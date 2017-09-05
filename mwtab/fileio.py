@@ -21,7 +21,6 @@ import zipfile
 import tarfile
 import bz2
 import gzip
-import re
 
 from . import mwtab
 
