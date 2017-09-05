@@ -33,19 +33,43 @@ by default.
 Install on Linux, Mac OS X
 --------------------------
 
-.. code:: bash
+.. code-block:: none
 
    python3 -m pip install mwtab
 
 Install on Windows
 ------------------
 
-.. code:: bash
+.. code-block:: none
 
    py -3 -m pip install mwtab
 
 Quickstart
 ~~~~~~~~~~
+
+.. code-block:: python
+
+   >>> import mwtab
+   >>>
+   >>> for mwfile in mwtab.read_files("1", "2"):  # Here we use ANALYSIS_ID of file to fetch from URL
+   ...      print("STUDY_ID:", mwfile.study_id)
+   ...      print("ANALYSIS_ID:", mwfile.analysis_id)
+   ...      print("SOURCE:", mwfile.source)
+   ...      print("Blocks:", list(mwfile.keys()))
+   STUDY_ID: ST000001
+   ANALYSIS_ID: AN000001
+   SOURCE: http://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000001/mwtab/txt
+   Blocks: ['METABOLOMICS WORKBENCH', 'PROJECT', 'STUDY', 'SUBJECT', 'SUBJECT_SAMPLE_FACTORS',
+            'COLLECTION', 'TREATMENT', 'SAMPLEPREP', 'CHROMATOGRAPHY', 'ANALYSIS', 'MS',
+            'MS_METABOLITE_DATA', 'METABOLITES']
+
+   STUDY_ID: ST000002
+   ANALYSIS_ID: AN000002
+   SOURCE: http://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000002/mwtab/txt
+   Blocks: ['METABOLOMICS WORKBENCH', 'PROJECT', 'STUDY', 'SUBJECT', 'SUBJECT_SAMPLE_FACTORS',
+            'COLLECTION', 'TREATMENT', 'SAMPLEPREP', 'CHROMATOGRAPHY', 'ANALYSIS', 'MS',
+            'MS_METABOLITE_DATA', 'METABOLITES']
+   >>>
 
 .. note:: Read the User Guide and The mwtab Tutorial on ReadTheDocs_
           to learn more and to see code examples on using the ``mwtab`` as a
