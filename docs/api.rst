@@ -19,7 +19,7 @@ The mwtab API Reference
 .. autofunction:: tokenizer
 
 
-.. automodule:: mwtab.fileutils
+.. automodule:: mwtab.fileio
 
 .. autofunction:: read_files
 

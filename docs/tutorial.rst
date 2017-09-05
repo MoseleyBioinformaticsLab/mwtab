@@ -636,8 +636,8 @@ The mwtab Command-Line Interface provides the following functionality:
        --from_format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
        --to_format=<format>            Output file format, available formats: mwtab, json [default: json].
 
-Converting NMR-STAR files in bulk
----------------------------------
+Converting ``mwTab`` files in bulk
+----------------------------------
 
 One-to-one file conversions
 ***************************
@@ -685,37 +685,53 @@ Many-to-many files conversions
 
    * Convert from a directory of files in ``mwTab`` format to a directory of files in ``JSON`` format:
 
-   .. code:: bash
+   .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab mwtabfiles_json \
                 --from_format=mwtab --to_format=json
 
    * Convert from a directory of files in ``JSON`` format to a directory of files in ``mwTab`` format:
 
-   .. code:: bash
+   .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_json mwtabfiles_mwtab \
                 --from_format=json --to_format=mwtab
 
    * Convert from a directory of files in ``mwTab`` format to a zip archive of files in ``JSON`` format:
 
-   .. code:: bash
+   .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab mwtabfiles_json.zip \
                 --from_format=mwtab --to_format=json
 
    * Convert from a compressed tar archive of files in ``JSON`` format to a directory of files in ``mwTab`` format:
 
-   .. code:: bash
+   .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_json.tar.gz mwtabfiles_mwtab \
                 --from_format=json --to_format=mwtab
 
    * Convert from a zip archive of files in ``mwTab`` format to a compressed tar archive of files in ``JSON`` format:
 
-   .. code:: bash
+   .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab.zip mwtabfiles_json.tar.bz2 \
                 --from_format=mwtab --to_format=json
 
    .. note:: See :mod:`mwtab.converter` for full list of available conversions.
+
+
+Validating ``mwTab`` files
+--------------------------
+
+The :mod:`mwtab` package provides :func:`~mwtab.validator.validate_file` function
+that can validate files based on ``JSON`` schema definition. The :mod:`mwtab.mwschema`
+contains schema definitions for every block (section) of ``mwTab`` formatted file, i.e.
+it lists the types of attributes (e.g. :py:class:`str` as well as specifys which keys are
+optional and which are required).
+
+   * To validate file(s) simply call ``validate`` command and provide path to file(s):
+
+   .. code-block:: none
+
+      $ python3 -m mwtab validate path
