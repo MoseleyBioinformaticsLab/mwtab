@@ -37,6 +37,6 @@ This package includes the following modules:
     on schema definitions as well as checks for file self-consistency.
 """
 
-from .fileutils import read_files
+from .fileio import read_files
 
 __version__ = "0.1.0"
