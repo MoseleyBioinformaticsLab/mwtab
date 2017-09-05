@@ -389,18 +389,17 @@ metabolites_schema = Schema(
                 "DATA": [
                     {
                         "metabolite_name": str,
-                        "moverz_quant": str,
-                        "ri": str,
-                        "ri_type": str,
-                        "pubchem_id": str,
-                        "inchi_key": str,
-                        "kegg_id": str,
+                        Optional("moverz_quant"): str,
+                        Optional("ri"): str,
+                        Optional("ri_type"): str,
+                        Optional("pubchem_id"): str,
+                        Optional("inchi_key"): str,
+                        Optional("kegg_id"): str,
                         Optional("other_id"): str,
                         Optional("other_id_type"): str
                     }
                 ]
             }
-
     }
 )
 
