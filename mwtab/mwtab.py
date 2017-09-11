@@ -187,8 +187,16 @@ class MWTabFile(OrderedDict):
                     token = next(lexer)
                 section[section_key]["DATA"] = data
 
+            elif token.key.endswith("_RESULTS_FILE"):
+                if len(token) == 4:
+                    key, value, extra_key, extra_value = token
+                    section[key] = OrderedDict([(key, value), (extra_key,extra_value)])
+                else:
+                    key, value = token
+                    section[key] = value
+
             else:
-                key, value = token
+                key, value, = token
                 if key in section:
                     section[key] += "\n{}".format(value)
                 else:
@@ -250,6 +258,13 @@ class MWTabFile(OrderedDict):
 
                 elif key.endswith(":UNITS"):
                     print("{}\t{}".format(key, value), file=f)
+
+                elif key.endswith("_RESULTS_FILE"):
+                    if isinstance(value, dict):
+                        print("{}{}               \t{}\t{}:{}".format(self.prefixes.get(section_key, ""),
+                                                                      *[i for pair in value.items() for i in pair]), file=f)
+                    else:
+                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
 
                 elif key.endswith("_START"):
                     start_key = key

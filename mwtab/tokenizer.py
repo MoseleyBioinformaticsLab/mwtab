@@ -21,6 +21,7 @@ from collections import namedtuple
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
 SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type", "local_sample_id", "factors", "additional_sample_data"])
+KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extrakey", "extravalue"])
 
 
 def tokenizer(text):
@@ -71,17 +72,26 @@ def tokenizer(text):
 
         else:
             if line:
-                try:
-                    key, value, = line.split("\t")
-                    if ":" in key:
+                if line.startswith("MS:MS_RESULTS_FILE"):
+                    try:
+                        key, value, extra = line.split("\t")
+                        extra_key, extra_value = extra.strip().split(":")
+                        yield KeyValueExtra(key.strip()[3:], value, extra_key, extra_value)
+                    except ValueError:
+                        key, value = line.split("\t")
                         yield KeyValue(key.strip()[3:], value)
-                    else:
-                        yield KeyValue(key.strip(), value)
-                except Exception:
-                    raise
+                else:
+                    try:
+                        key, value = line.split("\t")
+                        if ":" in key:
+                            yield KeyValue(key.strip()[3:], value)
+                        else:
+                            yield KeyValue(key.strip(), value)
+                    except ValueError:
+                        raise
 
     yield KeyValue("#ENDSECTION", "\n")
-    yield KeyValue("!#ENDFILE", "\n")
+    yield KeyValue("!#ENDFILE", "\n")  # This is to ensure that tokenizer terminates when #END is missing.
 
 
 if __name__ == "__main__":
