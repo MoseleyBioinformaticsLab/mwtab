@@ -32,7 +32,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
             assert from_subject_samples == from_metabolite_data_samples
 
         if "NMR_BINNED_DATA" in mwtabfile:
-            from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["fields"][1:])
+            from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["Fields"][1:])
             assert from_subject_samples == from_nmr_binned_data_samples
 
     if validate_factors:
@@ -63,19 +63,25 @@ def validate_file(mwtabfile, section_schema_mapping, validate_samples=True, vali
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+    :param validate_samples: Make sure that sample ids are consistent across file.
+    :type validate_samples: :py:obj:`True` or :py:obj:`False`  
+    :param validate_factors: Make sure that factors are consistent across file.
+    :type validate_factors: :py:obj:`True` or :py:obj:`False`
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
-    _validate_samples_factors(mwtabfile, validate_samples, validate_factors)
-
     validated_mwtabfile = OrderedDict()
+
+    try:
+        _validate_samples_factors(mwtabfile, validate_samples, validate_factors)
+    except Exception:
+        raise
 
     for section_key in mwtabfile:
         try:
             section = validate_section(mwtabfile, section_key, section_schema_mapping)
             validated_mwtabfile[section_key] = section
         except Exception:
-            print("Section name:", section_key)
             raise
 
     return validated_mwtabfile
