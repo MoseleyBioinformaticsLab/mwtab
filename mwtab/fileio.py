@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-mwtab.fileutils
-~~~~~~~~~~~~~~~
+mwtab.fileio
+~~~~~~~~~~~~
 
 This module provides routines for reading ``mwTab`` formatted files
 from difference kinds of sources:

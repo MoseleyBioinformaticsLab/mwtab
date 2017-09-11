@@ -109,7 +109,7 @@ import tarfile
 import bz2
 import gzip
 
-from . import fileutils
+from . import fileio
 
 
 class Translator(object):
@@ -126,8 +126,8 @@ class Translator(object):
         self.to_path = to_path
         self.from_format = from_format
         self.to_format = to_format
-        self.from_path_compression = fileutils.GenericFilePath.is_compressed(from_path)
-        self.to_path_compression = fileutils.GenericFilePath.is_compressed(to_path)
+        self.from_path_compression = fileio.GenericFilePath.is_compressed(from_path)
+        self.to_path_compression = fileio.GenericFilePath.is_compressed(to_path)
 
     def __iter__(self):
         """Abstract iterator must be implemented in a subclass."""
@@ -154,7 +154,7 @@ class MWTabFileToMWTabFile(Translator):
         :return: instance of :class:`~mwtab.mwtab.MWTabFile` object instance.
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
-        for mwtabfile in fileutils.read_files(self.from_path):
+        for mwtabfile in fileio.read_files(self.from_path):
             yield mwtabfile
 
 
@@ -180,7 +180,7 @@ class Converter(object):
 
         if os.path.isdir(self.file_generator.from_path):
             self._many_to_many()
-        elif os.path.isfile(self.file_generator.from_path) or fileutils.GenericFilePath.is_url(self.file_generator.from_path):
+        elif os.path.isfile(self.file_generator.from_path) or fileio.GenericFilePath.is_url(self.file_generator.from_path):
             if self.file_generator.from_path_compression in ("zip", "tar", "tar.gz", "tar.bz2"):
                 self._many_to_many()
             elif self.file_generator.from_path_compression in ("gz", "bz2"):
