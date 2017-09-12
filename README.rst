@@ -51,7 +51,7 @@ Quickstart
 
    >>> import mwtab
    >>>
-   >>> for mwfile in mwtab.read_files("1", "2"):  # Here we use ANALYSIS_ID of file to fetch from URL
+   >>> for mwfile in mwtab.read_files("1", "2"):  # Here we use ANALYSIS_ID of file to fetch data from URL
    ...      print("STUDY_ID:", mwfile.study_id)
    ...      print("ANALYSIS_ID:", mwfile.analysis_id)
    ...      print("SOURCE:", mwfile.source)

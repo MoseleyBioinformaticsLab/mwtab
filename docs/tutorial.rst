@@ -625,16 +625,17 @@ The mwtab Command-Line Interface provides the following functionality:
    Usage:
        mwtab -h | --help
        mwtab --version
-       mwtab convert (<from_path> <to_path>) [--from_format=<format>] [--to_format=<format>] [--validate] [--verbose]
-       mwtab validate <from_path> [--verbose]
+       mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--verbose]
+       mwtab validate <from-path> [--verbose]
 
    Options:
        -h, --help                      Show this screen.
        --version                       Show version.
        --verbose                       Print what files are processing.
        --validate                      Validate the mwTab file.
-       --from_format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
-       --to_format=<format>            Output file format, available formats: mwtab, json [default: json].
+       --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
+       --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
+       --mw-rest=<url>                 URL to MW REST interface [default: "http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"].
 
 Converting ``mwTab`` files in bulk
 ----------------------------------
@@ -647,35 +648,35 @@ One-to-one file conversions
    .. code:: bash
 
       $ python3 -m mwtab convert ST000001_AN000001.txt ST000001_AN000001.json \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    * Convert from a local file in ``JSON`` format to a local file in ``mwTab`` format:
 
    .. code:: bash
 
       $ python3 -m mwtab convert ST000001_AN000001.json ST000001_AN000001.txt \
-                --from_format=json --to_format=mwtab
+                --from-format=json --to-format=mwtab
 
    * Convert from a compressed local file in ``mwTab`` format to a compressed local file in ``JSON`` format:
 
    .. code:: bash
 
       $ python3 -m mwtab convert ST000001_AN000001.txt.gz ST000001_AN000001.json.gz \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    * Convert from a compressed local file in ``JSON`` format to a compressed local file in ``mwTab`` format:
 
    .. code:: bash
 
       $ python3 -m mwtab convert ST000001_AN000001.json.gz ST000001_AN000001.txt.gz \
-                --from_format=json --to_format=mwtab
+                --from-format=json --to-format=mwtab
 
    * Convert from a uncompressed URL file in ``mwTab`` format to a compressed local file in ``JSON`` format:
 
    .. code:: bash
 
       $ python3 -m mwtab convert 1 ST000001_AN000001.json.bz2 \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    .. note:: See :mod:`mwtab.converter` for full list of available conversions.
 
@@ -688,35 +689,35 @@ Many-to-many files conversions
    .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab mwtabfiles_json \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    * Convert from a directory of files in ``JSON`` format to a directory of files in ``mwTab`` format:
 
    .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_json mwtabfiles_mwtab \
-                --from_format=json --to_format=mwtab
+                --from-format=json --to-format=mwtab
 
    * Convert from a directory of files in ``mwTab`` format to a zip archive of files in ``JSON`` format:
 
    .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab mwtabfiles_json.zip \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    * Convert from a compressed tar archive of files in ``JSON`` format to a directory of files in ``mwTab`` format:
 
    .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_json.tar.gz mwtabfiles_mwtab \
-                --from_format=json --to_format=mwtab
+                --from-format=json --to-format=mwtab
 
    * Convert from a zip archive of files in ``mwTab`` format to a compressed tar archive of files in ``JSON`` format:
 
    .. code-block:: none
 
       $ python3 -m mwtab convert mwtabfiles_mwtab.zip mwtabfiles_json.tar.bz2 \
-                --from_format=mwtab --to_format=json
+                --from-format=mwtab --to-format=json
 
    .. note:: See :mod:`mwtab.converter` for full list of available conversions.
 
