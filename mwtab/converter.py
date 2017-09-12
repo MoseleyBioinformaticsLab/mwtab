@@ -59,10 +59,10 @@ Local files:
          * tarfile.tar.bz2 - to - directory.gz / directory.bz2 (TypeError: Many-to-one conversion)
 URL files:
    * One-to-one file conversions:
-      * bmrbid - to - textfile
-      * bmrbid - to - textfile.gz
-      * bmrbid - to - textfile.bz2
-      * bmrbid - to - textfile.zip / textfile.tar / textfile.tar.gz / textfile.tar.bz2 (TypeError: One-to-many conversion)
+      * analysis_id - to - textfile
+      * analysis_id - to - textfile.gz
+      * analysis_id - to - textfile.bz2
+      * analysis_id - to - textfile.zip / textfile.tar / textfile.tar.gz / textfile.tar.bz2 (TypeError: One-to-many conversion)
       * textfileurl - to - textfile
       * textfileurl - to - textfile.gz
       * textfileurl - to - textfile.bz2

@@ -12,9 +12,8 @@ directly from the :class:`~mwtab.mwtab.MWTabFile` instance using
 bracket accessors.
 
 The data is divided into a series of "sections" which each contain a
-number of "key-value"-like pairs. Also file consists of specifically
-formatted section ``SUBJECT_SAMPLE_FACTORS`` and blocks of data between
-``*_START`` and ``*_END``.
+number of "key-value"-like pairs. Also, the file contains a specifically formatted 
+``SUBJECT_SAMPLE_FACTOR`` block and blocks of data between ``*_START`` and ``*_END``.
 """
 
 from __future__ import print_function, division
@@ -189,8 +188,8 @@ class MWTabFile(OrderedDict):
 
             elif token.key.endswith("_RESULTS_FILE"):
                 if len(token) == 4:
-                    key, value, extra_key, extra_value = token
-                    section[key] = OrderedDict([(key, value), (extra_key,extra_value)])
+                    key, value, extrakey, extravalue = token
+                    section[key] = OrderedDict([(key, value), (extrakey,extravalue)])
                 else:
                     key, value = token
                     section[key] = value

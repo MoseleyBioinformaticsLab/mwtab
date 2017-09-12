@@ -5,7 +5,7 @@
 mwtab.tokenizer
 ~~~~~~~~~~~~~~~
 
-This module provides :func:`~mwtab.tokenizer.tokenizer` lexical analyzer for
+This module provides the :func:`~mwtab.tokenizer.tokenizer` lexical analyzer for
 `mwTab` format syntax. It is implemented as Python generator-based state
 machine which generates (yields) tokens one at a time when :py:func:`next()`
 is invoked on :func:`~mwtab.tokenizer.tokenizer` instance.
