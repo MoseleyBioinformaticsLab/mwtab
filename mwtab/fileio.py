@@ -12,6 +12,7 @@ from difference kinds of sources:
    * Directory containing multiple ``mwTab`` formatted files.
    * Compressed zip/tar archive of ``mwTab`` formatted files.
    * URL address of ``mwTab`` formatted file.
+   * ``ANALYSIS_ID`` of ``mwTab`` formatted file. 
 """
 
 import os
@@ -34,7 +35,7 @@ else:
 
 
 VERBOSE = False
-MW_REST = "http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"
+MWREST = "http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"
 
 
 def _generate_filenames(sources):
@@ -60,7 +61,7 @@ def _generate_filenames(sources):
             yield source
         elif source.isdigit():
             analysis_id = "AN{}".format(source.zfill(6))
-            yield MW_REST.format(analysis_id)
+            yield MWREST.format(analysis_id)
 
         elif GenericFilePath.is_url(source):
             yield source
@@ -76,8 +77,6 @@ def _generate_handles(filenames):
     :return: Filehandle to be processed into an instance.
     """
     for fname in filenames:
-        if VERBOSE:
-            print("Processing file: {}".format(os.path.abspath(fname)))
         path = GenericFilePath(fname)
         for filehandle, source in path.open():
             yield filehandle, source
@@ -92,9 +91,16 @@ def read_files(*sources):
     filenames = _generate_filenames(sources)
     filehandles = _generate_handles(filenames)
     for fh, source in filehandles:
-        f = mwtab.MWTabFile(source)
-        f.read(fh)
-        yield f
+        try:
+            f = mwtab.MWTabFile(source)
+            f.read(fh)
+            yield f
+            if VERBOSE:
+                print("Processed file: {}".format(os.path.abspath(source)))
+        except Exception:
+            if VERBOSE:
+                print("Error processing file: ", os.path.abspath(source))
+            pass
 
 
 class GenericFilePath(object):
