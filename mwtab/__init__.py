@@ -18,8 +18,8 @@ This package includes the following modules:
     This module provides the :func:`~mwtab.tokenizer.tokenizer` generator that generates
     tuples of key-value pairs from `mwtab` files.
 
-``fileutils``
-    This module provides the :func:`~mwtab.fileutils.read_files` generator
+``fileio``
+    This module provides the :func:`~mwtab.fileio.read_files` generator
     to open files from different sources (single file/multiple files on a local 
     machine, directory/archive of files, URL address of a file).
 
