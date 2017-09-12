@@ -51,7 +51,7 @@ For an isolated install, you can run the same inside a virtualenv_.
 
    $ source venv/bin/activate             # activate virtual environment
 
-   $ python3 -m pip install mwtab         # install mwtab as usually
+   $ python3 -m pip install mwtab         # install mwtab as usual
 
    $ deactivate                           # if you are done working in the virtual environment
 
@@ -84,9 +84,9 @@ or install it into your system site-packages easily:
 Dependencies
 ~~~~~~~~~~~~
 
-The :mod:`mwtab` package depends on several Python libraries, it will install all
-dependencies automatically, but if you wish to install them manually run the
-following commands:
+The :mod:`mwtab` package depends on several Python libraries. The ``pip`` command
+will install all dependencies automatically, but if you wish to install them manually,
+run the following commands:
 
    * docopt_ for creating :mod:`mwtab` command-line interface.
       * To install docopt_ run the following:
@@ -110,21 +110,21 @@ Basic usage
 
 The :mod:`mwtab` package can be used in several ways:
 
-   * As a library for accessing and manipulating data stored in ``mwTab`` format files.
+   * As a library for accessing and manipulating data stored in ``mwTab`` formatted files.
 
       * Create the :class:`~mwtab.mwtab.MWTabFile` generator function that will generate
-        (yield) single :class:`~mwtab.mwtab.MWTabFile` instance at a time.
+        (yield) a single :class:`~mwtab.mwtab.MWTabFile` instance at a time.
 
       * Process each :class:`~mwtab.mwtab.MWTabFile` instance:
 
-         * Process ``mwTab`` files in a for-loop one file at a time.
+         * Process ``mwTab`` files in a for-loop, one file at a time.
          * Process as an iterator calling the :py:func:`next` built-in function.
          * Convert the generator into a :py:class:`list` of :class:`~mwtab.mwtab.MWTabFile` objects.
 
    * As a command-line tool:
 
       * Convert from ``mwTab`` file format into its equivalent ``JSON`` file format and vice versa.
-      * Validate data in stored in ``mwTab`` file based on schema definition.
+      * Validate data stored in ``mwTab`` file based on schema definition.
 
 .. note:: Read :doc:`tutorial` to learn more and see code examples on using the :mod:`mwtab`
           as a library and as a command-line tool.

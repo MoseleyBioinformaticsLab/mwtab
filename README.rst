@@ -71,7 +71,7 @@ Quickstart
             'MS_METABOLITE_DATA', 'METABOLITES']
    >>>
 
-.. note:: Read the User Guide and The mwtab Tutorial on ReadTheDocs_
+.. note:: Read the User Guide and the mwtab Tutorial on ReadTheDocs_
           to learn more and to see code examples on using the ``mwtab`` as a
           library and as a command-line tool.
 

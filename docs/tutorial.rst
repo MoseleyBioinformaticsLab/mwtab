@@ -41,7 +41,7 @@ The ``mwTab`` formatted files consist of multiple blocks. Each new block starts 
 
 
    * ``#SUBJECT_SAMPLE_FACTORS`` block is specially formatted, i.e. it contains header
-     specification and ``\t``-separated values.
+     specification and tab-separated values.
 
    .. code-block:: none
 
@@ -55,7 +55,7 @@ The ``mwTab`` formatted files consist of multiple blocks. Each new block starts 
 
 
    * ``#MS_METABOLITE_DATA`` (results) block contains ``Samples`` identifiers, ``Factors`` identifiers
-     as well as ``\t``-separated data between ``*_START`` and ``*_END``.
+     as well as tab-separated data between ``*_START`` and ``*_END``.
 
    .. code-block:: none
 
@@ -70,7 +70,7 @@ The ``mwTab`` formatted files consist of multiple blocks. Each new block starts 
       MS_METABOLITE_DATA_END
 
    * ``#METABOLITES`` metadata block contains a header specifying fields and
-     ``\t``-separated data between ``*_START`` and ``*_END``.
+     tab-separated data between ``*_START`` and ``*_END``.
 
    .. code-block:: none
 
@@ -85,7 +85,7 @@ The ``mwTab`` formatted files consist of multiple blocks. Each new block starts 
       METABOLITES_END
 
    * ``#NMR_BINNED_DATA`` metadata block contains a header specifying fields and
-     ``\t``-separated data between ``*_START`` and ``*_END``.
+     tab-separated data between ``*_START`` and ``*_END``.
 
    .. code-block:: none
 
@@ -180,9 +180,9 @@ The :class:`~mwtab.mwtab.MWTabFile` generator can be processed in several ways:
    * Feed it to a for-loop and process one file at a time:
 
    >>> for mwtfile in mwtdir_gen:
-   >>>     print("STUDY_ID:", mwtfile.study_id)       # print STUDY_ID of MWTabFile
-   >>>     print("ANALYSIS_ID", mwtfile.analysis_id)  # print ANALYSIS_ID of MWTabFile
-   >>>     print("SOURCE", mwtfile.source)            # print source of MWTabFile
+   >>>     print("STUDY_ID:", mwtfile.study_id)       # print STUDY_ID
+   >>>     print("ANALYSIS_ID", mwtfile.analysis_id)  # print ANALYSIS_ID
+   >>>     print("SOURCE", mwtfile.source)            # print source
    >>>     for block_name in mwtfile:                 # print names of blocks
    >>>          print("\t", block_name)
 
@@ -405,10 +405,10 @@ using bracket accessors.
 Manipulating Data From a Single MWTabFile
 -----------------------------------------
 
-In order to change values within :class:`~mwtab.mwtab.MWTabFile` descend into
-appropriate level using square bracket accessors and set a new value.
+In order to change values within :class:`~mwtab.mwtab.MWTabFile`, descend into
+the appropriate level using square bracket accessors and set a new value.
 
-   * Changing regular "key-value" pairs:
+   * Change regular "key-value" pairs:
 
    >>> mwtfile["PROJECT"]["PHONE"]
    '-'
@@ -416,7 +416,7 @@ appropriate level using square bracket accessors and set a new value.
    >>> mwtfile["PROJECT"]["PHONE"]
    '1-530-754-8258'
 
-   * Changing ``#SUBJECT_SAMPLE_FACTORS`` values:
+   * Change ``#SUBJECT_SAMPLE_FACTORS`` values:
 
    >>> mwtfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"][0]
    OrderedDict([
@@ -525,8 +525,8 @@ Printing a MWTabFile and its Components
    }
 
 
-Writing data from a StarFile object into a file
------------------------------------------------
+Writing data from a MWTabFile object into a file
+------------------------------------------------
 Data from a :class:`~mwtab.mwtab.MWTabFile` can be written into file
 in original ``mwTab`` format or in equivalent JSON format using
 :meth:`~mwtab.mwtab.MWTabFile.write()`:
@@ -548,7 +548,7 @@ Converting mwTab Files
 ----------------------
 
 ``mwTab`` files can be converted between the ``mwTab`` file format and their ``JSON``
-representation using :mod:`mwtab.converter` modules.
+representation using the :mod:`mwtab.converter` module.
 
 One-to-one file conversions
 ***************************
@@ -724,13 +724,13 @@ Many-to-many files conversions
 Validating ``mwTab`` files
 --------------------------
 
-The :mod:`mwtab` package provides :func:`~mwtab.validator.validate_file` function
-that can validate files based on ``JSON`` schema definition. The :mod:`mwtab.mwschema`
+The :mod:`mwtab` package provides the :func:`~mwtab.validator.validate_file` function
+that can validate files based on a ``JSON`` schema definition. The :mod:`mwtab.mwschema`
 contains schema definitions for every block (section) of ``mwTab`` formatted file, i.e.
-it lists the types of attributes (e.g. :py:class:`str` as well as specifys which keys are
+it lists the types of attributes (e.g. :py:class:`str` as well as specifies which keys are
 optional and which are required).
 
-   * To validate file(s) simply call ``validate`` command and provide path to file(s):
+   * To validate file(s) simply call the ``validate`` command and provide path to file(s):
 
    .. code-block:: none
 
