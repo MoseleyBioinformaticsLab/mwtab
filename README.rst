@@ -1,6 +1,23 @@
 mwtab
 =====
 
+.. image:: https://img.shields.io/pypi/l/mwtab.svg
+   :target: https://choosealicense.com/licenses/bsd-3-clause/
+   :alt: License information
+
+.. image:: https://img.shields.io/pypi/v/mwtab.svg
+   :target: https://pypi.org/project/mwtab/
+   :alt: Current library version
+
+.. image:: https://img.shields.io/pypi/pyversions/mwtab.svg
+   :target: https://pypi.org/project/mwtab/
+   :alt: Supported Python versions
+
+.. image:: https://readthedocs.org/projects/nmrstarlib/badge/?version=latest
+   :target: http://mwtab.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation status
+
+
 The ``mwtab`` package is a Python library that facilitates reading and writing
 files in ``mwTab`` format used by the `Metabolomics Workbench`_ for archival of
 Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR) experimental data.
@@ -58,7 +75,7 @@ Quickstart
    ...      print("Blocks:", list(mwfile.keys()))
    >>>
 
-.. note:: Read the User Guide and the mwtab Tutorial on ReadTheDocs_
+.. note:: Read the User Guide and the ``mwtab`` Tutorial on ReadTheDocs_
           to learn more and to see code examples on using the ``mwtab`` as a
           library and as a command-line tool.
 
