@@ -115,7 +115,7 @@ from . import fileio
 class Translator(object):
     """Translator abstract class."""
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None, validate=False):
         """Translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
@@ -128,6 +128,7 @@ class Translator(object):
         self.to_format = to_format
         self.from_path_compression = fileio.GenericFilePath.is_compressed(from_path)
         self.to_path_compression = fileio.GenericFilePath.is_compressed(to_path)
+        self.validate = validate
 
     def __iter__(self):
         """Abstract iterator must be implemented in a subclass."""
@@ -140,33 +141,33 @@ class MWTabFileToMWTabFile(Translator):
     file_extension = {"json": ".json",
                       "mwtab": ".txt"}
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None, validate=False):
         """StarFileToStarFile translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
         """
-        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format)
+        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format, validate)
 
     def __iter__(self):
         """Iterator that yields instances of :class:`~mwtab.mwtab.MWTabFile` instances.
         :return: instance of :class:`~mwtab.mwtab.MWTabFile` object instance.
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
-        for mwtabfile in fileio.read_files(self.from_path):
+        for mwtabfile in fileio.read_files(self.from_path, validate=self.validate):
             yield mwtabfile
 
 
 class Converter(object):
     """Converter class to convert ``mwTab`` files from ``mwTab`` to ``JSON`` or from ``JSON`` to ``mwTab`` format."""
 
-    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json"):
+    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json", validate=False):
         """Converter initializer.
         :param file_generator:
         :type file_generator: :class:`mwtab.converter.Translator`
         """
-        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format)
+        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format, validate)
 
     def convert(self):
         """Convert file(s) from ``mwTab`` format to ``JSON`` format or from ``JSON`` format to ``mwTab`` format.

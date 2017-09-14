@@ -24,6 +24,8 @@ import bz2
 import gzip
 
 from . import mwtab
+from mwtab.validator import validate_file
+from mwtab.mwschema import section_schema_mapping
 
 
 if sys.version_info.major == 3:
@@ -45,8 +47,6 @@ def _generate_filenames(sources):
     :return: Path to file(s).
     :rtype: :py:class:`str`
     """
-    # study_id_analysis_id_pattern = re.compile("^ST[0-9]{6}_AN[0-9]{6}$")
-
     for source in sources:
         if os.path.isdir(source):
             for path, dirlist, filelist in os.walk(source):
@@ -57,14 +57,18 @@ def _generate_filenames(sources):
                         continue
                     else:
                         yield os.path.join(path, fname)
+
         elif os.path.isfile(source):
             yield source
+
         elif source.isdigit():
             analysis_id = "AN{}".format(source.zfill(6))
-            yield MWREST.format(analysis_id)
+            url = MWREST.format(analysis_id)
+            yield url
 
         elif GenericFilePath.is_url(source):
             yield source
+
         else:
             raise TypeError("Unknown file source.")
 
@@ -83,7 +87,7 @@ def _generate_handles(filenames):
             filehandle.close()
 
 
-def read_files(*sources):
+def read_files(*sources, validate=False):
     """Construct a generator that yields file instances.
 
     :param sources: One or more strings representing path to file(s).
@@ -94,12 +98,20 @@ def read_files(*sources):
         try:
             f = mwtab.MWTabFile(source)
             f.read(fh)
+
+            if validate:
+                validate_file(mwtabfile=f,
+                              section_schema_mapping=section_schema_mapping,
+                              validate_samples=True,
+                              validate_factors=True)
             yield f
+
             if VERBOSE:
                 print("Processed file: {}".format(os.path.abspath(source)))
-        except Exception:
+
+        except Exception as e:
             if VERBOSE:
-                print("Error processing file: ", os.path.abspath(source))
+                print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
             pass
 
 

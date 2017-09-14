@@ -36,13 +36,12 @@ def cli(cmdargs):
         converter = Converter(from_path=cmdargs["<from-path>"],
                               to_path=cmdargs["<to-path>"],
                               from_format=cmdargs["--from-format"],
-                              to_format=cmdargs["--to-format"])
+                              to_format=cmdargs["--to-format"],
+                              validate=cmdargs["--validate"])
         converter.convert()
 
     elif cmdargs["validate"]:
-        for mwfile in mwtab.read_files(cmdargs["<from-path>"]):
-            print("mwfile:", mwfile)
-
+        for mwfile in mwtab.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
             validate_file(mwtabfile=mwfile,
                           section_schema_mapping=section_schema_mapping,
                           validate_samples=True,
