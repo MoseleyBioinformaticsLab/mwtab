@@ -84,7 +84,10 @@ def tokenizer(text):
                     try:
                         key, value = line.split("\t")
                         if ":" in key:
-                            yield KeyValue(key.strip()[3:], value)
+                            if key.startswith("MS_METABOLITE_DATA:UNITS"):
+                                yield KeyValue(key.strip(), value)
+                            else:
+                                yield KeyValue(key.strip()[3:], value)
                         else:
                             yield KeyValue(key.strip(), value)
                     except ValueError:

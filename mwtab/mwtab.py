@@ -12,8 +12,9 @@ directly from the :class:`~mwtab.mwtab.MWTabFile` instance using
 bracket accessors.
 
 The data is divided into a series of "sections" which each contain a
-number of "key-value"-like pairs. Also, the file contains a specifically formatted 
-``SUBJECT_SAMPLE_FACTOR`` block and blocks of data between ``*_START`` and ``*_END``.
+number of "key-value"-like pairs. Also, the file contains a specially
+formatted ``SUBJECT_SAMPLE_FACTOR`` block and blocks of data between 
+``*_START`` and ``*_END``.
 """
 
 from __future__ import print_function, division
@@ -158,6 +159,7 @@ class MWTabFile(OrderedDict):
         token = next(lexer)
 
         while not token.key.startswith("#ENDSECTION"):
+
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
                 header = token._fields[1:]
                 values = token[1:]
@@ -244,8 +246,10 @@ class MWTabFile(OrderedDict):
 
                 if key in ("VERSION", "CREATED_ON"):
                     cw = 20 - len(key)
-                else:
+                elif key in ("SUBJECT_SAMPLE_FACTORS", ):
                     cw = 33 - len(key)
+                else:
+                    cw = 30 - len(key)
 
                 if "\n" in value:
                     for line in value.split("\n"):
@@ -273,6 +277,9 @@ class MWTabFile(OrderedDict):
                     for data_key in value:
                         if data_key in ("Samples", "Factors"):
                             print("{}\t{}".format(data_key, "\t".join(self[section_key][key][data_key])), file=f)
+
+                        elif data_key in ("Fields", ):
+                            print("{}".format("\t".join(self[section_key][key][data_key])), file=f)
 
                         elif data_key == "DATA":
                             for data in self[section_key][key][data_key]:
