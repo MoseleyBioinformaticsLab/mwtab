@@ -405,7 +405,7 @@ metabolites_schema = Schema(
 
 ms_metabolite_data_schema = Schema(
     {
-        "METABOLITE_DATA:UNITS": str,
+        "MS_METABOLITE_DATA:UNITS": str,
         "MS_METABOLITE_DATA_START": {
             "Samples": list,
             "Factors": list,
