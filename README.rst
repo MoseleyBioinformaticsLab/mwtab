@@ -61,6 +61,21 @@ Install on Windows
 
    py -3 -m pip install mwtab
 
+Upgrade on Linux, Mac OS X
+--------------------------
+
+.. code:: bash
+
+   python3 -m pip install mwtab --upgrade
+
+Upgrade on Windows
+------------------
+
+.. code:: bash
+
+   py -3 -m pip install mwtab --upgrade
+
+
 Quickstart
 ~~~~~~~~~~
 
