@@ -17,6 +17,10 @@ mwtab
    :target: http://mwtab.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation status
 
+.. image:: https://api.travis-ci.org/MoseleyBioinformaticsLab/mwtab.svg?branch=master
+   :target: https://travis-ci.org/MoseleyBioinformaticsLab/mwtab
+   :alt: Travis CI status
+
 
 The ``mwtab`` package is a Python library that facilitates reading and writing
 files in ``mwTab`` format used by the `Metabolomics Workbench`_ for archival of
