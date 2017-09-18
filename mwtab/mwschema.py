@@ -9,7 +9,12 @@ This module provides schema definitions for different sections of the
 ``mwTab`` Metabolomics Workbench format.
 """
 
-from schema import Schema, Optional
+import sys
+
+from schema import Schema, Optional, Or
+
+if sys.version_info.major == 2:
+    str = unicode
 
 
 metabolomics_workbench_schema = Schema(
@@ -19,6 +24,7 @@ metabolomics_workbench_schema = Schema(
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
         Optional("HEADER"): str,
+        Optional("DATATRACK_ID"): str
     }
 )
 
@@ -335,7 +341,7 @@ ms_schema = Schema(
         Optional("SCANNING_RANGE"): str,
         Optional("SKIMMER_VOLTAGE"): str,
         Optional("TUBE_LENS_VOLTAGE"): str,
-        Optional("MS_RESULTS_FILE"): str
+        Optional("MS_RESULTS_FILE"): Or(str, dict)
     }
 )
 
