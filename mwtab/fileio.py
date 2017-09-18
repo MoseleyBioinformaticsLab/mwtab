@@ -24,8 +24,8 @@ import bz2
 import gzip
 
 from . import mwtab
-from mwtab.validator import validate_file
-from mwtab.mwschema import section_schema_mapping
+from . import validator
+from . import mwschema
 
 
 if sys.version_info.major == 3:
@@ -87,7 +87,7 @@ def _generate_handles(filenames):
             filehandle.close()
 
 
-def read_files(*sources, validate=False):
+def read_files(*sources, **kwds):
     """Construct a generator that yields file instances.
 
     :param sources: One or more strings representing path to file(s).
@@ -99,11 +99,11 @@ def read_files(*sources, validate=False):
             f = mwtab.MWTabFile(source)
             f.read(fh)
 
-            if validate:
-                validate_file(mwtabfile=f,
-                              section_schema_mapping=section_schema_mapping,
-                              validate_samples=True,
-                              validate_factors=True)
+            if kwds.get('validate'):
+                validator.validate_file(mwtabfile=f,
+                                        section_schema_mapping=mwschema.section_schema_mapping,
+                                        validate_samples=True,
+                                        validate_factors=True)
             yield f
 
             if VERBOSE:
@@ -171,7 +171,7 @@ class GenericFilePath(object):
                         filehandle.close()
 
             elif compression_type == "bz2":
-                filehandle = bz2.open(io.BytesIO(path)) if is_url else bz2.open(path)
+                filehandle = bz2.BZ2File(io.BytesIO(path)) if is_url else bz2.BZ2File(path)
                 source = self.path
                 yield filehandle, source
                 filehandle.close()
