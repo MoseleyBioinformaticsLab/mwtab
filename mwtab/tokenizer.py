@@ -15,6 +15,7 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 ``*_START`` and ``*_END`` blocks.
 """
 
+from __future__ import print_function, division, unicode_literals
 from collections import deque
 from collections import namedtuple
 
@@ -95,17 +96,3 @@ def tokenizer(text):
 
     yield KeyValue("#ENDSECTION", "\n")
     yield KeyValue("!#ENDFILE", "\n")  # This is to ensure that tokenizer terminates when #END is missing.
-
-
-if __name__ == "__main__":
-    import sys
-
-    script = sys.argv.pop(0)
-    filepath = sys.argv.pop(0)
-
-    with open(filepath, "r") as inf:
-        t = tokenizer(inf.read())
-
-    for token in t:
-        print(token)
-        pass

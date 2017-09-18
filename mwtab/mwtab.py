@@ -17,7 +17,7 @@ formatted ``SUBJECT_SAMPLE_FACTOR`` block and blocks of data between
 ``*_START`` and ``*_END``.
 """
 
-from __future__ import print_function, division
+from __future__ import print_function, division, unicode_literals
 from collections import OrderedDict
 import io
 import sys
@@ -215,7 +215,7 @@ class MWTabFile(OrderedDict):
         :return: None
         :rtype: :py:obj:`None`
         """
-        if file_format is "mwtab":
+        if file_format == "mwtab":
             for key in self:
                 if key == "SUBJECT_SAMPLE_FACTORS":
                     print("#SUBJECT_SAMPLE_FACTORS:         \tSUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data", file=f)
@@ -227,7 +227,7 @@ class MWTabFile(OrderedDict):
                 self.print_block(key, f=f, file_format=file_format)
             print("#END", file=f)
 
-        elif file_format is "json":
+        elif file_format == "json":
             print(self._to_json(), file=f)
 
     def print_block(self, section_key, f=sys.stdout, file_format="mwtab"):
@@ -239,7 +239,7 @@ class MWTabFile(OrderedDict):
         :return: None
         :rtype: :py:obj:`None`
         """
-        if file_format is "mwtab":
+        if file_format == "mwtab":
             for key, value in self[section_key].items():
                 if section_key == "METABOLOMICS WORKBENCH" and key not in ("VERSION", "CREATED_ON"):
                     continue
@@ -289,7 +289,7 @@ class MWTabFile(OrderedDict):
                 else:
                     print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
 
-        elif file_format is "json":
+        elif file_format == "json":
             print(json.dumps(self[section_key], sort_keys=False, indent=4), file=f)
 
     def _to_json(self):
