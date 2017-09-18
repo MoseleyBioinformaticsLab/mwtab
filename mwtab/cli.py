@@ -21,16 +21,16 @@ Options:
     --mw-rest=<url>                 URL to MW REST interface [default: http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
 """
 
-import mwtab
-from mwtab.converter import Converter
-from mwtab.validator import validate_file
-from mwtab.mwschema import section_schema_mapping
+from . import fileio
+from .converter import Converter
+from .validator import validate_file
+from .mwschema import section_schema_mapping
 
 
 def cli(cmdargs):
 
-    mwtab.fileio.VERBOSE = cmdargs["--verbose"]
-    mwtab.fileio.MWREST = cmdargs["--mw-rest"]
+    fileio.VERBOSE = cmdargs["--verbose"]
+    fileio.MWREST = cmdargs["--mw-rest"]
 
     if cmdargs["convert"]:
         converter = Converter(from_path=cmdargs["<from-path>"],
@@ -41,7 +41,7 @@ def cli(cmdargs):
         converter.convert()
 
     elif cmdargs["validate"]:
-        for mwfile in mwtab.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
+        for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
             validate_file(mwtabfile=mwfile,
                           section_schema_mapping=section_schema_mapping,
                           validate_samples=True,
