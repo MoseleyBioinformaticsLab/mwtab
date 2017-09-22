@@ -11,23 +11,6 @@ def teardown_module(module):
         shutil.rmtree("tests/example_data/tmp")
 
 
-# @pytest.mark.parametrize("from_path,to_path,from_format,to_format", [
-#     ("tests/example_data/mwtab_files/ST000001_AN000001.txt", "tests/example_data/tmp/ST000001_AN000001.json", "mwtab", "json"),
-#     ("tests/example_data/tmp/ST000001_AN000001.json", "tests/example_data/tmp/ST000001_AN000001.txt", "json", "mwtab"),
-# ])
-# def test_one_to_one_conversion(from_path, to_path, from_format, to_format):
-#     converter = Converter(from_path=from_path,
-#                           to_path=to_path,
-#                           from_format=from_format,
-#                           to_format=to_format)
-#     converter.convert()
-#
-#     mwtabfile_generator = mwtab.read_files(to_path)
-#     mwtabfile = next(mwtabfile_generator)
-#     assert mwtabfile.study_id == "ST000001"
-#     assert mwtabfile.analysis_id == "AN000001"
-
-
 @pytest.mark.parametrize("from_path,to_path,from_format,to_format", [
     # one-to-one file conversions
     ("tests/example_data/mwtab_files/ST000001_AN000001.txt", "tests/example_data/tmp/json/ST000001_AN000001.json", "mwtab", "json"),
