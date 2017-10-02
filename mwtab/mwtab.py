@@ -141,14 +141,14 @@ class MWTabFile(OrderedDict):
         while token.key != "!#ENDFILE":
             if token.key.startswith("#"):
                 name = token.key[1:]
-                section = self._build_section(lexer)
+                section = self._build_block(lexer)
                 if section:
                     mwtab_file[name] = section
             token = next(lexer)
         return mwtab_file
 
-    def _build_section(self, lexer):
-        """Build section of :class:`~mwtab.mwtab.MWTabFile` instance.
+    def _build_block(self, lexer):
+        """Build individual text block of :class:`~mwtab.mwtab.MWTabFile` instance.
 
         :param lexer: instance of the mwtab tokenizer.
         :type lexer: :func:`~mwtab.tokenizer.tokenizer`
