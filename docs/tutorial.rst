@@ -153,7 +153,7 @@ If the :mod:`mwtab` package is installed on the system, it can be imported:
 Constructing MWTabFile Generator
 --------------------------------
 
-The :mod:`~mwtab.fileutils` module provides the :func:`~mwtab.fileutils.read_files`
+The :mod:`~mwtab.fileio` module provides the :func:`~mwtab.fileio.read_files`
 generator function that yields :class:`~mwtab.mwtab.MWTabFile` instances. Constructing a
 :class:`~mwtab.mwtab.MWTabFile` generator is easy - specify the path to a local ``mwTab`` file,
 directory of files, archive of files:
