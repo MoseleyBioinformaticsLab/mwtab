@@ -91,12 +91,16 @@ Quickstart
 
    >>> import mwtab
    >>>
-   >>> for mwfile in mwtab.read_files("1", "2"):  # Here we use ANALYSIS_ID of file to fetch data from URL
+   >>> # Here we use ANALYSIS_ID of file to fetch data from URL
+   >>> for mwfile in mwtab.read_files("1", "2"):
    ...      print("STUDY_ID:", mwfile.study_id)
    ...      print("ANALYSIS_ID:", mwfile.analysis_id)
    ...      print("SOURCE:", mwfile.source)
    ...      print("Blocks:", list(mwfile.keys()))
    >>>
+
+.. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_demo.gif
+   :align: center
 
 .. note:: Read the User Guide and the ``mwtab`` Tutorial on ReadTheDocs_
           to learn more and to see code examples on using the ``mwtab`` as a
