@@ -121,9 +121,9 @@ License
 This package is distributed under the BSD_ `license`.
 
 
+.. _Metabolomics Workbench: http://www.metabolomicsworkbench.org
 .. _GitHub: https://github.com/MoseleyBioinformaticsLab/mwtab
 .. _ReadTheDocs: http://mwtab.readthedocs.io
 .. _PyPI: https://pypi.org/project/mwtab
 .. _pip: https://pip.pypa.io
-.. _Metabolomics Workbench: http://www.metabolomicsworkbench.org
 .. _BSD: https://choosealicense.com/licenses/bsd-3-clause
