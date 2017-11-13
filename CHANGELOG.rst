@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.1.5 (2017-11-13)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Minor update: update README to properly render on PyPI. 
+
+
 0.1.4 (2017-11-13)
 ~~~~~~~~~~~~~~~~~~
 
