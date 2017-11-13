@@ -1,22 +1,16 @@
 .. :changelog:
 
 Release History
-===============
-
-0.1.5 (2017-11-13)
-~~~~~~~~~~~~~~~~~~
-
-**Improvements**
-
-- Minor update: update README to properly render on PyPI. 
+=============== 
 
 
-0.1.4 (2017-11-13)
+0.1.4, 0.1.5, 0.1.6 (2017-11-13)
 ~~~~~~~~~~~~~~~~~~
 
 **Improvements**
 
 - Minor update: package README file examples. 
+- Minor update: update README to properly render on PyPI.
 
 
 0.1.3 (2017-09-14)
