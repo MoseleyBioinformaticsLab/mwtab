@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.1.4 (2017-11-13)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Minor update: package README file examples. 
+
+
 0.1.3 (2017-09-14)
 ~~~~~~~~~~~~~~~~~~
 
