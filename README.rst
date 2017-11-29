@@ -2,7 +2,7 @@ mwtab
 =====
 
 .. image:: https://img.shields.io/pypi/l/mwtab.svg
-   :target: https://choosealicense.com/licenses/bsd-3-clause
+   :target: https://choosealicense.com/licenses/bsd-3-clause-clear/
    :alt: License information
 
 .. image:: https://img.shields.io/pypi/v/mwtab.svg
@@ -126,4 +126,4 @@ This package is distributed under the BSD_ `license`.
 .. _ReadTheDocs: http://mwtab.readthedocs.io
 .. _PyPI: https://pypi.org/project/mwtab
 .. _pip: https://pip.pypa.io
-.. _BSD: https://choosealicense.com/licenses/bsd-3-clause
+.. _BSD: https://choosealicense.com/licenses/bsd-3-clause-clear/
