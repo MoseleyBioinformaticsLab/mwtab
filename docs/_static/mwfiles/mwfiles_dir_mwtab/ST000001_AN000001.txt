@@ -1,0 +1,377 @@
+#METABOLOMICS WORKBENCH STUDY_ID:ST000001 ANALYSIS_ID:AN000001
+VERSION             	1
+CREATED_ON          	2016-09-17
+#PROJECT
+PR:PROJECT_TITLE                 	FatB Gene Project
+PR:PROJECT_TYPE                  	Genotype treatment
+PR:PROJECT_SUMMARY               	Experiment to test the consequence of a mutation at the FatB gene (At1g08510)
+PR:PROJECT_SUMMARY               	the wound-response of Arabidopsis
+PR:INSTITUTE                     	University of California, Davis
+PR:DEPARTMENT                    	Davis Genome Center
+PR:LABORATORY                    	Fiehn
+PR:LAST_NAME                     	Fiehn
+PR:FIRST_NAME                    	Oliver
+PR:ADDRESS                       	451 E. Health Sci. Drive, Davis, CA, 95616, USA
+PR:EMAIL                         	ofiehn@ucdavis.edu
+PR:PHONE                         	-
+PR:PUBLICATIONS                  	Quality control for plant metabolomics: reporting MSI-compliant studies. DOI:
+PR:PUBLICATIONS                  	http://www.ncbi.nlm.nih.gov/pubmed/18269577 (PubMed)
+#STUDY
+ST:STUDY_TITLE                   	Fatb Induction Experiment (FatBIE)
+ST:STUDY_TYPE                    	Genotype treatment
+ST:STUDY_SUMMARY                 	This experiment tests the consequence of a mutation at the FatB gene
+ST:STUDY_SUMMARY                 	in the wound-response of Arabidopsis. The FatB mutant allele (fatb KD J.
+ST:STUDY_SUMMARY                 	(Plant Cell 2003, Vol 15, 1020-1033)) was obtained from Dr. Katayonn Dehesh,
+ST:STUDY_SUMMARY                 	of California, Davis, Davis, CA. This allele is in the Ws background.The
+ST:STUDY_SUMMARY                 	growth conditions are as follows: 1. Seeds (between 14 and 16) are sown on
+ST:STUDY_SUMMARY                 	in 100 x 100 x 15mm square Falcon Petri Dishes (Fisher Scientific, catalogue
+ST:STUDY_SUMMARY                 	Seeds were arranged on the plates in a single horizontal line at the 1-cm mark
+ST:STUDY_SUMMARY                 	the top of the plate.2. Each plate contains between 20 and 25-ml of sterile MS
+ST:STUDY_SUMMARY                 	containing 0.1% (w/v) sucrose.3. Prior to sowing, seeds were sterilized by
+ST:STUDY_SUMMARY                 	for 1 minute at room temperature with a 300-l solution of 50% (v/v) ethanol,
+ST:STUDY_SUMMARY                 	solution was removed and replaced with a 300-l solution consisting of 1% (v/v)
+ST:STUDY_SUMMARY                 	20 (Fischer BioReagents, catalogue #BP33750), and 50% (v/v) bleach solution
+ST:STUDY_SUMMARY                 	and incubated at room temperature for 10-minutes. The seeds were then washed
+ST:STUDY_SUMMARY                 	three changes of 0.3-ml of sterile water.
+ST:INSTITUTE                     	University of California, Davis
+ST:DEPARTMENT                    	Davis Genome Center
+ST:LABORATORY                    	Fiehn
+ST:LAST_NAME                     	Kind
+ST:FIRST_NAME                    	Tobias
+ST:ADDRESS                       	451 E. Health Sci. Drive, Davis, CA 95616, USA
+ST:EMAIL                         	tkind@ucdavis.edu
+ST:PHONE                         	-
+ST:NUM_GROUPS                    	4
+ST:TOTAL_SUBJECTS                	24
+#SUBJECT
+SU:SUBJECT_TYPE                  	Plant
+SU:SUBJECT_SPECIES               	Arabidopsis thaliana
+SU:TAXONOMY_ID                   	3702
+SU:GENOTYPE_STRAIN               	Wassilewskija (Ws) | fatb-ko KD; At1g08510
+SU:SPECIES_GROUP                 	Plant
+#SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115873	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115878	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115883	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115888	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115893	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115898	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115811	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115816	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115821	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115826	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115831	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115836	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115904	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115909	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115914	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115919	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115924	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115929	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115842	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115847	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115852	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115857	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115862	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_115867	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	
+#COLLECTION
+CO:COLLECTION_SUMMARY            	-
+CO:SAMPLE_TYPE                   	Plant
+CO:VOLUMEORAMOUNT_COLLECTED      	50 mg
+#TREATMENT
+TR:TREATMENT_SUMMARY             	-
+TR:TREATMENT                     	Abiotic
+TR:TREATMENT_ROUTE               	Wounded
+TR:TREATMENT_DOSE                	Ten punches
+TR:TREATMENT_DOSEDURATION        	3 min wounding period; 2 h response perioid before harvest
+TR:PLANT_GROWTH_SUPPORT          	Fourteen to sixteen seeds were sown on 2025 ml of sterile Murashige and Skoog
+TR:PLANT_GROWTH_SUPPORT          	salt mixture (MS medium) containing 0.1% w/v sucrose and 1 liquid vitamin
+TR:PLANT_GROWTH_SUPPORT          	(Sigma, http://www.sigmaaldrich.com/) containing 15 g l)1 bacto agar (BD) in
+TR:PLANT_GROWTH_SUPPORT          	100 15 mm square Falcon Petri dishes (Thermo Fisher Scientific; http://
+TR:PLANT_GROWTH_SUPPORT          	Seeds were arranged on the plates in a single horizontal line 1 cm from the top
+TR:PLANT_GROWTH_SUPPORT          	the plate. Prior to sowing, seeds were sterilized by treating for 1 min at room
+TR:PLANT_GROWTH_SUPPORT          	with 300 ll of 50% v/v ethanol; this solution was then removed and replaced by
+TR:PLANT_GROWTH_SUPPORT          	ll of a solution consisting of 1% v/v Tween-20 (Thermo Fisher Scientific) and
+TR:PLANT_GROWTH_SUPPORT          	v/v bleach (Clorox; http://www.clorox. com), and incubated at room temperature
+TR:PLANT_GROWTH_SUPPORT          	10 min. The seeds were then washed with three changes of 0.3 ml of sterile
+TR:PLANT_GROWTH_SUPPORT          	After sowing the seeds, the plates were wrapped using micropore tape (3 M
+TR:PLANT_GROWTH_SUPPORT          	Care; http://www.3m.com), and then stored horizontally for 4 days at 4 C in the
+TR:PLANT_GROWTH_SUPPORT          	On the 5th day, plates were moved to the growth room, and held in a vertical
+TR:PLANT_GROWTH_SUPPORT          	in Plexiglass holders for 12 days.
+TR:PLANT_GROWTH_LOCATION         	Controlled-environment facility at Iowa State University, Nikolau laboratory.
+TR:PLANT_PLOT_DESIGN             	Each genotype and replicate were grown on individual plates and placed randomly
+TR:PLANT_PLOT_DESIGN             	the Plexiglass holders.
+TR:PLANT_LIGHT_PERIOD            	24 h day at 82 micromol/m**2 s (light source Sylvania;
+TR:PLANT_LIGHT_PERIOD            	F34CW/SS/ECO/RP)
+TR:PLANT_HUMIDITY                	Day 100%, night 100%
+TR:PLANT_TEMP                    	Day 24 C, night 24 C
+TR:PLANT_WATERING_REGIME         	No further watering, plates remained closed
+TR:PLANT_NUTRITIONAL_REGIME      	MS medium without further fertilizers
+TR:PLANT_ESTAB_DATE              	2006-09-25
+TR:PLANT_HARVEST_DATE            	2006-10-11
+TR:PLANT_GROWTH_STAGE            	Boyes 1.11.4
+TR:PLANT_METAB_QUENCH_METHOD     	Immersion in liquid nitrogen within 1 min after harvest
+TR:PLANT_HARVEST_METHOD          	Petri plates were opened and the aerial portions of the plants were cut
+TR:PLANT_STORAGE                 	-70 C for 1 day, then shipping on dry ice and storage at -80 C for 2 weeks
+#SAMPLEPREP
+SP:SAMPLEPREP_SUMMARY            	-
+SP:PROCESSING_STORAGE_CONDITIONS 	Frozen tissues were kept in 2 ml round-bottomed Eppendorf tubes equipped with
+SP:PROCESSING_STORAGE_CONDITIONS 	3 mm diameter steel ball, and homogenized using a Retsch
+SP:PROCESSING_STORAGE_CONDITIONS 	ball mill for 30 sec at 25/sec
+SP:EXTRACTION_METHOD             	Ground tissue powder was kept in liquid nitrogen between homogenization and
+SP:EXTRACTION_METHOD             	The extraction solvent was prepared by mixing isopropanol/ acetonitrile/water
+SP:EXTRACTION_METHOD             	the volume ratio 3:3:2 and degassing this mixture by directing a gentle stream
+SP:EXTRACTION_METHOD             	nitrogen through the solvent for 5 min. The solvent was cooled to )20 C prior
+SP:EXTRACTION_METHOD             	extraction. Randomly processing all samples of the study, 1 ml of cold solvent
+SP:EXTRACTION_METHOD             	20 mg of ground tissue was added, vortexed for 10 sec, and shaken at 4 C for 5
+SP:EXTRACTION_METHOD             	to extract metabolites and simultaneously precipitate proteins. After
+SP:EXTRACTION_METHOD             	at 12 800 g for 2 min, 90% of the supernatant was removed, taking are not to
+SP:EXTRACTION_METHOD             	any residues from the pellet
+SP:EXTRACT_CONCENTRATION_DILUTION	The supernatant was separated into two equal aliquots and concentrated to
+SP:EXTRACT_CONCENTRATION_DILUTION	in a Centrivap cold trap vacuum concentrator (http://www. labconco.com) at room
+SP:EXTRACT_CONCENTRATION_DILUTION	for 4 h
+SP:EXTRACT_CLEANUP               	In order to fractionate complex lipids and waxes, the residue was re-suspended
+SP:EXTRACT_CLEANUP               	500 ll 50% aqueous acetonitrile and centrifuged at 12 800 g for 2 min. The
+SP:EXTRACT_CLEANUP               	was transferred to a 1.5 ml Eppendorf tube and concentrated to dryness in a
+SP:EXTRACT_CLEANUP               	concentrator
+SP:EXTRACT_STORAGE               	Dried extracts can be kept under nitrogen at -80 C for up to 4 weeks. In the
+SP:EXTRACT_STORAGE               	presented here, extracts were immediately derivatized for GCTOF mass
+SP:ORGAN_SPECIFICATION           	Rosette leaf
+SP:CELL_TYPE                     	Arial portion
+#CHROMATOGRAPHY
+CH:CHROMATOGRAPHY_TYPE           	-
+CH:INSTRUMENT_NAME               	Agilent 6890N Gas Chromatograph
+CH:COLUMN_NAME                   	-
+CH:METHODS_FILENAME              	nihms161442.pdf
+#ANALYSIS
+AN:ANALYSIS_TYPE                 	MS
+#MS
+MS:INSTRUMENT_NAME               	Leco Pegasus III GC-TOF
+MS:INSTRUMENT_TYPE               	GC-TOF
+MS:MS_TYPE                       	EI
+MS:ION_MODE                      	POSITIVE
+#MS_METABOLITE_DATA
+MS_METABOLITE_DATA:UNITS	Peak height
+MS_METABOLITE_DATA_START
+Samples	LabF_115904	LabF_115909	LabF_115914	LabF_115919	LabF_115924	LabF_115929	LabF_115842	LabF_115847	LabF_115852	LabF_115857	LabF_115862	LabF_115867	LabF_115873	LabF_115878	LabF_115883	LabF_115888	LabF_115893	LabF_115898	LabF_115811	LabF_115816	LabF_115821	LabF_115826	LabF_115831	LabF_115836
+Factors	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded	Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded
+1,2,4-benzenetriol	1874	3566	1945	1456	2004	1995	4040	2432	2189	1931	1307	2880	2218	1754	1369	1201	3324	1355	2257	1718	1740	3472	2054	1367
+1-monostearin	987	450	1910	549	1032	902	393	705	100	481	265	120	1185	867	676	569	579	387	1035	789	875	224	641	693
+2-hydroxyvaleric acid	771	931	1114	509	516	803	900	1778	1648	1575	1466	1145	913	1340	607	794	951	922	735	632	815	805	941	709
+3-phosphoglycerate	2039	2005	1496	2361	3282	2096	3061	2583	1182	2727	2505	1437	1343	1006	772	995	2449	2677	1325	922	1235	1204	1742	2109
+5-hydroxynorvaline NIST	2297	2403	2598	2679	2554	2857	2409	3001	2310	2153	2529	2229	2258	1907	2032	1948	2521	2521	2896	2965	2225	2496	3043	4073
+adenosine	538	407	575	450	971	582	132	133	79	105	112	118	579	370	479	435	303	423	590	745	644	588	408	417
+adenosine-5-monophosphate	2153	1650	2204	2454	2927	3657	2386	2418	2160	2139	2055	2347	2314	2236	2106	2518	1678	2899	2434	2732	2878	2264	3291	3217
+adipic acid	2197	8148	2149	1860	2375	2368	8451	2612	2786	3689	2318	2894	2338	2046	1306	1200	3536	1507	2418	2380	1872	4537	2482	1843
+agmatine	2334	2259	2461	3867	1553	1892	2576	1849	5597	2634	3227	3173	2739	1817	3941	2190	1572	3855	3391	2819	4961	3005	1910	4752
+alanine	122481	121790	109758	60409	127477	155438	205814	8658	141398	124788	89824	133091	91238	34512	142573	66959	140582	138205	160150	165750	22986	116237	152137	134462
+alpha ketoglutaric acid	1743	1705	1881	2752	2649	3516	1752	1875	1548	1677	1364	1433	2120	1680	1003	1622	1764	2789	2284	3182	2599	2276	1818	1889
+arabinose	1867	1890	2040	2149	1602	2287	1128	5084	1471	1251	1336	1354	1677	2138	1502	1904	1820	1771	1953	3133	3073	2437	1494	3188
+arginine + ornithine	29214	23914	24339	23111	16368	38112	27827	25459	26485	23088	20565	24915	16177	24611	23768	26265	23398	19528	22417	32062	37686	15180	50264	46282
+ascorbic acid	662	759	487	470	604	510	905	1240	1012	938	859	1043	683	1047	734	586	387	688	610	1113	851	884	888	948
+asparagine	184971	166504	218190	396681	190545	172219	193989	154463	169905	134135	152265	179077	167774	136767	373437	192416	249959	189174	196116	154345	165784	185200	185399	248457
+aspartic acid	150584	147358	132985	130527	121826	152121	185060	207878	182640	195754	181544	189012	156470	152975	172271	183800	126211	152607	208216	213580	196640	167437	240358	188624
+beta alanine	6114	5185	5716	4356	4699	5249	8823	40246	8547	85013	27673	6983	6061	6383	5422	4966	2600	4431	5625	5964	4591	5658	6287	4960
+beta-gentiobiose	1163	661	734	957	871	686	574	728	211	418	609	869	742	886	850	996	591	652	257	1174	1074	1317	843	972
+capric acid	5273	6204	4901	3913	5971	6826	3709	3089	2897	2131	2779	2685	6833	4854	3298	3723	6027	4593	5194	5444	7949	5546	5208	3785
+cis-sinapinic acid	942	1567	1023	2508	4862	6847	789	1869	1766	1837	2048	1512	2457	2640	2579	1728	847	1547	2445	2716	4819	7603	5843	3120
+citric acid	10725	8376	5743	2846	5398	6015	4078	5188	6140	4752	3322	4555	7725	5312	2832	2982	10321	6783	7069	8227	4463	6047	5044	4832
+citrulline	2822	2444	3014	3720	1790	3062	3565	3558	2986	3325	3017	3483	2349	2986	3621	3047	3277	3402	2693	3129	3226	1378	3654	5738
+cyano-L-alanine	6224	6914	6333	8876	6552	5983	5118	3123	5182	1217	4740	4477	6225	4110	8511	7182	8869	6193	7466	6036	5306	6856	7188	8495
+dehydroascorbate	163570	163491	174967	117739	148727	192104	182455	155475	211644	195527	167064	215698	174461	206360	178303	178766	133263	185798	217051	242998	234347	195741	176201	192702
+dehydroascorbate 1	163570	163491	174967	117739	148727	192104	182455	155475	211644	195527	167064	215698	174461	206360	178303	178766	133263	185798	217051	242998	234347	195741	176201	192702
+erythronic acid	80202	81211	97701	101442	43590	38507	132378	179780	126283	178585	144600	170878	47403	89698	53858	116775	40529	49133	32336	53997	94396	63832	45136	33372
+fructose	235409	284400	300655	269410	279531	352066	284890	317189	141180	163750	140311	219482	161640	152488	240193	160792	208853	242554	244564	265977	228393	352904	167603	317125
+fructose-6-phosphate	5160	4860	4712	3958	4189	5253	5802	5531	5209	5010	4488	5285	4397	4969	2967	3391	5311	4614	4628	4312	5523	5441	5202	5146
+fumarate	180903	184728	184596	125947	132217	144991	175204	271269	220884	299784	237302	239205	188815	500610	158461	579266	89512	112457	110148	178780	436851	193074	150350	71969
+galactinol	95911	105705	99425	104950	117138	143764	124729	121731	168275	122029	108456	147759	118831	108622	99479	96814	81513	110814	151251	165643	143781	171420	113881	142574
+galactinol major	95911	105705	99425	104950	117138	143764	124729	121731	168275	122029	108456	147759	118831	108622	99479	96814	81513	110814	151251	165643	143781	171420	113881	142574
+galactonic acid	5158	5233	5129	518	4271	4868	4009	4713	1988	4365	3734	4573	4445	4880	4399	4698	4363	325	5602	6573	5761	7078	4714	5560
+galactose-6-phosphate	64	114	217	122	474	278	99	112	111	104	126	77	277	85	6	255	410	352	23	203	341	86	543	696
+galactose-6-phosphate_199932	1538	1413	1222	1172	1162	1369	1398	1435	1358	1111	1049	1359	1289	1300	741	845	1465	1334	1188	1144	1552	1720	1487	1439
+galactose-6-phosphate_2	1538	1413	1222	1172	1162	1369	1398	1435	1358	1111	1049	1359	1289	1300	741	845	1465	1334	1188	1144	1552	1720	1487	1439
+galactose-6-phosphate_200536	64	114	217	122	474	278	99	112	111	104	126	77	277	85	6	255	410	352	23	203	341	86	543	696
+glucoheptulose	999	851	910	558	899	866	729	847	818	719	746	925	840	1074	1111	1004	752	1051	1084	1313	1449	1289	1194	1270
+gluconic acid	333	324	270	883	419	391	222	396	343	259	265	509	301	329	250	234	221	711	371	495	397	439	231	406
+glucose	116769	121027	142576	156785	144382	258037	92079	95939	57378	54473	46548	66419	84624	66700	100977	79389	109888	148599	115681	108577	91136	147045	59201	151306
+glucose-1-phosphate	54589	42020	55440	36538	30324	34584	46793	38269	47467	46987	41208	57234	39555	46959	36126	43808	46558	52961	52636	61892	60510	46702	47132	63605
+glucose-6-phosphate	7767	6826	6073	5703	6173	8279	8445	7871	7236	6764	6048	7566	6826	7291	3991	4484	7714	6850	7104	5588	7981	8596	7565	7878
+glucose-6-phosphate 2	7767	6826	6073	5703	6173	8279	8445	7871	7236	6764	6048	7566	6826	7291	3991	4484	7714	6850	7104	5588	7981	8596	7565	7878
+glutamic acid	382033	365318	374337	361825	290242	240590	261095	230805	190516	216632	224913	241988	250433	242858	349891	340639	284022	364440	431890	405053	278425	255206	208333	202302
+glutamine	873841	1041650	1032124	1233087	1587140	1290010	1214876	1088569	1176823	986149	998619	1138210	1219442	983821	1537672	881268	1076451	1053644	1235014	1221490	1247389	1383749	1521353	1085594
+glyceric acid	16857	15850	18593	5239	12929	12192	18720	19913	16046	21631	17121	12734	10516	18710	7727	19606	5116	12991	7769	10492	22525	7896	1564	7033
+glycerol-alpha-phosphate	37867	38860	38507	32235	25803	31749	39350	40561	31684	39732	31715	35724	30227	34811	29319	30886	33532	32354	39663	38545	44057	50458	46401	43978
+glycerol-beta-phosphate	1018	561	979	1115	425	546	783	805	386	958	743	771	500	557	784	1015	548	1020	1181	1302	1384	797	799	1395
+glycine	718653	784923	635325	724624	425955	266472	648700	692392	798504	718573	827500	527648	231965	594793	652762	700994	331879	468690	278803	181015	534059	238196	407513	243905
+glycolic acid	1725	4190	1828	2564	4780	5526	1363	2964	2837	2779	2535	2115	3681	3367	2489	1910	4074	2432	4730	3879	4056	354	5514	4150
+hydroxylamine	91608	95476	110237	99757	116851	174615	204955	203557	207767	162375	127301	172366	149797	119256	102457	97919	131423	121472	144530	146610	163175	130360	168677	228731
+idonic acid NIST	321	324	228	362	249	319	179	328	435	685	264	298	315	307	209	337	445	283	539	627	359	657	395	146
+inositol myo-	303352	274295	217997	161473	180252	269946	189880	235648	175868	209098	185169	215896	268140	297306	228418	186816	177888	214239	274357	385465	142510	469969	255285	310945
+inositol-4-monophosphate	2212	3420	2196	1726	2719	3192	2856	2133	2994	2351	1955	2811	3037	2389	2138	1548	1918	2133	2280	2039	2564	3850	3577	2619
+inulobiose	77070	3823	831	1357	828	1702	572	541	808	397	774	703	913	593	1170	1095	750	1492	1195	1165	1749	731	1237	1766
+isoleucine	6579	4686	5807	4325	2819	4928	8209	6224	6464	6427	6143	8133	4651	1148	6480	4048	12732	4305	6040	5158	613	5321	5212	4844
+isopropyl beta-D-thiogalactopyranoside	10509	9115	7857	5257	8488	6189	6668	4435	4002	3869	4272	5471	9713	9851	6458	8603	5897	6266	10378	13849	14137	13717	16165	14862
+lactic acid	46955	88356	23815	61129	100337	143155	96975	106792	80325	60249	40715	40463	88333	44010	51704	20864	95616	64018	58535	100045	65818	163642	156853	99844
+lactobionic acid	3243	2134	2338	2225	1964	2666	2238	2069	2996	2322	2341	2461	2859	2605	2125	2036	2090	2218	2360	3366	3403	3217	2740	3001
+lauric acid	16604	11080	7524	11814	24186	21115	4576	3973	3857	4008	3237	3704	23058	8393	7642	6233	10012	10864	23806	7801	9381	8543	8879	10127
+leucine	4868	5624	4826	3223	9093	8626	7991	25723	7452	5047	4977	8408	9373	2866	13918	3365	8781	8599	8338	7767	2701	6891	8635	9063
+linoleic acid	449	276	706	486	216	593	228	335	428	308	458	434	259	237	231	374	576	519	601	607	627	398	355	633
+linolenic acid	4863	1844	5217	3674	1589	2827	2355	3128	1008	2239	3063	2853	2223	2559	2352	3225	5935	3168	4085	3361	4327	2525	2290	4148
+lyxitol	3499	2331	3911	3463	1692	1430	1612	2522	3778	1150	3184	3256	3156	3387	3525	2199	1928	3118	2344	2229	3176	2225	2576	2110
+malate	26727	27875	23031	19725	24816	26583	27956	28323	28101	35638	26344	27643	29501	40602	23053	31273	19686	26262	31796	37006	38429	27525	26454	22466
+maltose	1730	530	552	1081	764	973	416	1070	264	191	427	355	382	603	472	543	677	1013	930	818	611	818	531	905
+mannonic acid NIST	1498	1440	1423	1370	1267	1358	525	822	1248	551	732	936	1182	1353	1301	1516	1102	1264	1731	1957	1798	2214	1303	1626
+melibiose	868	897	957	1182	839	1341	563	1005	1229	825	1062	899	1005	1193	1343	1097	1010	1185	1202	1230	1534	1542	1377	1693
+methionie sulfoxide	2358	2611	2528	2590	2939	2566	1825	3416	3054	909	3629	3706	1987	2509	3057	2459	2097	2584	2423	2697	3045	3519	4391	2734
+methionine	4466	3740	4296	2929	3919	5493	3818	3462	3648	3446	3358	3848	4743	3073	3366	3447	3662	4365	5649	6204	4122	2349	5752	5657
+methionine sulfoxide	3211	3142	3181	3442	3350	3693	4055	5422	5080	5335	4862	5020	3244	3166	3771	3237	2910	3662	2553	3671	3972	4005	4468	3630
+monopalmitin-1-glyceride	977	836	1212	690	782	1130	471	754	543	590	536	511	1137	1078	885	838	661	763	1298	1369	1357	877	1027	1143
+myristic acid	607	769	550	530	631	672	642	515	651	713	508	902	676	636	513	479	825	468	904	662	806	766	759	588
+N-acetyl-D-hexosamine	16176	18036	18378	22936	14426	15796	15321	20578	15616	13331	10406	16958	12203	13891	17562	15253	13124	15177	18307	22485	18567	27016	17372	22090
+N-acetyl-D-mannosamine	10246	10403	8893	10845	9162	9919	9875	8621	11477	9608	9918	8871	9612	11870	13643	11833	7834	9670	12707	14185	16733	14507	13234	14923
+nicotinic acid	859	1238	1132	10590	5751	7967	1146	3462	1322	2584	2241	1974	1140	1473	603	1287	722	611	5039	8478	15763	6703	7687	5127
+ornithine	14889	4015	18675	26214	4829	13195	11339	17873	16990	14695	15741	12014	7906	4845	17253	22555	22134	23190	16679	12493	12195	3168	12241	43280
+oxalic acid	271901	415520	274058	60405	72728	117162	49907	53545	37942	184586	600349	58690	680528	721940	168441	737457	973531	674933	71021	79621	38192	71978	103466	75306
+oxoproline	630096	905941	623933	818811	918287	839227	791296	895021	818768	896779	842520	827264	759993	888501	871614	574950	603169	577671	739682	782510	858933	1011677	1233805	1021155
+palmitic acid	5563	4482	5962	5267	3631	5304	4676	5208	6782	5345	5154	4951	4414	4010	3880	5268	7422	5896	6542	6372	8151	5201	5714	7292
+pelargonic acid	26541	20855	22707	21336	13759	23200	15370	32043	28704	20758	26166	12548	14585	30651	16961	26450	17109	14659	12992	20343	45112	13861	19633	11662
+phenylalanine	4020	4165	3964	4688	4678	4293	5365	6196	7044	5143	5971	5337	4712	3604	5805	4362	3618	4304	6150	6371	4012	4245	5480	7063
+phosphoethanolamine	2810	2123	2719	4196	3871	3392	3709	4176	4823	2957	4190	4752	3307	3090	4620	3175	1780	4295	4261	3769	5569	4320	7288	5881
+phosphoric acid	549859	654166	387525	26032	426370	35284	849485	868681	782220	769922	437894	632187	521726	371110	103521	405165	521683	502487	525654	474900	620711	106627	50883	620601
+phytol	18493	17800	11614	14972	14633	11909	27305	18289	16323	11298	18691	17981	9470	17041	19181	19737	7802	10876	23196	34517	34253	35367	25668	37243
+proline	634620	626729	614460	997543	616372	558396	303440	113179	181588	211130	386358	467792	689869	40136	508665	311821	632790	735480	697857	532747	110445	617786	307140	384956
+putrescine	89094	67792	100027	147016	59530	77524	52857	48402	114719	58672	65792	69736	86975	60620	129478	84727	62711	135713	135122	119269	211352	76869	78221	192159
+pyrogallol	1381	2707	1277	1039	1603	1640	934	1032	241	115	446	1250	1844	1396	939	706	2314	989	1666	1197	1212	2594	1565	981
+raffinose	4280	4356	7340	11721	6508	9480	8114	5330	13023	4281	3937	6769	6698	4483	7034	10344	6569	7644	12631	13440	10474	16133	5028	9811
+ribitol	982	763	689	534	1216	1503	838	805	1122	1546	815	874	1114	1048	1192	1021	831	883	1156	1724	1912	1786	1700	1927
+serine	644142	688606	718520	487692	427588	512823	816033	769579	893830	924261	900614	908471	545280	926506	674347	749637	375771	375298	465113	470295	558622	283620	694837	324449
+shikimic acid	19426	17990	17626	15385	15105	17277	14173	10803	14991	15394	14574	14718	16477	18885	14140	13466	15416	16778	18800	20725	19685	18812	20103	19059
+spermidine	545	488	644	380	522	518	376	480	898	169	556	510	632	460	1343	428	520	373	522	745	816	411	651	695
+stearic acid	19008	16439	20073	20793	19975	24793	21463	22911	41983	21168	18964	19541	18516	16132	15169	15178	25586	17995	22315	23408	29917	19787	27789	24533
+suberyl glycine	9614	1312	9767	25548	4230	8605	13997	9184	19716	9873	15886	21818	5375	2218	14043	10771	17802	9330	10149	9420	9973	2078	5782	14733
+succinic acid	76735	36752	58216	127485	74984	14067	62656	39767	29414	26390	41740	37686	13879	23526	19171	37881	51367	23069	34014	35576	43483	83729	91920	29028
+sucrose	250458	4483	100408	116440	140518	107130	160651	169694	147063	110276	133006	134416	128092	135861	164950	97229	99716	106849	123499	139126	127771	187813	140980	167928
+threonic acid	10317	11653	8215	12192	6163	4356	8061	7355	7106	1972	7268	11379	6067	8895	9056	10015	5747	6270	5269	6108	8779	13449	6883	5424
+threonine	52772	47266	63729	43732	41211	39036	78700	65136	73347	63272	77425	89417	40889	73167	57130	72739	26770	44939	50225	57689	72473	45618	65762	34745
+trehalose	2367	531	380	1373	1266	1286	446	505	600	7826	728	553	661	310	847	470	755	1059	1568	993	536	1007	605	1001
+tris(ethyleneglycol) NIST ID - likely artifact	9014	9056	8269	8690	7208	10014	15187	14067	16093	4760	14931	15893	8829	11281	6118	7651	7418	6794	9301	10412	12459	8416	11111	8855
+tryptophan	1922	1649	1668	2928	2660	2603	3507	5148	4913	3265	3681	4415	2823	2712	4033	2668	1581	2289	4130	4985	4899	4272	3679	4524
+tyramine	30760	29092	29692	18148	25663	35481	25149	25950	33297	23469	19259	32271	37325	28514	17348	18077	24990	26261	29378	32269	36730	30171	26920	31206
+tyrosine	3541	2811	3641	5462	4907	3879	4608	5932	5030	5146	4189	4504	4353	4024	7245	4325	3709	4110	5941	5143	6255	5128	4127	5516
+valine	26680	25444	28678	16310	22212	26852	47124	35787	42002	38906	29708	38790	24285	11073	28215	22162	48098	24835	26157	24596	11345	27101	24158	25672
+xylitol	2157	2148	2368	1604	2009	2047	2236	1384	1960	415	1436	2051	2024	2296	1765	1871	1915	1972	2579	2759	2981	2095	2467	2439
+xylonic acid	2000	1804	2220	2105	2186	2546	1709	1483	1509	1641	1308	1817	1834	2093	1869	2043	1808	1781	2469	2944	2698	2868	2209	2637
+xylose	20923	19019	19778	18874	17589	20297	14826	5655	16090	9212	5242	5634	19287	20273	15664	20996	15731	16849	19115	24288	24757	24527	17742	21555
+MS_METABOLITE_DATA_END
+#METABOLITES
+METABOLITES_START
+metabolite_name	moverz_quant	ri	ri_type	pubchem_id	inchi_key	kegg_id	other_id	other_id_type
+1,2,4-benzenetriol	239	522741	Fiehn	10787		C02814	205673	BinBase
+1-monostearin	399	959625	Fiehn	107036		D01947	202835	BinBase
+2-hydroxyvaleric acid	131	310750	Fiehn	98009			218773	BinBase
+3-phosphoglycerate	299	611619	Fiehn	724		C00597	217821	BinBase
+5-hydroxynorvaline NIST	142	494838	Fiehn	95562			200384	BinBase
+adenosine	236	917818	Fiehn	60961		C00212	211944	BinBase
+adenosine-5-monophosphate	169	1040943	Fiehn	6083		C00020	213958	BinBase
+adipic acid	111	475399	Fiehn	196		C06104	218815	BinBase
+agmatine	157	587051	Fiehn	199		C00179	212007	BinBase
+alanine	116	243537	Fiehn	602		C00041	199651	BinBase
+alpha ketoglutaric acid	198	507734	Fiehn	51		C00026	200425	BinBase
+arabinose	217	546892	Fiehn	7044039		C00216	202065	BinBase
+arginine + ornithine	142	619420	Fiehn	6322		C00062	199796	BinBase
+ascorbic acid	332	673155	Fiehn	54670067		C00072	199950	BinBase
+asparagine	116	553791	Fiehn	439600		C00152	199805	BinBase
+aspartic acid	232	480543	Fiehn	424		C00049	199612	BinBase
+beta alanine	174	435138	Fiehn	239		C00099	200544	BinBase
+beta-gentiobiose	204	967919	Fiehn	219994		C08240	214469	BinBase
+capric acid	117	451122	Fiehn	2969		C01571	213517	BinBase
+cis-sinapinic acid	338	718366	Fiehn	1549091			199283	BinBase
+citric acid	273	617288	Fiehn	311		C00158	199168	BinBase
+citrulline	256	622791	Fiehn	9750		C00327	202827	BinBase
+cyano-L-alanine	141	404014	Fiehn	13538		C02512	200605	BinBase
+dehydroascorbate	173	633331	Fiehn	210328		C00425	200336	BinBase
+dehydroascorbate 1	173	633331						
+erythronic acid	218	512521	Fiehn	2781043			212276	BinBase
+fructose	307	638631	Fiehn	439553		C00095	199188	BinBase
+fructose-6-phosphate	315	804605	Fiehn	603		C00085	201024	BinBase
+fumarate	245	390988	Fiehn	444972		C00122	199198	BinBase
+galactinol	204	1017113	Fiehn	439451		C01235	199189	BinBase
+galactinol major	204	1017113						
+galactonic acid	292	692399	Fiehn	12310779		C00880	202883	BinBase
+galactose-6-phosphate	387	828457						
+galactose-6-phosphate_199932	387	817783	Fiehn	99058		C01113	199932	BinBase
+galactose-6-phosphate_2	387	817783						
+galactose-6-phosphate_200536	387	828457	Fiehn	99058		C01113	200536	BinBase
+glucoheptulose	331	828610	Fiehn	102926			202881	BinBase
+gluconic acid	333	693140	Fiehn	10690		C00257	211990	BinBase
+glucose	160	649920	Fiehn	5793		C00031	199413	BinBase
+glucose-1-phosphate	217	594823	Fiehn	65533		C11450	199178	BinBase
+glucose-6-phosphate	387	809066	Fiehn	5958		C00092	199350	BinBase
+glucose-6-phosphate 2	387	809066						
+glutamic acid	246	529370	Fiehn	33032		C00025	199604	BinBase
+glutamine	156	600452	Fiehn	738		C00064	199776	BinBase
+glyceric acid	189	377001	Fiehn	439194		C00258	199174	BinBase
+glycerol-alpha-phosphate	299	591357	Fiehn	754		C03189	199419	BinBase
+glycerol-beta-phosphate	211	574994	Fiehn	2526		C02979	212582	BinBase
+glycine	174	368041	Fiehn	750		C00037	199588	BinBase
+glycolic acid	177	227487	Fiehn	3698251		C00160	202167	BinBase
+hydroxylamine	146	255313	Fiehn	10931771		C00192	205859	BinBase
+idonic acid NIST	333	698217	Fiehn	193325			199232	BinBase
+inositol myo-	305	729867	Fiehn	892		C00137	199164	BinBase
+inositol-4-monophosphate	318	845491	Fiehn	6349		C03546	200698	BinBase
+inulobiose	204	930708	Fiehn	25201864		C01711	202729	BinBase
+isoleucine	158	358756	Fiehn	6306		C00407	199785	BinBase
+isopropyl beta-D-thiogalactopyranoside	361	720878	Fiehn	656894			217835	BinBase
+lactic acid	117	216442	Fiehn	107689		C00186	199591	BinBase
+lactobionic acid	204	952195	Fiehn	7314			214401	BinBase
+lauric acid	117	547810	Fiehn	3893		C02679	201826	BinBase
+leucine	158	345953	Fiehn	6106		C00123	199607	BinBase
+linoleic acid	337	777102	Fiehn	5280450		C01595	199240	BinBase
+linolenic acid	108	779785	Fiehn	5280934		C06427	199206	BinBase
+lyxitol	217	575571	Fiehn	94154		C00532	199230	BinBase
+malate	233	462908	Fiehn	222656		C00149	199166	BinBase
+maltose	361	946798	Fiehn	447139		C00208	204171	BinBase
+mannonic acid NIST	333	689431	Fiehn	3246006		C00514	199322	BinBase
+melibiose	204	981832	Fiehn	440658			200816	BinBase
+methionie sulfoxide	128	605961	Fiehn	158980		C02989	218944	BinBase
+methionine	176	483425	Fiehn	6137		C00073	200533	BinBase
+methionine sulfoxide	128	637775	Fiehn	158980		C02989	218901	BinBase
+monopalmitin-1-glyceride	371	901207	Fiehn	14900			202859	BinBase
+myristic acid	285	634543	Fiehn	11005		C06424	199929	BinBase
+N-acetyl-D-hexosamine	103	746708	Fiehn	24139		C03136	200594	BinBase
+N-acetyl-D-mannosamine	205	733793	Fiehn	11096158		C00645	205676	BinBase
+nicotinic acid	180	354525	Fiehn	21829312		C00253	212606	BinBase
+ornithine	142	527822	Fiehn	6262		C00077	202829	BinBase
+oxalic acid	147	259625	Fiehn	971		C00209	207563	BinBase
+oxoproline	156	486399	Fiehn	7405		C01879	199593	BinBase
+palmitic acid	313	713542	Fiehn	985		C00249	199173	BinBase
+pelargonic acid	117	399163	Fiehn	8158		C01601	201810	BinBase
+phenylalanine	218	537760	Fiehn	6140		C00079	199798	BinBase
+phosphoethanolamine	100	604454	Fiehn	1015		C00346	199628	BinBase
+phosphoric acid	299	344674	Fiehn	1004		C00009	199165	BinBase
+phytol	143	761377	Fiehn	145386		C01389	199184	BinBase
+proline	142	364232	Fiehn	145742		C00148	199611	BinBase
+putrescine	174	587728	Fiehn	9532		C00134	206261	BinBase
+pyrogallol	239	494984	Fiehn	1057		C01108	214434	BinBase
+raffinose	361	1121372	Fiehn	439242		C00492	199180	BinBase
+ribitol	217	572822	Fiehn			C00474	204361	BinBase
+serine	204	394656	Fiehn	5951		C00065	199440	BinBase
+shikimic acid	204	610984	Fiehn	8742		C00493	199162	BinBase
+spermidine	144	792258	Fiehn	1102		C00315	200990	BinBase
+stearic acid	117	787358	Fiehn	5281		C01530	199195	BinBase
+suberyl glycine	188	532293	Fiehn	6453952			200526	BinBase
+succinic acid	147	370518	Fiehn	1110		C00042	199210	BinBase
+sucrose	271	915457	Fiehn	5988		C00089	202121	BinBase
+threonic acid	292	497167	Fiehn	5460407			199262	BinBase
+threonine	117	409403	Fiehn	6288		C00188	199626	BinBase
+trehalose	191	947837	Fiehn	7427		C01083	199289	BinBase
+tris(ethyleneglycol) NIST ID - likely artifact	117	471814	Fiehn				203267	BinBase
+tryptophan	202	779834	Fiehn	6305		C00078	199775	BinBase
+tyramine	174	664065	Fiehn	5610		C00483	211928	BinBase
+tyrosine	218	671085	Fiehn	6057		C00082	199781	BinBase
+valine	144	313224	Fiehn	6287		C00183	199605	BinBase
+xylitol	217	563718	Fiehn	6912		C00379	199436	BinBase
+xylonic acid	292	588743	Fiehn	6602431			208695	BinBase
+xylose	103	542808	Fiehn	135191		C00181	200500	BinBase
+METABOLITES_END
+#END

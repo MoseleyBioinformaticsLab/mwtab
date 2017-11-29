@@ -1,0 +1,90 @@
+#METABOLOMICS WORKBENCH STUDY_ID:ST000002 ANALYSIS_ID:AN000002
+VERSION             	1
+CREATED_ON          	2016-09-17
+#PROJECT
+PR:PROJECT_TITLE                 	Intestinal Samples II pre/post transplantation
+PR:PROJECT_TYPE                  	Human intestinal samples
+PR:PROJECT_SUMMARY               	Intestinal Samples II pre/post transplantation
+PR:INSTITUTE                     	University of California, Davis
+PR:DEPARTMENT                    	Davis Genome Center
+PR:LABORATORY                    	Fiehn
+PR:LAST_NAME                     	Fiehn
+PR:FIRST_NAME                    	Oliver
+PR:ADDRESS                       	451 E. Health Sci. Drive, Davis, California 95616, USA
+PR:EMAIL                         	ofiehn@ucdavis.edu
+PR:PHONE                         	-
+#STUDY
+ST:STUDY_TITLE                   	Intestinal Samples II pre/post transplantation
+ST:STUDY_TYPE                    	MS analysis
+ST:STUDY_SUMMARY                 	Intestinal Samples II pre/post transplantation
+ST:INSTITUTE                     	University of California, Davis
+ST:DEPARTMENT                    	Davis Genome Center
+ST:LABORATORY                    	Fiehn
+ST:LAST_NAME                     	Hartman
+ST:FIRST_NAME                    	Amber
+ST:ADDRESS                       	451 E. Health Sci. Drive, Davis, California 95616, USA
+ST:EMAIL                         	-
+ST:PHONE                         	-
+ST:NUM_GROUPS                    	2
+ST:TOTAL_SUBJECTS                	12
+#SUBJECT
+SU:SUBJECT_TYPE                  	Human
+SU:SUBJECT_SPECIES               	Homo sapiens
+SU:TAXONOMY_ID                   	9606
+SU:SPECIES_GROUP                 	Human
+#SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684508	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684512	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684516	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684520	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684524	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684528	Transplantation:After transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684483	Transplantation:Before transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684487	Transplantation:Before transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684491	Transplantation:Before transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684495	Transplantation:Before transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684499	Transplantation:Before transplantation	
+SUBJECT_SAMPLE_FACTORS           	-	LabF_684503	Transplantation:Before transplantation	
+#COLLECTION
+CO:COLLECTION_SUMMARY            	-
+CO:SAMPLE_TYPE                   	Tissue
+#TREATMENT
+TR:TREATMENT_SUMMARY             	-
+TR:TREATMENT_PROTOCOL_COMMENTS   	Before transplantation | After transplanation
+#SAMPLEPREP
+SP:SAMPLEPREP_SUMMARY            	-
+SP:EXTRACTION_METHOD             	Extraction: Proteomics 2004, 4, 78-83; Splitratio: splitless 25 purge
+#CHROMATOGRAPHY
+CH:CHROMATOGRAPHY_TYPE           	-
+CH:INSTRUMENT_NAME               	Agilent 6890N Gas Chromatograph
+CH:COLUMN_NAME                   	-
+#ANALYSIS
+AN:ANALYSIS_TYPE                 	MS
+#MS
+MS:INSTRUMENT_NAME               	Leco Pegasus III GC-TOF
+MS:INSTRUMENT_TYPE               	GC-TOF
+MS:MS_TYPE                       	EI
+MS:ION_MODE                      	POSITIVE
+#MS_METABOLITE_DATA
+MS_METABOLITE_DATA:UNITS	Peak height
+MS_METABOLITE_DATA_START
+Samples	LabF_684508	LabF_684512	LabF_684516	LabF_684520	LabF_684524	LabF_684528	LabF_684483	LabF_684487	LabF_684491	LabF_684495	LabF_684499	LabF_684503
+Factors	Transplantation:After transplantation	Transplantation:After transplantation	Transplantation:After transplantation	Transplantation:After transplantation	Transplantation:After transplantation	Transplantation:After transplantation	Transplantation:Before transplantation	Transplantation:Before transplantation	Transplantation:Before transplantation	Transplantation:Before transplantation	Transplantation:Before transplantation	Transplantation:Before transplantation
+1-monoolein	6047.0000	2902.0000	1452.0000	3428.0000	2985.0000	16334.0000	244142.0000	6968.0000	1928.0000	19228.0000	3029.0000	23277.0000
+1-monostearin	9771.0000	6521.0000	1302.0000	2781.0000	5789.0000	4338.0000	16848.0000	10206.0000	9398.0000	1013.0000	4190.0000	11114.0000
+2-hydroxybutanoic acid	13238.0000	29774.0000	4134.0000	4419.0000	13334.0000	2115.0000	11587.0000	65635.0000	32433.0000	1823.0000	4429.0000	30427.0000
+2-hydroxyglutaric acid	7160.0000	11501.0000	3202.0000	17238.0000	20376.0000	1109.0000	8276.0000	12402.0000	20964.0000	25913.0000	2709.0000	70972.0000
+2-ketoisocaproic acid	812.0000	2011.0000	738.0000	2550.0000	871.0000	628.0000	2096.0000	3472.0000	10669.0000	432.0000	1055.0000	1005.0000
+2-monopalmitin	1511.0000	622.0000	883.0000	796.0000	623.0000	5716.0000	3405.0000	3196.0000	1457.0000	1416.0000	1275.0000	14445.0000
+MS_METABOLITE_DATA_END
+#METABOLITES
+METABOLITES_START
+metabolite_name	moverz_quant	ri	ri_type	pubchem_id	inchi_key	kegg_id	other_id	other_id_type
+1-monoolein	129	952993	Fiehn	5283468			213963	BinBase
+1-monostearin	399	959625	Fiehn	107036		D01947	202835	BinBase
+2-hydroxybutanoic acid	131	258175	Fiehn	11266		C05984	199800	BinBase
+2-hydroxyglutaric acid	129	506359	Fiehn	43		C02630	214409	BinBase
+2-ketoisocaproic acid	200	310629	Fiehn	70		C00233	213388	BinBase
+2-monopalmitin	218	889972	Fiehn	123409			233239	BinBase
+METABOLITES_END
+#END
