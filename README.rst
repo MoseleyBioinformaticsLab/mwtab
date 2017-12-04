@@ -31,9 +31,9 @@ files in `mwTab` format used by the `Metabolomics Workbench`_ for archival of
 Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR) experimental data.
 
 The `mwtab` package provides facilities to convert `mwTab` formatted files into
-their equivalent JSONized (JavaScript Object Notation, an open-standard format that
-uses human-readable text to transmit data objects consisting of attribute-value pairs)
-representation and vice versa.
+their equivalent JSONized representation and vice versa.  JSON stands for JavaScript
+Object Notation, an open-standard format that uses human-readable text to transmit
+data objects consisting of attribute-value pairs.
 
 The `mwtab` package can be used in several ways:
 
@@ -53,9 +53,8 @@ Links
 Installation
 ~~~~~~~~~~~~
 
-The `mwtab` package runs under Python 2.7 and Python 3.4+,
-use pip_ to install. Starting with Python 3.4, pip_ is included
-by default.
+The `mwtab` package runs under Python 2.7 and Python 3.4+. Use pip_ to install.
+Starting with Python 3.4, pip_ is included by default.
 
 
 Install on Linux, Mac OS X
