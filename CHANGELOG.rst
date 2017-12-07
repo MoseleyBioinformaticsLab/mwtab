@@ -4,8 +4,17 @@ Release History
 =============== 
 
 
-0.1.4, 0.1.5, 0.1.6 (2017-11-13)
+0.1.7 (2017-12-07)
 ~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Minor update: Included test for additional header line within `mwTab` files
+  that may or may not be present.
+
+
+0.1.4, 0.1.5, 0.1.6 (2017-11-13)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Improvements**
 
