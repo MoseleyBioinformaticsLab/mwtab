@@ -191,7 +191,7 @@ class MWTabFile(OrderedDict):
             elif token.key.endswith("_RESULTS_FILE"):
                 if len(token) == 4:
                     key, value, extrakey, extravalue = token
-                    section[key] = OrderedDict([(key, value), (extrakey,extravalue)])
+                    section[key] = OrderedDict([(key, value), (extrakey, extravalue)])
                 else:
                     key, value = token
                     section[key] = value

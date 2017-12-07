@@ -47,6 +47,9 @@ def tokenizer(text):
                     key, value = identifier.split(":")
                     yield KeyValue(key, value)
 
+        elif line.startswith("#ANALYSIS TYPE"):
+            yield KeyValue("HEADER", line)
+
         elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
             yield KeyValue("#ENDSECTION", "\n")
             yield KeyValue("#SUBJECT_SAMPLE_FACTORS", "\n")
@@ -73,7 +76,7 @@ def tokenizer(text):
 
         else:
             if line:
-                if line.startswith("MS:MS_RESULTS_FILE"):
+                if line.startswith("MS:MS_RESULTS_FILE") or line.startswith("NM:NMR_RESULTS_FILE"):
                     try:
                         key, value, extra = line.split("\t")
                         extra_key, extra_value = extra.strip().split(":")
@@ -92,6 +95,7 @@ def tokenizer(text):
                         else:
                             yield KeyValue(key.strip(), value)
                     except ValueError:
+                        print("LINE WITH ERROR:\n\t", repr(line))
                         raise
 
     yield KeyValue("#ENDSECTION", "\n")
