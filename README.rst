@@ -26,20 +26,20 @@ mwtab
    :alt: Code coverage information
 
 
-The `mwtab` package is a Python library that facilitates reading and writing
-files in `mwTab` format used by the `Metabolomics Workbench`_ for archival of
+The ``mwtab`` package is a Python library that facilitates reading and writing
+files in ``mwTab`` format used by the `Metabolomics Workbench`_ for archival of
 Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR) experimental data.
 
-The `mwtab` package provides facilities to convert `mwTab` formatted files into
-their equivalent JSONized representation and vice versa.  JSON stands for JavaScript
+The ``mwtab`` package provides facilities to convert ``mwTab`` formatted files into
+their equivalent ``JSON``ized representation and vice versa.  ``JSON`` stands for JavaScript
 Object Notation, an open-standard format that uses human-readable text to transmit
 data objects consisting of attribute-value pairs.
 
-The `mwtab` package can be used in several ways:
+The ``mwtab`` package can be used in several ways:
 
-   * As a library for accessing and manipulating data stored in `mwTab` format files.
-   * As a command-line tool to convert between `mwTab` format and its equivalent
-     `JSON` representation.
+   * As a library for accessing and manipulating data stored in ``mwTab`` format files.
+   * As a command-line tool to convert between ``mwTab`` format and its equivalent
+     ``JSON`` representation.
 
 
 Links
@@ -53,7 +53,7 @@ Links
 Installation
 ~~~~~~~~~~~~
 
-The `mwtab` package runs under Python 2.7 and Python 3.4+. Use pip_ to install.
+The ``mwtab`` package runs under Python 2.7 and Python 3.4+. Use pip_ to install.
 Starting with Python 3.4, pip_ is included by default.
 
 
@@ -109,8 +109,8 @@ Quickstart
    :align: center
 
 
-.. note:: Read the User Guide and the `mwtab` Tutorial on ReadTheDocs_
-          to learn more and to see code examples on using the `mwtab` as a
+.. note:: Read the User Guide and the ``mwtab`` Tutorial on ReadTheDocs_
+          to learn more and to see code examples on using the ``mwtab`` as a
           library and as a command-line tool.
 
 
