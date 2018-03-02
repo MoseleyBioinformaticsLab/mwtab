@@ -31,7 +31,7 @@ files in ``mwTab`` format used by the `Metabolomics Workbench`_ for archival of
 Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR) experimental data.
 
 The ``mwtab`` package provides facilities to convert ``mwTab`` formatted files into
-their equivalent ``JSON``ized representation and vice versa.  ``JSON`` stands for JavaScript
+their equivalent ``JSON`` ized representation and vice versa.  ``JSON`` stands for JavaScript
 Object Notation, an open-standard format that uses human-readable text to transmit
 data objects consisting of attribute-value pairs.
 
