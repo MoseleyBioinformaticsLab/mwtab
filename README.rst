@@ -28,7 +28,7 @@ mwtab
 |
 
 .. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_logo.png
-   :width: 50%
+   :width: 30%
    :align: center
    :target: http://mwtab.readthedocs.io/
 
