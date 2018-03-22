@@ -25,6 +25,13 @@ mwtab
    :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
    :alt: Code coverage information
 
+|
+
+.. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_logo.png
+   :width: 50%
+   :align: center
+   :target: http://mwtab.readthedocs.io/
+
 
 The ``mwtab`` package is a Python library that facilitates reading and writing
 files in ``mwTab`` format used by the `Metabolomics Workbench`_ for archival of
