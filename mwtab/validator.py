@@ -13,6 +13,8 @@ required key-value pairs are present.
 
 from collections import OrderedDict
 
+from .mwschema import section_schema_mapping
+
 
 def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors=True):
     """Validate ``Samples`` and ``Factors`` identifiers across the file.
@@ -42,22 +44,18 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
             assert from_subject_factors == from_metabolite_data_factors
 
 
-def validate_section(mwtabfile, section_key, section_schema_mapping):
+def validate_section(section, schema):
     """Validate section of ``mwTab`` formatted file.
 
-    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param str section_key: Section name.
-    :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
+    :param schema: Schema definition.
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
-    schema = section_schema_mapping[section_key]
-    validated = schema.validate(mwtabfile[section_key])
-    return validated
+    return schema.validate(section)
 
 
-def validate_file(mwtabfile, section_schema_mapping, validate_samples=True, validate_factors=True):
+def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True, validate_factors=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
     
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -77,9 +75,10 @@ def validate_file(mwtabfile, section_schema_mapping, validate_samples=True, vali
     except Exception:
         raise
 
-    for section_key in mwtabfile:
+    for section_key, section in mwtabfile.items():
         try:
-            section = validate_section(mwtabfile, section_key, section_schema_mapping)
+            schema = section_schema_mapping[section_key]
+            section = validate_section(section=section, schema=schema)
             validated_mwtabfile[section_key] = section
         except Exception:
             raise
