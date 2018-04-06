@@ -3,6 +3,14 @@
 Release History
 =============== 
 
+0.1.8 (2018-04-05)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Added `mwtab` package logo.
+- Minor update: Simplified section validation function.
+
 
 0.1.7 (2017-12-07)
 ~~~~~~~~~~~~~~~~~~
