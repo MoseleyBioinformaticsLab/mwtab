@@ -41,7 +41,7 @@ import logging
 from .fileio import read_files
 
 
-__version__ = "0.1.8"
+__version__ = "0.1.9"
 
 
 try:  # Python 2/3 compatibility code
