@@ -37,6 +37,20 @@ This package includes the following modules:
     on schema definitions as well as checks for file self-consistency.
 """
 
+import logging
 from .fileio import read_files
 
+
 __version__ = "0.1.8"
+
+
+try:  # Python 2/3 compatibility code
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
+
+# Setting default logging handler
+logging.getLogger(__name__).addHandler(NullHandler())
