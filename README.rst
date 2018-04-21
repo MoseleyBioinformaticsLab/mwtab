@@ -53,6 +53,16 @@ The ``mwtab`` package can be used in several ways:
      ``JSON`` representation.
 
 
+Citation
+~~~~~~~~
+
+When using ``mwtab`` package in published work, please cite the following paper:
+
+   * Smelter, Andrey and Hunter NB Moseley. "A Python library for FAIRer access and
+     deposition to the Metabolomics Workbench Data Repository."
+     *Metabolomics* 2018, 14(5): 64. doi: `10.1007/s11306-018-1356-6`_.
+
+
 Links
 ~~~~~
 
@@ -165,3 +175,4 @@ This package is distributed under the BSD_ `license`.
 .. _PyPI: https://pypi.org/project/mwtab
 .. _pip: https://pip.pypa.io
 .. _BSD: https://choosealicense.com/licenses/bsd-3-clause-clear/
+.. _10.1007/s11306-018-1356-6: http://dx.doi.org/10.1007/s11306-018-1356-6
