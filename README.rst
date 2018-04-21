@@ -25,6 +25,10 @@ mwtab
    :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
    :alt: Code coverage information
 
+.. image:: https://img.shields.io/badge/DOI-10.1007%2Fs11306--018--1356--6-blue.svg
+   :target: http://dx.doi.org/10.1007/s11306-018-1356-6
+   :alt: Citation link
+
 |
 
 .. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_logo.png
