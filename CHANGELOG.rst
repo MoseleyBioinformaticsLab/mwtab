@@ -3,6 +3,14 @@
 Release History
 =============== 
 
+0.1.9 (2018-04-21)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Added citation link to `mwtab` package.
+
+
 0.1.8 (2018-04-05)
 ~~~~~~~~~~~~~~~~~~
 
