@@ -3,6 +3,15 @@
 Release History
 =============== 
 
+0.1.10 (2019-02-18)
+~~~~~~~~~~~~~~~~~~~
+
+**Bugfixes**
+
+- Metabolomics Workbench started using HTTPS,
+  update reading from ANALYSIS_ID to address the change.
+
+
 0.1.9 (2018-04-21)
 ~~~~~~~~~~~~~~~~~~
 
