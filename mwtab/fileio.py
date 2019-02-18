@@ -37,7 +37,7 @@ else:
 
 
 VERBOSE = False
-MWREST = "http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"
+MWREST = "https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"
 
 
 def _generate_filenames(sources):
