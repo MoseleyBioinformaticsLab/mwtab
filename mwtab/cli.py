@@ -18,7 +18,7 @@ Options:
     --validate                      Validate the mwTab file.
     --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
     --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
-    --mw-rest=<url>                 URL to MW REST interface [default: http://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
+    --mw-rest=<url>                 URL to MW REST interface [default: https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
 """
 
 from . import fileio
