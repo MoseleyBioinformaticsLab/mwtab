@@ -29,6 +29,10 @@ mwtab
    :target: http://dx.doi.org/10.1007/s11306-018-1356-6
    :alt: Citation link
 
+.. image:: https://img.shields.io/github/stars/MoseleyBioinformaticsLab/mwtab.svg?style=social&label=Star
+    :target: https://github.com/MoseleyBioinformaticsLab/mwtab
+    :alt: GitHub project
+
 |
 
 .. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_logo.png
