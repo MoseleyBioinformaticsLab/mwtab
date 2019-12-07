@@ -95,6 +95,65 @@ CONTEXT = {
 }
 
 
+def pull_analysis_list():
+    # Generate urls for EVER
+    pass
+
+
+def pull_study_list():
+    pass
+
+
+def generate_mwtab_urls(input_items, output_format='txt'):
+    """
+
+    :param list input_items:
+    :param str output_format:
+    :return: Metabolomics Workbench REST URL string.
+    :rtype: :py:class:`str`
+    """
+    for input_item in input_items:
+        if input_item.isdigit():
+            analysis_id = "AN{}".format(input_item.zfill(6))
+            yield GenericMWURL(**{
+                'context': 'study',
+                'input item': 'analysis_id',
+                'input value': analysis_id,
+                'output item': 'mwtab',
+                'output format': output_format
+            }).url
+        elif re.match(r'(AN[0-9]{1,6}$)', input_item):
+            yield GenericMWURL(**{
+                'context': 'study',
+                'input item': 'analysis_id',
+                'input value': input_item,
+                'output item': 'mwtab',
+                'output format': output_format
+            }).url
+        elif re.match(r'(ST[0-9]{1,6}$)', input_item):
+            yield GenericMWURL(**{
+                'context': 'study',
+                'input item': 'study_id',
+                'input value': input_item,
+                'output item': 'mwtab',
+                'output format': output_format
+            }).url
+
+
+def generate_urls(input_items, **kwds):
+    """
+
+    :param list input_items:
+    :param dict kwds:
+    :return: Metabolomics Workbench REST URL string.
+    :rtype: :py:class:`str`
+    """
+    for input_item in input_items:
+        params = dict(kwds)
+        params["input_item"] = input_item
+        yield GenericMWURL(**params).url
+
+
 class GenericMWURL(OrderedDict):
     """GenericMWURL class that stores Metabolomics Workbench REST API keyword argument data in the form of
     :py:class:`collections.OrderedDict`.
@@ -111,12 +170,12 @@ class GenericMWURL(OrderedDict):
     def __init__(self, **kwds):
         """File initializer.
 
-        :param dict kwds: Dictionary of Metabolomics Workbench URL Path items.
+        :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
         """
         super(GenericMWURL, self).__init__(**kwds)
         if 'output format' not in self.keys():
             self['output format'] = 'json'
-        self.URL = self._validate()
+        self.url = self._validate()
 
     def _validate(self):
         """Validate keyword arguments.
@@ -256,7 +315,7 @@ class GenericMWURL(OrderedDict):
         protein). If invalid, raises value error.
         """
         if input_item == 'study_id':
-            if not re.match(r'(ST[0-9]{6}$)', input_value):
+            if not re.match(r'(ST[0-9]{1,6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench (MW) study ID (ST<6-digit integer>)")
         elif input_item in ['study_title', 'institute', 'last_name',
                             'formula',
@@ -264,7 +323,7 @@ class GenericMWURL(OrderedDict):
             if not type(input_value) == str:
                 raise ValueError("Invalid {} (<string>)".format(input_item.replace('_', ' ')))
         elif input_item == 'analysis_id':
-            if not re.match(r'(AN[0-9]{6}$)', input_value):
+            if not re.match(r'(AN[0-9]{1,6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench analysis ID for a study (AN<6-digit integer>)")
         elif input_item == 'metabolite_id':
             if not re.match(r'(ME[0-9]{6}$)', input_value):
@@ -321,15 +380,3 @@ class GenericMWURL(OrderedDict):
             # regex from https://www.uniprot.org/help/accession_numbers
             if not re.match(r'[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}', input_value):
                 raise ValueError("Invalid UniProt ID (see uniprot.org/help/accession_numbers)")
-
-
-if __name__ == '__main__':
-    MWURL = GenericMWURL(**{
-        'context': 'compound',
-        'input item': 'lm_id',
-        'input value': 'LMFA03010001',
-        'output item': ['regno', 'formula'],
-        'output format': 'txt',
-        'VERBOSE': True
-    })
-    print(MWURL.URL)

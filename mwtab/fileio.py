@@ -22,6 +22,7 @@ import zipfile
 import tarfile
 import bz2
 import gzip
+import json
 
 from . import mwtab
 from . import validator
@@ -112,6 +113,34 @@ def read_files(*sources, **kwds):
         except Exception as e:
             if VERBOSE:
                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
+            pass
+
+
+def read_mwrest(*sources, **kwds):
+    """Construct a generator that yields file instances.
+
+    :param sources: One or more strings representing path to file(s).
+    """
+    filenames = _generate_filenames(sources)
+    filehandles = _generate_handles(filenames)
+    for fh, source in filehandles:
+        try:
+            text = fh.read()
+
+            if kwds.get('convertJSON'):
+                try:
+                    yield json.loads(text)
+                except:
+                    yield text
+            else:
+                yield text
+
+            if VERBOSE:
+                print("Processed url: {}".format(os.path.abspath(source)))
+
+        except Exception as e:
+            if VERBOSE:
+                print("Error processing url: ", os.path.abspath(source), "\nReason:", e)
             pass
 
 
