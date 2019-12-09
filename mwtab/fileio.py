@@ -27,6 +27,7 @@ import json
 from . import mwtab
 from . import validator
 from . import mwschema
+from . import mwrest
 
 
 if sys.version_info.major == 3:
@@ -63,9 +64,7 @@ def _generate_filenames(sources):
             yield source
 
         elif source.isdigit():
-            analysis_id = "AN{}".format(source.zfill(6))
-            url = MWREST.format(analysis_id)
-            yield url
+            yield mwrest.generate_mwtab_urls(source)
 
         elif GenericFilePath.is_url(source):
             yield source

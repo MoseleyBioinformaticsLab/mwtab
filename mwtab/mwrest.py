@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# TODO: Add refmet context.
 # TODO: Add qualifications for output items per specific context input item.
 """
 mwtab.mwrest
@@ -13,6 +12,8 @@ See https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf for details.
 
 from collections import OrderedDict
 import re
+
+from . import fileio
 
 MWREST = "https://www.metabolomicsworkbench.org/rest/"
 CONTEXT = {
@@ -95,13 +96,42 @@ CONTEXT = {
 }
 
 
-def pull_analysis_list():
-    # Generate urls for EVER
-    pass
+def analysis_urls():
+    st_an_dict = _pull_study_analysis()
+    analyses = list()
+    [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
+
+    return generate_mwtab_urls(analyses)
 
 
-def pull_study_list():
-    pass
+def study_urls():
+    st_an_dict = _pull_study_analysis()
+    studies = list(st_an_dict.keys())
+
+    return generate_mwtab_urls(studies)
+
+
+def _pull_study_analysis():
+    """
+    Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
+    API.
+
+    :return: Dictionary of study ids (keys) and lists of analyses (value).
+    :rtype: :py:class:`dict`
+    """
+    url = GenericMWURL(
+        **{'context': 'study', 'input item': 'study_id', 'input value': 'ST', 'output item': 'analysis'}
+    ).url
+    json_object = fileio.read_mwrest(url, **{'convertJSON': True})
+
+    study_analysis_dict = dict()
+    for k in json_object.keys():
+        if study_analysis_dict.get(json_object[k]['study_id']):
+            study_analysis_dict[json_object[k]['study_id']].append(json_object[k]['analysis_id'])
+        else:
+            study_analysis_dict[json_object[k]['study_id']] = [json_object[k]['analysis_id']]
+
+    return study_analysis_dict
 
 
 def generate_mwtab_urls(input_items, output_format='txt'):
@@ -122,7 +152,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 'output item': 'mwtab',
                 'output format': output_format
             }).url
-        elif re.match(r'(AN[0-9]{1,6}$)', input_item):
+        elif re.match(r'(AN[0-9]{6}$)', input_item):
             yield GenericMWURL(**{
                 'context': 'study',
                 'input item': 'analysis_id',
@@ -142,6 +172,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
 
 def generate_urls(input_items, **kwds):
     """
+    Method for creating a generating a 
 
     :param list input_items:
     :param dict kwds:
@@ -315,6 +346,7 @@ class GenericMWURL(OrderedDict):
         protein). If invalid, raises value error.
         """
         if input_item == 'study_id':
+            # allows for pulling a range of entries (ie. ST0001 pulls studies 100-199)
             if not re.match(r'(ST[0-9]{1,6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench (MW) study ID (ST<6-digit integer>)")
         elif input_item in ['study_title', 'institute', 'last_name',
@@ -323,7 +355,7 @@ class GenericMWURL(OrderedDict):
             if not type(input_value) == str:
                 raise ValueError("Invalid {} (<string>)".format(input_item.replace('_', ' ')))
         elif input_item == 'analysis_id':
-            if not re.match(r'(AN[0-9]{1,6}$)', input_value):
+            if not re.match(r'(AN[0-9]{6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench analysis ID for a study (AN<6-digit integer>)")
         elif input_item == 'metabolite_id':
             if not re.match(r'(ME[0-9]{6}$)', input_value):
