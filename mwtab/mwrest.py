@@ -172,7 +172,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
 
 def generate_urls(input_items, **kwds):
     """
-    Method for creating a generating a 
+    Method for creating a generator which yields validated Metabolomics Workbench REST urls.
 
     :param list input_items:
     :param dict kwds:
