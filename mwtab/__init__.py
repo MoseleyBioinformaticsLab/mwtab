@@ -13,7 +13,7 @@ This package includes the following modules:
 
 ``cli``
     This module provides command-line interface for the ``mwtab`` package.
-    
+
 ``tokenizer``
     This module provides the :func:`~mwtab.tokenizer.tokenizer` generator that generates
     tuples of key-value pairs from `mwtab` files.
@@ -35,6 +35,12 @@ This package includes the following modules:
 ``validator``
     This module provides routines to validate ``mwTab`` formatted files based
     on schema definitions as well as checks for file self-consistency.
+
+``mwrest``
+    This module provides the :class:`~mwtab.mwrest.GenericMWURL` class which is a
+    python dictionary representation of a Metabolomics Workbench REST URL. The class
+    is used to validate query parameters and to generate a URL path which can be
+    used to request data from Metabolomics Workbench through their REST API.
 """
 
 import logging
