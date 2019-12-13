@@ -23,6 +23,7 @@ metabolomics_workbench_schema = Schema(
         "CREATED_ON": str,
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
+        # TODO: Optional("PROJECT_ID"): str,
         Optional("HEADER"): str,
         Optional("DATATRACK_ID"): str
     }

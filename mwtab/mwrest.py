@@ -150,6 +150,8 @@ def _pull_study_analysis():
 
 def generate_mwtab_urls(input_items, output_format='txt'):
     """
+    Method for generating URLS to be used to retrieve `mwtab` files for analyses and
+    studies through the REST API of the Metabolomics Workbench database.
 
     :param list input_items:
     :param str output_format:
