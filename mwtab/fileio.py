@@ -64,7 +64,7 @@ def _generate_filenames(sources):
             yield source
 
         elif source.isdigit():
-            yield mwrest.generate_mwtab_urls(source)
+            yield next(mwrest.generate_mwtab_urls(source))
 
         elif GenericFilePath.is_url(source):
             yield source
@@ -124,12 +124,12 @@ def read_mwrest(*sources, **kwds):
     filehandles = _generate_handles(filenames)
     for fh, source in filehandles:
         try:
-            text = fh.read()
+            text = fh.read().decode('utf-8')
 
             if kwds.get('convertJSON'):
                 try:
                     yield json.loads(text)
-                except:
+                except Exception as e:
                     yield text
             else:
                 yield text

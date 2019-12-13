@@ -96,25 +96,39 @@ CONTEXT = {
 }
 
 
-def analysis_urls():
+def analysis_ids():
+    """
+    Method for generating a list of urls for every current analysis in Metabolomics Workbench.
+
+    :return: Urls to every Metabolomics Workbench analysis.
+    :rtype: :py:class:`str`
+    """
     st_an_dict = _pull_study_analysis()
     analyses = list()
     [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
 
-    return generate_mwtab_urls(analyses)
+    return analyses
 
 
-def study_urls():
+def study_ids():
+    """
+    Method for generating a list of urls for every current study in Metabolomics Workbench.
+
+    :return: Urls to every Metabolomics Workbench study.
+    :rtype: :py:class:`str`
+    """
     st_an_dict = _pull_study_analysis()
     studies = list(st_an_dict.keys())
 
-    return generate_mwtab_urls(studies)
+    return studies
 
 
 def _pull_study_analysis():
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
-    API.
+    API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is
+    converted into a python object (dict) which can then be parsed to create a dictionary wit hthe form study id (key):
+    analysis id(s) (values).
 
     :return: Dictionary of study ids (keys) and lists of analyses (value).
     :rtype: :py:class:`dict`
@@ -122,7 +136,7 @@ def _pull_study_analysis():
     url = GenericMWURL(
         **{'context': 'study', 'input item': 'study_id', 'input value': 'ST', 'output item': 'analysis'}
     ).url
-    json_object = fileio.read_mwrest(url, **{'convertJSON': True})
+    json_object = next(fileio.read_mwrest(url, **{'convertJSON': True}))
 
     study_analysis_dict = dict()
     for k in json_object.keys():
@@ -204,8 +218,8 @@ class GenericMWURL(OrderedDict):
         :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
         """
         super(GenericMWURL, self).__init__(**kwds)
-        if 'output format' not in self.keys():
-            self['output format'] = 'json'
+        # if not self.get('output format'):
+        #     self['output format'] = 'json'
         self.url = self._validate()
 
     def _validate(self):
@@ -276,13 +290,13 @@ class GenericMWURL(OrderedDict):
                 raise ValueError("Invalid output item(s): " +
                                  str(set(self['output item']).difference(CONTEXT[self['context']]['output item'])))
             else:
-                return MWREST + '/'.join([self['context'], self['input item'], str(self['input value']),
-                                          ','.join(self['output item']), self['output format']])
+                return MWREST + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
+                                          ','.join(self.get('output item')), self.get('output format') or ''])
         elif not any(k in self['output item'] for k in CONTEXT[self['context']]['output item']):
             raise ValueError("Invalid output item")
         else:
-            return MWREST + '/'.join([self['context'], self['input item'], str(self['input value']),
-                                      self['output item'], self['output format']])
+            return MWREST + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
+                                      self.get('output item'), self.get('output format') or ''])
 
     def _validate_moverz(self):
         """Validate keyword arguments for moverz context. If valid, generates REST URL.
@@ -347,7 +361,7 @@ class GenericMWURL(OrderedDict):
         """
         if input_item == 'study_id':
             # allows for pulling a range of entries (ie. ST0001 pulls studies 100-199)
-            if not re.match(r'(ST[0-9]{1,6}$)', input_value):
+            if not re.match(r'(ST[0-9]{0,6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench (MW) study ID (ST<6-digit integer>)")
         elif input_item in ['study_title', 'institute', 'last_name',
                             'formula',
