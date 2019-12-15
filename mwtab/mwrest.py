@@ -148,7 +148,7 @@ def _pull_study_analysis():
     return study_analysis_dict
 
 
-def generate_mwtab_urls(input_items, output_format='txt'):
+def generate_mwtab_urls(*input_items, output_format='txt'):
     """
     Method for generating URLS to be used to retrieve `mwtab` files for analyses and
     studies through the REST API of the Metabolomics Workbench database.
@@ -158,8 +158,10 @@ def generate_mwtab_urls(input_items, output_format='txt'):
     :return: Metabolomics Workbench REST URL string.
     :rtype: :py:class:`str`
     """
+    print(input_items)
     for input_item in input_items:
         if input_item.isdigit():
+            print(input_item)
             analysis_id = "AN{}".format(input_item.zfill(6))
             yield GenericMWURL(**{
                 'context': 'study',
