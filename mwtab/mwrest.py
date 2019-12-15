@@ -158,10 +158,8 @@ def generate_mwtab_urls(*input_items, output_format='txt'):
     :return: Metabolomics Workbench REST URL string.
     :rtype: :py:class:`str`
     """
-    print(input_items)
     for input_item in input_items:
         if input_item.isdigit():
-            print(input_item)
             analysis_id = "AN{}".format(input_item.zfill(6))
             yield GenericMWURL(**{
                 'context': 'study',
