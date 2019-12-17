@@ -31,17 +31,20 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
 
         if "MS_METABOLITE_DATA" in mwtabfile:
             from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
-            assert from_subject_samples == from_metabolite_data_samples
+            assert from_subject_samples == from_metabolite_data_samples,\
+                "AssertionError: Unequal samples in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
 
         if "NMR_BINNED_DATA" in mwtabfile:
             from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["Fields"][1:])
-            assert from_subject_samples == from_nmr_binned_data_samples
+            assert from_subject_samples == from_nmr_binned_data_samples,\
+                "AssertionError: Unequal samples/fields in SUBJECT_SAMPLE_FACTORS and NMR_BINNED_DATA blocks."
 
     if validate_factors:
 
         if "MS_METABOLITE_DATA" in mwtabfile:
             from_metabolite_data_factors = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Factors"])
-            assert from_subject_factors == from_metabolite_data_factors
+            assert from_subject_factors == from_metabolite_data_factors,\
+                "AssertionError: Unequal factors in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
 
 
 def validate_section(section, schema):
@@ -57,7 +60,7 @@ def validate_section(section, schema):
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True, validate_factors=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
-    
+
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
