@@ -22,7 +22,7 @@ from collections import namedtuple
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
 SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type", "local_sample_id", "factors", "additional_sample_data"])
-KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extrakey", "extravalue"])
+KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
 def tokenizer(text):
@@ -78,12 +78,14 @@ def tokenizer(text):
             if line:
                 if line.startswith("MS:MS_RESULTS_FILE") or line.startswith("NM:NMR_RESULTS_FILE"):
                     try:
-                        key, value, extra = line.split("\t")
-                        extra_key, extra_value = extra.strip().split(":")
-                        yield KeyValueExtra(key.strip()[3:], value, extra_key, extra_value)
-                    except ValueError:
                         key, value = line.split("\t")
                         yield KeyValue(key.strip()[3:], value)
+                    except ValueError:
+                        split_keys_values = line.split("\t")
+                        key = split_keys_values[0]
+                        value = split_keys_values[1]
+                        extra = [tuple(pair.split(":")) for pair in split_keys_values[2:]]
+                        yield KeyValueExtra(key.strip()[3:], value, extra)
                 else:
                     try:
                         key, value = line.split("\t")
