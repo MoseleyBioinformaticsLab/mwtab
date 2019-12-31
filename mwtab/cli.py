@@ -10,6 +10,7 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
+    mwtab request <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=item(s)] [--output-format=<format>] [--validate] [--verbose]
     
 Options:
     -h, --help                      Show this screen.
@@ -19,6 +20,12 @@ Options:
     --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
     --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
     --mw-rest=<url>                 URL to MW REST interface [default: https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
+
+    --to-path                       File path to directory for file to be saved in [default: cwd].
+    --context=<context>             Type of resource to access from MW REST interface, available contexts: study, compound, refmet, gene, protein, moverz, exactmass [default: study].
+    --input-item=<item>
+    --output-item=<item(s)>
+    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc. [default: mwtab].
 """
 
 from . import fileio
@@ -46,3 +53,6 @@ def cli(cmdargs):
                           section_schema_mapping=section_schema_mapping,
                           validate_samples=True,
                           validate_factors=True)
+
+    elif cmdargs["request"]:
+
