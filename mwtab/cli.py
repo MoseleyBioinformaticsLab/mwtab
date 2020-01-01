@@ -29,9 +29,12 @@ Options:
 """
 
 from . import fileio
+from . import mwrest
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping
+
+from os import getcwd
 
 
 def cli(cmdargs):
@@ -55,4 +58,15 @@ def cli(cmdargs):
                           validate_factors=True)
 
     elif cmdargs["request"]:
-
+        for mwfile in fileio.read_mwrest(
+                *mwrest.GenericMWURL(**{
+                    "context": cmdargs.get("--context") or "study",
+                    "input item": cmdargs.get("--input-item") or "analysis_id",
+                    'input value': cmdargs["<input-value>"],
+                    'output item': cmdargs.get("--output-item") or "mwtab",
+                    'output format': cmdargs.get("--output-format") or "txt"
+                }).url
+        ):
+            with open(cmdargs.get("--to-path") or getcwd(), "w") as outfile:
+                mwfile.write(outfile, format="mwtab")
+                outfile.close()
