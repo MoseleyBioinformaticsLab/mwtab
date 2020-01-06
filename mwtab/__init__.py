@@ -44,7 +44,7 @@ This package includes the following modules:
 """
 
 import logging
-from .fileio import read_files
+from .fileio import read_files, read_mwrest
 
 
 __version__ = "0.1.11"

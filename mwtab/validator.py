@@ -32,19 +32,19 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
         if "MS_METABOLITE_DATA" in mwtabfile:
             from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
             assert from_subject_samples == from_metabolite_data_samples,\
-                "AssertionError: Unequal samples in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
+                "Unequal samples in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
 
         if "NMR_BINNED_DATA" in mwtabfile:
             from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["Fields"][1:])
             assert from_subject_samples == from_nmr_binned_data_samples,\
-                "AssertionError: Unequal samples/fields in SUBJECT_SAMPLE_FACTORS and NMR_BINNED_DATA blocks."
+                "Unequal samples/fields in SUBJECT_SAMPLE_FACTORS and NMR_BINNED_DATA blocks."
 
     if validate_factors:
 
         if "MS_METABOLITE_DATA" in mwtabfile:
             from_metabolite_data_factors = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Factors"])
             assert from_subject_factors == from_metabolite_data_factors,\
-                "AssertionError: Unequal factors in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
+                "Unequal factors in SUBJECT_SAMPLE_FACTORS and MS_METABOLITE_DATA blocks."
 
 
 def validate_section(section, schema):
