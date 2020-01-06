@@ -12,6 +12,12 @@ mwtab.fileio.VERBOSE = True
 
 
 # Useful ReGeX r'(AN[0-9]{6})'
+processing_errors = [
+    "AN000404", "AN000405", "AN000410", "AN000415", "AN000436", "AN000439", "AN001311", "AN001312", "AN001313",
+    "AN000696", "AN001467", "AN001576", "AN001684", "AN001685", "AN001721", "AN001979", "AN002035", "AN001492",
+    "AN001493", "AN001499", "AN001761", "AN001762", "AN001776", "AN001777", "AN001982", "AN001689", "AN001690",
+    "AN001992"
+]
 
 
 def gnerate_filenames(data_path="data/"):
@@ -37,13 +43,6 @@ def access_saved(filenames):
             yield f
             f.close()
 
-    #         f.close()
-    #     if '_RESULTS_FILE' in mwtab_str:
-    #         include_results_file.append(filename.split('.')[0])
-    #
-    # print(sorted(include_results_file))
-    # print(len(include_results_file))
-
 
 def open_error_file():
     with open("errors.json", 'r') as error_file:
@@ -53,58 +52,24 @@ def open_error_file():
     return jsonpickle.decode(json_str)
 
 
-if __name__ == '__main__':
-
-    # 1878
-
-    # access_single_file('917')
-    # exit()
+def fetch_all():
     """
     Pull Down Every Analysis
     """
-    # analysis_ids = mwr.analysis_ids()
-    # urls = mwr.generate_mwtab_urls(*analysis_ids)
-    #
-    # for url in urls:
-    #     print(url)
-    #     response = urlopen(url)
-    #     path = response.read().decode('utf-8')
-    #     response.close()
-    #     with open("data/{}.txt".format(re.search(r'(AN[0-9]{6})', url).group(0)), "w") as outfile:
-    #         outfile.write(path)
+    analysis_ids = mwr.analysis_ids()
+    urls = mwr.generate_mwtab_urls(*analysis_ids)
 
-    # for mwfile in mwtab.read_files("data/AN001818.txt"):
-    #     print(mwfile.analysis_id)
-    # exit()
+    for url in urls:
+        print(url)
+        response = urlopen(url)
+        path = response.read().decode('utf-8')
+        response.close()
+        with open("data/{}.txt".format(re.search(r'(AN[0-9]{6})', url).group(0)), "w") as outfile:
+            outfile.write(path)
+            outfile.close()
 
 
-    #
-    # errors["Processing Error"]["Format"] = sorted(list(errors["Processing Error"]["Format"]))
-    #
-    # for an_id in errors["Processing Error"]["Format"]:
-    #     print(an_id)
-    #     try:
-    #         mwfile = next(mwtab.read_files("data/{}.txt".format(an_id)))
-    #     except Exception:
-    #         pass
-
-    # error_ids = set(errors["Processing Error"])
-    #
-    # errors = {"Processing Error": {"Blank": set(), "Format": set()}}
-    # blanks = list()
-    #
-    # for error_id in error_ids:
-    #     with open('data/{}.txt'.format(error_id), 'r') as f:
-    #         file_str = f.read()
-    #         f.close()
-    #     if file_str == '':
-    #         errors["Processing Error"]["Blank"].add(error_id)
-    #
-    # errors["Processing Error"]["Format"] = error_ids.difference(errors["Processing Error"]["Blank"])
-    #
-    # with open("errors.json", 'w') as error_file:
-    #     error_file.write(jsonpickle.encode(errors))
-    #     error_file.close()
+if __name__ == '__main__':
 
     """
     Check every analysis for errors
@@ -113,12 +78,16 @@ if __name__ == '__main__':
     (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
     filenames = sorted(filenames)
     for filename in filenames:
-        print(filename)
-        try:
-            mwfile = next(mwtab.read_files("data/{}".format(filename)))
-        except Exception as e:
-            print(e)
-            errors.append(re.search(r'(AN[0-9]{6})', filename).group(0))
-        print()
+        if not any(error in filename for error in processing_errors):
+            print(filename)
+            try:
+                mwfile = next(mwtab.read_files("data/{}".format(filename), validate=True))
+            except Exception as e:
+                print(e)
+                errors.append(re.search(r'(AN[0-9]{6})', filename).group(0))
+            print()
 
-    errors = {'Processing Error': errors}
+    print(len(errors))
+    with open("errors.json", "w") as outfile:
+        outfile.write(jsonpickle.encode(errors))
+        outfile.close()
