@@ -108,6 +108,8 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
             except KeyError:
                 errors.update({'13': ''})
 
+    return errors
+
 
 def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
