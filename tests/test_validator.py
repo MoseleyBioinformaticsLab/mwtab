@@ -130,10 +130,15 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
 
 
 if __name__ == '__main__':
+    error_files = dict()
     (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
     filenames = sorted(filenames)
     for filename in filenames:
         if not any(error in filename for error in processing_errors):
             print(filename)
             mwfile = next(mwtab.read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
-            print(validate_file(mwfile))
+            errors = validate_file(mwfile)
+            if errors:
+                error_files.update({filename[:-4]: errors})
+
+    print(len(error_files))
