@@ -111,6 +111,20 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     return errors
 
 
+def validate_section(section, schema):
+    """Validate section of ``mwTab`` formatted file.
+
+    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
+    :param schema: Schema definition.
+    :return: Validated section.
+    :rtype: :py:class:`collections.OrderedDict`
+    """
+    try:
+        schema.validate(section)
+    except Exception:
+        return {'14': section}
+
+
 def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
@@ -125,6 +139,13 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = _validate_samples_factors(mwtabfile, validate_samples, validate_factors)
+
+    for section_key, section in mwtabfile.items():
+        try:
+            schema = mwtab.section_schema_mapping[section_key]
+            section = validate_section(section=section, schema=schema)
+        except Exception:
+            raise
 
     return errors
 
