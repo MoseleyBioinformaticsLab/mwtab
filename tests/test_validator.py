@@ -21,6 +21,9 @@ Error List
 11 - KeyError in `MS_METABOLITE_DATA` block (missing `Samples` key).
 12 - KeyError in `NMR_BINNED_DATA' block (missing `Fields` key).
 13 - KeyError in `MS_METABOLITE_DATA` block (missing `Factors` key).
+
+14 - Extra keys in `METABOLITE` block (under `METABOLITES_START`, `DATA` keys).
+15 - Missing key `metabolite_name` in `METABOLITE` block (commonly replaced with `Compound`).
 """
 
 processing_errors = [
@@ -111,7 +114,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     return errors
 
 
-def validate_section(section, schema):
+def _validate_metabolites(mwtabfile):
     """Validate section of ``mwTab`` formatted file.
 
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
@@ -119,10 +122,18 @@ def validate_section(section, schema):
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
-    try:
-        schema.validate(section)
-    except Exception:
-        return {'14': section}
+    errors = dict()
+
+    schema_keys = {"metabolite_name", "moverz_quant", "ri", "ri_type", "pubchem_id", "inchi_key", "kegg_id", "other_id", "other_id_type"}
+    if mwtabfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
+        section_keys = set(mwtabfile["METABOLITES"]["METABOLITES_START"]["Fields"])
+    else:
+        errors.update({"15": ""})
+        section_keys = set(mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"][0].keys())
+
+    diff = section_keys.difference(schema_keys)
+    if diff:
+        return {'14': diff}
 
 
 def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
@@ -138,14 +149,13 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
-    errors = _validate_samples_factors(mwtabfile, validate_samples, validate_factors)
+    errors = dict()
+    errors.update(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
 
-    for section_key, section in mwtabfile.items():
-        try:
-            schema = mwtab.section_schema_mapping[section_key]
-            section = validate_section(section=section, schema=schema)
-        except Exception:
-            raise
+    if mwtabfile.get("METABOLITES"):
+        metabolites_error = _validate_metabolites(mwtabfile)
+        if metabolites_error:
+            errors.update(metabolites_error)
 
     return errors
 
@@ -159,7 +169,14 @@ if __name__ == '__main__':
             print(filename)
             mwfile = next(mwtab.read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
             errors = validate_file(mwfile)
+            print(errors)
             if errors:
                 error_files.update({filename[:-4]: errors})
 
     print(len(error_files))
+
+    metabolite_values = dict()
+    for f in error_files.keys():
+        if error_files[f].get("14"):
+            for v in error_files[f]["14"]:
+                pass
