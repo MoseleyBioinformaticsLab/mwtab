@@ -4,23 +4,20 @@ from os import walk
 
 """
 Error List
-0 - Missing Sample ID in `SUBJECT_SAMPLE_FACTORS` block. (should be impossible...)
-1 - Extra Sample ID in `SUBJECT_SAMPLE_FACTORS` block.
-2 - Extra tab in `MS_METABOLITE_DATA` block (samples).
-3 - Extra Sample ID in `MS_METABOLITE_DATA` block.
+0 - Missing Sample ID in `SUBJECT_SAMPLE_FACTORS` block ("" entered as value).
+1 - Missing Sample Factor(s) in `SUBJECT_SAMPLE_FACTORS` block ("" entered as value).
 
-4 - Extra tab in `NMR_BINNED_DATA` block.
-5 - Extra Sample ID in `NMR_BINNED_DATA` block.
+2 - Extra tab in `MS_METABOLITE_DATA` block (Samples line).
+3 - Extra Sample ID in `MS_METABOLITE_DATA` block (Samples line).
+4 - KeyError in `MS_METABOLITE_DATA` block (missing `Samples` key).
 
-6 - Missing Sample Factor in `SUBJECT_SAMPLE_FACTORS` block. (should be impossible...)
-7 - Extra Sample Factor in `SUBJECT_SAMPLE_FACTORS` block.
-8 - Extra tab in `MS_METABOLITE_DATA` block (factors).
-9 - Extra Factor in `MS_METABOLITE_DATA` block.
+5 - Extra tab in `NMR_BINNED_DATA` block (Samples line).
+6 - Extra Sample ID in `NMR_BINNED_DATA` block (Samples line).
+7 - KeyError in `NMR_BINNED_DATA` block (missing `Fields` key).
 
-10 - KeyError in `SUBJECT_SAMPLE_FACTORS` block (missing `SAMPLE` and/or `FACTORS` key(s)).
-11 - KeyError in `MS_METABOLITE_DATA` block (missing `Samples` key).
-12 - KeyError in `NMR_BINNED_DATA' block (missing `Fields` key).
-13 - KeyError in `MS_METABOLITE_DATA` block (missing `Factors` key).
+8 - Extra tab in `MS_METABOLITE_DATA` block (Factors line).
+9 - Extra Sample Factor in `MS_METABOLITE_DATA` block (Factors line).
+10 - KeyError in `MS_METABOLITE_DATA` block (missing `Factors` key).
 
 14 - Extra keys in `METABOLITE` block (under `METABOLITES_START`, `DATA` keys).
 15 - Missing key `metabolite_name` in `METABOLITE` block (commonly replaced with `Compound`).
@@ -44,72 +41,50 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     """
     errors = dict()
 
-    try:
-        from_subject_samples = {i["local_sample_id"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
-        from_subject_factors = {i["factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
-    except KeyError:
-        return {'10': ''}
+    from_subject_samples = {i["local_sample_id"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
+    from_subject_factors = {i["factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
+
+    if "" in from_subject_samples:
+        errors.update({"0": ""})
+    if "" in from_subject_factors:
+        errors.update({"1": ""})
 
     if validate_samples:
 
         if "MS_METABOLITE_DATA" in mwtabfile:
             try:
                 from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
-                if from_subject_samples != from_metabolite_data_samples:
-                    from_ss = from_subject_samples.difference(from_metabolite_data_samples)
-                    from_mds = from_metabolite_data_samples.difference(from_subject_samples)
-                    if from_ss:
-                        if '' in from_ss:
-                            errors.update({'0': ''})
-                        if any(val for val in from_ss if val != ''):
-                            errors.update({'1': from_ss})
-                    if from_mds:
-                        if '' in from_mds:
-                            errors.update({'2': ''})
-                        if any(val for val in from_mds if val != ''):
-                            errors.update({'3': from_mds})
+                if not from_metabolite_data_samples.issubset(from_subject_samples):
+                    if "" in from_metabolite_data_samples:
+                        errors.update({"2": ""})
+                    if any(val for val in from_metabolite_data_samples if val != ""):
+                        errors.update({"3": from_metabolite_data_samples.difference(from_subject_samples)})
             except KeyError:
-                errors.update({'11': ''})
+                errors.update({"4": ""})
 
         if "NMR_BINNED_DATA" in mwtabfile:
             try:
                 from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["Fields"][1:])
-                if from_subject_samples != from_nmr_binned_data_samples:
-                    from_ss = from_subject_samples.difference(from_nmr_binned_data_samples)
-                    from_nbds = from_nmr_binned_data_samples.difference(from_subject_samples)
-                    if from_ss:
-                        if '' in from_ss:
-                            errors.update({'0': ''})
-                        if any(val for val in from_ss if val != ''):
-                            errors.update({'1': from_ss})
-                    if from_nbds:
-                        if '' in from_nbds:
-                            errors.update({'4': ''})
-                        if any(val for val in from_nbds if val != ''):
-                            errors.update({'5': from_nbds})
+                if not from_nmr_binned_data_samples.issubset(from_subject_samples):
+                    if "" in from_nmr_binned_data_samples:
+                        errors.update({"5": ""})
+                    if any(val for val in from_nmr_binned_data_samples if val != ""):
+                        errors.update({"6": from_nmr_binned_data_samples.difference(from_subject_samples)})
             except KeyError:
-                errors.update({'12': ''})
+                errors.update({"7": ""})
 
     if validate_factors:
 
         if "MS_METABOLITE_DATA" in mwtabfile:
             try:
                 from_metabolite_data_factors = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Factors"])
-                if from_subject_factors != from_metabolite_data_factors:
-                    from_sf = from_subject_factors.difference(from_metabolite_data_factors)
-                    from_mdf = from_metabolite_data_factors.difference(from_subject_factors)
-                    if from_sf:
-                        if '' in from_sf:
-                            errors.update({'6': ''})
-                        if any(val for val in from_sf if val != ''):
-                            errors.update({'7': from_sf})
-                    if from_mdf:
-                        if '' in from_mdf:
-                            errors.update({'8': ''})
-                        if any(val for val in from_mdf if val != ''):
-                            errors.update({'9': from_mdf})
+                if not from_metabolite_data_factors.issubset(from_subject_factors):
+                    if "" in from_metabolite_data_factors:
+                        errors.update({"8": ""})
+                    if any(val for val in from_metabolite_data_factors if val != ""):
+                        errors.update({"9": from_metabolite_data_factors.difference(from_subject_factors)})
             except KeyError:
-                errors.update({'13': ''})
+                errors.update({"10": ""})
 
     return errors
 
@@ -161,6 +136,7 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
 
 
 if __name__ == '__main__':
+
     error_files = dict()
     (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
     filenames = sorted(filenames)
