@@ -1,6 +1,8 @@
 # TODO: This file should not be included in the public release
 import mwtab
+from collections import OrderedDict
 from os import walk
+from re import match
 
 """
 Error List
@@ -156,14 +158,16 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True, valid
 
 
 REGEXS = {
-    r"(?i)(m/z)", r"(?i)(quantified)(\s|_)(m/z)", r"(?i)(retention)(\s|_)(time)", r"(?i)(retention)(\s|_)(index)",
-    r"(?i)(pubchem)(\s|_)(id)", r"(?i)(inchi)(\s|_)(key)", r"(?i)(moverz)(\s|_)(quant)", r"(?i)(inchi)(\s|_)(key)",
-    r"(?i)(kegg)(\s|_)(id)", r"(?i)(ri)", r"(?i)(ri)(\s|_)(type)", r"(?i)(kegg)(\s|_)(id)",
+    r"(?i)(m/z)", r"(?i)(quan)[\S]{,}(\s|_)(m/z)", r"(?i)(retention)(\s|_)(time)", r"(?i)(retention)(\s|_)(index)",
+    r"(?i)(pubchem)[\S]{,}", r"(?i)(inchi)[\S]{,}", r"(?i)(moverz)(\s|_)(quant)",
+    # r"(?i)(pubchem)(\s|_)(id)", r"(?i)(moverz)(\s|_)(quant)",
+    r"(?i)(kegg)(\s|_)(id)", r"(?i)(ri)", r"(?i)(kegg)(\s|_)(id)", r"(other)(\s|_)(id)"
 }
 
 if __name__ == '__main__':
 
     error_files = dict()
+    unique_fields = dict()
     (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
     filenames = sorted(filenames)
     for filename in filenames:
@@ -172,7 +176,27 @@ if __name__ == '__main__':
             if mwfile.get("METABOLITES"):
                 if mwfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
                     from_metabolites_fields = set(mwfile["METABOLITES"]["METABOLITES_START"]["Fields"])
-                    print(from_metabolites_fields)
+                    for field in from_metabolites_fields:
+                        if field in unique_fields.keys():
+                            unique_fields[field] += 1
+                        else:
+                            unique_fields[field] = 1
+    del unique_fields["metabolite_name"]
+    print(len(unique_fields))
+
+    duplicate_fields = dict()
+    sent = 0
+    items = list(unique_fields.items())
+    for k, i in items:
+        if any(match(re, k) for re in REGEXS):
+            duplicate_fields.update({k: i})
+            del unique_fields[k]
+
+    print(sorted(unique_fields.items(), key=lambda x: x[1], reverse=True))
+    print(duplicate_fields)
+    print(len(unique_fields))
+
+# 'PubChem', 'PUBCHEM', 'PubChem CID'
 
     #         errors = validate_file(mwfile)
     #         if errors:
