@@ -9,6 +9,8 @@ Release History
 **Improvements**
 
 - Added methods for working with Metabolomics Workbench's REST API.
+- Updates ``validator.py`` to now validate metabolite features are consistent between `#METABOLITES`
+  and `MS_METABOLITE_DATA` blocks.
 
 
 **Bugfixes**

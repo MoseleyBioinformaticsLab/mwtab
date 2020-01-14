@@ -110,6 +110,7 @@ def _validate_metabolites(mwtabfile, validate_features=True):
                 print(mwtabfile.analysis_id)
                 errors.update({"11": ""})
 
+    # Excess debugging code
     schema_keys = {"metabolite_name", "moverz_quant", "ri", "ri_type", "pubchem_id", "inchi_key", "kegg_id", "other_id", "other_id_type"}
     if mwtabfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
         section_keys = set(mwtabfile["METABOLITES"]["METABOLITES_START"]["Fields"])
@@ -122,7 +123,7 @@ def _validate_metabolites(mwtabfile, validate_features=True):
         return {'14': diff}
 
 
-def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
+def validate_file(mwtabfile, validate_samples=True, validate_factors=True, validate_features=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -136,16 +137,29 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = dict()
-    errors.update(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
+    try:
+        errors.update(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
+        if mwtabfile.get("METABOLITES"):
+            errors.update(_validate_metabolites(mwtabfile, validate_features))
+    except Exception:
+        raise
 
-    if mwtabfile.get("METABOLITES"):
-        print(mwtabfile.analysis_id)
-        metabolites_error = _validate_metabolites(mwtabfile)
-        if metabolites_error:
-            errors.update(metabolites_error)
+    # for section_key, section in mwtabfile.items():
+    #     try:
+    #         schema = section_schema_mapping[section_key]
+    #         section = validate_section(section=section, schema=schema)
+    #         validated_mwtabfile[section_key] = section
+    #     except Exception:
+    #         raise
 
     return errors
 
+
+REGEXS = {
+    r"(?i)(m/z)", r"(?i)(quantified)(\s|_)(m/z)", r"(?i)(retention)(\s|_)(time)", r"(?i)(retention)(\s|_)(index)",
+    r"(?i)(pubchem)(\s|_)(id)", r"(?i)(inchi)(\s|_)(key)", r"(?i)(moverz)(\s|_)(quant)", r"(?i)(inchi)(\s|_)(key)",
+    r"(?i)(kegg)(\s|_)(id)", r"(?i)(ri)", r"(?i)(ri)(\s|_)(type)", r"(?i)(kegg)(\s|_)(id)",
+}
 
 if __name__ == '__main__':
 
@@ -155,13 +169,18 @@ if __name__ == '__main__':
     for filename in filenames:
         if not any(error in filename for error in processing_errors):
             mwfile = next(mwtab.read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
-            errors = validate_file(mwfile)
-            if errors:
-                error_files.update({filename[:-4]: errors})
+            if mwfile.get("METABOLITES"):
+                if mwfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
+                    from_metabolites_fields = set(mwfile["METABOLITES"]["METABOLITES_START"]["Fields"])
+                    print(from_metabolites_fields)
 
-    fields = set()
-    for fn in error_files.keys():
-        if error_files[fn].get("14"):
-            fields.update(error_files[fn]["14"])
-    print(fields)
-    print(len(fields))
+    #         errors = validate_file(mwfile)
+    #         if errors:
+    #             error_files.update({filename[:-4]: errors})
+    #
+    # fields = set()
+    # for fn in error_files.keys():
+    #     if error_files[fn].get("14"):
+    #         fields.update(error_files[fn]["14"])
+    # print(fields)
+    # print(len(fields))
