@@ -71,6 +71,12 @@ def fetch_all():
 
 if __name__ == '__main__':
 
+    mwfile = next(mwtab.read_files("data/AN000009.txt"))
+    from_metabolites_features = {i["metabolite_name"] for i in mwfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
+    from_metabolite_data_features = {feature["metabolite_name"] for feature in mwfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]}
+    print(from_metabolite_data_features)
+    exit()
+
     """
     Check every analysis for errors
     """

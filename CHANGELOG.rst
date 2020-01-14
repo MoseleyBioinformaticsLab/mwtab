@@ -1,7 +1,30 @@
 .. :changelog:
 
 Release History
-=============== 
+===============
+
+0.1.11 (2020-01-xx)
+~~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Added methods for working with Metabolomics Workbench's REST API.
+
+
+**Bugfixes**
+
+- Updated ``mwschema.py`` to be consistent with Metabolomics Workbench's
+  updated `mwTab` format specification.
+
+     - Adds `PROJECT_ID` as optional schema field in `#METABOLOMICS WORKBENCH` block.
+- Updated ``validator.py`` to be consistent Metabolomics Workbench's
+  updated `mwTab` format specification.
+
+     - Now accepts `samples` and `factors` in a files `#MS_METABOLITE_DATA` and
+       `#NMR_BINNED_DATA` blocks to be subsets of `sample` and `factors`
+       listed in the file's `#SAMPLE_FACTORS` block.
+- Fixed bug preventing files with multiple additional key value pairs in
+  `_RESULTS_FILE` lines.
 
 0.1.10 (2019-02-18)
 ~~~~~~~~~~~~~~~~~~~

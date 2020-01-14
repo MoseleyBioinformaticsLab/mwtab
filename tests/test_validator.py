@@ -19,6 +19,8 @@ Error List
 9 - Extra Sample Factor in `MS_METABOLITE_DATA` block (Factors line).
 10 - KeyError in `MS_METABOLITE_DATA` block (missing `Factors` key).
 
+11 - Unequal `Features` in `METABOLITES` and `MS_METABOLITE_DATA` (features listed under `metabolite_name`).
+
 14 - Extra keys in `METABOLITE` block (under `METABOLITES_START`, `DATA` keys).
 15 - Missing key `metabolite_name` in `METABOLITE` block (commonly replaced with `Compound`).
 """
@@ -89,7 +91,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     return errors
 
 
-def _validate_metabolites(mwtabfile):
+def _validate_metabolites(mwtabfile, validate_features=True):
     """Validate section of ``mwTab`` formatted file.
 
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
@@ -98,6 +100,15 @@ def _validate_metabolites(mwtabfile):
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = dict()
+
+    from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
+
+    if validate_features:
+        if "MS_METABOLITE_DATA" in mwtabfile:
+            from_metabolite_data_features = {i["metabolite_name"] for i in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]}
+            if from_metabolites_features != from_metabolite_data_features:
+                print(mwtabfile.analysis_id)
+                errors.update({"11": ""})
 
     schema_keys = {"metabolite_name", "moverz_quant", "ri", "ri_type", "pubchem_id", "inchi_key", "kegg_id", "other_id", "other_id_type"}
     if mwtabfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
@@ -128,6 +139,7 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True):
     errors.update(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
 
     if mwtabfile.get("METABOLITES"):
+        print(mwtabfile.analysis_id)
         metabolites_error = _validate_metabolites(mwtabfile)
         if metabolites_error:
             errors.update(metabolites_error)
@@ -142,17 +154,14 @@ if __name__ == '__main__':
     filenames = sorted(filenames)
     for filename in filenames:
         if not any(error in filename for error in processing_errors):
-            print(filename)
             mwfile = next(mwtab.read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
             errors = validate_file(mwfile)
-            print(errors)
             if errors:
                 error_files.update({filename[:-4]: errors})
 
-    print(len(error_files))
-
-    metabolite_values = dict()
-    for f in error_files.keys():
-        if error_files[f].get("14"):
-            for v in error_files[f]["14"]:
-                pass
+    fields = set()
+    for fn in error_files.keys():
+        if error_files[fn].get("14"):
+            fields.update(error_files[fn]["14"])
+    print(fields)
+    print(len(fields))
