@@ -157,12 +157,24 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True, valid
     return errors
 
 
-REGEXS = {
-    r"(?i)(m/z)", r"(?i)(quan)[\S]{,}(\s|_)(m/z)", r"(?i)(retention)(\s|_)(time)", r"(?i)(retention)(\s|_)(index)",
-    r"(?i)(pubchem)[\S]{,}", r"(?i)(inchi)[\S]{,}", r"(?i)(moverz)(\s|_)(quant)",
-    # r"(?i)(pubchem)(\s|_)(id)", r"(?i)(moverz)(\s|_)(quant)",
-    r"(?i)(kegg)(\s|_)(id)", r"(?i)(ri)", r"(?i)(kegg)(\s|_)(id)", r"(other)(\s|_)(id)"
-}
+REGEXS = [
+    (r"(?i)(m/z)", "m/z"),                                          # m/z
+    (r"(?i)(quan)[\S]{,}(\s|_)(m)[\S]{,}(z)", "quantitated_m/z"),   # quantitated_m/z
+    (r"(?i)(r)[\s|\S]{,}(time)[\S]{,}", "retention_time"),          # retention_time
+    (r"(?i)(ret)[\s|\S]{,}(index)", "retention_index"),             # retention_index
+    (r"(?i)(pubchem)[\S]{,}", "pubchem_id"),                        # pubchem_id
+    (r"(?i)(inchi)[\S]{,}", "inchi_key"),                           # inchi_key
+    (r"(?i)(moverz)(\s|_)(quant)", "moverz_quant"),                 # moverz_quant
+    (r"(?i)(kegg)(\s|_)(i)", "kegg_id"),                            # kegg_id
+    (r"(?i)(kegg)$", "kegg_id"),
+    (r"(?i)(ri)$", "ri"),                                           # ri
+    (r"(?i)(ri)(\s|_)(type)", "ri_type"),                           # ri_type
+    (r"(?i)(other)(\s|_)(id)", "other_id"),                         # other_id (other_id_type)
+    (r"(?i)[\s|\S]{,}(HMDB)", "hmdb_id"),                           # hmdb_id
+    (r"(?i)(Human Metabolome D)[\S]{,}", "hmdb_id"),
+]
+
+duplicate_fields = {f: dict() for r, f in REGEXS}
 
 if __name__ == '__main__':
 
@@ -182,19 +194,26 @@ if __name__ == '__main__':
                         else:
                             unique_fields[field] = 1
     del unique_fields["metabolite_name"]
-    print(len(unique_fields))
 
-    duplicate_fields = dict()
+    print(len(unique_fields))
     sent = 0
     items = list(unique_fields.items())
-    for k, i in items:
-        if any(match(re, k) for re in REGEXS):
-            duplicate_fields.update({k: i})
-            del unique_fields[k]
+    for k, v in items:
+        for r, f in REGEXS:
+            if match(r, k):
+                duplicate_fields[f].update({k: v})
+                del unique_fields[k]
+                break
 
-    print(sorted(unique_fields.items(), key=lambda x: x[1], reverse=True))
-    print(duplicate_fields)
     print(len(unique_fields))
+    features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0], reverse=True)]
+    print(features)
+
+    print()
+    for k in duplicate_fields.keys():
+        print(k)
+        for f in duplicate_fields[k].keys():
+            print("\t{}".format(f))
 
 # 'PubChem', 'PUBCHEM', 'PubChem CID'
 
