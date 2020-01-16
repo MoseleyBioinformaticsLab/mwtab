@@ -158,14 +158,16 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True, valid
     :type validate_samples: :py:obj:`True` or :py:obj:`False`
     :param validate_factors: Make sure that factors are consistent across file.
     :type validate_factors: :py:obj:`True` or :py:obj:`False`
+    :param validate_features: Make sure that features are consistent across file.
+    :type validate_features: :py:obj:`True` or :py:obj:`False`
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
-    errors = dict()
+    errors = []
     try:
-        errors.update(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
+        errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
         if mwtabfile.get("METABOLITES"):
-            errors.update(_validate_metabolites(mwtabfile, validate_features))
+            errors.extend(_validate_metabolites(mwtabfile, validate_features))
     except Exception:
         raise
 
@@ -229,7 +231,7 @@ if __name__ == '__main__':
                 break
 
     print(len(unique_fields))
-    features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0], reverse=True)]
+    features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0].lower, reverse=True)]
     print(features)
 
     print()
@@ -237,16 +239,3 @@ if __name__ == '__main__':
         print(k)
         for f in duplicate_fields[k].keys():
             print("\t{}".format(f))
-
-# 'PubChem', 'PUBCHEM', 'PubChem CID'
-
-    #         errors = validate_file(mwfile)
-    #         if errors:
-    #             error_files.update({filename[:-4]: errors})
-    #
-    # fields = set()
-    # for fn in error_files.keys():
-    #     if error_files[fn].get("14"):
-    #         fields.update(error_files[fn]["14"])
-    # print(fields)
-    # print(len(fields))

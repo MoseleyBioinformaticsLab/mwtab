@@ -73,32 +73,6 @@ study_schema = Schema(
     }
 )
 
-analysis_schema = Schema(
-    {
-        "ANALYSIS_TYPE": str,
-        Optional("NUM_FACTORS"): str,
-        Optional("ACQUISITION_TIME"): str,
-        Optional("PROCESSING_PARAMETERS_FILE"): str,
-        Optional("ANALYSIS_DISPLAY"): str,
-        Optional("ANALYSIS_COMMENTS"): str,
-        Optional("LABORATORY_NAME"): str,
-        Optional("DETECTOR_TYPE"): str,
-        Optional("SOFTWARE_VERSION"): str,
-        Optional("OPERATOR_NAME"): str,
-        Optional("INSTRUMENT_NAME"): str,
-        Optional("ACQUISITION_DATE"): str,
-        Optional("DATA_FORMAT"): str,
-        Optional("NUM_METABOLITES"): str,
-        Optional("ACQUISITION_ID"): str,
-        Optional("RAW_FILE"): str,
-        Optional("PROCESSED_FILE"): str,
-        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
-        Optional("ACQUISITION_PARAMETERS_FILE"): str,
-        Optional("ANALYSIS_PROTOCOL_FILE"): str,
-        Optional("RANDOMIZATION_ORDER"): str
-    }
-)
-
 subject_schema = Schema(
     {
         "SUBJECT_TYPE": str,
@@ -171,7 +145,6 @@ collection_schema = Schema(
         Optional("TISSUE_CELL_IDENTIFICATION"): str,
         Optional("TISSUE_CELL_QUANTITY_TAKEN"): str
     }
-
 )
 
 treatment_schema = Schema(
@@ -290,6 +263,33 @@ chromatography_schema = Schema(
         Optional("CHROMATOGRAPHY_COMMENTS"): str
     }
 )
+
+analysis_schema = Schema(
+    {
+        "ANALYSIS_TYPE": str,
+        Optional("NUM_FACTORS"): str,
+        Optional("ACQUISITION_TIME"): str,
+        Optional("PROCESSING_PARAMETERS_FILE"): str,
+        Optional("ANALYSIS_DISPLAY"): str,
+        Optional("ANALYSIS_COMMENTS"): str,
+        Optional("LABORATORY_NAME"): str,
+        Optional("DETECTOR_TYPE"): str,
+        Optional("SOFTWARE_VERSION"): str,
+        Optional("OPERATOR_NAME"): str,
+        Optional("INSTRUMENT_NAME"): str,
+        Optional("ACQUISITION_DATE"): str,
+        Optional("DATA_FORMAT"): str,
+        Optional("NUM_METABOLITES"): str,
+        Optional("ACQUISITION_ID"): str,
+        Optional("RAW_FILE"): str,
+        Optional("PROCESSED_FILE"): str,
+        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
+        Optional("ACQUISITION_PARAMETERS_FILE"): str,
+        Optional("ANALYSIS_PROTOCOL_FILE"): str,
+        Optional("RANDOMIZATION_ORDER"): str
+    }
+)
+
 ms_schema = Schema(
     {
         "INSTRUMENT_NAME": str,
