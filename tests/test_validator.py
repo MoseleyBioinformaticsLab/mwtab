@@ -232,11 +232,12 @@ if __name__ == '__main__':
 
     features = sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)
     max_len = max(len(f[0]) for f in features)
+    print("Unique Features: ")
     print("{0:<{1}} {2}".format("FEATURE", max_len, "INSTANCES"))
     for f, n in features:
         print("{0:<{1}} {2}".format(f, max_len, n))
 
-    print()
+    print("\nDuplicate Features: ")
     for k in duplicate_fields.keys():
         print(k)
         for f in duplicate_fields[k].keys():
