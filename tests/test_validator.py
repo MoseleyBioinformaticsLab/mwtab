@@ -40,18 +40,22 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :return: None
-    :rtype: :py:obj:`None`
+    :param validate_samples:
+    :type validate_samples: :py:obj:`bool`
+    :param validate_factors:
+    :type validate_factors: :py:obj:`bool`
+    :return: List of errors (["None"] if no errors).
+    :rtype: :py:obj:`list`
     """
-    errors = dict()
+    errors = []
 
     from_subject_samples = {i["local_sample_id"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
     from_subject_factors = {i["factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
 
     if "" in from_subject_samples:
-        errors.update({"0": ""})
+        errors.append(ValueError("Sample with no sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block."))
     if "" in from_subject_factors:
-        errors.update({"1": ""})
+        errors.append(ValueError("Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block."))
 
     if validate_samples:
 
@@ -60,22 +64,32 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                 from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
                 if not from_metabolite_data_samples.issubset(from_subject_samples):
                     if "" in from_metabolite_data_samples:
-                        errors.update({"2": ""})
+                        errors.append(ValueError(
+                            "Sample with no sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
+                            "excetrainious TAB at the end of line)."))
                     if any(val for val in from_metabolite_data_samples if val != ""):
-                        errors.update({"3": from_metabolite_data_samples.difference(from_subject_samples)})
+                        errors.append(ValueError(
+                            "`MS_METABOLITE_DATA` block contains additional samples not found in "
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\t Additional samples: {}".format(
+                                from_metabolite_data_samples.difference(from_subject_samples))))
             except KeyError:
-                errors.update({"4": ""})
+                errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
 
         if "NMR_BINNED_DATA" in mwtabfile:
             try:
                 from_nmr_binned_data_samples = set(mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["Fields"][1:])
                 if not from_nmr_binned_data_samples.issubset(from_subject_samples):
                     if "" in from_nmr_binned_data_samples:
-                        errors.update({"5": ""})
+                        errors.append(ValueError(
+                            "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by "
+                            "excetrainious TAB at the end of line)."))
                     if any(val for val in from_nmr_binned_data_samples if val != ""):
-                        errors.update({"6": from_nmr_binned_data_samples.difference(from_subject_samples)})
+                        errors.append(ValueError(
+                            "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
+                            "block.\n\t Additional samples: {}".format(
+                                from_nmr_binned_data_samples.difference(from_subject_samples))))
             except KeyError:
-                errors.update({"7": ""})
+                errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
 
     if validate_factors:
 
@@ -84,26 +98,36 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                 from_metabolite_data_factors = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Factors"])
                 if not from_metabolite_data_factors.issubset(from_subject_factors):
                     if "" in from_metabolite_data_factors:
-                        errors.update({"8": ""})
+                        errors.append(ValueError(
+                            "Sample with no factors (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
+                            "excetrainious TAB at the end of line)."))
                     if any(val for val in from_metabolite_data_factors if val != ""):
-                        errors.update({"9": from_metabolite_data_factors.difference(from_subject_factors)})
+                        errors.append(ValueError(
+                            "`MS_METABOLITE_DATA` block contains additional factors not found in "
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\t Additional factors: {}".format(
+                                from_metabolite_data_factors.difference(from_subject_samples))))
             except KeyError:
-                errors.update({"10": ""})
+                errors.append(KeyError("Missing key `Factors` in `MS_METABOLITE_DATA` block."))
 
     return errors
 
 
 def _validate_metabolites(mwtabfile, validate_features=True):
-    """Validate section of ``mwTab`` formatted file.
+    """Validate ``Samples`` and ``Factors`` identifiers across the file.
 
-    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
-    :param schema: Schema definition.
-    :return: Validated section.
-    :rtype: :py:class:`collections.OrderedDict`
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :param validate_features:
+    :type validate_features: :py:obj:`bool`
+    :return: List of errors (["None"] if no errors).
+    :rtype: :py:obj:`list`
     """
-    errors = dict()
+    errors = list()
 
     from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
+
+    if "" in from_metabolites_features:
+        errors.append(ValueError())
 
     if validate_features:
         if "MS_METABOLITE_DATA" in mwtabfile:
