@@ -231,7 +231,7 @@ if __name__ == '__main__':
                 break
 
     print(len(unique_fields))
-    features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0].lower, reverse=True)]
+    features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)]
     print(features)
 
     print()
