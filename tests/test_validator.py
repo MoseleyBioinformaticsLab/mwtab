@@ -231,10 +231,11 @@ if __name__ == '__main__':
                 break
 
     print(len(unique_fields))
-    features = [i for i in sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)]
+    features = sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)
+    print(features)
 
     max_len = max(len(f[0]) for f in features)
-    for f, n in unique_fields:
+    for f, n in features:
         print("{feature :<{width}} {num}".format(feature=f, num=n, width=max_len))
 
     print()
