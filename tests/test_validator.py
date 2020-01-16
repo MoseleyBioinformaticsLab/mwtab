@@ -1,4 +1,5 @@
 # TODO: This file should not be included in the public release
+# TODO: update "if any(val for val in from_metabolite_data_features if val != ""):" lines to use diff.
 import mwtab
 from collections import OrderedDict
 from os import walk
@@ -122,31 +123,28 @@ def _validate_metabolites(mwtabfile, validate_features=True):
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """
-    errors = list()
+    errors = []
 
     from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
 
     if "" in from_metabolites_features:
-        errors.append(ValueError())
+        errors.append(ValueError(
+            "Feature with no name (\"\") in `METABOLITES` block (usually caused by excetrainious TAB at the end of line)."))
 
     if validate_features:
         if "MS_METABOLITE_DATA" in mwtabfile:
             from_metabolite_data_features = {i["metabolite_name"] for i in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]}
             if from_metabolites_features != from_metabolite_data_features:
-                print(mwtabfile.analysis_id)
-                errors.update({"11": ""})
-
-    # Excess debugging code
-    schema_keys = {"metabolite_name", "moverz_quant", "ri", "ri_type", "pubchem_id", "inchi_key", "kegg_id", "other_id", "other_id_type"}
-    if mwtabfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
-        section_keys = set(mwtabfile["METABOLITES"]["METABOLITES_START"]["Fields"])
-    else:
-        errors.update({"15": ""})
-        section_keys = set(mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"][0].keys())
-
-    diff = section_keys.difference(schema_keys)
-    if diff:
-        return {'14': diff}
+                if "" in from_metabolite_data_features:
+                    errors.append(ValueError(
+                        "Feature with no name (\"\") in `MS_METABOLITE_DATA` block (usually caused by excetrainious "
+                        "TAB at the end of line)."))
+                if any(val for val in from_metabolite_data_features if val != ""):
+                    errors.append(ValueError(
+                        "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t "
+                        "Additional features: {}".format(
+                            from_metabolite_data_features.difference(from_metabolites_features))))
+    return errors
 
 
 def validate_file(mwtabfile, validate_samples=True, validate_factors=True, validate_features=True):
