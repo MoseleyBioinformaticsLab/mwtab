@@ -235,7 +235,7 @@ if __name__ == '__main__':
     print(features)
 
     max_len = max(len(f) for f in features)
-    for f, n in features:
+    for f, n in unique_fields:
         print("{feature :<{width}} {num}".format(feature=f, num=n, width=max_len))
 
     print()
