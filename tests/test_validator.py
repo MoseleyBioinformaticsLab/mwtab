@@ -114,7 +114,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
 
 
 def _validate_metabolites(mwtabfile, validate_features=True):
-    """Validate ``Samples`` and ``Factors`` identifiers across the file.
+    """Validate metabolite ``Features`` across the file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
@@ -144,6 +144,7 @@ def _validate_metabolites(mwtabfile, validate_features=True):
                         "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t "
                         "Additional features: {}".format(
                             from_metabolite_data_features.difference(from_metabolites_features))))
+
     return errors
 
 
