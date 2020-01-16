@@ -234,6 +234,10 @@ if __name__ == '__main__':
     features = [i[0] for i in sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)]
     print(features)
 
+    max_len = max(len(f) for f in features)
+    for f, n in features:
+        print("{feature :<{width}} {num}".format(feature=f, num=n, width=max_len))
+
     print()
     for k in duplicate_fields.keys():
         print(k)
