@@ -232,9 +232,9 @@ if __name__ == '__main__':
 
     features = sorted(unique_fields.items(), key=lambda x: x[0].lower(), reverse=True)
     max_len = max(len(f[0]) for f in features)
-    print("{{}:<{}} {}".format("FEATURE", str(max_len), "INSTANCES"))
+    print("{:{}<{}} {}".format("FEATURE", str(max_len), "INSTANCES"))
     for f, n in features:
-        print("{{}:<{}} {}".format(str(f), str(max_len), str(n)))
+        print("{:{}<{}} {}".format(str(f), str(max_len), str(n)))
 
     print()
     for k in duplicate_fields.keys():
