@@ -45,6 +45,7 @@ This package includes the following modules:
 
 import logging
 from .fileio import read_files, read_mwrest
+from .mwschema import section_schema_mapping
 
 
 __version__ = "0.1.11"
