@@ -1,32 +1,9 @@
 # TODO: This file should not be included in the public release
 # TODO: update "if any(val for val in from_metabolite_data_features if val != ""):" lines to use diff.
-import mwtab
-from collections import OrderedDict
 from os import walk
 from re import match
 
-"""
-Error List
-0 - Missing Sample ID in `SUBJECT_SAMPLE_FACTORS` block ("" entered as value).
-1 - Missing Sample Factor(s) in `SUBJECT_SAMPLE_FACTORS` block ("" entered as value).
-
-2 - Extra tab in `MS_METABOLITE_DATA` block (Samples line).
-3 - Extra Sample ID in `MS_METABOLITE_DATA` block (Samples line).
-4 - KeyError in `MS_METABOLITE_DATA` block (missing `Samples` key).
-
-5 - Extra tab in `NMR_BINNED_DATA` block (Samples line).
-6 - Extra Sample ID in `NMR_BINNED_DATA` block (Samples line).
-7 - KeyError in `NMR_BINNED_DATA` block (missing `Fields` key).
-
-8 - Extra tab in `MS_METABOLITE_DATA` block (Factors line).
-9 - Extra Sample Factor in `MS_METABOLITE_DATA` block (Factors line).
-10 - KeyError in `MS_METABOLITE_DATA` block (missing `Factors` key).
-
-11 - Unequal `Features` in `METABOLITES` and `MS_METABOLITE_DATA` (features listed under `metabolite_name`).
-
-14 - Extra keys in `METABOLITE` block (under `METABOLITES_START`, `DATA` keys).
-15 - Missing key `metabolite_name` in `METABOLITE` block (commonly replaced with `Compound`).
-"""
+from mwtab import read_files, section_schema_mapping
 
 processing_errors = [
     "AN000404", "AN000405", "AN000410", "AN000415", "AN000436", "AN000439", "AN001311", "AN001312", "AN001313",
@@ -54,7 +31,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     from_subject_factors = {i["factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]["SUBJECT_SAMPLE_FACTORS"]}
 
     if "" in from_subject_samples:
-        errors.append(ValueError("Sample with no sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block."))
+        errors.append(ValueError("Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block."))
     if "" in from_subject_factors:
         errors.append(ValueError("Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block."))
 
@@ -148,6 +125,17 @@ def _validate_metabolites(mwtabfile, validate_features=True):
     return errors
 
 
+def validate_section(section, schema):
+    """Validate section of ``mwTab`` formatted file.
+
+    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
+    :param schema: Schema definition.
+    :return: Validated section.
+    :rtype: :py:class:`collections.OrderedDict`
+    """
+    return schema.validate(section)
+
+
 def validate_file(mwtabfile, validate_samples=True, validate_factors=True, validate_features=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
@@ -171,16 +159,39 @@ def validate_file(mwtabfile, validate_samples=True, validate_factors=True, valid
     except Exception:
         raise
 
-    # for section_key, section in mwtabfile.items():
-    #     try:
-    #         schema = section_schema_mapping[section_key]
-    #         section = validate_section(section=section, schema=schema)
-    #         validated_mwtabfile[section_key] = section
-    #     except Exception:
-    #         raise
+    for section_key, section in mwtabfile.items():
+        try:
+            schema = section_schema_mapping[section_key]
+            validate_section(section=section, schema=schema)
+        except Exception as e:
+            errors.append(e)
 
     return errors
 
+# start test file for release
+import pytest
+import mwtab
+
+
+@pytest.mark.parametrize("files_source", "tests/example_data/validation_files/AN000001.txt")
+def test_validate(files_source):
+    mwfile = next(mwtab.read_files(files_source))
+    validation_errors = validate_file(mwfile)
+    assert not validation_errors
+
+
+@pytest.mark.parametrize("files_source", [
+    "tests/example_data/validation_files/AN000001_errors.txt",
+])
+def test_validate_sample_factors(files_source):
+    mwfile = next(mwtab.read_files(files_source))
+    validation_errors = validate_file(mwfile)
+    print(validation_errors[0])
+    pass
+
+
+def test_validate_metabolites():
+    pass
 
 REGEXS = [
     (r"(?i)(m/z)", "m/z"),                                          # m/z
@@ -203,13 +214,17 @@ duplicate_fields = {f: dict() for r, f in REGEXS}
 
 if __name__ == '__main__':
 
+    test_validate("example_data/validation_files/AN000001.txt")
+    test_validate_sample_factors("example_data/validation_files/AN000001_errors.txt")
+    exit()
+
     error_files = dict()
     unique_fields = dict()
     (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
     filenames = sorted(filenames)
     for filename in filenames:
         if not any(error in filename for error in processing_errors):
-            mwfile = next(mwtab.read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
+            mwfile = next(read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
             if mwfile.get("METABOLITES"):
                 if mwfile["METABOLITES"]["METABOLITES_START"].get("Fields"):
                     from_metabolites_fields = set(mwfile["METABOLITES"]["METABOLITES_START"]["Fields"])
