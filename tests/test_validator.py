@@ -186,7 +186,7 @@ def test_validate(files_source):
 def test_validate_sample_factors(files_source):
     mwfile = next(mwtab.read_files(files_source))
     validation_errors = validate_file(mwfile)
-    print(vars(validation_errors[0]))
+    assert str(validation_errors[0]) == "Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block."
 
 
 def test_validate_metabolites():
