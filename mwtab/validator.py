@@ -44,14 +44,15 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
             try:
                 from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
                 if not from_metabolite_data_samples.issubset(from_subject_samples):
+                    # TODO: Using list/OrderedDict to separate missing sample ids from tab errors
                     if "" in from_metabolite_data_samples:
                         errors.append(ValueError(
-                            "Sample with no sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
-                            "excetrainious TAB at the end of line)."))
+                            "Sample with no Sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
+                            "extraneous TAB at the end of line)."))
                     if any(val for val in from_metabolite_data_samples if val != ""):
                         errors.append(ValueError(
                             "`MS_METABOLITE_DATA` block contains additional samples not found in "
-                            "`SUBJECT_SAMPLE_FACTORS` block.\n\t Additional samples: {}".format(
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {}".format(
                                 from_metabolite_data_samples.difference(from_subject_samples))))
             except KeyError:
                 errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
@@ -63,7 +64,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                     if "" in from_nmr_binned_data_samples:
                         errors.append(ValueError(
                             "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by "
-                            "excetrainious TAB at the end of line)."))
+                            "extraneous TAB at the end of line)."))
                     if any(val for val in from_nmr_binned_data_samples if val != ""):
                         errors.append(ValueError(
                             "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
@@ -81,7 +82,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                     if "" in from_metabolite_data_factors:
                         errors.append(ValueError(
                             "Sample with no factors (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
-                            "excetrainious TAB at the end of line)."))
+                            "extraneous TAB at the end of line)."))
                     if any(val for val in from_metabolite_data_factors if val != ""):
                         errors.append(ValueError(
                             "`MS_METABOLITE_DATA` block contains additional factors not found in "
@@ -109,7 +110,7 @@ def _validate_metabolites(mwtabfile, validate_features=True):
 
     if "" in from_metabolites_features:
         errors.append(ValueError(
-            "Feature with no name (\"\") in `METABOLITES` block (usually caused by excetrainious TAB at the end of line)."))
+            "Feature with no name (\"\") in `METABOLITES` block (usually caused by extraneous TAB at the end of line)."))
 
     if validate_features:
         if "MS_METABOLITE_DATA" in mwtabfile:
@@ -117,8 +118,8 @@ def _validate_metabolites(mwtabfile, validate_features=True):
             if from_metabolites_features != from_metabolite_data_features:
                 if "" in from_metabolite_data_features:
                     errors.append(ValueError(
-                        "Feature with no name (\"\") in `MS_METABOLITE_DATA` block (usually caused by excetrainious "
-                        "TAB at the end of line)."))
+                        "Feature with no name (\"\") in `MS_METABOLITE_DATA` block (usually caused by extraneous TAB "
+                        "at the end of line)."))
                 if any(val for val in from_metabolite_data_features if val != ""):
                     errors.append(ValueError(
                         "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t "
