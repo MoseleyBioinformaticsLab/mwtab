@@ -1,18 +1,18 @@
-# from os import walk
-# from re import match
-# from mwtab import read_files, section_schema_mapping
 import pytest
 import mwtab
 
 
-@pytest.mark.parametrize("files_source", "tests/example_data/validation_files/AN000001.txt")
+@pytest.mark.parametrize("files_source", [
+    "tests/example_data/validation_files/AN000001.txt",
+    "tests/example_data/validation_files/AN000041.txt"
+])
 def test_validate(files_source):
     mwfile = next(mwtab.read_files(files_source))
     validation_errors = mwtab.validate_file(mwfile)
     assert not validation_errors
 
 
-def test_validate_sample_factors():
+def test_validate_ms_samples():
     mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_1.txt"))
     validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False, validate_schema=False)
     assert len(validation_errors) == 1
@@ -20,12 +20,35 @@ def test_validate_sample_factors():
 
     mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_2.txt"))
     validation_errors = mwtab.validate_file(mwfile, validate_features=False, validate_schema=False)
+    assert len(validation_errors) == 4
     assert repr(validation_errors[0]) == "ValueError('Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
     assert repr(validation_errors[1]) == "ValueError('Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
     assert repr(validation_errors[2]) == "ValueError('Sample with no Sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused " \
                                         "by extraneous TAB at the end of line).',)"
-    # TODO: Attempt to clena up the following line.
+    # TODO: Attempt to cleanup the following line.
     assert repr(validation_errors[3]).replace("\"", "'").replace("\\n", "").replace("\\t", "") == "ValueError('`MS_METABOLITE_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` block.Additional samples: {'LabF_115873'}',)"
+
+
+def test_validate_nmr_samples():
+    mwfile = next(mwtab.read_files("example_data/validation_files/AN000041_error_1.txt"))
+    validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False,
+                                            validate_schema=False)
+    assert len(validation_errors) == 1
+    assert repr(validation_errors[0]) == "KeyError('Missing key `Bin range(ppm)` in `NMR_BINNED_DATA` block.',)"
+
+    mwfile = next(mwtab.read_files("example_data/validation_files/AN000041_error_2.txt"))
+    validation_errors = mwtab.validate_file(mwfile, validate_features=False, validate_schema=False)
+    assert len(validation_errors) == 4
+    assert repr(validation_errors[0]) == "ValueError('Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
+    assert repr(validation_errors[1]) == "ValueError('Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
+    assert repr(validation_errors[2]) == "ValueError('Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block " \
+                                         "(usually caused by extraneous TAB at the end of line).',)"
+    # TODO: Attempt to cleanup the following line.
+    assert repr(validation_errors[3]).replace("\"", "'").replace("\\n", "").replace("\\t", "") == "ValueError('`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` block.Additional samples: {'C0559'}',)"
+
+
+def test_validate_factors():
+    pass
 
 
 def test_validate_metabolites():
@@ -53,7 +76,7 @@ REGEXS = [
     (r"(?i)(ri)(\s|_)(type)", "ri_type"),                           # ri_type
     (r"(?i)(other)(\s|_)(id)", "other_id"),                         # other_id (other_id_type)
     (r"(?i)[\s|\S]{,}(HMDB)", "hmdb_id"),                           # hmdb_id
-    (r"(?i)(Human Metabolome D)[\S]{,}", "hmdb_id"),
+    (r"(?i)(Human Metabolome D)[\S]{,}", "hm0db_id"),
 ]
 
 duplicate_fields = {f: dict() for r, f in REGEXS}
@@ -61,8 +84,14 @@ duplicate_fields = {f: dict() for r, f in REGEXS}
 if __name__ == '__main__':
 
     test_validate("example_data/validation_files/AN000001.txt")
-    test_validate_sample_factors()
+    test_validate("example_data/validation_files/AN000041.txt")
+    test_validate_ms_samples()
+    test_validate_nmr_samples()
     exit()
+
+    # from os import walk
+    # from re import match
+    # from mwtab import read_files, section_schema_mapping
 
     error_files = dict()
     unique_fields = dict()

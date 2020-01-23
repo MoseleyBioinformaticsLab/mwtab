@@ -68,10 +68,10 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                     if any(val for val in from_nmr_binned_data_samples if val != ""):
                         errors.append(ValueError(
                             "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
-                            "block.\n\t Additional samples: {}".format(
+                            "block.\n\tAdditional samples: {}".format(
                                 from_nmr_binned_data_samples.difference(from_subject_samples))))
             except KeyError:
-                errors.append(KeyError("Missing key `Fields` in `NMR_BINNED_DATA` block."))
+                errors.append(KeyError("Missing key `Bin range(ppm)` in `NMR_BINNED_DATA` block."))
 
     if validate_factors:
 
