@@ -50,10 +50,10 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                             "Sample with no Sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
                             "extraneous TAB at the end of line)."))
                     if any(val for val in from_metabolite_data_samples if val != ""):
-                        errors.append(ValueError(
-                            "`MS_METABOLITE_DATA` block contains additional samples not found in "
-                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {}".format(
-                                from_metabolite_data_samples.difference(from_subject_samples))))
+                        error_msg = "`MS_METABOLITE_DATA` block contains additional samples not found in " \
+                                    "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {}".format(
+                                        str(from_metabolite_data_samples.difference(from_subject_samples)))
+                        errors.append(ValueError(error_msg))
             except KeyError:
                 errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
 
@@ -71,7 +71,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                             "block.\n\t Additional samples: {}".format(
                                 from_nmr_binned_data_samples.difference(from_subject_samples))))
             except KeyError:
-                errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
+                errors.append(KeyError("Missing key `Fields` in `NMR_BINNED_DATA` block."))
 
     if validate_factors:
 
@@ -140,7 +140,8 @@ def validate_section(section, schema):
     return schema.validate(section)
 
 
-def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True, validate_factors=True, validate_features=True):
+def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True,
+                  validate_factors=True, validate_features=True, validate_schema=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -154,22 +155,21 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = []
-    try:
+    if validate_samples or validate_factors:
         errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
-    except KeyError:
-        errors.append(KeyError())
 
-    if mwtabfile.get("METABOLITES"):
+    if mwtabfile.get("METABOLITES") and validate_features:
         try:
             errors.extend(_validate_metabolites(mwtabfile, validate_features))
         except KeyError:
             errors.append(KeyError())
 
-    for section_key, section in mwtabfile.items():
-        try:
-            schema = section_schema_mapping[section_key]
-            validate_section(section=section, schema=schema)
-        except Exception as e:
-            errors.append(e)
+    if validate_schema:
+        for section_key, section in mwtabfile.items():
+            try:
+                schema = section_schema_mapping[section_key]
+                validate_section(section=section, schema=schema)
+            except Exception as e:
+                errors.append(e)
 
     return errors

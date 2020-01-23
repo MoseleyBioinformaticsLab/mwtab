@@ -1,11 +1,36 @@
-# TODO: This file should not be included in the public release
-# TODO: update "if any(val for val in from_metabolite_data_features if val != ""):" lines to use diff.
 # from os import walk
 # from re import match
-#
 # from mwtab import read_files, section_schema_mapping
 import pytest
 import mwtab
+
+
+@pytest.mark.parametrize("files_source", "tests/example_data/validation_files/AN000001.txt")
+def test_validate(files_source):
+    mwfile = next(mwtab.read_files(files_source))
+    validation_errors = mwtab.validate_file(mwfile)
+    assert not validation_errors
+
+
+def test_validate_sample_factors():
+    mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_1.txt"))
+    validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False, validate_schema=False)
+    assert len(validation_errors) == 1
+    assert repr(validation_errors[0]) == "KeyError('Missing key `Samples` in `MS_METABOLITE_DATA` block.',)"
+
+    mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_2.txt"))
+    validation_errors = mwtab.validate_file(mwfile, validate_features=False, validate_schema=False)
+    assert repr(validation_errors[0]) == "ValueError('Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
+    assert repr(validation_errors[1]) == "ValueError('Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
+    assert repr(validation_errors[2]) == "ValueError('Sample with no Sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused " \
+                                        "by extraneous TAB at the end of line).',)"
+    # TODO: Attempt to clena up the following line.
+    assert repr(validation_errors[3]).replace("\"", "'").replace("\\n", "").replace("\\t", "") == "ValueError('`MS_METABOLITE_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` block.Additional samples: {'LabF_115873'}',)"
+
+
+def test_validate_metabolites():
+    pass
+
 
 processing_errors = [
     "AN000404", "AN000405", "AN000410", "AN000415", "AN000436", "AN000439", "AN001311", "AN001312", "AN001313",
@@ -13,26 +38,6 @@ processing_errors = [
     "AN001493", "AN001499", "AN001761", "AN001762", "AN001776", "AN001777", "AN001982", "AN001689", "AN001690",
     "AN001992"
 ]
-
-
-@pytest.mark.parametrize("files_source", "tests/example_data/validation_files/AN000001.txt")
-def test_validate(files_source):
-    mwfile = next(mwtab.read_files(files_source))
-    validation_errors = validate_file(mwfile)
-    assert not validation_errors
-
-
-@pytest.mark.parametrize("files_source", [
-    "tests/example_data/validation_files/AN000001_errors.txt",
-])
-def test_validate_sample_factors(files_source):
-    mwfile = next(mwtab.read_files(files_source))
-    validation_errors = validate_file(mwfile)
-    assert str(validation_errors[0]) == "Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block."
-
-
-def test_validate_metabolites():
-    pass
 
 REGEXS = [
     (r"(?i)(m/z)", "m/z"),                                          # m/z
@@ -56,7 +61,7 @@ duplicate_fields = {f: dict() for r, f in REGEXS}
 if __name__ == '__main__':
 
     test_validate("example_data/validation_files/AN000001.txt")
-    test_validate_sample_factors("example_data/validation_files/AN000001_errors.txt")
+    test_validate_sample_factors()
     exit()
 
     error_files = dict()
