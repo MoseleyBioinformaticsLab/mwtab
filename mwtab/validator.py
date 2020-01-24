@@ -12,7 +12,6 @@ required key-value pairs are present.
 """
 
 from collections import OrderedDict
-
 from .mwschema import section_schema_mapping
 
 

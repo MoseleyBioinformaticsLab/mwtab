@@ -70,7 +70,7 @@ SU:GENDER                        	Male, Female
 SU:SPECIES_GROUP                 	Human
 #SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
 SUBJECT_SAMPLE_FACTORS           	-		Disease Status:Cases	
-SUBJECT_SAMPLE_FACTORS           	-	C0629		
+SUBJECT_SAMPLE_FACTORS           	-	C0629	Disease Status:Cases	
 SUBJECT_SAMPLE_FACTORS           	-	C0640	Disease Status:Cases	
 SUBJECT_SAMPLE_FACTORS           	-	C0835	Disease Status:Cases	
 SUBJECT_SAMPLE_FACTORS           	-	D0613	Disease Status:Cases	
