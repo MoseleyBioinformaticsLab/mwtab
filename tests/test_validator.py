@@ -30,7 +30,7 @@ def test_validate_ms_samples():
                             "extraneous TAB at the end of line).")
     assert type(validation_errors[1]) == type(test_error) and validation_errors[1].args == test_error.args
     test_error = ValueError("`MS_METABOLITE_DATA` block contains additional samples not found in "
-                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAddit   ional samples: {'LabF_115873'}")
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {'LabF_115873'}")
     assert type(validation_errors[2]) == type(test_error) and validation_errors[2].args == test_error.args
 
 
