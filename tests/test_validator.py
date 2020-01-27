@@ -30,7 +30,7 @@ def test_validate_ms_samples():
                             "extraneous TAB at the end of line).")
     assert type(validation_errors[1]) == type(test_error) and validation_errors[1].args == test_error.args
     test_error = ValueError("`MS_METABOLITE_DATA` block contains additional samples not found in "
-                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {'LabF_115873'}")
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAddit   ional samples: {'LabF_115873'}")
     assert type(validation_errors[2]) == type(test_error) and validation_errors[2].args == test_error.args
 
 
@@ -61,17 +61,8 @@ def test_validate_factors():
     validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_features=False,
                                             validate_schema=False)
     assert len(validation_errors) == 1
-    assert repr(validation_errors[0]) == "KeyError('Missing key `Factors` in `MS_METABOLITE_DATA` block.')"
-
-    # mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_4.txt"))
-    # validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_features=False, validate_schema=False)
-    # print(len(validation_errors))
-    # print(validation_errors)
-    # assert len(validation_errors) == 3
-    # assert repr(validation_errors[0]) == "ValueError('Sample with no Factor(s) (\"\") in `SUBJECT_SAMPLE_FACTOR` block.',)"
-    # assert repr(validation_errors[2]) == "ValueError('Sample with no factors (\"\") in `MS_METABOLITE_DATA` block " \
-    #                                      "(usually caused by extraneous TAB at the end of line).',)"
-    # assert repr(validation_errors[3]).replace("\"", "'").replace("\\n", "").replace("\\t", "") == "ValueError('`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` block.Additional samples: {'C0559'}',)"
+    test_error = KeyError("Missing key `Factors` in `MS_METABOLITE_DATA` block.")
+    assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
 
 
 def test_validate_metabolites():

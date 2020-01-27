@@ -64,7 +64,7 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                         errors.append(ValueError(
                             "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by "
                             "extraneous TAB at the end of line)."))
-                    if any(val for val in from_nmr_binned_data_samples if val != ""):
+                       if any(val for val in from_nmr_binned_data_samples if val != ""):
                         errors.append(ValueError(
                             "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
                             "block.\n\tAdditional samples: {}".format(
@@ -93,37 +93,37 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     return errors
 
 
-def _validate_metabolites(mwtabfile, validate_features=True):
+def _validate_metabolites(mwtabfile):
     """Validate metabolite ``Features`` across the file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param validate_features:
-    :type validate_features: :py:obj:`bool`
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """
     errors = []
 
-    from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
+    try:
+        from_metabolite_data_features = {i["metabolite_name"] for i in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]}
+    except KeyError:
+        errors.append(KeyError("Missing key `metabolite_name` in `MS_METABOLITE_DATA` block."))
+    try:
+        from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
+    except KeyError:
+        errors.append(KeyError("Missing key `metabolite_name` in `MS_METABOLITE_DATA` block."))
 
-    if "" in from_metabolites_features:
-        errors.append(ValueError(
-            "Feature with no name (\"\") in `METABOLITES` block (usually caused by extraneous TAB at the end of line)."))
+    if not errors:
+        if "" in from_metabolite_data_features:
+            errors.append(ValueError("Feature with no name (\"\") in `MS_METABOLITE_DATA` block."))
+        if "" in from_metabolites_features:
+            errors.append(ValueError("Feature with no name (\"\") in `METABOLITES` block."))
 
-    if validate_features:
-        if "MS_METABOLITE_DATA" in mwtabfile:
-            from_metabolite_data_features = {i["metabolite_name"] for i in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]}
-            if from_metabolites_features != from_metabolite_data_features:
-                if "" in from_metabolite_data_features:
-                    errors.append(ValueError(
-                        "Feature with no name (\"\") in `MS_METABOLITE_DATA` block (usually caused by extraneous TAB "
-                        "at the end of line)."))
-                if any(val for val in from_metabolite_data_features if val != ""):
-                    errors.append(ValueError(
-                        "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t "
-                        "Additional features: {}".format(
-                            from_metabolite_data_features.difference(from_metabolites_features))))
+        if from_metabolite_data_features != from_metabolites_features:
+            if any(val for val in from_metabolite_data_features if val != ""):
+                errors.append(ValueError(
+                    "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t"
+                    "Additional features: {}".format(
+                        from_metabolite_data_features.difference(from_metabolites_features))))
 
     return errors
 
@@ -159,7 +159,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
 
     if mwtabfile.get("METABOLITES") and validate_features:
         try:
-            errors.extend(_validate_metabolites(mwtabfile, validate_features))
+            errors.extend(_validate_metabolites(mwtabfile))
         except KeyError:
             errors.append(KeyError())
 
