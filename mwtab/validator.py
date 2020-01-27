@@ -154,14 +154,12 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = []
+
     if validate_samples or validate_factors:
         errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
 
     if mwtabfile.get("METABOLITES") and validate_features:
-        try:
-            errors.extend(_validate_metabolites(mwtabfile))
-        except KeyError:
-            errors.append(KeyError())
+        errors.extend(_validate_metabolites(mwtabfile))
 
     if validate_schema:
         for section_key, section in mwtabfile.items():
