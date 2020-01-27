@@ -62,9 +62,9 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                 if not from_nmr_binned_data_samples.issubset(from_subject_samples):
                     if "" in from_nmr_binned_data_samples:
                         errors.append(ValueError(
-                            "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by "
-                            "extraneous TAB at the end of line)."))
-                       if any(val for val in from_nmr_binned_data_samples if val != ""):
+                            "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by extraneous "
+                            "TAB at the end of line)."))
+                    if any(val for val in from_nmr_binned_data_samples if val != ""):
                         errors.append(ValueError(
                             "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
                             "block.\n\tAdditional samples: {}".format(
