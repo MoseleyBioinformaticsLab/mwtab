@@ -70,8 +70,23 @@ def test_validate_metabolites():
     validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_factors=False,
                                             validate_schema=False)
     assert len(validation_errors) == 1
+    test_error = KeyError("Missing key `metabolite_name` in `METABOLITES` block.")
+    assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
 
-    pass
+    mwfile = next(mwtab.read_files("example_data/validation_files/AN000001_error_6.txt"))
+    validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_factors=False,
+                                            validate_schema=False)
+    assert len(validation_errors) == 4
+    test_error = ValueError("Feature with no name (\"\") in `MS_METABOLITE_DATA` block.")
+    assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
+    test_error = ValueError("Feature with no name (\"\") in `METABOLITES` block.")
+    assert type(validation_errors[1]) == type(test_error) and validation_errors[1].args == test_error.args
+    test_error = ValueError("`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` "
+                            "block.\n\tAdditional features: ['1-monostearin', 'xylose']")
+    assert type(validation_errors[2]) == type(test_error) and validation_errors[2].args == test_error.args
+    test_error = ValueError("`METABOLITES` block contains additional features not found in `MS_METABOLITE_DATA` "
+                            "block.\n\tAdditional features: ['1,2,4-benzenetriol', 'xylonic acid']")
+    assert type(validation_errors[3]) == type(test_error) and validation_errors[3].args == test_error.args
 
 
 processing_errors = [
@@ -107,6 +122,7 @@ if __name__ == '__main__':
     test_validate_ms_samples()
     test_validate_nmr_samples()
     test_validate_factors()
+    test_validate_metabolites()
     exit()
 
     # from os import walk
