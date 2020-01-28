@@ -179,9 +179,6 @@ def _validate_data(mwtabfile):
                                                  "metabolite: '{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
 
-    if errors:
-        print(str(errors[0]))
-
     return errors
 
 

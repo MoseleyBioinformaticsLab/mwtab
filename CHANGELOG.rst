@@ -3,15 +3,22 @@
 Release History
 ===============
 
-0.1.11 (2020-01-xx)
+0.1.11 (2020-02-xx)
 ~~~~~~~~~~~~~~~~~~~
 
 **Improvements**
 
-- Added methods for working with Metabolomics Workbench's REST API.
-- Updates ``validator.py`` to now validate metabolite features are consistent between `#METABOLITES`
-  and `MS_METABOLITE_DATA` blocks.
+- Added ``mwrest.py`` module for working with Metabolomics Workbench's REST API.
 
+    - Added methods in ``test_cli.py`` to test module methods.
+- Updated ``validator.py``.
+
+    - Validator now collects all present errors.
+    - Validates consistency of metabolite features between `#METABOLITES` and
+      `#MS_METABOLITE_DATA` blocks.
+    - Validates data in `#MS_METABOLITE_DATA` and `#NMR_BINNED_DATA` blocks.
+
+        - Ensure data does not contain non-numeric or negative values.
 
 **Bugfixes**
 
