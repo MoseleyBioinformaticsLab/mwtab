@@ -43,16 +43,16 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
             try:
                 from_metabolite_data_samples = set(mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["Samples"])
                 if not from_metabolite_data_samples.issubset(from_subject_samples):
-                    # TODO: Using list/OrderedDict to separate missing sample ids from tab errors
                     if "" in from_metabolite_data_samples:
                         errors.append(ValueError(
                             "Sample with no Sample ID (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
                             "extraneous TAB at the end of line)."))
-                    if any(val for val in from_metabolite_data_samples if val != ""):
-                        error_msg = "`MS_METABOLITE_DATA` block contains additional samples not found in " \
-                                    "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {}".format(
-                                        str(from_metabolite_data_samples.difference(from_subject_samples)))
-                        errors.append(ValueError(error_msg))
+                    from_metabolite_data_unique_samples = from_metabolite_data_samples.difference(from_subject_samples)
+                    if any(val for val in from_metabolite_data_unique_samples if val != ""):
+                        errors.append(ValueError(
+                            "`MS_METABOLITE_DATA` block contains additional samples not found in "
+                            "`SUBJECT_SAMPLE_FACTORS` block.\n\tAdditional samples: {}".format(
+                                from_metabolite_data_unique_samples)))
             except KeyError:
                 errors.append(KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block."))
 
@@ -64,11 +64,12 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                         errors.append(ValueError(
                             "Sample with no sample ID (\"\") in `NMR_BINNED_DATA` block (usually caused by extraneous "
                             "TAB at the end of line)."))
-                    if any(val for val in from_nmr_binned_data_samples if val != ""):
+                    from_nmr_binned_data_unique_samples = from_nmr_binned_data_samples.difference(from_subject_samples)
+                    if any(val for val in from_nmr_binned_data_unique_samples if val != ""):
                         errors.append(ValueError(
                             "`NMR_BINNED_DATA` block contains additional samples not found in `SUBJECT_SAMPLE_FACTORS` "
                             "block.\n\tAdditional samples: {}".format(
-                                from_nmr_binned_data_samples.difference(from_subject_samples))))
+                                from_nmr_binned_data_unique_samples)))
             except KeyError:
                 errors.append(KeyError("Missing key `Bin range(ppm)` in `NMR_BINNED_DATA` block."))
 
@@ -82,11 +83,12 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
                         errors.append(ValueError(
                             "Sample with no factors (\"\") in `MS_METABOLITE_DATA` block (usually caused by "
                             "extraneous TAB at the end of line)."))
-                    if any(val for val in from_metabolite_data_factors if val != ""):
+                    from_metabolite_data_unique_factors = from_metabolite_data_factors.difference(from_subject_samples)
+                    if any(val for val in from_metabolite_data_unique_factors if val != ""):
                         errors.append(ValueError(
                             "`MS_METABOLITE_DATA` block contains additional factors not found in "
                             "`SUBJECT_SAMPLE_FACTORS` block.\n\t Additional factors: {}".format(
-                                from_metabolite_data_factors.difference(from_subject_samples))))
+                                from_metabolite_data_unique_factors)))
             except KeyError:
                 errors.append(KeyError("Missing key `Factors` in `MS_METABOLITE_DATA` block."))
 
@@ -113,6 +115,7 @@ def _validate_metabolites(mwtabfile):
         errors.append(KeyError("Missing key `metabolite_name` in `METABOLITES` block."))
 
     if not errors:
+
         if "" in from_metabolite_data_features:
             errors.append(ValueError("Feature with no name (\"\") in `MS_METABOLITE_DATA` block."))
         if "" in from_metabolites_features:
@@ -133,6 +136,51 @@ def _validate_metabolites(mwtabfile):
     return errors
 
 
+def _validate_data(mwtabfile):
+    """
+    Validate data in `MS_METABOLITE_DATA` or `NMR_BINNED_DATA` blocks.
+
+    :param mwtabfile:
+    :return:
+    """
+    errors = []
+
+    if mwtabfile.get("MS_METABOLITE_DATA"):
+        for data_list in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]:
+            sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
+            for k in sample_keys:
+                try:
+                    if float(data_list[k]) < 0:
+                        errors.append(ValueError("`MS_METABOLITE_DATA` block contains negative value ({}) for "
+                                                 "metabolite: '{}' and sample: '{}'.".format(
+                                                    data_list[k], data_list["metabolite_name"], k)))
+                except ValueError:
+                    if not data_list[k]:
+                        errors.append(ValueError("`MS_METABOLITE_DATA` block contains non-numeric value ({}) for "
+                                                 "metabolite: '{}' and sample: '{}'.".format(
+                                                    data_list[k], data_list["metabolite_name"], k)))
+
+    if mwtabfile.get("NMR_BINNED_DATA"):
+        for data_list in mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["DATA"]:
+            sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
+            for k in sample_keys:
+                try:
+                    if float(data_list[k]) < 0:
+                        errors.append(ValueError("`NMR_BINNED_DATA` block contains negative value ({}) for metabolite: "
+                                                 "'{}' and sample: '{}'.".format(
+                                                    data_list[k], data_list["metabolite_name"], k)))
+                except ValueError:
+                    if not data_list[k]:
+                        errors.append(ValueError("`NMR_BINNED_DATA` block contains non-numeric value ({}) for "
+                                                 "metabolite: '{}' and sample: '{}'.".format(
+                                                    data_list[k], data_list["metabolite_name"], k)))
+
+    if errors:
+        print(str(errors[0]))
+
+    return errors
+
+
 def validate_section(section, schema):
     """Validate section of ``mwTab`` formatted file.
 
@@ -145,7 +193,7 @@ def validate_section(section, schema):
 
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True,
-                  validate_factors=True, validate_features=True, validate_schema=True):
+                  validate_factors=True, validate_features=True, validate_schema=True, validate_data=True):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -165,6 +213,9 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
 
     if mwtabfile.get("METABOLITES") and validate_features:
         errors.extend(_validate_metabolites(mwtabfile))
+
+    if validate_data:
+        errors.extend(_validate_data(mwtabfile))
 
     if validate_schema:
         for section_key, section in mwtabfile.items():
