@@ -140,8 +140,12 @@ def _validate_data(mwtabfile):
     """
     Validate data in `MS_METABOLITE_DATA` or `NMR_BINNED_DATA` blocks.
 
-    :param mwtabfile:
-    :return:
+    Checks for null or negative data values in blocks.
+
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :return: List of errors (["None"] if no errors).
+    :rtype: :py:obj:`list`
     """
     errors = []
 
@@ -203,6 +207,12 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :type validate_samples: :py:obj:`True` or :py:obj:`False`
     :param validate_factors: Make sure that factors are consistent across file.
     :type validate_factors: :py:obj:`True` or :py:obj:`False`
+    :param validate_features: Make sure that metabolite features are consistent across file.
+    :type validate_features: :py:obj:`True` or :py:obj:`False`
+    :param validate_schema: Make sure that sections follow schema.
+    :type validate_schema: :py:obj:`True` or :py:obj:`False`
+    :param validate_data: Make sure that no null or negative values are present in data blocks.
+    :type validate_data: :py:obj:`True` or :py:obj:`False`
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
