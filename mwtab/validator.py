@@ -110,7 +110,7 @@ def _validate_metabolites(mwtabfile):
     try:
         from_metabolites_features = {i["metabolite_name"] for i in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]}
     except KeyError:
-        errors.append(KeyError("Missing key `metabolite_name` in `MS_METABOLITE_DATA` block."))
+        errors.append(KeyError("Missing key `metabolite_name` in `METABOLITES` block."))
 
     if not errors:
         if "" in from_metabolite_data_features:
@@ -119,11 +119,16 @@ def _validate_metabolites(mwtabfile):
             errors.append(ValueError("Feature with no name (\"\") in `METABOLITES` block."))
 
         if from_metabolite_data_features != from_metabolites_features:
-            if any(val for val in from_metabolite_data_features if val != ""):
+            from_metabolite_data_unique_features = from_metabolite_data_features.difference(from_metabolites_features)
+            if any(val for val in from_metabolite_data_unique_features if val != ""):
                 errors.append(ValueError(
                     "`MS_METABOLITE_DATA` block contains additional features not found in `METABOLITES` block.\n\t"
-                    "Additional features: {}".format(
-                        from_metabolite_data_features.difference(from_metabolites_features))))
+                    "Additional features: {}".format(sorted(from_metabolite_data_unique_features))))
+            from_metabolites_unique_features = from_metabolites_features.difference(from_metabolite_data_features)
+            if any(val for val in from_metabolites_unique_features if val != ""):
+                errors.append(ValueError(
+                    "`METABOLITES` block contains additional features not found in `MS_METABOLITE_DATA` block.\n\t"
+                    "Additional features: {}".format(sorted(from_metabolites_unique_features))))
 
     return errors
 
