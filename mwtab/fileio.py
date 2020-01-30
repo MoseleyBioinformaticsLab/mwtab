@@ -23,6 +23,7 @@ import tarfile
 import bz2
 import gzip
 import json
+from re import match
 
 from . import mwtab
 from . import validator
@@ -64,6 +65,10 @@ def _generate_filenames(sources):
             yield source
 
         elif source.isdigit():
+            yield next(mwrest.generate_mwtab_urls(source))
+
+        # TODO: Add ST parsing
+        elif match(r"(AN[0-9]{6}$)", source):
             yield next(mwrest.generate_mwtab_urls(source))
 
         elif GenericFilePath.is_url(source):
