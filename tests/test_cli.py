@@ -69,3 +69,10 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     mwtabfiles_analysis_ids_set = set(mwf.analysis_id for mwf in mwtabfiles_list)
     assert mwtabfiles_study_ids_set.issubset({"ST000001", "ST000002"})
     assert mwtabfiles_analysis_ids_set.issubset({"AN000001", "AN000002"})
+
+@pytest.mark.parametrize("input_value, args", [
+    ("AN000001", "tests/example_data/tmp")
+])
+def test_download_command(input_value, args):
+    command = "python-m mwtab download {} {}"
+    assert os.system(command) == 0
