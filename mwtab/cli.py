@@ -69,8 +69,8 @@ def cli(cmdargs):
                     outfile.close()
 
         else:
-            for mwfile in fileio.read_mwrest(
-                    *mwrest.GenericMWURL(**{
+            for mwfile in fileio.read_files(
+                    mwrest.GenericMWURL(**{
                         "context": cmdargs.get("--context") or "study",
                         "input item": cmdargs.get("--input-item") or "analysis_id",
                         'input value': cmdargs["<input-value>"],
@@ -78,8 +78,9 @@ def cli(cmdargs):
                         'output format': cmdargs.get("--output-format") or "txt"
                     }).url
             ):
-                with open(cmdargs.get("--to-path") or getcwd(), "w") as outfile:
-                    mwfile.write(outfile, format="mwtab")
+                print(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"))
+                with open(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"), "w") as outfile:
+                    mwfile.write(outfile, "mwtab")
                     outfile.close()
 
     elif cmdargs["search-metabolites"]:

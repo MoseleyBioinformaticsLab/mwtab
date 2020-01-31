@@ -21,6 +21,7 @@ def test_validate_command(files_source):
     command = "python -m mwtab validate {}".format(files_source)
     assert os.system(command) == 0
 
+
 @pytest.mark.parametrize("from_path, to_path, from_format, to_format", [
     # one-to-one file conversions
     ("tests/example_data/mwtab_files/ST000001_AN000001.txt", "tests/example_data/tmp/json/ST000001_AN000001.json", "mwtab", "json"),
@@ -70,9 +71,15 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     assert mwtabfiles_study_ids_set.issubset({"ST000001", "ST000002"})
     assert mwtabfiles_analysis_ids_set.issubset({"AN000001", "AN000002"})
 
-@pytest.mark.parametrize("input_value, args", [
+
+@pytest.mark.parametrize("input_value, to_path", [
     ("AN000001", "tests/example_data/tmp")
 ])
-def test_download_command(input_value, args):
-    command = "python-m mwtab download {} {}"
-    assert os.system(command) == 0
+def test_download_command(input_value, to_path):
+    command = "/mlab/data/cdpo224/mwtab/venv/bin/python -m mwtab download {} --to-path={}".format(input_value, to_path)
+    blah = os.system(command)
+    print(blah)
+
+
+if __name__ == "__main__":
+    test_download_command("AN000002", "/mlab/data/cdpo224/mwtab/tests/example_data/tmp")
