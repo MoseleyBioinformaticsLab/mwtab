@@ -73,13 +73,12 @@ def test_convert_command(from_path, to_path, from_format, to_format):
 
 
 @pytest.mark.parametrize("input_value, to_path", [
-    ("AN000001", "tests/example_data/tmp")
+    ("AN000002", "tests/example_data/tmp")
 ])
 def test_download_command(input_value, to_path):
     command = "/mlab/data/cdpo224/mwtab/venv/bin/python -m mwtab download {} --to-path={}".format(input_value, to_path)
-    blah = os.system(command)
-    print(blah)
+    assert os.system(command) == 0
 
-
-if __name__ == "__main__":
-    test_download_command("AN000002", "/mlab/data/cdpo224/mwtab/tests/example_data/tmp")
+    mwtabfile = next(mwtab.read_files(to_path))
+    assert mwtabfile.study_id == "ST000002"
+    assert mwtabfile.analysis_id == "AN000002"

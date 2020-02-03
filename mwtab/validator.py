@@ -21,9 +21,9 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
     :param validate_samples:
-    :type validate_samples: :py:obj:`bool`
+    :type validate_samples: :py:obj:`True` or :py:obj:`False`
     :param validate_factors:
-    :type validate_factors: :py:obj:`bool`
+    :type validate_factors: :py:obj:`True` or :py:obj:`False`
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """

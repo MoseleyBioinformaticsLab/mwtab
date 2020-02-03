@@ -27,7 +27,6 @@ Options:
     --input-item=<item>
     --output-item=<item(s)>
     --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
-                                    [default: mwtab].
 """
 
 from . import fileio
@@ -76,9 +75,7 @@ def cli(cmdargs):
                         'input value': cmdargs["<input-value>"],
                         'output item': cmdargs.get("--output-item") or "mwtab",
                         'output format': cmdargs.get("--output-format") or "txt"
-                    }).url
-            ):
-                print(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"))
+                    }).url):
                 with open(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"), "w") as outfile:
                     mwfile.write(outfile, "mwtab")
                     outfile.close()
