@@ -76,7 +76,7 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     ("AN000002", "tests/example_data/tmp")
 ])
 def test_download_command(input_value, to_path):
-    command = "/mlab/data/cdpo224/mwtab/venv/bin/python -m mwtab download {} --to-path={}".format(input_value, to_path)
+    command = "python -m mwtab download {} --to-path={}".format(input_value, to_path)
     assert os.system(command) == 0
 
     mwtabfile = next(mwtab.read_files(to_path))
