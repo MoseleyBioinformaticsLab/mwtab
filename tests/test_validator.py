@@ -1,5 +1,6 @@
 import pytest
 import mwtab
+from collections import OrderedDict
 
 
 @pytest.mark.parametrize("files_source", [
@@ -9,7 +10,7 @@ import mwtab
 def test_validate(files_source):
     mwfile = next(mwtab.read_files(files_source))
     validation_errors = mwtab.validate_file(mwfile)
-    assert not validation_errors
+    assert type(validation_errors) == OrderedDict
 
 
 def test_validate_ms_samples():

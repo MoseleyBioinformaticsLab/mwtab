@@ -20,9 +20,9 @@ def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param validate_samples:
+    :param validate_samples: Make sure that sample ids are consistent across file.
     :type validate_samples: :py:obj:`True` or :py:obj:`False`
-    :param validate_factors:
+    :param validate_factors: Make sure that factors are consistent across file.
     :type validate_factors: :py:obj:`True` or :py:obj:`False`
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
@@ -194,7 +194,8 @@ def validate_section(section, schema):
 
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True,
-                  validate_factors=True, validate_features=True, validate_schema=True, validate_data=True):
+                  validate_factors=True, validate_features=True, validate_schema=True, validate_data=True,
+                  verbose=False, test=False):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -214,6 +215,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = []
+    validated_mwtabfile = OrderedDict()
 
     if validate_samples or validate_factors:
         errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
@@ -229,7 +231,15 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
             try:
                 schema = section_schema_mapping[section_key]
                 validate_section(section=section, schema=schema)
+                validated_mwtabfile[section_key] = section
             except Exception as e:
                 errors.append(e)
 
-    return errors
+    if not errors:
+        return validated_mwtabfile
+    elif verbose:
+        print("Errors in file {}:".format(mwtabfile.analysis_id))
+        for e in errors:
+            print("\t{}".format(str(e)))
+    if test:
+        return errors
