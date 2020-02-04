@@ -22,3 +22,18 @@ def test_mwrest(kwds):
         kwds["output item"],
         kwds.get("output format") or ""
     )
+
+
+@pytest.mark.parametrize("kwds", [
+    ({'context': 'study',
+      'input item': 'analysis_id',
+      'input value': "ST000002",
+      'output item': 'mwtab',
+      'output format': "txt"}),
+])
+def test_failure(kwds):
+    expected_error = ValueError("Invalid Metabolomics Workbench analysis ID for a study (AN<6-digit integer>)")
+    try:
+        GenericMWURL(**kwds)
+    except ValueError as e:
+        assert e.args == expected_error.args
