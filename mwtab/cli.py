@@ -10,8 +10,10 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
-    mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=item(s)] [--output-format=<format>] [--validate] [--verbose]
-    mwtab search-metabolites <from-path> <subject-type> <subject-species>
+    mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--validate] [--verbose]
+    mwtab extract metabolites <from-path> <output-filename> <key>=<value> ... [--extraction-format=<format>]
+    mwtab extract metadata <from-path> <output-filename> <key> ... [--extraction-format=<format>]
+
 
 Options:
     -h, --help                      Show this screen.
@@ -20,17 +22,22 @@ Options:
     --validate                      Validate the mwTab file.
     --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
     --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
-    --mw-rest=<url>                 URL to MW REST interface [default:
-                                    https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
+    --mw-rest=<url>                 URL to MW REST interface
+                                    [default: https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
     --context=<context>             Type of resource to access from MW REST interface, available contexts: study,
                                     compound, refmet, gene, protein, moverz, exactmass [default: study].
     --input-item=<item>
-    --output-item=<item(s)>
+    --output-item=<item>
     --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
+    --extraction-format=<format>    File format for extracted data/metadata to be save in, available formats: csv, json
+                                    [default: csv].
+
+    <output-filename> can take a "-" which will use stdout.
 """
 
 from . import fileio
 from . import mwrest
+from . import mwextract
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping
@@ -80,24 +87,8 @@ def cli(cmdargs):
                     mwfile.write(outfile, "mwtab")
                     outfile.close()
 
-    elif cmdargs["search-metabolites"]:
-        metabolites = dict()
-        analyses = set()
-
-        for mwfile in fileio.read_files(cmdargs["<from-path>"]):
-            if mwfile["SUBJECT"]["SUBJECT_TYPE"] == cmdargs["<subject-type>"] and \
-                    mwfile["SUBJECT"]["SUBJECT_SPECIES"] == cmdargs["<subject-species>"]:
-                if mwfile.get("METABOLITES"):
-                    analyses.add(mwfile.analysis_id)
-                    for metabolite in mwfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
-                        if metabolite["metabolite_name"] in metabolites.keys():
-                            metabolites[metabolite["metabolite_name"]].append(mwfile.analysis_id)
-                        else:
-                            metabolites[metabolite["metabolite_name"]] = [mwfile.analysis_id]
-
-        print("{} matched analyses:\n\t{}".format(len(analyses), analyses))
-
-        metabolites = sorted([item for item in metabolites.items()], key=lambda x: len(x[1]), reverse=True)
-        for metabolite in metabolites:
-            print(metabolite[0])
-            print("\t", metabolite[1])
+    elif cmdargs["extract"]:
+        if cmdargs["metabolites"]:
+            mwextract.extract_metabolites(cmdargs)
+        elif cmdargs["metadata"]:
+            mwextract.extract_metabolites(cmdargs)
