@@ -31,6 +31,7 @@ def extract_metabolites(**kwargs):
     # for metabolite in metabolites:
     #     print(metabolite[0])
     #     print("\t", metabolite[1])
+    pass
 
 
 def extract_metadata(kwargs):
@@ -44,7 +45,7 @@ def write_csv():
 
     For metadata:
     key, value_1, ...
-    
+
     :return:
     """
     # for metabolits:
