@@ -46,6 +46,7 @@ This package includes the following modules:
 import logging
 from .fileio import read_files, read_mwrest
 from .validator import validate_file
+from .mwrest import GenericMWURL
 
 
 __version__ = "0.1.11"
