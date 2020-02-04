@@ -38,6 +38,17 @@ def extract_metadata(kwargs):
 
 
 def write_csv():
+    """
+    For metabolites:
+    metabolite_name, num_studies, num_analyses, num_samples,
+
+    For metadata:
+    key, value_1, ...
+    
+    :return:
+    """
+    # for metabolits:
+
     pass
 
 
