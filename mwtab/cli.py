@@ -88,17 +88,21 @@ def cli(cmdargs):
                     outfile.close()
 
     elif cmdargs["extract"]:
-        mwfile_generator = fileio.read_files(cmdargs["from-path"])
+        mwfile_generator = fileio.read_files(cmdargs["<from-path>"])
         if cmdargs["metabolites"]:
             for mwtabfile in mwfile_generator:
-                # exttracted_values = mwextract.extract_metabolites(mwtabfile, cmdargs)
+                # extracted_values = mwextract.extract_metabolites(mwtabfile, cmdargs)
                 pass
 
         elif cmdargs["metadata"]:
+            metadata = dict()
             for mwtabfile in mwfile_generator:
                 extracted_values = mwextract.extract_metadata(mwtabfile, cmdargs)
-                if cmdargs["output-path"] != "-":
-                    if cmdargs["extraction-format"] == "csv":
-                        mwextract.write_metadata_csv(cmdargs["output-path"], extracted_values)
-                    else:
-                        mwextract.write_json(cmdargs["output-path"], extracted_values)
+                [metadata.setdefault(key, set()).update(val) for (key, val) in extracted_values.items()]
+            if cmdargs["<output-path>"] != "-":
+                if cmdargs["--extraction-format"] == "csv":
+                    mwextract.write_metadata_csv(cmdargs["<output-path>"], metadata)
+                else:
+                    mwextract.write_json(cmdargs["<output-path>"], metadata)
+            else:
+                print(metadata)

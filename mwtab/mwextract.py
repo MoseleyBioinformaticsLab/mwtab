@@ -45,8 +45,8 @@ def extract_metadata(mwtabfile, kwargs):
     """
     extracted_values = {}
     for section in mwtabfile:
-        for metadata in section:
-            for key in kwargs["key"]:
+        for metadata in mwtabfile[section]:
+            for key in kwargs["<key>"]:
                 if metadata == key:  # TODO: Allow for partial match, ReGeX, etc.
                     extracted_values.setdefault(key, set()).add(mwtabfile[section][metadata])
 
@@ -64,7 +64,7 @@ def write_metadata_csv(output_path, extracted_values):
     :param dict extracted_values:
     :return:
     """
-    with open(output_path, "w") as outfile:
+    with open(output_path+".csv", "w") as outfile:
         wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
         for key in extracted_values:
             line_list = [key]
@@ -83,5 +83,7 @@ def write_json(output_path, extracted_dict):
         :param dict extracted_dict:
         :return:
         """
-    with open(".".join((output_path, "json")), "w") as outfile:
+    with open(output_path+".json", "w") as outfile:
+        for key in extracted_dict:
+            extracted_dict[key] = list(extracted_dict[key])
         json.dump(extracted_dict, outfile, sort_keys=True, indent=4)
