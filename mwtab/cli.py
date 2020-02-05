@@ -11,8 +11,8 @@ Usage:
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
     mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--validate] [--verbose]
-    mwtab extract metabolites <from-path> <output-filename> <key>=<value> ... [--extraction-format=<format>]
-    mwtab extract metadata <from-path> <output-filename> <key> ... [--extraction-format=<format>]
+    mwtab extract metabolites <from-path> <output-path> <key>=<value> ... [--extraction-format=<format>]
+    mwtab extract metadata <from-path> <output-path> <key> ... [--extraction-format=<format>]
 
 
 Options:
@@ -32,7 +32,7 @@ Options:
     --extraction-format=<format>    File format for extracted data/metadata to be save in, available formats: csv, json
                                     [default: csv].
 
-    <output-filename> can take a "-" which will use stdout.
+    <output-path> can take a "-" which will use stdout.
 """
 
 from . import fileio
@@ -88,7 +88,17 @@ def cli(cmdargs):
                     outfile.close()
 
     elif cmdargs["extract"]:
+        mwfile_generator = fileio.read_files(cmdargs["from-path"])
         if cmdargs["metabolites"]:
-            mwextract.extract_metabolites(cmdargs)
+            for mwtabfile in mwfile_generator:
+                # exttracted_values = mwextract.extract_metabolites(mwtabfile, cmdargs)
+                pass
+
         elif cmdargs["metadata"]:
-            mwextract.extract_metabolites(cmdargs)
+            for mwtabfile in mwfile_generator:
+                extracted_values = mwextract.extract_metadata(mwtabfile, cmdargs)
+                if cmdargs["output-path"] != "-":
+                    if cmdargs["extraction-format"] == "csv":
+                        mwextract.write_metadata_csv(cmdargs["output-path"], extracted_values)
+                    else:
+                        mwextract.write_json(cmdargs["output-path"], extracted_values)

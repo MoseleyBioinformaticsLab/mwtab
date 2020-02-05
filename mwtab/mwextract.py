@@ -8,9 +8,11 @@ mwtab.mwextract
 This module provides a number of functions for extracting metadata and data
 stored in ``mwTab`` formatted files.
 """
+import csv
+import json
 
 
-def extract_metabolites(**kwargs):
+def extract_metabolites(mwtabfile, **kwargs):
     # metabolites = dict()
     # analyses = set()
     #
@@ -34,24 +36,52 @@ def extract_metabolites(**kwargs):
     pass
 
 
-def extract_metadata(kwargs):
-    pass
+def extract_metadata(mwtabfile, kwargs):
+    """
+
+    :param mwtabfile:
+    :param kwargs:
+    :return:
+    """
+    extracted_values = {}
+    for section in mwtabfile:
+        for metadata in section:
+            for key in kwargs["key"]:
+                if metadata == key:  # TODO: Allow for partial match, ReGeX, etc.
+                    extracted_values.setdefault(key, set()).add(mwtabfile[section][metadata])
+
+    return extracted_values
 
 
-def write_csv():
+def write_metadata_csv(output_path, extracted_values):
     """
     For metabolites:
     metabolite_name, num_studies, num_analyses, num_samples,
 
     For metadata:
     key, value_1, ...
-
+    :param str output_path:
+    :param dict extracted_values:
     :return:
     """
-    # for metabolits:
+    with open(output_path, "w") as outfile:
+        wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
+        for key in extracted_values:
+            line_list = [key]
+            line_list.extend([val for val in sorted(extracted_values[key])])
+            wr.writerow(line_list)
 
-    pass
 
+def write_json(output_path, extracted_dict):
+    """
+        For metabolites:
+        metabolite_name, num_studies, num_analyses, num_samples,
 
-def write_json():
-    pass
+        For metadata:
+        key, value_1, ...
+        :param str output_path:
+        :param dict extracted_dict:
+        :return:
+        """
+    with open(".".join((output_path, "json")), "w") as outfile:
+        json.dump(extracted_dict, outfile, sort_keys=True, indent=4)
