@@ -10,9 +10,61 @@ stored in ``mwTab`` formatted files.
 """
 import csv
 import json
+import re
 
 
-def extract_metabolites(mwtabfile, **kwargs):
+class ItemMatcher(object):
+    section_conversion = {
+        "PR": "PROJECT",
+        "ST": "STUDY",
+        "SU": "SUBJECT",
+        "CO": "COLLECTION",
+        "TR": "TREATMENT",
+        "SP": "SAMPLEPREP",
+        "CH": "CHROMATOGRAPHY",
+        "AN": "ANALYSIS",
+        "MS": "MS",
+        "NM": "NMR",
+    }
+
+    def __init__(self, full_key, value_comparison):
+        self.full_key = full_key
+        self.section, self.key = self.full_key.split(":")
+        self.section = ItemMatcher.section_conversion[self.section]
+        self.value_comparison = value_comparison
+
+    def __call__(self, mwtabfile):
+        return mwtabfile[self.section][self.key] == self.value_comparison
+
+
+class ReGeXMatcher(ItemMatcher):
+
+    def __init__(self, full_key, value_comparison):
+        super(ReGeXMatcher, self).__init__(full_key, value_comparison)
+
+    def __call__(self, mwtabfile):
+        return re.search(self.value_comparison, mwtabfile[self.section][self.key])
+
+
+def extract_metabolites(mwfile_generator, kwargs):
+
+    metabolites = dict()
+    matchers = [ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]) for i in range(len(kwargs["<key>"]))]
+    for mwtabfile in mwfile_generator:
+        if all(matcher(mwtabfile) for matcher in matchers):
+            for metabolite in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
+                for data_list in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]:
+                    sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
+                    for k in sample_keys:
+                        if float(data_list[k]) > 0:
+                            metabolites.setdefault(metabolite, dict())\
+                                .setdefault("study_ids", dict())\
+                                .setdefault("analysis_ids", dict())\
+                                .setdefault("sample_ids", set())\
+                                .add(k)
+
+    return metabolites
+
     # metabolites = dict()
     # analyses = set()
     #
@@ -33,7 +85,6 @@ def extract_metabolites(mwtabfile, **kwargs):
     # for metabolite in metabolites:
     #     print(metabolite[0])
     #     print("\t", metabolite[1])
-    pass
 
 
 def extract_metadata(mwtabfile, kwargs):
