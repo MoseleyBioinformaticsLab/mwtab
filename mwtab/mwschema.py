@@ -23,7 +23,7 @@ metabolomics_workbench_schema = Schema(
         "CREATED_ON": str,
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
-        Optional("PROJECT_ID"): str,  # Added in 0.11.0
+        Optional("PROJECT_ID"): str,  # assumed
         Optional("HEADER"): str,
         Optional("DATATRACK_ID"): str
     }
@@ -68,8 +68,8 @@ study_schema = Schema(
         Optional("NUM_MALES"): str,
         Optional("NUM_FEMALES"): str,
         Optional("STUDY_COMMENTS"): str,
-        Optional("PUBLICATIONS"): str,
-        Optional("SUBMIT_DATE"): str
+        Optional("PUBLICATIONS"): str,  # assumed
+        Optional("SUBMIT_DATE"): str  # assumed
     }
 )
 
@@ -129,7 +129,7 @@ collection_schema = Schema(
         Optional("COLLECTION_PROTOCOL_ID"): str,
         Optional("COLLECTION_PROTOCOL_FILENAME"): str,
         Optional("COLLECTION_PROTOCOL_COMMENTS"): str,
-        Optional("SAMPLE_TYPE"): str,
+        "SAMPLE_TYPE": str,
         Optional("COLLECTION_METHOD"): str,
         Optional("COLLECTION_LOCATION"): str,
         Optional("COLLECTION_FREQUENCY"): str,
@@ -296,7 +296,7 @@ ms_schema = Schema(
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        Optional("MS_COMMENTS"): str,
+        "MS_COMMENTS": str,  # changed to required
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
@@ -396,14 +396,7 @@ metabolites_schema = Schema(
                 "DATA": [
                     {
                         "metabolite_name": str,
-                        Optional("moverz_quant"): str,
-                        Optional("ri"): str,
-                        Optional("ri_type"): str,
-                        Optional("pubchem_id"): str,
-                        Optional("inchi_key"): str,
-                        Optional("kegg_id"): str,
-                        Optional("other_id"): str,
-                        Optional("other_id_type"): str
+                        Optional(str): str
                     }
                 ]
             }

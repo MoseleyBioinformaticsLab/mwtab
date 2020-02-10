@@ -10,7 +10,7 @@ Release History
 
 - Added ``mwrest.py`` module for working with Metabolomics Workbench's REST API.
 
-    - Added methods in ``test_cli.py`` to test module methods.
+    - Added methods in ``test_mwrest.py`` to test module methods.
 - Updated ``validator.py``.
 
     - Validator now collects all present errors.
@@ -26,6 +26,7 @@ Release History
   updated `mwTab` format specification.
 
      - Adds `PROJECT_ID` as optional schema field in `#METABOLOMICS WORKBENCH` block.
+     - Changes `METABOLITES` block schema to all for user specified fields.
 - Updated ``validator.py`` to be consistent Metabolomics Workbench's
   updated `mwTab` format specification.
 

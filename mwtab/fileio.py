@@ -117,7 +117,7 @@ def read_files(*sources, **kwds):
         except Exception as e:
             if VERBOSE:
                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
-            pass
+            raise e
 
 
 def read_mwrest(*sources, **kwds):

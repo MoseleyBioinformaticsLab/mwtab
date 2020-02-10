@@ -25,7 +25,7 @@ SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type"
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
-def tokenizer(text):
+def tokenizer(text, verbose=False):
     """A lexical analyzer for the `mwtab` formatted files.
 
     :param str text: `mwtab` formatted text.
@@ -97,8 +97,9 @@ def tokenizer(text):
                         else:
                             yield KeyValue(key.strip(), value)
                     except ValueError:
-                        print("LINE WITH ERROR:\n\t", repr(line))
-                        raise
+                        if verbose:
+                            print("LINE WITH ERROR:\n\t", repr(line))
+                        raise ValueError("LINE WITH ERROR:\n\t", repr(line))
 
     yield KeyValue("#ENDSECTION", "\n")
     yield KeyValue("!#ENDFILE", "\n")  # This is to ensure that tokenizer terminates when #END is missing.

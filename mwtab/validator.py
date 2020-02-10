@@ -147,6 +147,7 @@ def _validate_data(mwtabfile):
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """
+    null_values = ["", "NA", "N", "NULL", "ND", "N.D.", "not measured", "xx", ".", "b n v b", "< LOD"]
     errors = []
 
     if mwtabfile.get("MS_METABOLITE_DATA"):
@@ -159,10 +160,11 @@ def _validate_data(mwtabfile):
                                                  "metabolite: '{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
                 except ValueError:
-                    if not data_list[k]:
+                    if not any(null_value == data_list[k] for null_value in null_values):
                         errors.append(ValueError("`MS_METABOLITE_DATA` block contains non-numeric value ({}) for "
                                                  "metabolite: '{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
+                        break
 
     if mwtabfile.get("NMR_BINNED_DATA"):
         for data_list in mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["DATA"]:
@@ -174,10 +176,11 @@ def _validate_data(mwtabfile):
                                                  "'{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
                 except ValueError:
-                    if not data_list[k]:
+                    if not any(null_value == data_list[k] for null_value in null_values):
                         errors.append(ValueError("`NMR_BINNED_DATA` block contains non-numeric value ({}) for "
                                                  "metabolite: '{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
+                        break
 
     return errors
 
@@ -235,7 +238,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
             except Exception as e:
                 errors.append(e)
 
-    if not errors:
+    if not test and not errors:
         return validated_mwtabfile
     elif verbose:
         print("Errors in file {}:".format(mwtabfile.analysis_id))
