@@ -49,14 +49,13 @@ if __name__ == '__main__':
             mwfile = next(read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
 
             try:
-                errors = validate_file(mwfile, validate_samples=True, validate_factors=True, validate_features=True,
-                                       validate_schema=True, validate_data=True, test=True)
+                errors = validate_file(mwfile, test=True)
                 if errors:
                     error_files["validating"].add(filename.split(".")[0])
-                    print("\tValidating Error(s)")
-                    for e in errors:
-                        print("\t\t" + e.__class__.__name__)
-                        print("\t\t" + str(e))
+                    # print("\tValidating Error(s)")
+                    # for e in errors:
+                    #     print("\t\t" + e.__class__.__name__)
+                    #     print("\t\t" + str(e))
             except KeyError as e:
                 error_files["validating"].add(filename.split(".")[0])
                 print("\tValidating Error(s)")
@@ -65,9 +64,9 @@ if __name__ == '__main__':
 
         except Exception as e:
             error_files["processing"].add(filename.split(".")[0])
-            print("\tProcessing Error")
-            print("\t\t"+e.__class__.__name__)
-            print("\t\t"+str(e))
+            # print("\tProcessing Error")
+            # print("\t\t"+e.__class__.__name__)
+            # print("\t\t"+str(e))
 
     print(len(error_files["validating"]))
     print(len(error_files["processing"]))
