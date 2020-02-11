@@ -160,27 +160,27 @@ def _validate_data(mwtabfile):
                                                  "metabolite: '{}' and sample: '{}'.".format(
                                                     data_list[k], data_list["metabolite_name"], k)))
                 except ValueError:
-                    if not any(null_value == data_list[k] for null_value in null_values):
-                        errors.append(ValueError("`MS_METABOLITE_DATA` block contains non-numeric value ({}) for "
-                                                 "metabolite: '{}' and sample: '{}'.".format(
-                                                    data_list[k], data_list["metabolite_name"], k)))
-                        break
+                    # if not any(null_value == data_list[k] for null_value in null_values):
+                    #     errors.append(ValueError("`MS_METABOLITE_DATA` block contains non-numeric value ({}) for "
+                    #                              "metabolite: '{}' and sample: '{}'.".format(
+                    #                                 data_list[k], data_list["metabolite_name"], k)))
+                    pass
 
     if mwtabfile.get("NMR_BINNED_DATA"):
         for data_list in mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["DATA"]:
-            sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
+            sample_keys = [k for k in data_list.keys() if k != "Bin range(ppm)"]
             for k in sample_keys:
                 try:
                     if float(data_list[k]) < 0:
-                        errors.append(ValueError("`NMR_BINNED_DATA` block contains negative value ({}) for metabolite: "
+                        errors.append(ValueError("`NMR_BINNED_DATA` block contains negative value ({}) for Bin range(ppm): "
                                                  "'{}' and sample: '{}'.".format(
-                                                    data_list[k], data_list["metabolite_name"], k)))
+                                                    data_list[k], data_list["Bin range(ppm)"], k)))
                 except ValueError:
-                    if not any(null_value == data_list[k] for null_value in null_values):
-                        errors.append(ValueError("`NMR_BINNED_DATA` block contains non-numeric value ({}) for "
-                                                 "metabolite: '{}' and sample: '{}'.".format(
-                                                    data_list[k], data_list["metabolite_name"], k)))
-                        break
+                    # if not any(null_value == data_list[k] for null_value in null_values):
+                    #     errors.append(ValueError("`NMR_BINNED_DATA` block contains non-numeric value ({}) for "
+                    #                              "metabolite: '{}' and sample: '{}'.".format(
+                    #                                 data_list[k], data_list["metabolite_name"], k)))
+                    pass
 
     return errors
 
