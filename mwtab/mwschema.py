@@ -129,7 +129,7 @@ collection_schema = Schema(
         Optional("COLLECTION_PROTOCOL_ID"): str,
         Optional("COLLECTION_PROTOCOL_FILENAME"): str,
         Optional("COLLECTION_PROTOCOL_COMMENTS"): str,
-        "SAMPLE_TYPE": str,
+        Optional("SAMPLE_TYPE"): str,  # assumed optional due to large number of files without
         Optional("COLLECTION_METHOD"): str,
         Optional("COLLECTION_LOCATION"): str,
         Optional("COLLECTION_FREQUENCY"): str,
@@ -267,26 +267,28 @@ chromatography_schema = Schema(
 analysis_schema = Schema(
     {
         "ANALYSIS_TYPE": str,
-        Optional("NUM_FACTORS"): str,
-        Optional("ACQUISITION_TIME"): str,
-        Optional("PROCESSING_PARAMETERS_FILE"): str,
-        Optional("ANALYSIS_DISPLAY"): str,
-        Optional("ANALYSIS_COMMENTS"): str,
         Optional("LABORATORY_NAME"): str,
+        Optional("OPERATOR_NAME"): str,
         Optional("DETECTOR_TYPE"): str,
         Optional("SOFTWARE_VERSION"): str,
-        Optional("OPERATOR_NAME"): str,
-        Optional("INSTRUMENT_NAME"): str,
         Optional("ACQUISITION_DATE"): str,
-        Optional("DATA_FORMAT"): str,
-        Optional("NUM_METABOLITES"): str,
-        Optional("ACQUISITION_ID"): str,
-        Optional("RAW_FILE"): str,
-        Optional("PROCESSED_FILE"): str,
-        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
-        Optional("ACQUISITION_PARAMETERS_FILE"): str,
         Optional("ANALYSIS_PROTOCOL_FILE"): str,
-        Optional("RANDOMIZATION_ORDER"): str
+        Optional("ACQUISITION_PARAMETERS_FILE"): str,
+        Optional("PROCESSING_PARAMETERS_FILE"): str,
+        Optional("DATA_FORMAT"): str,
+
+        # note specified in mwTab specification (assumed)
+        Optional("ACQUISITION_ID"): str,
+        Optional("ACQUISITION_TIME"): str,
+        Optional("ANALYSIS_COMMENTS"): str,
+        Optional("ANALYSIS_DISPLAY"): str,
+        Optional("INSTRUMENT_NAME"): str,
+        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
+        Optional("NUM_FACTORS"): str,
+        Optional("NUM_METABOLITES"): str,
+        Optional("PROCESSED_FILE"): str,
+        Optional("RANDOMIZATION_ORDER"): str,
+        Optional("RAW_FILE"): str,
     }
 )
 
@@ -296,7 +298,7 @@ ms_schema = Schema(
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        "MS_COMMENTS": str,  # changed to required
+        Optional("MS_COMMENTS"): str,  # changed to required
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
