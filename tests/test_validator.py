@@ -21,7 +21,7 @@ def test_validate_ms_samples(file_source):
     print(file_source)
     mwfile = next(mwtab.read_files(file_source[0]))
     validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 1
     test_error = KeyError("Missing key `Samples` in `MS_METABOLITE_DATA` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
@@ -47,14 +47,14 @@ def test_validate_ms_samples(file_source):
 def test_validate_nmr_samples(file_source):
     mwfile = next(mwtab.read_files(file_source[0]))
     validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 1
     test_error = KeyError("Missing key `Bin range(ppm)` in `NMR_BINNED_DATA` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
 
     mwfile = next(mwtab.read_files(file_source[1]))
     validation_errors = mwtab.validate_file(mwfile, validate_factors=False, validate_features=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 3
     test_error = ValueError("Sample with no Sample ID (\"\") in `SUBJECT_SAMPLE_FACTOR` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
@@ -73,7 +73,7 @@ def test_validate_nmr_samples(file_source):
 def test_validate_factors(file_source):
     mwfile = next(mwtab.read_files(file_source))
     validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_features=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 1
     test_error = KeyError("Missing key `Factors` in `MS_METABOLITE_DATA` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
@@ -86,14 +86,14 @@ def test_validate_factors(file_source):
 def test_validate_metabolites(file_source):
     mwfile = next(mwtab.read_files(file_source[0]))
     validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_factors=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 1
     test_error = KeyError("Missing key `metabolite_name` in `METABOLITES` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args
 
     mwfile = next(mwtab.read_files(file_source[1]))
     validation_errors = mwtab.validate_file(mwfile, validate_samples=False, validate_factors=False,
-                                            validate_schema=False, test=True)
+                                            validate_schema=False, validate_data=False, test=True)
     assert len(validation_errors) == 4
     test_error = ValueError("Feature with no name (\"\") in `MS_METABOLITE_DATA` block.")
     assert type(validation_errors[0]) == type(test_error) and validation_errors[0].args == test_error.args

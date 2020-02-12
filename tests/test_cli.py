@@ -11,7 +11,7 @@ def teardown_module(module):
 
 
 @pytest.mark.parametrize("files_source", [
-    "1",
+    "2",  # changed to 2 from 1. As of 02/12/2020 AN000001 contains an error preventing it from being parsed.
     "tests/example_data/mwtab_files",
     "tests/example_data/mwtab_files.zip",
     "tests/example_data/mwtab_files.tar.gz",
