@@ -1,5 +1,5 @@
 from os import walk
-from re import match
+import re
 import mwtab
 from mwtab import read_files, validate_file
 # section_schema_mapping
@@ -35,6 +35,19 @@ REGEXS = [
 duplicate_fields = {f: dict() for r, f in REGEXS}
 
 if __name__ == '__main__':
+
+    count = 0
+    (_, _, filenames) = next(walk("/mlab/data/cdpo224/mwtab/data"))
+    filenames = sorted(filenames)
+    for filename in filenames:
+        try:
+            mwfile = next(read_files("/mlab/data/cdpo224/mwtab/data/{}".format(filename)))
+            if re.search(r"(?i)(human)", mwfile["SUBJECT"]["SUBJECT_TYPE"]):
+                count += 1
+        except Exception:
+            pass
+    exit()
+
 
     error_files = {
         "processing": set(),
