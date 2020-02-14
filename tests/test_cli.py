@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
-import os
-import shutil
-import pytest
+import csv
+import json
 import mwtab
+import os
+import pytest
+import shutil
 
 
 def teardown_module(module):
@@ -61,7 +63,9 @@ def test_validate_command(files_source):
     ("tests/example_data/tmp/json/dir/mwtab_files_json.tar.bz2", "tests/example_data/tmp/mwtab/tarbz2/mwtab_files_mwtab.tar.bz2", "json", "mwtab")
 ])
 def test_convert_command(from_path, to_path, from_format, to_format):
-    command = "python -m mwtab convert {} {} --from-format={} --to-format={}".format(from_path, to_path, from_format, to_format)
+    command = "python -m mwtab convert {} {} --from-format={} --to-format={}".format(
+        from_path, to_path, from_format, to_format
+    )
     assert os.system(command) == 0
 
     mwtabfile_generator = mwtab.read_files(to_path)
@@ -84,10 +88,23 @@ def test_download_command(input_value, to_path):
     assert mwtabfile.analysis_id == "AN000002"
 
 
-# @pytest.mark.parametrize("from_path", "output_path", "key", "format", [
-#     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_1", "SUBJECT_TYPE", "csv")
-# ])
-# def test_extract_metadata_command(from_path, output_path, key, format):
-#     pass
-#     command = "python -m mwtab extract metadata {} {} {} {}".format(from_path, output_path, key, format)
-#     assert os.system(command) == 0
+@pytest.mark.parametrize("from_path, output_path, key, output_format", [
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json")
+])
+def test_extract_metadata_command(from_path, output_path, key, output_format):
+    command = "python -m mwtab extract metadata {} {} {} --extraction-format={}".format(
+        from_path, output_path, key, output_format
+    )
+    assert os.system(command) == 0
+
+    with open(".".join([output_path, output_format]), "r") as f:
+        if output_format == "csv":
+            data = set(list(csv.reader(f))[0])
+            assert data == {"SUBJECT_TYPE", "Human", "Plant"}
+        elif output_format == "json":
+            data = json.load(f)
+            data["SUBJECT_TYPE"] = set(data["SUBJECT_TYPE"])
+            assert data == {"SUBJECT_TYPE": {"Human", "Plant"}}
+        else:
+            assert False
