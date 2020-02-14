@@ -57,34 +57,12 @@ def extract_metabolites(mwfile_generator, kwargs):
                     sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
                     for k in sample_keys:
                         if float(data_list[k]) > 0:
-                            metabolites.setdefault(metabolite, dict())\
-                                .setdefault("study_ids", dict())\
-                                .setdefault("analysis_ids", dict())\
-                                .setdefault("sample_ids", set())\
+                            metabolites.setdefault(metabolite["metabolite_name"], dict())\
+                                .setdefault(mwtabfile.study_id, dict())\
+                                .setdefault(mwtabfile.analysis_id, set())\
                                 .add(k)
 
     return metabolites
-
-    # metabolites = dict()
-    # analyses = set()
-    #
-    # for mwfile in fileio.read_files(cmdargs["<from-path>"]):
-    #     if mwfile["SUBJECT"]["SUBJECT_TYPE"] == cmdargs["<subject-type>"] and \
-    #             mwfile["SUBJECT"]["SUBJECT_SPECIES"] == cmdargs["<subject-species>"]:
-    #         if mwfile.get("METABOLITES"):
-    #             analyses.add(mwfile.analysis_id)
-    #             for metabolite in mwfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
-    #                 if metabolite["metabolite_name"] in metabolites.keys():
-    #                     metabolites[metabolite["metabolite_name"]].append(mwfile.analysis_id)
-    #                 else:
-    #                     metabolites[metabolite["metabolite_name"]] = [mwfile.analysis_id]
-    #
-    # print("{} matched analyses:\n\t{}".format(len(analyses), analyses))
-    #
-    # metabolites = sorted([item for item in metabolites.items()], key=lambda x: len(x[1]), reverse=True)
-    # for metabolite in metabolites:
-    #     print(metabolite[0])
-    #     print("\t", metabolite[1])
 
 
 def extract_metadata(mwtabfile, kwargs):
@@ -123,18 +101,42 @@ def write_metadata_csv(output_path, extracted_values):
             wr.writerow(line_list)
 
 
+def write_metabolites_csv(output_path, extracted_values):
+    """
+    """
+    csv_list = []
+    for metabolite_key in extracted_values.keys():
+        num_analyses = 0
+        num_samples = 0
+        for study_key in extracted_values[metabolite_key]:
+            num_analyses += len(extracted_values[metabolite_key][study_key])
+            for analysis_key in extracted_values[metabolite_key][study_key]:
+                num_samples += len(extracted_values[metabolite_key][study_key][analysis_key])
+
+        csv_list.append([
+            metabolite_key,
+            len(extracted_values[metabolite_key]),
+            num_analyses,
+            num_samples
+        ])
+
+    with open(output_path + ".csv", "w") as outfile:
+        wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
+        for line_list in csv_list:
+            wr.writerow(line_list)
+
+
 def write_json(output_path, extracted_dict):
     """
-        For metabolites:
-        metabolite_name, num_studies, num_analyses, num_samples,
+    :param str output_path:
+    :param dict extracted_dict:
+    :return:
+    """
+    class SetEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, set):
+                return list(obj)
+            return json.JSONEncoder.default(self, obj)
 
-        For metadata:
-        key, value_1, ...
-        :param str output_path:
-        :param dict extracted_dict:
-        :return:
-        """
     with open(output_path+".json", "w") as outfile:
-        for key in extracted_dict:
-            extracted_dict[key] = list(extracted_dict[key])
-        json.dump(extracted_dict, outfile, sort_keys=True, indent=4)
+        json.dump(extracted_dict, outfile, sort_keys=True, indent=4, cls=SetEncoder)

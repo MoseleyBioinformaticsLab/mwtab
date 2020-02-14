@@ -108,3 +108,14 @@ def test_extract_metadata_command(from_path, output_path, key, output_format):
             assert data == {"SUBJECT_TYPE": {"Human", "Plant"}}
         else:
             assert False
+
+
+@pytest.mark.parametrize("from_path, output_path, key, value, output_format", [
+    ("tests/example_data/mwtab_files/", "tests/example_data/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "json")
+])
+def test_extract_metabolites_command(from_path, output_path, key, value, output_format):
+    command = "python -m mwtab extract metabolites {} {} {} {} --extraction-format={}".format(
+        from_path, output_path, key, value, output_format
+    )
+    assert os.system(command) == 0
