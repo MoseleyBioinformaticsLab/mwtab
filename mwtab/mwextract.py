@@ -126,17 +126,18 @@ def write_metabolites_csv(output_path, extracted_values):
             wr.writerow(line_list)
 
 
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
+
+
 def write_json(output_path, extracted_dict):
     """
     :param str output_path:
     :param dict extracted_dict:
     :return:
     """
-    class SetEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, set):
-                return list(obj)
-            return json.JSONEncoder.default(self, obj)
-
     with open(output_path+".json", "w") as outfile:
         json.dump(extracted_dict, outfile, sort_keys=True, indent=4, cls=SetEncoder)

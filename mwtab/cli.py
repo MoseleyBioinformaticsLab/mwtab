@@ -45,6 +45,8 @@ from .mwschema import section_schema_mapping
 from os import getcwd
 from os.path import join
 
+import json
+
 
 def cli(cmdargs):
 
@@ -96,6 +98,8 @@ def cli(cmdargs):
                     mwextract.write_metabolites_csv(cmdargs["<output-path>"], metabolites_dict)
                 else:
                     mwextract.write_json(cmdargs["<output-path>"], metabolites_dict)
+            else:
+                print(json.dumps(metabolites_dict, indent=4, cls=mwextract.SetEncoder))
 
         elif cmdargs["metadata"]:
             metadata = dict()
