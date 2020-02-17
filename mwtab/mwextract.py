@@ -35,8 +35,8 @@ class ItemMatcher(object):
     def __init__(self, full_key, value_comparison):
         """ItemMatcher initializer.
 
-        :param str full_key:
-        :param str value_comparison:
+        :param str full_key: Key to match in :class:`~mwtab.mwtab.MWTabFile`.
+        :param str value_comparison: Value to match in :class:`~mwtab.mwtab.MWTabFile`.
         """
         self.full_key = full_key
         self.section, self.key = self.full_key.split(":")
@@ -46,7 +46,7 @@ class ItemMatcher(object):
     def __call__(self, mwtabfile):
         """Match key value pair in :class:`~mwtab.mwtab.MWTabFile`.
 
-        :param mwtabfile:
+        :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
         :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
         :return: True if key and value are present, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
@@ -62,15 +62,16 @@ class ReGeXMatcher(ItemMatcher):
     def __init__(self, full_key, value_comparison):
         """ItemMatcher initializer.
 
-        :param str full_key:
-        :param str value_comparison:
+        :param str full_key: Key to match in :class:`~mwtab.mwtab.MWTabFile`.
+        :param str value_comparison: Value, in the form of a regular expression, to match in
+        :class:`~mwtab.mwtab.MWTabFile`.
         """
         super(ReGeXMatcher, self).__init__(full_key, value_comparison)
 
     def __call__(self, mwtabfile):
         """Match key value pair in :class:`~mwtab.mwtab.MWTabFile`.
 
-        :param mwtabfile:
+        :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
         :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
         :return: True if key and value are present, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
@@ -127,9 +128,9 @@ def write_metadata_csv(to_path, extracted_values, no_header=False):
     "metadata","value1","value2"
     "SUBJECT_TYPE","Human","Plant"
 
-    :param str to_path:
-    :param dict extracted_values:
-    :param bool no_header:
+    :param str to_path: Path to output file.
+    :param dict extracted_values: Metadata dictionary to be saved.
+    :param bool no_header: If true header is not included, otherwise header is included.
     :return: None
     :rtype: :py:obj:`None`
     """
@@ -154,10 +155,15 @@ def write_metadata_csv(to_path, extracted_values, no_header=False):
 def write_metabolites_csv(to_path, extracted_values, no_header=False):
     """Write extracted metabolites data :py:class:`dict` into csv file.
 
+    Example:
+    "metabolite_name","num-studies","num_analyses","num_samples"
+    "1,2,4-benzenetriol","1","1","24"
+    "1-monostearin","1","1","24"
+    ...
 
-    :param str to_path:
-    :param dict extracted_values:
-    :param bool no_header:
+    :param str to_path: Path to output file.
+    :param dict extracted_values: Metabolites data dictionary to be saved.
+    :param bool no_header: If true header is not included, otherwise header is included.
     :return: None
     :rtype: :py:obj:`None`
     """
@@ -213,8 +219,28 @@ class SetEncoder(json.JSONEncoder):
 def write_json(to_path, extracted_dict):
     """Write extracted data or metadata :py:class:`dict` into json file.
 
-    :param str to_path:
-    :param dict extracted_dict:
+    Metabolites example:
+    {
+        "1,2,4-benzenetriol": {
+            "ST000001": {
+                "AN000001": [
+                    "LabF_115816",
+                    ...
+                ]
+            }
+        }
+    }
+
+    Metadata example:
+    {
+        "SUBJECT_TYPE": [
+            "Plant",
+            "Human"
+        ]
+    }
+
+    :param str to_path: Path to output file.
+    :param dict extracted_dict: Metabolites data or metadata dictionary to be saved.
     :return: None
     :rtype: :py:obj:`None`
     """
