@@ -12,7 +12,7 @@ Usage:
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
     mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--validate] [--verbose]
     mwtab extract metadata <from-path> <output-path> <key> ... [--extraction-format=<format>] [--no-header]
-    mwtab extract metabolites <from-path> <output-path> (<key> <value>) ... [--extraction-format=<format>]
+    mwtab extract metabolites <from-path> <output-path> (<key> <value>) ... [--extraction-format=<format>] [--no-header]
 
 
 Options:
@@ -31,6 +31,7 @@ Options:
     --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
     --extraction-format=<format>    File format for extracted data/metadata to be save in, available formats: csv, json
                                     [default: csv].
+    --no-header                     Include header at teh top of csv formatted files.
 
     <output-path> can take a "-" which will use stdout.
 """
