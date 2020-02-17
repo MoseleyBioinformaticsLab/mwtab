@@ -103,7 +103,6 @@ def cli(cmdargs):
                 print(json.dumps(metabolites_dict, indent=4, cls=mwextract.SetEncoder))
 
         elif cmdargs["metadata"]:
-            print(cmdargs)
             metadata = dict()
             for mwtabfile in mwfile_generator:
                 extracted_values = mwextract.extract_metadata(mwtabfile, cmdargs)
