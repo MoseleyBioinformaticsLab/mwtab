@@ -88,20 +88,25 @@ def test_download_command(input_value, to_path):
     assert mwtabfile.analysis_id == "AN000002"
 
 
-@pytest.mark.parametrize("from_path, output_path, key, output_format", [
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv"),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json")
+@pytest.mark.parametrize("from_path, output_path, key, output_format, no_header", [
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", " --no-header"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", "")
 ])
-def test_extract_metadata_command(from_path, output_path, key, output_format):
-    command = "python -m mwtab extract metadata {} {} {} --extraction-format={}".format(
-        from_path, output_path, key, output_format
+def test_extract_metadata_command(from_path, output_path, key, output_format, no_header):
+    command = "python -m mwtab extract metadata {} {} {} --extraction-format={}{}".format(
+        from_path, output_path, key, output_format, no_header
     )
     assert os.system(command) == 0
 
     with open(".".join([output_path, output_format]), "r") as f:
         if output_format == "csv":
-            data = set(list(csv.reader(f))[0])
-            assert data == {"SUBJECT_TYPE", "Human", "Plant"}
+            data = list(csv.reader(f))
+            if bool(no_header):
+                assert set(data[0]) == {"SUBJECT_TYPE", "Human", "Plant"}
+            else:
+                assert set(data[0]) == {"metadata", "value0", "value1"}
+                assert set(data[1]) == {"SUBJECT_TYPE", "Human", "Plant"}
         elif output_format == "json":
             data = json.load(f)
             data["SUBJECT_TYPE"] = set(data["SUBJECT_TYPE"])
@@ -110,12 +115,22 @@ def test_extract_metadata_command(from_path, output_path, key, output_format):
             assert False
 
 
-@pytest.mark.parametrize("from_path, output_path, key, value, output_format", [
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv"),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "json")
+@pytest.mark.parametrize("from_path, output_path, key, value, output_format, no_header", [
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", " --no-header"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "json", "")
 ])
-def test_extract_metabolites_command(from_path, output_path, key, value, output_format):
-    command = "python -m mwtab extract metabolites {} {} {} {} --extraction-format={}".format(
-        from_path, output_path, key, value, output_format
+def test_extract_metabolites_command(from_path, output_path, key, value, output_format, no_header):
+    command = "python -m mwtab extract metabolites {} {} {} {} --extraction-format={}{}".format(
+        from_path, output_path, key, value, output_format, no_header
     )
     assert os.system(command) == 0
+
+    if output_format == "csv":
+        with open(".".join([output_path, output_format]), "r") as f:
+            data = list(csv.reader(f))
+            if bool(no_header):
+                assert set(data[0]) == {"1,2,4-benzenetriol", "1", "1", "24"}
+            else:
+                assert set(data[0]) == {"metabolite_name", "num-studies", "num_analyses", "num_samples"}
+                assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
