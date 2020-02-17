@@ -10,6 +10,7 @@ stored in ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFil
 """
 import csv
 import json
+import os
 import re
 
 
@@ -119,20 +120,25 @@ def extract_metadata(mwtabfile, kwargs):
     return extracted_values
 
 
-def write_metadata_csv(output_path, extracted_values, no_header=False):
+def write_metadata_csv(to_path, extracted_values, no_header=False):
     """Write extracted metadata :py:class:`dict` into csv file.
 
     Example:
     "metadata","value1","value2"
     "SUBJECT_TYPE","Human","Plant"
 
-    :param str output_path:
+    :param str to_path:
     :param dict extracted_values:
     :param bool no_header:
     :return: None
     :rtype: :py:obj:`None`
     """
-    with open(output_path+".csv", "w") as outfile:
+    if not os.path.exists(os.path.dirname(to_path)):
+        dirname = os.path.dirname(to_path)
+        if dirname:
+            os.makedirs(dirname)
+
+    with open(to_path+".csv", "w") as outfile:
         wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
         if not no_header:
             max_value_num = max([len(extracted_values[key]) for key in extracted_values.keys()])
@@ -145,11 +151,11 @@ def write_metadata_csv(output_path, extracted_values, no_header=False):
             wr.writerow(line_list)
 
 
-def write_metabolites_csv(output_path, extracted_values, no_header=False):
+def write_metabolites_csv(to_path, extracted_values, no_header=False):
     """Write extracted metabolites data :py:class:`dict` into csv file.
 
 
-    :param str output_path:
+    :param str to_path:
     :param dict extracted_values:
     :param bool no_header:
     :return: None
@@ -170,9 +176,13 @@ def write_metabolites_csv(output_path, extracted_values, no_header=False):
             num_analyses,
             num_samples
         ])
-    print(csv_list)
 
-    with open(output_path + ".csv", "w") as outfile:
+    if not os.path.exists(os.path.dirname(to_path)):
+        dirname = os.path.dirname(to_path)
+        if dirname:
+            os.makedirs(dirname)
+
+    with open(to_path + ".csv", "w") as outfile:
         wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
         if not no_header:
             wr.writerow(["metabolite_name", "num-studies", "num_analyses", "num_samples"])
@@ -200,13 +210,18 @@ class SetEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def write_json(output_path, extracted_dict):
+def write_json(to_path, extracted_dict):
     """Write extracted data or metadata :py:class:`dict` into json file.
 
-    :param str output_path:
+    :param str to_path:
     :param dict extracted_dict:
     :return: None
     :rtype: :py:obj:`None`
     """
-    with open(output_path+".json", "w") as outfile:
+    if not os.path.exists(os.path.dirname(to_path)):
+        dirname = os.path.dirname(to_path)
+        if dirname:
+            os.makedirs(dirname)
+
+    with open(to_path+".json", "w") as outfile:
         json.dump(extracted_dict, outfile, sort_keys=True, indent=4, cls=SetEncoder)
