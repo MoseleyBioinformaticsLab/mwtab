@@ -96,20 +96,21 @@ def cli(cmdargs):
             metabolites_dict = mwextract.extract_metabolites(mwfile_generator, cmdargs)
             if cmdargs["<output-path>"] != "-":
                 if cmdargs["--extraction-format"] == "csv":
-                    mwextract.write_metabolites_csv(cmdargs["<output-path>"], metabolites_dict)
+                    mwextract.write_metabolites_csv(cmdargs["<output-path>"], metabolites_dict, cmdargs["--no-header"])
                 else:
                     mwextract.write_json(cmdargs["<output-path>"], metabolites_dict)
             else:
                 print(json.dumps(metabolites_dict, indent=4, cls=mwextract.SetEncoder))
 
         elif cmdargs["metadata"]:
+            print(cmdargs)
             metadata = dict()
             for mwtabfile in mwfile_generator:
                 extracted_values = mwextract.extract_metadata(mwtabfile, cmdargs)
                 [metadata.setdefault(key, set()).update(val) for (key, val) in extracted_values.items()]
             if cmdargs["<output-path>"] != "-":
                 if cmdargs["--extraction-format"] == "csv":
-                    mwextract.write_metadata_csv(cmdargs["<output-path>"], metadata)
+                    mwextract.write_metadata_csv(cmdargs["<output-path>"], metadata, cmdargs["--no-header"])
                 else:
                     mwextract.write_json(cmdargs["<output-path>"], metadata)
             else:
