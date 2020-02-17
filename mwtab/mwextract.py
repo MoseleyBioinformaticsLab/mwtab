@@ -88,6 +88,11 @@ def extract_metabolites(mwfile_generator, kwargs):
     :rtype: :py:class:`dict`
     """
     metabolites = dict()
+    matchers = list()
+    for i in range(len(kwargs["<key>"])):
+        if kwargs["<value>"][i]:
+            pass
+
     matchers = [ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]) for i in range(len(kwargs["<key>"]))]
     for mwtabfile in mwfile_generator:
         if all(matcher(mwtabfile) for matcher in matchers):
