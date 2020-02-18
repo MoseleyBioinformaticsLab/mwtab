@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# TODO: Change output-path
 
 """
 The mwtab command-line interface
@@ -26,12 +27,12 @@ Options:
                                     [default: https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
     --context=<context>             Type of resource to access from MW REST interface, available contexts: study,
                                     compound, refmet, gene, protein, moverz, exactmass [default: study].
-    --input-item=<item>
-    --output-item=<item>
+    --input-item=<item>             Item to search Metabolomics Workbench with.
+    --output-item=<item>            Item to be retrieved from Metabolomics Workbench.
     --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
     --extraction-format=<format>    File format for extracted data/metadata to be save in, available formats: csv, json
                                     [default: csv].
-    --no-header                     Include header at teh top of csv formatted files.
+    --no-header                     Include header at the top of csv formatted files.
 
     <output-path> can take a "-" which will use stdout.
 """

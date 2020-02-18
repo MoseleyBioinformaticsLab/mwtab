@@ -87,7 +87,6 @@ def extract_metabolites(mwfile_generator, kwargs):
     :return: Extracted metabolites dictionary.
     :rtype: :py:class:`dict`
     """
-    metabolites = dict()
     matchers = list()
     for i in range(len(kwargs["<key>"])):
         if kwargs["<value>"][i][:2] == "r\'":
@@ -95,17 +94,17 @@ def extract_metabolites(mwfile_generator, kwargs):
         else:
             matchers.append(ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]))
 
+    metabolites = dict()
     for mwtabfile in mwfile_generator:
         if all(matcher(mwtabfile) for matcher in matchers):
             for metabolite in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
                 for data_list in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]:
-                    sample_keys = [k for k in data_list.keys() if k != "metabolite_name"]
-                    for k in sample_keys:
-                        if float(data_list[k]) > 0:
+                    for test_key in (key for key in data_list.keys() if key != "metabolite_name"):
+                        if float(data_list[test_key]) > 0:
                             metabolites.setdefault(metabolite["metabolite_name"], dict())\
                                 .setdefault(mwtabfile.study_id, dict())\
                                 .setdefault(mwtabfile.analysis_id, set())\
-                                .add(k)
+                                .add(test_key)
     return metabolites
 
 
