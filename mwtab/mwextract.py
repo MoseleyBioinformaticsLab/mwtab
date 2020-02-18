@@ -90,10 +90,11 @@ def extract_metabolites(mwfile_generator, kwargs):
     metabolites = dict()
     matchers = list()
     for i in range(len(kwargs["<key>"])):
-        if kwargs["<value>"][i]:
-            pass
+        if kwargs["<value>"][i][:2] == "r\'":
+            matchers.append(ReGeXMatcher(kwargs["<key>"][i], r"{}".format(kwargs["<value>"][i].replace("\'", "")[1:])))
+        else:
+            matchers.append(ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]))
 
-    matchers = [ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]) for i in range(len(kwargs["<key>"]))]
     for mwtabfile in mwfile_generator:
         if all(matcher(mwtabfile) for matcher in matchers):
             for metabolite in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
