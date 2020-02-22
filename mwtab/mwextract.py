@@ -76,27 +76,36 @@ class ReGeXMatcher(ItemMatcher):
         :return: True if key and value are present, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
         """
-        return re.search(self.value_comparison, mwtabfile[self.section][self.key])
+        return re.search(r"{}".format(self.value_comparison), mwtabfile[self.section][self.key])
 
 
-def extract_metabolites(mwfile_generator, kwargs):
+def generate_matchers(items):
+    """Construct a generator that yields Matchers :class:`~mwtab.mwtab.ItemMatcher` or
+    :class:`~mwtab.mwtab.ReGeXMatcher`.
+
+    :param iterable items: Iterable object containing key value pairs to match.
+    :return: Yields a Matcher object for each given item.
+    :rtype: :class:`~mwtab.mwtab.ItemMatcher` or :class:`~mwtab.mwtab.ReGeXMatcher`
+    """
+    for item in items:
+        if item[1][:2] == "r\'":
+            yield ReGeXMatcher(item[0], item[1].replace("r\'", "")[:-1])
+        else:
+            yield ItemMatcher(item[0], item[1])
+
+
+def extract_metabolites(sources, matchers):
     """Extract metabolite data from ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
 
-    :param generator mwfile_generator:
-    :param kwargs:
+    :param generator sources:
+    :param generator matchers:
     :return: Extracted metabolites dictionary.
     :rtype: :py:class:`dict`
     """
-    matchers = list()
-    for i in range(len(kwargs["<key>"])):
-        if kwargs["<value>"][i][:2] == "r\'":
-            matchers.append(ReGeXMatcher(kwargs["<key>"][i], r"{}".format(kwargs["<value>"][i].replace("\'", "")[1:])))
-        else:
-            matchers.append(ItemMatcher(kwargs["<key>"][i], kwargs["<value>"][i]))
-
     metabolites = dict()
-    for mwtabfile in mwfile_generator:
+    for mwtabfile in sources:
         if all(matcher(mwtabfile) for matcher in matchers):
+            print(mwtabfile.analysis_id)
             for metabolite in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
                 for data_list in mwtabfile["MS_METABOLITE_DATA"]["MS_METABOLITE_DATA_START"]["DATA"]:
                     for test_key in (key for key in data_list.keys() if key != "metabolite_name"):
@@ -108,18 +117,18 @@ def extract_metabolites(mwfile_generator, kwargs):
     return metabolites
 
 
-def extract_metadata(mwtabfile, kwargs):
+def extract_metadata(mwtabfile, keys):
     """Extract metadata data from ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
 
     :param generator mwtabfile:
-    :param kwargs:
+    :param list keys:
     :return: Extracted metadata dictionary.
     :rtype: :py:class:`dict`
     """
     extracted_values = {}
     for section in mwtabfile:
         for metadata in mwtabfile[section]:
-            for key in kwargs["<key>"]:
+            for key in keys:
                 if metadata == key:  # TODO: Allow for partial match, ReGeX, etc.
                     extracted_values.setdefault(key, set()).add(mwtabfile[section][metadata])
 

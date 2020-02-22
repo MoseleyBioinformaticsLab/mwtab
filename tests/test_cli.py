@@ -88,26 +88,26 @@ def test_download_command(input_value, to_path):
     assert mwtabfile.analysis_id == "AN000002"
 
 
-@pytest.mark.parametrize("from_path, output_path, key, output_format, no_header", [
+@pytest.mark.parametrize("from_path, to_path, key, to_format, no_header", [
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", " --no-header"),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", "")
 ])
-def test_extract_metadata_command(from_path, output_path, key, output_format, no_header):
-    command = "python -m mwtab extract metadata {} {} {} --extraction-format={}{}".format(
-        from_path, output_path, key, output_format, no_header
+def test_extract_metadata_command(from_path, to_path, key, to_format, no_header):
+    command = "python -m mwtab extract metadata {} {} {} --to-format={}{}".format(
+        from_path, to_path, key, to_format, no_header
     )
     assert os.system(command) == 0
 
-    with open(".".join([output_path, output_format]), "r") as f:
-        if output_format == "csv":
+    with open(".".join([to_path, to_format]), "r") as f:
+        if to_format == "csv":
             data = list(csv.reader(f))
             if bool(no_header):
                 assert set(data[0]) == {"SUBJECT_TYPE", "Human", "Plant"}
             else:
                 assert set(data[0]) == {"metadata", "value0", "value1"}
                 assert set(data[1]) == {"SUBJECT_TYPE", "Human", "Plant"}
-        elif output_format == "json":
+        elif to_format == "json":
             data = json.load(f)
             data["SUBJECT_TYPE"] = set(data["SUBJECT_TYPE"])
             assert data == {"SUBJECT_TYPE": {"Human", "Plant"}}
@@ -115,25 +115,28 @@ def test_extract_metadata_command(from_path, output_path, key, output_format, no
             assert False
 
 
-@pytest.mark.parametrize("from_path, output_path, key, value, output_format, no_header", [
+@pytest.mark.parametrize("from_path, to_path, key, value, to_format, no_header", [
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", " --no-header"),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "json", ""),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "r'(Plant)'", "csv", " --no-header"),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "r'(Plant)'", "csv", ""),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "r'(Plant)'", "json", "")
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Plant)'\"", "csv", " --no-header"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Plant)'\"", "csv", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "r\"'(Plant)'\"", "json", "")
 ])
-def test_extract_metabolites_command(from_path, output_path, key, value, output_format, no_header):
-    command = "python -m mwtab extract metabolites {} {} {} {} --extraction-format={}{}".format(
-        from_path, output_path, key, value, output_format, no_header
+def test_extract_metabolites_command(from_path, to_path, key, value, to_format, no_header):
+    command = "python -m mwtab extract metabolites {} {} {} {} --to-format={}{}".format(
+        from_path, to_path, key, value, to_format, no_header
     )
+    print(command)
     assert os.system(command) == 0
 
-    if output_format == "csv":
-        with open(".".join([output_path, output_format]), "r") as f:
+    if to_format == "csv":
+        with open(".".join([to_path, to_format]), "r") as f:
             data = list(csv.reader(f))
             if bool(no_header):
                 assert set(data[0]) == {"1,2,4-benzenetriol", "1", "1", "24"}
+                assert len(data) == 191
             else:
                 assert set(data[0]) == {"metabolite_name", "num-studies", "num_analyses", "num_samples"}
-                assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
+                # assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
+                assert len(data) == 192
