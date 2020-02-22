@@ -138,5 +138,5 @@ def test_extract_metabolites_command(from_path, to_path, key, value, to_format, 
                 assert len(data) == 191
             else:
                 assert set(data[0]) == {"metabolite_name", "num-studies", "num_analyses", "num_samples"}
-                # assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
+                assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
                 assert len(data) == 192
