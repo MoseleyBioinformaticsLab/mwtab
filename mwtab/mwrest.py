@@ -220,8 +220,6 @@ class GenericMWURL(OrderedDict):
         :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
         """
         super(GenericMWURL, self).__init__(**kwds)
-        # if not self.get('output format'):
-        #     self['output format'] = 'json'
         self.url = self._validate()
 
     def _validate(self):

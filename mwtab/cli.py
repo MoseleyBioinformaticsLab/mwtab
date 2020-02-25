@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# TODO: Change output-path
 
 """
 The mwtab command-line interface
@@ -11,7 +10,7 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
-    mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--validate] [--verbose]
+    mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
     mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
     mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
 
@@ -24,7 +23,7 @@ Options:
     --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
     --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
     --mw-rest=<url>                 URL to MW REST interface
-                                    [default: https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt].
+                                    [default: https://www.metabolomicsworkbench.org/rest/].
     --context=<context>             Type of resource to access from MW REST interface, available contexts: study,
                                     compound, refmet, gene, protein, moverz, exactmass [default: study].
     --input-item=<item>             Item to search Metabolomics Workbench with.
@@ -101,7 +100,6 @@ def cli(cmdargs):
                     cmdargs["<value>"][i])
                     for i in range(len(cmdargs["<key>"]))])
             )
-            print(len(metabolites_dict.keys()))
 
             if cmdargs["<to-path>"] != "-":
                 if cmdargs["--to-format"] == "csv":
