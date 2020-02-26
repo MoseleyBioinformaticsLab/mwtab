@@ -21,7 +21,11 @@ Options:
     --verbose                       Print what files are processing.
     --validate                      Validate the mwTab file.
     --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
-    --to-format=<format>            Output file format, available formats: mwtab, json [default: json].
+    --to-format=<format>            Output file format [default: json].
+                                    Available formats for convert:
+                                        mwtab, json.
+                                    Available formats for extract:
+                                        json, csv.
     --mw-rest=<url>                 URL to MW REST interface
                                     [default: https://www.metabolomicsworkbench.org/rest/].
     --context=<context>             Type of resource to access from MW REST interface, available contexts: study,
@@ -29,11 +33,9 @@ Options:
     --input-item=<item>             Item to search Metabolomics Workbench with.
     --output-item=<item>            Item to be retrieved from Metabolomics Workbench.
     --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
-    --extraction-format=<format>    File format for extracted data/metadata to be save in, available formats: csv, json
-                                    [default: csv].
     --no-header                     Include header at the top of csv formatted files.
 
-    <output-path> can take a "-" which will use stdout.
+    For extraction <to-path> can take a "-" which will use stdout.
 """
 
 from . import fileio
@@ -80,6 +82,7 @@ def cli(cmdargs):
         else:
             for mwfile in fileio.read_files(
                     mwrest.GenericMWURL(**{
+                        "base url": cmdargs["--mw-rest"],
                         "context": cmdargs.get("--context") or "study",
                         "input item": cmdargs.get("--input-item") or "analysis_id",
                         'input value': cmdargs["<input-value>"],

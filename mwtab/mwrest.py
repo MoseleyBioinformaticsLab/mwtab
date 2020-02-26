@@ -12,87 +12,7 @@ See https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf for details.
 
 from collections import OrderedDict
 import re
-
 from . import fileio
-
-CONTEXT = {
-    'study': {
-        'input item': {
-            'study_id', 'study_title', 'institute', 'last_name', 'analysis_id', 'metabolite_id'
-        },
-        'output item': {
-            'summary', 'factors', 'analysis', 'metabolites', 'mwtab', 'source', 'species', 'disease',
-            'number_of_metabolites', 'data', 'datatable', 'untarg_studies', 'untarg_factors', 'untarg_data'
-        }
-    },
-
-    'compound': {
-        'input item': {
-            'regno', 'formula', 'inchi_key', 'lm_id', 'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id',
-            'abbrev'
-        },
-        'output item': {
-            'all', 'regno', 'formula', 'exactmass', 'inchi_key', 'name', 'sys_name', 'smiles', 'lm_id',
-            'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id', 'classification', 'molfile', 'png'
-        }
-    },
-
-    'refmet': {
-        'input item': {
-            'all', 'match', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'formula', 'main_class', 'sub_class'
-        },
-        'output item': {
-            'all', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'exactmass', 'formula', 'synonyms', 'sys_name',
-            'main_class', 'sub_class'
-        }
-    },
-
-    'gene': {
-        'input item': {
-            'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid'
-        },
-        'output item': {
-            'all', 'lmp_id', 'mgp_id', 'gene_name', 'gene_symbol', 'gene_synonyms', 'alt_names', 'chromosome',
-            'map_location', 'summary', 'taxid', 'species', 'species_long'
-        }
-    },
-
-    'protein': {
-        'input item': {
-            'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'mrna_id', 'refseq_id', 'protein_gi',
-            'uniprot_id', 'protein_entry', 'protein_name'
-        },
-        'output item': {
-            'all', 'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'species', 'species_long', 'mrna_id',
-            'refseq_id', 'protein_gi', 'uniprot_id', 'protein_entry', 'protein_name', 'seqlength', 'seq',
-            'is_identical_to'
-        }
-    },
-
-    'moverz': {
-        'input item': {
-            'LIPIDS', 'MB', 'REFMET'
-        },
-        'ion type value': {
-            'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+Na', 'M+2Na', 'M+Li', 'M+2Li', 'M+NH4',
-            'M+H+CH3CN', 'M+Na+CH3CN', 'M.NaFormate+H', 'M.NH4Formate+H', 'M.CH3', 'M.TMSi', 'M.tBuDMSi', 'M-H',
-            'M-H-H2O', 'M+Na-2H', 'M+K-2H', 'M-2H', 'M-3H', 'M4H', 'M.Cl', 'M.F', 'M.HF2', 'M.OAc', 'M.Formate',
-            'M.NaFormate-H', 'M.NH4Formate-H', 'Neutral'
-        }
-    },
-
-    'exactmass': {
-        'LIPID abbreviation': {
-            'ArthroCer', 'asialoGM2Cer', 'CAR', 'CE', 'Cer', 'CerP', 'CoA', 'DG', 'DGDG', 'FA', 'GalCer', 'GB3Cer',
-            'GlcCer', 'GM3Cer', 'GM4Cer', 'iGB3Cer', 'LacCer', 'Lc3Cer', 'Manb1-4GlcCer', 'MG', 'MGDG', 'MolluCer',
-            'PA', 'PC', 'PE', 'PE-Cer', 'PG', 'PGP', 'PI', 'PI-Cer', 'PIP', 'PIP2', 'PIP3', 'PS', 'SM', 'SQDG', 'TG'
-        },
-        'ion type value': {
-            'Neutral', 'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+2K-H', 'M+Na', 'M+2Na', 'M+2Na-H',
-            'M+Li', 'M+2Li', 'M+Ag', 'M+NH4', 'M-H', 'M-CH3', 'M2H', 'M-3H', 'M-4H', 'M.Cl', 'M.OAc', 'M.Formate'
-        }
-    }
-}
 
 
 def analysis_ids():
@@ -213,6 +133,85 @@ class GenericMWURL(OrderedDict):
             <output specification> = <output item>/[<output format>]
     """
     base_mwrest_url = "https://www.metabolomicsworkbench.org/rest/"
+    context = {
+        'study': {
+            'input item': {
+                'study_id', 'study_title', 'institute', 'last_name', 'analysis_id', 'metabolite_id'
+            },
+            'output item': {
+                'summary', 'factors', 'analysis', 'metabolites', 'mwtab', 'source', 'species', 'disease',
+                'number_of_metabolites', 'data', 'datatable', 'untarg_studies', 'untarg_factors', 'untarg_data'
+            }
+        },
+
+        'compound': {
+            'input item': {
+                'regno', 'formula', 'inchi_key', 'lm_id', 'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id',
+                'abbrev'
+            },
+            'output item': {
+                'all', 'regno', 'formula', 'exactmass', 'inchi_key', 'name', 'sys_name', 'smiles', 'lm_id',
+                'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id', 'classification', 'molfile', 'png'
+            }
+        },
+
+        'refmet': {
+            'input item': {
+                'all', 'match', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'formula', 'main_class', 'sub_class'
+            },
+            'output item': {
+                'all', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'exactmass', 'formula', 'synonyms', 'sys_name',
+                'main_class', 'sub_class'
+            }
+        },
+
+        'gene': {
+            'input item': {
+                'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid'
+            },
+            'output item': {
+                'all', 'lmp_id', 'mgp_id', 'gene_name', 'gene_symbol', 'gene_synonyms', 'alt_names', 'chromosome',
+                'map_location', 'summary', 'taxid', 'species', 'species_long'
+            }
+        },
+
+        'protein': {
+            'input item': {
+                'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'mrna_id', 'refseq_id', 'protein_gi',
+                'uniprot_id', 'protein_entry', 'protein_name'
+            },
+            'output item': {
+                'all', 'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'species', 'species_long', 'mrna_id',
+                'refseq_id', 'protein_gi', 'uniprot_id', 'protein_entry', 'protein_name', 'seqlength', 'seq',
+                'is_identical_to'
+            }
+        },
+
+        'moverz': {
+            'input item': {
+                'LIPIDS', 'MB', 'REFMET'
+            },
+            'ion type value': {
+                'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+Na', 'M+2Na', 'M+Li', 'M+2Li', 'M+NH4',
+                'M+H+CH3CN', 'M+Na+CH3CN', 'M.NaFormate+H', 'M.NH4Formate+H', 'M.CH3', 'M.TMSi', 'M.tBuDMSi', 'M-H',
+                'M-H-H2O', 'M+Na-2H', 'M+K-2H', 'M-2H', 'M-3H', 'M4H', 'M.Cl', 'M.F', 'M.HF2', 'M.OAc', 'M.Formate',
+                'M.NaFormate-H', 'M.NH4Formate-H', 'Neutral'
+            }
+        },
+
+        'exactmass': {
+            'LIPID abbreviation': {
+                'ArthroCer', 'asialoGM2Cer', 'CAR', 'CE', 'Cer', 'CerP', 'CoA', 'DG', 'DGDG', 'FA', 'GalCer', 'GB3Cer',
+                'GlcCer', 'GM3Cer', 'GM4Cer', 'iGB3Cer', 'LacCer', 'Lc3Cer', 'Manb1-4GlcCer', 'MG', 'MGDG', 'MolluCer',
+                'PA', 'PC', 'PE', 'PE-Cer', 'PG', 'PGP', 'PI', 'PI-Cer', 'PIP', 'PIP2', 'PIP3', 'PS', 'SM', 'SQDG', 'TG'
+            },
+            'ion type value': {
+                'Neutral', 'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+2K-H', 'M+Na', 'M+2Na',
+                'M+2Na-H',
+                'M+Li', 'M+2Li', 'M+Ag', 'M+NH4', 'M-H', 'M-CH3', 'M2H', 'M-3H', 'M-4H', 'M.Cl', 'M.OAc', 'M.Formate'
+            }
+        }
+    }
 
     def __init__(self, **kwds):
         """File initializer.
@@ -229,7 +228,7 @@ class GenericMWURL(OrderedDict):
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        if not self['context'] in CONTEXT.keys():
+        if not self['context'] in self.context.keys():
             raise KeyError("Error: Invalid/missing context")
         elif self['context'] in {'study', 'compound', 'refmet', 'gene', 'protein'}:
             return self._validate_generic()
@@ -280,20 +279,25 @@ class GenericMWURL(OrderedDict):
         keywords = {'input item', 'input value', 'output item'}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['input item'] for k in CONTEXT[self['context']]['input item']):
+        elif not any(k in self['input item'] for k in self.context[self['context']]['input item']):
             raise ValueError("Invalid input item")
         elif self._validate_input(self['input item'], self['input value']):
             exit()
         elif type(self['output item']) == list:
             if self['context'] == 'study':
                 raise ValueError("Invalid output items. Study only takes a single output item.")
-            elif not all(k in CONTEXT[self['context']]['output item'] for k in self['output item']):
+            elif not all(k in self.context[self['context']]['output item'] for k in self['output item']):
                 raise ValueError("Invalid output item(s): " +
-                                 str(set(self['output item']).difference(CONTEXT[self['context']]['output item'])))
+                                 str(set(self['output item']).difference(self.context[self['context']]['output item'])))
             else:
-                return self.base_url + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
-                                          ','.join(self.get('output item')), self.get('output format') or ''])
-        elif not any(k in self['output item'] for k in CONTEXT[self['context']]['output item']):
+                return self.base_url + '/'.join([
+                    self.get('context'),
+                    self.get('input item'),
+                    str(self.get('input value')),
+                    ','.join(self.get('output item')),
+                    self.get('output format') or ''
+                ])
+        elif not any(k in self['output item'] for k in self.context[self['context']]['output item']):
             raise ValueError("Invalid output item")
         else:
             return self.base_url + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
@@ -319,11 +323,11 @@ class GenericMWURL(OrderedDict):
         keywords = {'input item', 'm/z value', 'ion type value', 'm/z tolerance value'}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['input item'] for k in CONTEXT['moverz']['input item']):
+        elif not any(k in self['input item'] for k in self.context['moverz']['input item']):
             raise ValueError("Invalid input item")
         elif not 50 <= float(self['m/z value']) <= 2000:
             raise ValueError("m/z value outside of range: 50-2000")
-        elif not self['ion type value'] in CONTEXT['moverz']['ion type value']:
+        elif not self['ion type value'] in self.context['moverz']['ion type value']:
             raise ValueError("Invalid ion type value")
         elif not 0.0001 <= float(self['m/z tolerance value']) <= 1:
             raise ValueError("m/z tolerance value outside of range: 0.0001-1")
@@ -347,9 +351,9 @@ class GenericMWURL(OrderedDict):
         keywords = {'LIPID abbreviation', 'ion type value'}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['LIPID abbreviation'] for k in CONTEXT['exactmass']['LIPID abbreviation']):
+        elif not any(k in self['LIPID abbreviation'] for k in self.context['exactmass']['LIPID abbreviation']):
             raise ValueError("Invalid LIPID abbreviation")
-        elif not self['ion type value'] in CONTEXT['exactmass']['ion type value']:
+        elif not self['ion type value'] in self.context['exactmass']['ion type value']:
             raise ValueError("Invalid ion type value")
         else:
             # no required output format
