@@ -15,7 +15,6 @@ import re
 
 from . import fileio
 
-MWREST = "https://www.metabolomicsworkbench.org/rest/"
 CONTEXT = {
     'study': {
         'input item': {
@@ -213,6 +212,7 @@ class GenericMWURL(OrderedDict):
             <input specification> = <input item>/<input value>
             <output specification> = <output item>/[<output format>]
     """
+    base_mwrest_url = "https://www.metabolomicsworkbench.org/rest/"
 
     def __init__(self, **kwds):
         """File initializer.
@@ -220,6 +220,7 @@ class GenericMWURL(OrderedDict):
         :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
         """
         super(GenericMWURL, self).__init__(**kwds)
+        self.base_url = kwds.get("base url") or self.base_mwrest_url
         self.url = self._validate()
 
     def _validate(self):
@@ -290,12 +291,12 @@ class GenericMWURL(OrderedDict):
                 raise ValueError("Invalid output item(s): " +
                                  str(set(self['output item']).difference(CONTEXT[self['context']]['output item'])))
             else:
-                return MWREST + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
+                return self.base_url + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
                                           ','.join(self.get('output item')), self.get('output format') or ''])
         elif not any(k in self['output item'] for k in CONTEXT[self['context']]['output item']):
             raise ValueError("Invalid output item")
         else:
-            return MWREST + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
+            return self.base_url + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
                                       self.get('output item'), self.get('output format') or ''])
 
     def _validate_moverz(self):
@@ -328,7 +329,7 @@ class GenericMWURL(OrderedDict):
             raise ValueError("m/z tolerance value outside of range: 0.0001-1")
         else:
             # only supports txt output format
-            return MWREST + '/'.join([self['context'], self['input item'], str(self['m/z value']),
+            return self.base_url + '/'.join([self['context'], self['input item'], str(self['m/z value']),
                                       self['ion type value'], str(self['m/z tolerance value']), 'txt'])
 
     def _validate_exactmass(self):
@@ -352,7 +353,7 @@ class GenericMWURL(OrderedDict):
             raise ValueError("Invalid ion type value")
         else:
             # no required output format
-            return MWREST + '/'.join([self['context'], self['LIPID abbreviation'], self['ion type value']])
+            return self.base_url + '/'.join([self['context'], self['LIPID abbreviation'], self['ion type value']])
 
     @staticmethod
     def _validate_input(input_item, input_value):
