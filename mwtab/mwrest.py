@@ -11,8 +11,12 @@ See https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf for details.
 """
 
 from collections import OrderedDict
-import re
 from . import fileio
+import re
+import json
+
+
+VERBOSE = False
 
 
 def analysis_ids():
@@ -26,6 +30,9 @@ def analysis_ids():
     analyses = list()
     [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
 
+    if VERBOSE:
+        print("Found {} analysis file to download.".format(len(analyses)))
+
     return analyses
 
 
@@ -38,6 +45,9 @@ def study_ids():
     """
     st_an_dict = _pull_study_analysis()
     studies = list(st_an_dict.keys())
+
+    if VERBOSE:
+        print("Found {} study file to download.".format(len(studies)))
 
     return studies
 
@@ -55,7 +65,8 @@ def _pull_study_analysis():
     url = GenericMWURL(
         **{'context': 'study', 'input item': 'study_id', 'input value': 'ST', 'output item': 'analysis'}
     ).url
-    json_object = next(fileio.read_mwrest(url, **{'convertJSON': True}))
+    mwrestfile = next(fileio.read_mwrest(url, **{'convertJSON': True}))
+    json_object = mwrestfile._is_json(mwrestfile.text)
 
     study_analysis_dict = dict()
     for k in json_object.keys():
@@ -67,7 +78,7 @@ def _pull_study_analysis():
     return study_analysis_dict
 
 
-def generate_mwtab_urls(*input_items, output_format='txt'):
+def generate_mwtab_urls(input_items, output_format='txt'):
     """
     Method for generating URLS to be used to retrieve `mwtab` files for analyses and
     studies through the REST API of the Metabolomics Workbench database.
@@ -246,6 +257,15 @@ class GenericMWURL(OrderedDict):
         <input value> = <input item value>
         <output item> = summary | factors | analysis | metabolites | mwtab | source | species | disease |
             number_of_metabolites | data | datatable | untarg_studies | untarg_factors | untarg_data
+        <output format> = txt | json [Default: json]
+
+        <context> = compound
+        <input item> = regno | formula | inchi_key | lm_id | pubchem_cid | hmdb_id | kegg_id | chebi_id |
+            metacyc_id | abbrev
+        <input value> = <input item value>
+        <output item> = all | regno | formula | exactmass | inchi_key | name | sys_name | smiles | lm_id |
+            pubchem_cid | hmdb_id | kegg_id | chebi_id | metacyc_id | classification | molfile | png |
+            regno,formula,exactmass,...
         <output format> = txt | json [Default: json]
 
         <context> = refmet
@@ -431,3 +451,65 @@ class GenericMWURL(OrderedDict):
             # regex from https://www.uniprot.org/help/accession_numbers
             if not re.match(r'[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}', input_value):
                 raise ValueError("Invalid UniProt ID (see uniprot.org/help/accession_numbers)")
+
+
+class MWRESTFile(object):
+    """MWRESTFile class that stores data from a single file download
+    through Metabolomics Workbench's REST API.
+    """
+
+    def __init__(self, source):
+        """File initializer.
+
+        :param str source: Source a `MWRESTFile` instance was created from.
+        """
+        self.source = source
+        self.text = ""
+
+    def read(self, filehandle):
+        """Read data into a :class:`~mwtab.mwrest.MWRESTFile` instance.
+
+        :param filehandle: file-like object.
+        :type filehandle: :py:class:`io.TextIOWrapper`, :py:class:`gzip.GzipFile`,
+                          :py:class:`bz2.BZ2File`, :py:class:`zipfile.ZipFile`
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        input_str = filehandle.read().decode('utf-8')
+        self.text = input_str
+        filehandle.close()
+
+    def write(self, filehandle):
+        """Write :class:`~mwtab.mwrest.MWRESTFile` data into file.
+
+        :param filehandle: file-like object.
+        :type filehandle: :py:class:`io.TextIOWrapper`
+        :param str file_format: Format to use to write data.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        try:
+            filehandle.write(self.text)
+        except IOError:
+            raise IOError('"filehandle" parameter must be writable.')
+        filehandle.close()
+
+    @staticmethod
+    def _is_json(string):
+        """Test if input string is in JSON format.
+
+        :param string: Input string.
+        :type string: :py:class:`str` or :py:class:`bytes`
+        :return: Input string if in JSON format or False otherwise.
+        :rtype: :py:class:`str` or :py:obj:`False`
+        """
+        try:
+            if isinstance(string, bytes):
+                json_str = json.loads(string.decode("utf-8"), object_pairs_hook=OrderedDict)
+            elif isinstance(string, str):
+                json_str = json.loads(string, object_pairs_hook=OrderedDict)
+            else:
+                raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
+            return json_str
+        except ValueError:
+            return False

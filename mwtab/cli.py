@@ -10,7 +10,11 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
-    mwtab download <input-value> [--to-path=<path>] [--context=<context>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
+    mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
+    mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
+    mwtab download (compound | refmet | gene | protein) <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+    mwtab download moverz <input-value> <m/z value> <ion type value> <m/z tolerance value> [--verbose]
+    mwtab download exactmass <LIPID abbreviation> <ion type value> [--verbose]
     mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
     mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
 
@@ -32,21 +36,22 @@ Options:
                                     compound, refmet, gene, protein, moverz, exactmass [default: study].
     --input-item=<item>             Item to search Metabolomics Workbench with.
     --output-item=<item>            Item to be retrieved from Metabolomics Workbench.
-    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json, etc.
+    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json [default: json]
     --no-header                     Include header at the top of csv formatted files.
 
     For extraction <to-path> can take a "-" which will use stdout.
 """
 
 from . import fileio
-from . import mwrest
 from . import mwextract
+from . import mwrest
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping
 
 from os import getcwd
 from os.path import join
+from urllib.parse import quote_plus
 
 import json
 
@@ -54,8 +59,10 @@ import json
 def cli(cmdargs):
 
     fileio.VERBOSE = cmdargs["--verbose"]
+    mwrest.VERBOSE = cmdargs["--verbose"]
     fileio.MWREST = cmdargs["--mw-rest"]
 
+    # mwtab convert ...
     if cmdargs["convert"]:
         converter = Converter(from_path=cmdargs["<from-path>"],
                               to_path=cmdargs["<to-path>"],
@@ -64,6 +71,7 @@ def cli(cmdargs):
                               validate=cmdargs["--validate"])
         converter.convert()
 
+    # mwtab validate ...
     elif cmdargs["validate"]:
         for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
             validate_file(mwtabfile=mwfile,
@@ -71,27 +79,46 @@ def cli(cmdargs):
                           validate_samples=True,
                           validate_factors=True)
 
+    # mwtab download ...
     elif cmdargs["download"]:
-        if cmdargs["<input-value>"] == "all":
-            an_ids = mwrest.analysis_ids()
-            for mwfile in fileio.read_files(*an_ids):
-                with open(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"), "w") as outfile:
-                    mwfile.write(outfile, "mwtab")
-                    outfile.close()
 
-        else:
-            for mwfile in fileio.read_files(
+        # mwtab download study ...
+        if cmdargs["study"]:
+
+            # mwtab download study all ...
+            if cmdargs["all"]:
+                # mwtab download study all --input-item=analysis_id
+                if not cmdargs["--input-item"] or cmdargs["--input-item"] == "analysis_id":
+                    mwtabfiles = fileio.read_files(
+                        *mwrest.generate_mwtab_urls(mwrest.analysis_ids(), cmdargs["--output-format"]),
+                        valdate=cmdargs.get("--validate")
+                    )
+                    for mwtabfile in mwtabfiles:
+                        with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwtabfile.source).replace(".", "_")), "w") as fh:
+                            mwtabfile.write(fh, cmdargs["--output-format"])
+                # mwtab download study all --input-item=study_id
+                elif cmdargs["--input-item"] == "study_id":
+                    mwtabfiles = fileio.read_files(
+                        *mwrest.generate_mwtab_urls(mwrest.study_ids(), cmdargs["--output-format"]),
+                        valdate=cmdargs.get("--validate")
+                    )
+                    for mwtabfile in mwtabfiles:
+                        with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwtabfile.source).replace(".", "_")), "w") as fh:
+                            mwtabfile.write(fh, cmdargs["--output-format"])
+
+            # mwtab download study <input_value> ...
+            if cmdargs["<input-value>"]:
+                MWTabFile = next(fileio.read_files(
                     mwrest.GenericMWURL(**{
                         "base url": cmdargs["--mw-rest"],
                         "context": cmdargs.get("--context") or "study",
                         "input item": cmdargs.get("--input-item") or "analysis_id",
                         'input value': cmdargs["<input-value>"],
                         'output item': cmdargs.get("--output-item") or "mwtab",
-                        'output format': cmdargs.get("--output-format") or "txt"
-                    }).url):
-                with open(join(cmdargs.get("--to-path") or getcwd(), mwfile.analysis_id+".txt"), "w") as outfile:
-                    mwfile.write(outfile, "mwtab")
-                    outfile.close()
+                        'output format': cmdargs.get("--output-format")
+                    }).url))
+                with open(join(cmdargs.get("--to-path") or getcwd(), MWTabFile.analysis_id+".txt"), "w") as outfile:
+                    MWTabFile.write(outfile, cmdargs["--output-format"])
 
     elif cmdargs["extract"]:
         mwfile_generator = fileio.read_files(cmdargs["<from-path>"])

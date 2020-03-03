@@ -128,22 +128,25 @@ def read_mwrest(*sources, **kwds):
     filehandles = _generate_handles(filenames)
     for fh, source in filehandles:
         try:
-            text = fh.read().decode('utf-8')
+            f = mwrest.MWRESTFile(source)
+            f.read(fh)
 
-            if kwds.get('convertJSON'):
-                try:
-                    yield json.loads(text)
-                except Exception as e:
-                    yield text
-            else:
-                yield text
+            yield f
+
+            # if kwds.get('convertJSON'):
+            #     try:
+            #         yield json.loads(text)
+            #     except Exception as e:
+            #         yield text
+            # else:
+            #     yield text
 
             if VERBOSE:
-                print("Processed url: {}".format(os.path.abspath(source)))
+                print("Processed url: {}".format(source))
 
         except Exception as e:
             if VERBOSE:
-                print("Error processing url: ", os.path.abspath(source), "\nReason:", e)
+                print("Error processing url: ", source, "\nReason:", e)
             pass
 
 
