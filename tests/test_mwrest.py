@@ -8,47 +8,49 @@ def test_study_analysis():
 
 
 @pytest.mark.parametrize("kwds", [
-    ({'context': 'study',
-      'input item': 'analysis_id',
-      'input value': "AN000002",
-      'output item': 'mwtab',
-      'output format': "txt"}),
-    ({'context': 'study',
-      'input item': 'study_id',
-      'input value': "ST000001",
-      'output item': 'mwtab'}),
-    ({'base url': "https://www.test.org/rest/",
-      'context': 'study',
-      'input item': 'study_id',
-      'input value': "ST000001",
-      'output item': 'mwtab'})
+    ({"context": "study",
+      "input_item": "analysis_id",
+      "input_value": "AN000002",
+      "output_item": "mwtab",
+      'output_format': "txt"}),
+    ({"context": "study",
+      "input_item": "study_id",
+      "input_value": "ST000001",
+      "output_item": "mwtab",
+      'output_format': "txt"}),
+    ({"base_url": "https://www.test.org/rest/",
+      "context": "study",
+      "input_item": "study_id",
+      "input_value": "ST000001",
+      "output_item": "mwtab",
+      'output_format': "txt"}),
 ])
 def test_mwrest(kwds):
     test_mwurl = GenericMWURL(**kwds)
-    assert test_mwurl.url == test_mwurl.base_url + "{}/{}/{}/{}/{}".format(
+    assert test_mwurl.url == test_mwurl.base_url + "/".join([
         kwds["context"],
-        kwds["input item"],
-        kwds["input value"],
-        kwds["output item"],
-        kwds.get("output format") or ""
-    )
+        kwds["input_item"],
+        kwds["input_value"],
+        kwds["output_item"],
+        kwds.get("output_format") or ""
+    ])
 
 
 @pytest.mark.parametrize("kwds", [
-    ({'context': 'study',
-      'input item': 'analysis_id',
-      'input value': "ST000002",
-      'output item': 'mwtab',
-      'output format': "txt"}),
-    ({'context': 'moverz',
-      'input item': 'LIPIDS',
-      'm/z value': 49,
-      'ion type value': "M+H",
-      'm/z tolerance value': 0.1,
-      'output format': "txt"}),
-    ({'context': 'exactmass',
-      'LIPID abbreviation': 'Test',
-      'ion type value': "M+H"}),
+    ({"context": "study",
+      "input_item": "analysis_id",
+      "input_value": "ST000001",
+      "output_item": "mwtab",
+      'output_format': "txt"}),
+    ({"context": "moverz",
+      "input_item": "LIPIDS",
+      "m/z_value": 49,
+      "ion_type_value": "M+H",
+      "m/z_tolerance_value": 0.1,
+      'output_format': "txt"}),
+    ({"context": "exactmass",
+      "LIPID_abbreviation": "Test",
+      "ion_type_value": "M+H"}),
 ])
 def test_fail_mwrest(kwds):
     try:
