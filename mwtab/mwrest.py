@@ -63,17 +63,17 @@ def _pull_study_analysis():
     :rtype: :py:class:`dict`
     """
     url = GenericMWURL(
-        **{'context': 'study', 'input item': 'study_id', 'input value': 'ST', 'output item': 'analysis'}
+        **{"context": "study", "input_item": "study_id", "input_value": "ST", "output_item": "analysis"}
     ).url
-    mwrestfile = next(fileio.read_mwrest(url, **{'convertJSON': True}))
+    mwrestfile = next(fileio.read_mwrest(url, **{"convertJSON": True}))
     json_object = mwrestfile._is_json(mwrestfile.text)
 
     study_analysis_dict = dict()
     for k in json_object.keys():
-        if study_analysis_dict.get(json_object[k]['study_id']):
-            study_analysis_dict[json_object[k]['study_id']].append(json_object[k]['analysis_id'])
+        if study_analysis_dict.get(json_object[k]["study_id"]):
+            study_analysis_dict[json_object[k]["study_id"]].append(json_object[k]["analysis_id"])
         else:
-            study_analysis_dict[json_object[k]['study_id']] = [json_object[k]['analysis_id']]
+            study_analysis_dict[json_object[k]["study_id"]] = [json_object[k]["analysis_id"]]
 
     return study_analysis_dict
 
@@ -92,27 +92,27 @@ def generate_mwtab_urls(input_items, output_format='txt'):
         if input_item.isdigit():
             analysis_id = "AN{}".format(input_item.zfill(6))
             yield GenericMWURL(**{
-                'context': 'study',
-                'input item': 'analysis_id',
-                'input value': analysis_id,
-                'output item': 'mwtab',
-                'output format': output_format
+                "context": "study",
+                "input_item": "analysis_id",
+                "input_value": analysis_id,
+                "output_item": "mwtab",
+                "output_format": output_format
             }).url
         elif re.match(r'(AN[0-9]{6}$)', input_item):
             yield GenericMWURL(**{
-                'context': 'study',
-                'input item': 'analysis_id',
-                'input value': input_item,
-                'output item': 'mwtab',
-                'output format': output_format
+                "context": "study",
+                "input_item": "analysis_id",
+                "input_value": input_item,
+                "output_item": "mwtab",
+                "output_format": output_format
             }).url
         elif re.match(r'(ST[0-9]{1,6}$)', input_item):
             yield GenericMWURL(**{
-                'context': 'study',
-                'input item': 'study_id',
-                'input value': input_item,
-                'output item': 'mwtab',
-                'output format': output_format
+                "context": "study",
+                "input_item": "study_id",
+                "input_value": input_item,
+                "output_item": "mwtab",
+                "output_format": output_format
             }).url
 
 
@@ -145,64 +145,64 @@ class GenericMWURL(OrderedDict):
     """
     base_mwrest_url = "https://www.metabolomicsworkbench.org/rest/"
     context = {
-        'study': {
-            'input item': {
+        "study": {
+            "input_item": {
                 'study_id', 'study_title', 'institute', 'last_name', 'analysis_id', 'metabolite_id'
             },
-            'output item': {
+            "output_item": {
                 'summary', 'factors', 'analysis', 'metabolites', 'mwtab', 'source', 'species', 'disease',
                 'number_of_metabolites', 'data', 'datatable', 'untarg_studies', 'untarg_factors', 'untarg_data'
             }
         },
 
-        'compound': {
-            'input item': {
+        "compound": {
+            "input_item": {
                 'regno', 'formula', 'inchi_key', 'lm_id', 'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id',
                 'abbrev'
             },
-            'output item': {
+            "output_item": {
                 'all', 'regno', 'formula', 'exactmass', 'inchi_key', 'name', 'sys_name', 'smiles', 'lm_id',
                 'pubchem_cid', 'hmdb_id', 'kegg_id', 'chebi_id', 'metacyc_id', 'classification', 'molfile', 'png'
             }
         },
 
-        'refmet': {
-            'input item': {
+        "refmet": {
+            "input_item": {
                 'all', 'match', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'formula', 'main_class', 'sub_class'
             },
-            'output item': {
+            "output_item": {
                 'all', 'name', 'inchi_key', 'regno', 'pubchem_cid', 'exactmass', 'formula', 'synonyms', 'sys_name',
                 'main_class', 'sub_class'
             }
         },
 
-        'gene': {
-            'input item': {
+        "gene": {
+            "input_item": {
                 'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid'
             },
-            'output item': {
+            "output_item": {
                 'all', 'lmp_id', 'mgp_id', 'gene_name', 'gene_symbol', 'gene_synonyms', 'alt_names', 'chromosome',
                 'map_location', 'summary', 'taxid', 'species', 'species_long'
             }
         },
 
-        'protein': {
-            'input item': {
+        "protein": {
+            "input_item": {
                 'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'mrna_id', 'refseq_id', 'protein_gi',
                 'uniprot_id', 'protein_entry', 'protein_name'
             },
-            'output item': {
+            "output_item": {
                 'all', 'mgp_id', 'gene_id', 'gene_name', 'gene_symbol', 'taxid', 'species', 'species_long', 'mrna_id',
                 'refseq_id', 'protein_gi', 'uniprot_id', 'protein_entry', 'protein_name', 'seqlength', 'seq',
                 'is_identical_to'
             }
         },
 
-        'moverz': {
-            'input item': {
+        "moverz": {
+            "input_item": {
                 'LIPIDS', 'MB', 'REFMET'
             },
-            'ion type value': {
+            "ion_type_value": {
                 'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+Na', 'M+2Na', 'M+Li', 'M+2Li', 'M+NH4',
                 'M+H+CH3CN', 'M+Na+CH3CN', 'M.NaFormate+H', 'M.NH4Formate+H', 'M.CH3', 'M.TMSi', 'M.tBuDMSi', 'M-H',
                 'M-H-H2O', 'M+Na-2H', 'M+K-2H', 'M-2H', 'M-3H', 'M4H', 'M.Cl', 'M.F', 'M.HF2', 'M.OAc', 'M.Formate',
@@ -210,13 +210,13 @@ class GenericMWURL(OrderedDict):
             }
         },
 
-        'exactmass': {
-            'LIPID abbreviation': {
+        "exactmass": {
+            "LIPID_abbreviation": {
                 'ArthroCer', 'asialoGM2Cer', 'CAR', 'CE', 'Cer', 'CerP', 'CoA', 'DG', 'DGDG', 'FA', 'GalCer', 'GB3Cer',
                 'GlcCer', 'GM3Cer', 'GM4Cer', 'iGB3Cer', 'LacCer', 'Lc3Cer', 'Manb1-4GlcCer', 'MG', 'MGDG', 'MolluCer',
                 'PA', 'PC', 'PE', 'PE-Cer', 'PG', 'PGP', 'PI', 'PI-Cer', 'PIP', 'PIP2', 'PIP3', 'PS', 'SM', 'SQDG', 'TG'
             },
-            'ion type value': {
+            "ion_type_value": {
                 'Neutral', 'M+H', 'M+H-H2O', 'M+2H', 'M+3H', 'M+4H', 'M+K', 'M+2K', 'M+2K-H', 'M+Na', 'M+2Na',
                 'M+2Na-H',
                 'M+Li', 'M+2Li', 'M+Ag', 'M+NH4', 'M-H', 'M-CH3', 'M2H', 'M-3H', 'M-4H', 'M.Cl', 'M.OAc', 'M.Formate'
@@ -230,7 +230,7 @@ class GenericMWURL(OrderedDict):
         :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
         """
         super(GenericMWURL, self).__init__(**kwds)
-        self.base_url = kwds.get("base url") or self.base_mwrest_url
+        self.base_url = kwds.get("base_url") or self.base_mwrest_url
         self.url = self._validate()
 
     def _validate(self):
@@ -239,13 +239,13 @@ class GenericMWURL(OrderedDict):
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        if not self['context'] in self.context.keys():
+        if not self["context"] in self.context.keys():
             raise KeyError("Error: Invalid/missing context")
-        elif self['context'] in {'study', 'compound', 'refmet', 'gene', 'protein'}:
+        elif self["context"] in {"study", "compound", "refmet", "gene", "protein"}:
             return self._validate_generic()
-        elif self['context'] == 'moverz':
+        elif self["context"] == "moverz":
             return self._validate_moverz()
-        elif self['context'] == 'exactmass':
+        elif self["context"] == "exactmass":
             return self._validate_exactmass()
 
     def _validate_generic(self):
@@ -296,32 +296,32 @@ class GenericMWURL(OrderedDict):
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        keywords = {'input item', 'input value', 'output item'}
+        keywords = {"input_item", "input_value", "output_item"}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['input item'] for k in self.context[self['context']]['input item']):
+        elif not any(k in self["input_item"] for k in self.context[self["context"]]["input_item"]):
             raise ValueError("Invalid input item")
-        elif self._validate_input(self['input item'], self['input value']):
+        elif self._validate_input(self["input_item"], self["input_value"]):
             exit()
-        elif type(self['output item']) == list:
-            if self['context'] == 'study':
+        elif type(self["output_item"]) == list:
+            if self["context"] == "study":
                 raise ValueError("Invalid output items. Study only takes a single output item.")
-            elif not all(k in self.context[self['context']]['output item'] for k in self['output item']):
+            elif not all(k in self.context[self["context"]]["output_item"] for k in self["output_item"]):
                 raise ValueError("Invalid output item(s): " +
-                                 str(set(self['output item']).difference(self.context[self['context']]['output item'])))
+                                 str(set(self["output_item"]).difference(self.context[self["context"]]["output_item"])))
             else:
                 return self.base_url + '/'.join([
-                    self.get('context'),
-                    self.get('input item'),
-                    str(self.get('input value')),
-                    ','.join(self.get('output item')),
-                    self.get('output format') or ''
+                    self.get("context"),
+                    self.get("input_item"),
+                    str(self.get("input_value")),
+                    ','.join(self.get("output_item")),
+                    self.get("output_format") or ''
                 ])
-        elif not any(k in self['output item'] for k in self.context[self['context']]['output item']):
+        elif not any(k in self["output_item"] for k in self.context[self["context"]]["output_item"]):
             raise ValueError("Invalid output item")
         else:
-            return self.base_url + '/'.join([self.get('context'), self.get('input item'), str(self.get('input value')),
-                                      self.get('output item'), self.get('output format') or ''])
+            return self.base_url + "/".join([self.get("context"), self.get("input_item"), str(self.get("input_value")),
+                                      self.get("output_item"), self.get("output_format") or ""])
 
     def _validate_moverz(self):
         """Validate keyword arguments for moverz context. If valid, generates REST URL.
@@ -340,21 +340,21 @@ class GenericMWURL(OrderedDict):
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        keywords = {'input item', 'm/z value', 'ion type value', 'm/z tolerance value'}
+        keywords = {"input_item", "m/z_value", "ion_type_value", "m/z_tolerance_value"}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['input item'] for k in self.context['moverz']['input item']):
+        elif not any(k in self["input_item"] for k in self.context["moverz"]["input_item"]):
             raise ValueError("Invalid input item")
-        elif not 50 <= float(self['m/z value']) <= 2000:
+        elif not 50 <= float(self["m/z_value"]) <= 2000:
             raise ValueError("m/z value outside of range: 50-2000")
-        elif not self['ion type value'] in self.context['moverz']['ion type value']:
+        elif not self["ion_type_value"] in self.context["moverz"]["ion_type_value"]:
             raise ValueError("Invalid ion type value")
-        elif not 0.0001 <= float(self['m/z tolerance value']) <= 1:
+        elif not 0.0001 <= float(self["m/z_tolerance_value"]) <= 1:
             raise ValueError("m/z tolerance value outside of range: 0.0001-1")
         else:
             # only supports txt output format
-            return self.base_url + '/'.join([self['context'], self['input item'], str(self['m/z value']),
-                                      self['ion type value'], str(self['m/z tolerance value']), 'txt'])
+            return self.base_url + "/".join([self["context"], self["input_item"], str(self["m/z_value"]),
+                                      self["ion_type_value"], str(self["m/z_tolerance_value"]), "txt"])
 
     def _validate_exactmass(self):
         """Validate keyword arguments for exactmass context. If valid, generates REST URL.
@@ -368,88 +368,88 @@ class GenericMWURL(OrderedDict):
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        keywords = {'LIPID abbreviation', 'ion type value'}
+        keywords = {"LIPID_abbreviation", "ion_type_value"}
         if not all(k in self.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self['LIPID abbreviation'] for k in self.context['exactmass']['LIPID abbreviation']):
+        elif not any(k in self["LIPID_abbreviation"] for k in self.context["exactmass"]["LIPID_abbreviation"]):
             raise ValueError("Invalid LIPID abbreviation")
-        elif not self['ion type value'] in self.context['exactmass']['ion type value']:
+        elif not self['ion_type_value'] in self.context["exactmass"]["ion_type_value"]:
             raise ValueError("Invalid ion type value")
         else:
             # no required output format
-            return self.base_url + '/'.join([self['context'], self['LIPID abbreviation'], self['ion type value']])
+            return self.base_url + "/".join([self["context"], self["LIPID_abbreviation"], self["ion_type_value"]])
 
     @staticmethod
     def _validate_input(input_item, input_value):
         """Validate keyword arguments for input item where an id is used (ie. study, compound, refmet, gene, and
         protein). If invalid, raises value error.
         """
-        if input_item == 'study_id':
+        if input_item == "study_id":
             # allows for pulling a range of entries (ie. ST0001 pulls studies 100-199)
-            if not re.match(r'(ST[0-9]{0,6}$)', input_value):
+            if not re.match(r"(ST[0-9]{0,6}$)", input_value):
                 raise ValueError("Invalid Metabolomics Workbench (MW) study ID (ST<6-digit integer>)")
-        elif input_item in ['study_title', 'institute', 'last_name',
-                            'formula',
-                            'gene_name', 'gene_symbol', 'protein_entry', 'protein_name']:
+        elif input_item in ["study_title", "institute", "last_name",
+                            "formula",
+                            "gene_name", "gene_symbol", "protein_entry", "protein_name"]:
             if not type(input_value) == str:
-                raise ValueError("Invalid {} (<string>)".format(input_item.replace('_', ' ')))
-        elif input_item == 'analysis_id':
+                raise ValueError("Invalid {} (<string>)".format(input_item.replace("_", " ")))
+        elif input_item == "analysis_id":
             if not re.match(r'(AN[0-9]{6}$)', input_value):
                 raise ValueError("Invalid Metabolomics Workbench analysis ID for a study (AN<6-digit integer>)")
-        elif input_item == 'metabolite_id':
-            if not re.match(r'(ME[0-9]{6}$)', input_value):
+        elif input_item == "metabolite_id":
+            if not re.match(r"(ME[0-9]{6}$)", input_value):
                 raise ValueError("Invalid Metabolomics Workbench metabolite ID for a study (ME<6-digit integer>)")
 
-        elif input_item == 'regno':
+        elif input_item == "regno":
             if not input_value.isdigit():
                 raise ValueError("Invalid Metabolomics Workbench Metabolite database ID (<integer>)")
-        elif input_item == 'inchi_key':
-            if not re.match(r'([A-Z,\-]{27}$)', input_value):
+        elif input_item == "inchi_key":
+            if not re.match(r"([A-Z,\-]{27}$)", input_value):
                 raise ValueError("Invalid InChIKey (27-character string)")
-        elif input_item == 'lm_id':
-            if not re.match(r'(LM[A-Z]{2}[0-9]{8,10}$)', input_value):
+        elif input_item == "lm_id":
+            if not re.match(r"(LM[A-Z]{2}[0-9]{8,10}$)", input_value):
                 raise ValueError("Invalid LIPID MAPS ID (LM<2-character LIPID MAPS category><8-10 character string>)")
-        elif input_item == 'pubchem_cid':
+        elif input_item == "pubchem_cid":
             if not input_value.isdigit():
                 raise ValueError("Invalid PubChem Compound ID (<integer>)")
-        elif input_item == 'hmdb_id':
-            if not re.match(r'(HMDB[0-9]+$)', input_value):
+        elif input_item == "hmdb_id":
+            if not re.match(r"(HMDB[0-9]+$)", input_value):
                 raise ValueError("Invalid Human Metabolome Database ID (HMDB<integer>)")
-        elif input_item == 'kegg_id':
-            if not re.match(r'(CO[0-9]+$)', input_value):
+        elif input_item == "kegg_id":
+            if not re.match(r"(CO[0-9]+$)", input_value):
                 raise ValueError("Invalid KEGG compound ID (CO<integer>)")
-        elif input_item == 'chebi_id':
+        elif input_item == "chebi_id":
             if not input_value.isdigit():
                 raise ValueError("Invalid ChEBI compound id (<integer>)")
         # TODO: update the following two input types.
-        elif input_item == 'metacyc_id':
+        elif input_item == "metacyc_id":
             if not type(input_value) == str:
                 raise ValueError("Invalid METACYC compound ID (<string>)")
-        elif input_item == 'abbrev':
+        elif input_item == "abbrev":
             if not type(input_value) == str:
                 raise ValueError("Invalid : Lipid bulk abbreviation (<string>)")
 
-        elif input_item == 'mgp_id':
-            if not re.match(r'(MGP[0-9]{6}$)', input_value):
+        elif input_item == "mgp_id":
+            if not re.match(r"(MGP[0-9]{6}$)", input_value):
                 raise ValueError("Invalid Human Metabolome Gene/Protein (MGP) database gene ID (MGP<6-digit integer>)")
-        elif input_item == 'gene_id':
+        elif input_item == "gene_id":
             if not input_value.isdigit():
                 raise ValueError("Invalid Entrez gene ID (<integer>)")
-        elif input_item == 'taxid':
+        elif input_item == "taxid":
             if not input_value.isdigit():
                 raise ValueError("Invalid NCBI taxonomy ID (<integer>)")
-        elif input_item == 'mrna_id':
-            if not re.match(r'(NM_[0-9]+$)', input_value):
+        elif input_item == "mrna_id":
+            if not re.match(r"(NM_[0-9]+$)", input_value):
                 raise ValueError("Invalid mRNA ID (NM_<integer>)")
-        elif input_item == 'refseq_id':
-            if not re.match(r'(NP_[0-9]+$)', input_value):
+        elif input_item == "refseq_id":
+            if not re.match(r"(NP_[0-9]+$)", input_value):
                 raise ValueError("Invalid mRNA ID (NP_<integer>)")
-        elif input_item == 'protein_gi':
+        elif input_item == "protein_gi":
             if not input_value.isdigit():
                 raise ValueError("Invalid NCBI protein GI (<integer>)")
-        elif input_item == 'uniprot_id':
+        elif input_item == "uniprot_id":
             # regex from https://www.uniprot.org/help/accession_numbers
-            if not re.match(r'[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}', input_value):
+            if not re.match(r"[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}", input_value):
                 raise ValueError("Invalid UniProt ID (see uniprot.org/help/accession_numbers)")
 
 
@@ -475,8 +475,9 @@ class MWRESTFile(object):
         :return: None
         :rtype: :py:obj:`None`
         """
-        input_str = filehandle.read().decode('utf-8')
+        input_str = filehandle.read().decode("utf-8")
         self.text = input_str
+        self.text = re.sub(r"<.*?>", "", self.text)
         filehandle.close()
 
     def write(self, filehandle):

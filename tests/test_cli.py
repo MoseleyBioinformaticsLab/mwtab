@@ -76,11 +76,13 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     assert mwtabfiles_analysis_ids_set.issubset({"AN000001", "AN000002"})
 
 
-@pytest.mark.parametrize("input_value, to_path", [
-    ("AN000002", "tests/example_data/tmp")
+@pytest.mark.parametrize("input_value, output_format, to_path", [
+    ("AN000002", "txt", "tests/example_data/tmp.txt"),
+    ("2", "txt", "tests/example_data/tmp.txt"),
+    ("ST000002", "txt", "tests/example_data/tmp.txt"),
 ])
-def test_download_command(input_value, to_path):
-    command = "python -m mwtab download {} --to-path={}".format(input_value, to_path)
+def test_download_command(input_value, output_format, to_path):
+    command = "python -m mwtab download study {} --output-format={} --to-path={}".format(input_value, output_format, to_path)
     assert os.system(command) == 0
 
     mwtabfile = next(mwtab.read_files(to_path))
