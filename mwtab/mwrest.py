@@ -301,27 +301,27 @@ class GenericMWURL(OrderedDict):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
         elif not any(k in self["input_item"] for k in self.context[self["context"]]["input_item"]):
             raise ValueError("Invalid input item")
-        elif self._validate_input(self["input_item"], self["input_value"]):
-            exit()
-        elif type(self["output_item"]) == list:
-            if self["context"] == "study":
-                raise ValueError("Invalid output items. Study only takes a single output item.")
-            elif not all(k in self.context[self["context"]]["output_item"] for k in self["output_item"]):
-                raise ValueError("Invalid output item(s): " +
-                                 str(set(self["output_item"]).difference(self.context[self["context"]]["output_item"])))
-            else:
-                return self.base_url + '/'.join([
-                    self.get("context"),
-                    self.get("input_item"),
-                    str(self.get("input_value")),
-                    ','.join(self.get("output_item")),
-                    self.get("output_format") or ''
-                ])
-        elif not any(k in self["output_item"] for k in self.context[self["context"]]["output_item"]):
-            raise ValueError("Invalid output item")
         else:
-            return self.base_url + "/".join([self.get("context"), self.get("input_item"), str(self.get("input_value")),
-                                      self.get("output_item"), self.get("output_format") or ""])
+            self._validate_input(self["input_item"], self["input_value"])
+            if type(self["output_item"]) == list:
+                if self["context"] == "study":
+                    raise ValueError("Invalid output items. Study only takes a single output item.")
+                elif not all(k in self.context[self["context"]]["output_item"] for k in self["output_item"]):
+                    raise ValueError("Invalid output item(s): " +
+                                     str(set(self["output_item"]).difference(self.context[self["context"]]["output_item"])))
+                else:
+                    return self.base_url + '/'.join([
+                        self.get("context"),
+                        self.get("input_item"),
+                        str(self.get("input_value")),
+                        ','.join(self.get("output_item")),
+                        self.get("output_format") or ''
+                    ])
+            elif not any(k in self["output_item"] for k in self.context[self["context"]]["output_item"]):
+                raise ValueError("Invalid output item")
+            else:
+                return self.base_url + "/".join([self.get("context"), self.get("input_item"), str(self.get("input_value")),
+                                          self.get("output_item"), self.get("output_format") or ""])
 
     def _validate_moverz(self):
         """Validate keyword arguments for moverz context. If valid, generates REST URL.
@@ -456,6 +456,8 @@ class GenericMWURL(OrderedDict):
 class MWRESTFile(object):
     """MWRESTFile class that stores data from a single file download
     through Metabolomics Workbench's REST API.
+
+    Mirrors :class:`~mwtab.mwtab.MWTabFile`.
     """
 
     def __init__(self, source):
@@ -477,7 +479,7 @@ class MWRESTFile(object):
         """
         input_str = filehandle.read().decode("utf-8")
         self.text = input_str
-        self.text = re.sub(r"<.*?>", "", self.text)
+        self.text = re.sub(r"<.*?>", "", self.text)  # included to remove remaining HTML tags
         filehandle.close()
 
     def write(self, filehandle):

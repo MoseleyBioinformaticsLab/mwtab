@@ -141,13 +141,14 @@ def cli(cmdargs):
                           "w") as fh:
                     mwrestfile.write(fh)
 
-        # mwtab download (compound | refmet | gene | protein) ...
+        # mwtab download (study | compound | refmet | gene | protein) ...
         elif cmdargs["compound"] or cmdargs["refmet"] or cmdargs["gene"] or cmdargs["protein"]:
-            print(cmdargs)
-            exit()
+            possible_contexts = {"compoud", "refmet", "gene", "protein"}
+            context = [c for c in possible_contexts if cmdargs.get(c)]
+
             mwresturl = mwrest.GenericMWURL(**{
                 "base_url": cmdargs["--mw-rest"],
-                "context": "balh",
+                "context": context[0],
                 "input_item": cmdargs["<input-item>"],
                 "input_value": cmdargs["<input-value>"],
                 "output_item": cmdargs["<output-item>"],
