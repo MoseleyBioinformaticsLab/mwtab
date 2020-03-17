@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# TODO: Remove print before public release
 
 """
 The mwtab command-line interface
@@ -18,8 +17,6 @@ Usage:
     mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
     mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
     mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
-    mwtab print
-
 
 Options:
     -h, --help                      Show this screen.
@@ -59,8 +56,29 @@ import json
 import re
 
 
-def write():
-    pass
+def download(context, cmdparams):
+    """
+    Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
+    Retrieved data is then saved out as specified.
+
+    :param str context: String indicating the type of data to be accessed from the Metabolomics Workbench.
+    :param dict cmdparams: Commandline arguments specifiying data to be accessed from Metabolomics Workbench.
+    :return: None
+    :rtype: :py:obj:`None`
+    """
+    mwresturl = mwrest.GenericMWURL(**{
+        "base_url": cmdparams["--mw-rest"],
+        "context": context,
+        "input_item": cmdparams["<input-item>"],
+        "input_value": cmdparams["<input-value>"],
+        "output_item": cmdparams["<output-item>"],
+        "output_format": cmdparams["<output-format>"],
+    }).url
+    mwrestfile = next(fileio.read_mwrest(mwresturl, ))
+    with open(cmdparams["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdparams[
+        "--output-format"]),
+              "w") as fh:
+        mwrestfile.write(fh)
 
 
 def cli(cmdargs):
@@ -142,22 +160,14 @@ def cli(cmdargs):
                     mwrestfile.write(fh)
 
         # mwtab download (study | compound | refmet | gene | protein) ...
-        elif cmdargs["compound"] or cmdargs["refmet"] or cmdargs["gene"] or cmdargs["protein"]:
-            possible_contexts = {"compoud", "refmet", "gene", "protein"}
-            context = [c for c in possible_contexts if cmdargs.get(c)]
-
-            mwresturl = mwrest.GenericMWURL(**{
-                "base_url": cmdargs["--mw-rest"],
-                "context": context[0],
-                "input_item": cmdargs["<input-item>"],
-                "input_value": cmdargs["<input-value>"],
-                "output_item": cmdargs["<output-item>"],
-                "output_format": cmdargs["<output-format>"],
-            }).url
-            mwrestfile = next(fileio.read_mwrest(mwresturl))
-            with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdargs["--output-format"]),
-                      "w") as fh:
-                mwrestfile.write(fh, cmdargs["--output-format"])
+        elif cmdargs["compound"]:
+            download("compound", cmdargs)
+        elif cmdargs["refmet"]:
+            download("refmet", cmdargs)
+        elif cmdargs["gene"]:
+            download("gene", cmdargs)
+        elif cmdargs["protein"]:
+            download("protein", cmdargs)
 
         # mwtab download moverz <input-value> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--verbose]
         elif cmdargs["moverz"]:
@@ -219,7 +229,3 @@ def cli(cmdargs):
                     mwextract.write_json(cmdargs["<to-path>"], metadata)
             else:
                 print(metadata)
-
-    # TODO: Remove before public release
-    elif cmdargs["print"]:
-        print(cmdargs)

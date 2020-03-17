@@ -108,10 +108,11 @@ def read_files(*sources, **kwds):
                                         section_schema_mapping=mwschema.section_schema_mapping,
                                         validate_samples=True,
                                         validate_factors=True)
-            yield f
 
             if VERBOSE:
                 print("Processed file: {}".format(os.path.abspath(source)))
+
+            yield f
 
         except Exception as e:
             if VERBOSE:
@@ -131,18 +132,10 @@ def read_mwrest(*sources, **kwds):
             f = mwrest.MWRESTFile(source)
             f.read(fh)
 
-            yield f
-
-            # if kwds.get('convertJSON'):
-            #     try:
-            #         yield json.loads(text)
-            #     except Exception as e:
-            #         yield text
-            # else:
-            #     yield text
-
             if VERBOSE:
                 print("Processed url: {}".format(source))
+
+            yield f
 
         except Exception as e:
             if VERBOSE:
