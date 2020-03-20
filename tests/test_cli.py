@@ -76,12 +76,62 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     assert mwtabfiles_analysis_ids_set.issubset({"AN000001", "AN000002"})
 
 
+@pytest.mark.parametrize("command", [
+    # download by url
+    "python -m mwtab download url https://www.metabolomicsworkbench.org/rest/study/study_id/ST000001/summary --to-path=tests/example_data/tmp/tmp.txt",
+    # download by study methods
+    "python -m mwtab download study 2 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
+    "python -m mwtab download study ST000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
+    "python -m mwtab download study study_id ST000002 summary --to-path=tests/example_data/tmp/tmp.txt",
+    # download compound | refmet | gene | protein
+    "python -m mwtab download compound regno 11 name --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download refmet name Cholesterol all --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download gene gene_symbol acaca all --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download protein uniprot_id Q13085 all --to-path=tests/example_data/tmp/tmp.txt",
+    # download moverz
+    "python -m mwtab download moverz MB 635.52 M+H 0.5 --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download moverz LIPIDS 513.45 M-2H 0.2 --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download moverz REFMET 255.2 M+H 0.2 --to-path=tests/example_data/tmp/tmp.txt",
+    # download exactmass
+    "python -m mwtab download exactmass \"PC(34:1)\" M+H --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download exactmass  \"GlcCer(d42:2)\" M-H --to-path=tests/example_data/tmp/tmp.txt",
+
+])
+def test_download_command(command):
+    assert os.system(command) == 0
+
+    file_str = ""
+    with open("tests/example_data/tmp/tmp.txt", "r") as fh:
+        file_str = fh.read()
+        fh.close()
+    with open("tests/example_data/tmp/tmp.txt", "w") as fh:
+        fh.close()
+    assert file_str
+
+
+# @pytest.mark.parametrize("command", [
+#     "python -m mwtab download study AN000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
+#     "python -m mwtab download study 2 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
+#     "python -m mwtab download study ST000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
+#     "python -m mwtab download study study_id ST000002 summary --to-path=tests/example_data/tmp/tmp.txt",
+#     "",
+# ])
+# def test_download_command(command):
+#     assert os.system(command) == 0
+#
+#     file_str = ""
+#     with open("tests/example_data/tmp/tmp.txt", "r") as fh:
+#         file_str = fh.read()
+#         fh.close()
+#     assert file_str
+
+
 @pytest.mark.parametrize("input_value, output_format, to_path", [
     ("AN000002", "txt", "tests/example_data/tmp.txt"),
     ("2", "txt", "tests/example_data/tmp.txt"),
     ("ST000002", "txt", "tests/example_data/tmp.txt"),
 ])
-def test_download_command(input_value, output_format, to_path):
+def test_download_study_command(input_value, output_format, to_path):
     command = "python -m mwtab download study {} --output-format={} --to-path={}".format(input_value, output_format, to_path)
     assert os.system(command) == 0
 

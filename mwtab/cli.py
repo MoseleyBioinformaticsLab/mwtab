@@ -10,10 +10,11 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
+    mwtab download url <url> [--to-path=<path>] [--verbose]
     mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
     mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
-    mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> <output-format> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
-    mwtab download moverz <input-value> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+    mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+    mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
     mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
     mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
     mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
@@ -48,12 +49,26 @@ from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping
 
-from os import getcwd
+from os import getcwd, makedirs, path
 from os.path import join
 from urllib.parse import quote_plus
 
 import json
 import re
+
+
+def check_filepath(filepath):
+    """
+    Method for validating that a given path directory exits. If not, the directory is created.
+
+    :param str filepath: File path string.
+    :return: None
+    :rtype: :py:obj:`None`
+    """
+    if not path.exists(path.dirname(filepath)):
+        dirname = path.dirname(filepath)
+        if dirname:
+            makedirs(dirname)
 
 
 def download(context, cmdparams):
@@ -72,12 +87,19 @@ def download(context, cmdparams):
         "input_item": cmdparams["<input-item>"],
         "input_value": cmdparams["<input-value>"],
         "output_item": cmdparams["<output-item>"],
-        "output_format": cmdparams["<output-format>"],
+        "output_format": cmdparams["--output-format"],
     }).url
-    mwrestfile = next(fileio.read_mwrest(mwresturl, ))
-    with open(cmdparams["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdparams[
-        "--output-format"]),
-              "w") as fh:
+    mwrestfile = next(fileio.read_mwrest(mwresturl))
+
+    # filepath validation
+    extention = "txt"
+    filepath = join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + "." + (
+        cmdparams["--output-format"] or extention))
+    if cmdparams["--to-path"]:
+        check_filepath(cmdparams["--to-path"])
+        filepath = cmdparams["--to-path"]
+
+    with open(filepath, "w") as fh:
         mwrestfile.write(fh)
 
 
@@ -107,8 +129,18 @@ def cli(cmdargs):
     # mwtab download ...
     elif cmdargs["download"]:
 
+        # mwtab download url ...
+        if cmdargs["<url>"]:
+            mwrestfile = next(fileio.read_mwrest(cmdargs["<url>"]))
+            with open(
+                    cmdargs["--to-path"] or join(getcwd(), quote_plus(cmdargs["<url>"]).replace(".", "_") + "." +
+                                                           cmdargs["--output-format"]),
+                    "w"
+            ) as fh:
+                mwrestfile.write(fh)
+
         # mwtab download study ...
-        if cmdargs["study"]:
+        elif cmdargs["study"]:
 
             # mwtab download study all ...
             if cmdargs["all"]:
@@ -133,8 +165,8 @@ def cli(cmdargs):
                             mwtabfile.write(fh, cmdargs["--output-format"])
 
             # mwtab download study <input_value> ...
-            elif cmdargs["<input-value>"]:
-                input_item = cmdargs.get("<input-item>")
+            elif cmdargs["<input-value>"] and not cmdargs["<input-item>"]:
+                input_item = cmdargs.get("--input-item")
                 input_value = cmdargs["<input-value>"]
                 if not input_item:
                     if input_value.isdigit():
@@ -149,7 +181,7 @@ def cli(cmdargs):
                     "context": "study",
                     "input_item": input_item,
                     "input_value": input_value,
-                    "output_item": cmdargs.get("<output-item>") or "mwtab",
+                    "output_item": cmdargs.get("--output-item") or "mwtab",
                     "output_format": cmdargs["--output-format"],
                 }).url
                 mwrestfile = next(fileio.read_mwrest(mwresturl))
@@ -159,7 +191,11 @@ def cli(cmdargs):
                           "w") as fh:
                     mwrestfile.write(fh)
 
-        # mwtab download (study | compound | refmet | gene | protein) ...
+            # mwtab download (study | ...) <input_item> ...
+            elif cmdargs["<input-item>"]:
+                download("study", cmdargs)
+
+        # mwtab download (... compound | refmet | gene | protein) ...
         elif cmdargs["compound"]:
             download("compound", cmdargs)
         elif cmdargs["refmet"]:
