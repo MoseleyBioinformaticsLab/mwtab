@@ -20,7 +20,7 @@ def teardown_module(module):
     "tests/example_data/mwtab_files.tar.bz2"
 ])
 def test_validate_command(files_source):
-    command = "python -m mwtab validate {}".format(files_source)
+    command = "python -m mwtab validate study {}".format(files_source)
     assert os.system(command) == 0
 
 

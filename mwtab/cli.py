@@ -9,7 +9,7 @@ Usage:
     mwtab -h | --help
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
-    mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
+    mwtab validate study <from-path> [--mw-rest=<url>] [--verbose]
     mwtab download url <url> [--to-path=<path>] [--verbose]
     mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
     mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
@@ -120,11 +120,14 @@ def cli(cmdargs):
 
     # mwtab validate ...
     elif cmdargs["validate"]:
-        for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
-            validate_file(mwtabfile=mwfile,
-                          section_schema_mapping=section_schema_mapping,
-                          validate_samples=True,
-                          validate_factors=True)
+        if cmdargs["study"]:
+            for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
+                validate_file(mwtabfile=mwfile,
+                              section_schema_mapping=section_schema_mapping,
+                              validate_samples=True,
+                              validate_factors=True)
+        else:
+            print("\"mwtab validate ...\" is now a depreciated method.\nAdditional validators are on the way.\nTo validate mwtab file use \"mwtab validate study ...\"")
 
     # mwtab download ...
     elif cmdargs["download"]:
