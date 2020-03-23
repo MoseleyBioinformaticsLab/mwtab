@@ -479,7 +479,7 @@ class MWRESTFile(object):
         """
         input_str = filehandle.read().decode("utf-8")
         self.text = input_str
-        self.text = re.sub(r"<.*?>", "", self.text)  # included to remove remaining HTML tags
+        self.text = re.sub(r"</br>", "", self.text)  # included to remove remaining HTML tags
         filehandle.close()
 
     def write(self, filehandle):
