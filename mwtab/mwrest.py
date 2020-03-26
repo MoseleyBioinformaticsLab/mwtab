@@ -304,19 +304,23 @@ class GenericMWURL(object):
         # validate all required parameters are present
         if not all(k in self.rest_params.keys() for k in keywords):
             raise KeyError("Missing input item(s): " + str(keywords.difference(self.rest_params.keys())))
+
         # validate input_item
-        elif not any(k in self.rest_params["input_item"] for k in self.context[self.rest_params["context"]]["input_item"]):
+        if not any(k in self.rest_params["input_item"] for k in self.context[self.rest_params["context"]]["input_item"]):
             raise ValueError("Invalid input item")
-        else:
-            self._validate_input(self.rest_params["input_item"], self.rest_params["input_value"])
-            if type(self.rest_params["output_item"]) == list:
-                if self.rest_params["context"] == "study":
-                    raise ValueError("Invalid output items. Study only takes a single output item.")
-                elif not all(k in self.context[self.rest_params["context"]]["output_item"] for k in self.rest_params["output_item"]):
-                    raise ValueError("Invalid output item(s): " +
-                                     str(set(self.rest_params["output_item"]).difference(self.context[self.rest_params["context"]]["output_item"])))
-            elif not any(k in self.rest_params["output_item"] for k in self.context[self.rest_params["context"]]["output_item"]):
-                raise ValueError("Invalid output item")
+
+        # validate input_item
+        self._validate_input(self.rest_params["input_item"], self.rest_params["input_value"])
+
+        # validate output_item(s)
+        if type(self.rest_params["output_item"]) == list:
+            if self.rest_params["context"] == "study":
+                raise ValueError("Invalid output items. Study only takes a single output item.")
+            elif not all(k in self.context[self.rest_params["context"]]["output_item"] for k in self.rest_params["output_item"]):
+                raise ValueError("Invalid output item(s): " +
+                                 str(set(self.rest_params["output_item"]).difference(self.context[self.rest_params["context"]]["output_item"])))
+        elif not any(k in self.rest_params["output_item"] for k in self.context[self.rest_params["context"]]["output_item"]):
+            raise ValueError("Invalid output item")
 
     def _validate_moverz(self):
         """Validate keyword arguments for moverz context. If valid, generates REST URL.
@@ -447,15 +451,23 @@ class GenericMWURL(object):
         :rtype: :py:class:`str`
         """
         if self.rest_params["context"] in {"study", "compound", "refmet", "gene", "protein"}:
-            return self.base_url + "/".join([self.rest_params.get(p) for p in [
-                "context", "input_item", "input_value", "output_item", "output_format"
-            ]])
+            # allows for url to include or not include output_format
+            if self.rest_params.get("output_format"):
+                return self.base_url + "/".join([self.rest_params.get(p) for p in [
+                    "context", "input_item", "input_value", "output_item", "output_format"
+                ]])
+            else:
+                return self.base_url + "/".join([self.rest_params.get(p) for p in [
+                    "context", "input_item", "input_value", "output_item"
+                ]])
+
         elif self.rest_params["context"] == "moverz":
             rest_params = [self.rest_params.get(p) for p in [
                 "context", "input_item", "m/z_value", "ion_type_value", "m/z_tolerance_value"
             ]]
             rest_params.append("txt")
             return self.base_url + "/".join(rest_params)
+
         elif self.rest_params["context"] == "exactmass":
             return self.base_url + "/".join([self.rest_params.get(p) for p in [
                 "context", "LIPID_abbreviation", "ion_type_value"

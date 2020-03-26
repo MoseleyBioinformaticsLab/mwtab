@@ -83,6 +83,7 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     "python -m mwtab download study 2 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
     "python -m mwtab download study ST000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
     "python -m mwtab download study study_id ST000002 summary --to-path=tests/example_data/tmp/tmp.txt",
+    "python -m mwtab download study study_id ST analysis --to-path=tests/example_data/tmp/tmp.txt",
     # download compound | refmet | gene | protein
     "python -m mwtab download compound regno 11 name --to-path=tests/example_data/tmp/tmp.txt",
     "python -m mwtab download refmet name Cholesterol all --to-path=tests/example_data/tmp/tmp.txt",
