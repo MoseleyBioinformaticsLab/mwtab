@@ -26,7 +26,7 @@ def test_study_analysis():
       'output_format': "txt"}),
 ])
 def test_mwrest(kwds):
-    test_mwurl = GenericMWURL(**kwds)
+    test_mwurl = GenericMWURL(kwds)
     assert test_mwurl.url == test_mwurl.base_url + "/".join([
         kwds["context"],
         kwds["input_item"],
@@ -54,7 +54,7 @@ def test_mwrest(kwds):
 ])
 def test_fail_mwrest(kwds):
     try:
-        test_mwurl = GenericMWURL(**kwds)
+        test_mwurl = GenericMWURL(kwds)
         assert False
     except Exception as e:
         assert type(e) == ValueError

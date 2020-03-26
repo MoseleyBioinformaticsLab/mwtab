@@ -81,8 +81,7 @@ def download(context, cmdparams):
     :return: None
     :rtype: :py:obj:`None`
     """
-    mwresturl = mwrest.GenericMWURL(**{
-        "base_url": cmdparams["--mw-rest"],
+    mwresturl = mwrest.GenericMWURL({
         "context": context,
         "input_item": cmdparams["<input-item>"],
         "input_value": cmdparams["<input-value>"],
@@ -179,14 +178,13 @@ def cli(cmdargs):
                         input_item = "analysis_id"
                     elif re.match(r'(ST[0-9]{6}$)', input_value):
                         input_item = "study_id"
-                mwresturl = mwrest.GenericMWURL(**{
-                    "base_url": cmdargs["--mw-rest"],
+                mwresturl = mwrest.GenericMWURL({
                     "context": "study",
                     "input_item": input_item,
                     "input_value": input_value,
                     "output_item": cmdargs.get("--output-item") or "mwtab",
                     "output_format": cmdargs["--output-format"],
-                }).url
+                }, cmdargs["--mw-rest"]).url
                 mwrestfile = next(fileio.read_mwrest(mwresturl))
                 with open(cmdargs["--to-path"] or join(getcwd(),
                                                        quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdargs[
@@ -210,8 +208,7 @@ def cli(cmdargs):
 
         # mwtab download moverz <input-value> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--verbose]
         elif cmdargs["moverz"]:
-            mwresturl = mwrest.GenericMWURL(**{
-                "base_url": cmdargs["--mw-rest"],
+            mwresturl = mwrest.GenericMWURL({
                 "context": "moverz",
                 "input_item": cmdargs["<input-item>"],
                 "m/z_value": cmdargs["<m/z-value>"],
@@ -225,8 +222,7 @@ def cli(cmdargs):
 
         # mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--verbose]
         elif cmdargs["exactmass"]:
-            mwresturl = mwrest.GenericMWURL(**{
-                "base_url": cmdargs["--mw-rest"],
+            mwresturl = mwrest.GenericMWURL({
                 "context": "exactmass",
                 "LIPID_abbreviation": cmdargs["<LIPID-abbreviation>"],
                 "ion_type_value": cmdargs["<ion-type-value>"],

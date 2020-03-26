@@ -17,16 +17,17 @@ import json
 
 
 VERBOSE = False
+BASE_URL = "https://www.metabolomicsworkbench.org/rest/"
 
 
-def analysis_ids():
+def analysis_ids(base_url=BASE_URL):
     """
     Method for generating a list of urls for every current analysis in Metabolomics Workbench.
 
     :return: Urls to every Metabolomics Workbench analysis.
     :rtype: :py:class:`str`
     """
-    st_an_dict = _pull_study_analysis()
+    st_an_dict = _pull_study_analysis(base_url)
     analyses = list()
     [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
 
@@ -36,14 +37,14 @@ def analysis_ids():
     return analyses
 
 
-def study_ids():
+def study_ids(base_url=BASE_URL):
     """
     Method for generating a list of urls for every current study in Metabolomics Workbench.
 
     :return: Urls to every Metabolomics Workbench study.
     :rtype: :py:class:`str`
     """
-    st_an_dict = _pull_study_analysis()
+    st_an_dict = _pull_study_analysis(base_url)
     studies = list(st_an_dict.keys())
 
     if VERBOSE:
@@ -52,7 +53,7 @@ def study_ids():
     return studies
 
 
-def _pull_study_analysis():
+def _pull_study_analysis(base_url=BASE_URL):
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
     API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is
@@ -63,7 +64,8 @@ def _pull_study_analysis():
     :rtype: :py:class:`dict`
     """
     url = GenericMWURL(
-        **{"context": "study", "input_item": "study_id", "input_value": "ST", "output_item": "analysis"}
+        {"context": "study", "input_item": "study_id", "input_value": "ST", "output_item": "analysis"},
+        base_url
     ).url
     mwrestfile = next(fileio.read_mwrest(url, **{"convertJSON": True}))
     json_object = mwrestfile._is_json(mwrestfile.text)
@@ -91,7 +93,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
     for input_item in input_items:
         if input_item.isdigit():
             analysis_id = "AN{}".format(input_item.zfill(6))
-            yield GenericMWURL(**{
+            yield GenericMWURL({
                 "context": "study",
                 "input_item": "analysis_id",
                 "input_value": analysis_id,
@@ -99,7 +101,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 "output_format": output_format
             }).url
         elif re.match(r'(AN[0-9]{6}$)', input_item):
-            yield GenericMWURL(**{
+            yield GenericMWURL({
                 "context": "study",
                 "input_item": "analysis_id",
                 "input_value": input_item,
@@ -107,7 +109,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 "output_format": output_format
             }).url
         elif re.match(r'(ST[0-9]{1,6}$)', input_item):
-            yield GenericMWURL(**{
+            yield GenericMWURL({
                 "context": "study",
                 "input_item": "study_id",
                 "input_value": input_item,
@@ -128,10 +130,10 @@ def generate_urls(input_items, **kwds):
     for input_item in input_items:
         params = dict(kwds)
         params["input_item"] = input_item
-        yield GenericMWURL(**params).url
+        yield GenericMWURL(params).url
 
 
-class GenericMWURL(OrderedDict):
+class GenericMWURL(object):
     """GenericMWURL class that stores Metabolomics Workbench REST API keyword argument data in the form of
     :py:class:`collections.OrderedDict`.
 
@@ -224,29 +226,31 @@ class GenericMWURL(OrderedDict):
         }
     }
 
-    def __init__(self, **kwds):
+    def __init__(self, rest_params, base_url=base_mwrest_url):
         """File initializer.
 
-        :param dict kwargs: Dictionary of Metabolomics Workbench URL Path items.
+        :param dict rest_params: Dictionary of Metabolomics Workbench URL Path items.
+        :param str base_url: Base url to Metabolomics Workbench REST API.
         """
-        super(GenericMWURL, self).__init__(**kwds)
-        self.base_url = kwds.get("base_url") or self.base_mwrest_url
-        self.url = self._validate()
+        self.rest_params = rest_params
+        self.base_url = base_url
+        self._validate()
+        self.url = self._create_url()
 
     def _validate(self):
-        """Validate keyword arguments.
+        """Validate keyword arguments. Sub-functions raise error if missing or invalid parameter(s) in self.rest_params.
 
         :return: URL string.
         :rtype: :py:class:`str`
         """
-        if not self["context"] in self.context.keys():
+        if not self.rest_params["context"] in self.context.keys():
             raise KeyError("Error: Invalid/missing context")
-        elif self["context"] in {"study", "compound", "refmet", "gene", "protein"}:
-            return self._validate_generic()
-        elif self["context"] == "moverz":
-            return self._validate_moverz()
-        elif self["context"] == "exactmass":
-            return self._validate_exactmass()
+        elif self.rest_params["context"] in {"study", "compound", "refmet", "gene", "protein"}:
+            self._validate_generic()
+        elif self.rest_params["context"] == "moverz":
+            self._validate_moverz()
+        elif self.rest_params["context"] == "exactmass":
+            self._validate_exactmass()
 
     def _validate_generic(self):
         """Validate keyword arguments for study, compound, refmet, gene, and protein context.
@@ -297,31 +301,22 @@ class GenericMWURL(OrderedDict):
         :rtype: :py:class:`str`
         """
         keywords = {"input_item", "input_value", "output_item"}
-        if not all(k in self.keys() for k in keywords):
-            raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self["input_item"] for k in self.context[self["context"]]["input_item"]):
+        # validate all required parameters are present
+        if not all(k in self.rest_params.keys() for k in keywords):
+            raise KeyError("Missing input item(s): " + str(keywords.difference(self.rest_params.keys())))
+        # validate input_item
+        elif not any(k in self.rest_params["input_item"] for k in self.context[self.rest_params["context"]]["input_item"]):
             raise ValueError("Invalid input item")
         else:
-            self._validate_input(self["input_item"], self["input_value"])
-            if type(self["output_item"]) == list:
-                if self["context"] == "study":
+            self._validate_input(self.rest_params["input_item"], self.rest_params["input_value"])
+            if type(self.rest_params["output_item"]) == list:
+                if self.rest_params["context"] == "study":
                     raise ValueError("Invalid output items. Study only takes a single output item.")
-                elif not all(k in self.context[self["context"]]["output_item"] for k in self["output_item"]):
+                elif not all(k in self.context[self.rest_params["context"]]["output_item"] for k in self.rest_params["output_item"]):
                     raise ValueError("Invalid output item(s): " +
-                                     str(set(self["output_item"]).difference(self.context[self["context"]]["output_item"])))
-                else:
-                    return self.base_url + '/'.join([
-                        self.get("context"),
-                        self.get("input_item"),
-                        str(self.get("input_value")),
-                        ','.join(self.get("output_item")),
-                        self.get("output_format") or ''
-                    ])
-            elif not any(k in self["output_item"] for k in self.context[self["context"]]["output_item"]):
+                                     str(set(self.rest_params["output_item"]).difference(self.context[self.rest_params["context"]]["output_item"])))
+            elif not any(k in self.rest_params["output_item"] for k in self.context[self.rest_params["context"]]["output_item"]):
                 raise ValueError("Invalid output item")
-            else:
-                return self.base_url + "/".join([self.get("context"), self.get("input_item"), str(self.get("input_value")),
-                                          self.get("output_item"), self.get("output_format") or ""])
 
     def _validate_moverz(self):
         """Validate keyword arguments for moverz context. If valid, generates REST URL.
@@ -337,24 +332,20 @@ class GenericMWURL(OrderedDict):
         See CONTEXT variable for supported ion type values.
         <m/z tolerance value> range: 0.0001-1
 
-        :return: URL string.
+        :return: None
         :rtype: :py:class:`str`
         """
         keywords = {"input_item", "m/z_value", "ion_type_value", "m/z_tolerance_value"}
-        if not all(k in self.keys() for k in keywords):
-            raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self["input_item"] for k in self.context["moverz"]["input_item"]):
+        if not all(k in self.rest_params.keys() for k in keywords):
+            raise KeyError("Missing input item(s): " + str(keywords.difference(self.rest_params.keys())))
+        elif not any(k in self.rest_params["input_item"] for k in self.context["moverz"]["input_item"]):
             raise ValueError("Invalid input item")
-        elif not 50 <= float(self["m/z_value"]) <= 2000:
+        elif not 50 <= float(self.rest_params["m/z_value"]) <= 2000:
             raise ValueError("m/z value outside of range: 50-2000")
-        elif not self["ion_type_value"] in self.context["moverz"]["ion_type_value"]:
+        elif not self.rest_params["ion_type_value"] in self.context["moverz"]["ion_type_value"]:
             raise ValueError("Invalid ion type value")
-        elif not 0.0001 <= float(self["m/z_tolerance_value"]) <= 1:
+        elif not 0.0001 <= float(self.rest_params["m/z_tolerance_value"]) <= 1:
             raise ValueError("m/z tolerance value outside of range: 0.0001-1")
-        else:
-            # only supports txt output format
-            return self.base_url + "/".join([self["context"], self["input_item"], str(self["m/z_value"]),
-                                      self["ion_type_value"], str(self["m/z_tolerance_value"]), "txt"])
 
     def _validate_exactmass(self):
         """Validate keyword arguments for exactmass context. If valid, generates REST URL.
@@ -369,15 +360,12 @@ class GenericMWURL(OrderedDict):
         :rtype: :py:class:`str`
         """
         keywords = {"LIPID_abbreviation", "ion_type_value"}
-        if not all(k in self.keys() for k in keywords):
-            raise KeyError("Missing input item(s): " + str(keywords.difference(self.keys())))
-        elif not any(k in self["LIPID_abbreviation"] for k in self.context["exactmass"]["LIPID_abbreviation"]):
+        if not all(k in self.rest_params.keys() for k in keywords):
+            raise KeyError("Missing input item(s): " + str(keywords.difference(self.rest_params.keys())))
+        elif not any(k in self.rest_params["LIPID_abbreviation"] for k in self.context["exactmass"]["LIPID_abbreviation"]):
             raise ValueError("Invalid LIPID abbreviation")
-        elif not self['ion_type_value'] in self.context["exactmass"]["ion_type_value"]:
+        elif not self.rest_params['ion_type_value'] in self.context["exactmass"]["ion_type_value"]:
             raise ValueError("Invalid ion type value")
-        else:
-            # no required output format
-            return self.base_url + "/".join([self["context"], self["LIPID_abbreviation"], self["ion_type_value"]])
 
     @staticmethod
     def _validate_input(input_item, input_value):
@@ -451,6 +439,27 @@ class GenericMWURL(OrderedDict):
             # regex from https://www.uniprot.org/help/accession_numbers
             if not re.match(r"[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}", input_value):
                 raise ValueError("Invalid UniProt ID (see uniprot.org/help/accession_numbers)")
+
+    def _create_url(self):
+        """Method for constructing a formatted Metabolomics Workbench REST API URL from the given class parameters.
+
+        :return: Formatted Metabolomics Workbench REST API URL.
+        :rtype: :py:class:`str`
+        """
+        if self.rest_params["context"] in {"study", "compound", "refmet", "gene", "protein"}:
+            return self.base_url + "/".join([self.rest_params.get(p) for p in [
+                "context", "input_item", "input_value", "output_item", "output_format"
+            ]])
+        elif self.rest_params["context"] == "moverz":
+            rest_params = [self.rest_params.get(p) for p in [
+                "context", "input_item", "m/z_value", "ion_type_value", "m/z_tolerance_value"
+            ]]
+            rest_params.append("txt")
+            return self.base_url + "/".join(rest_params)
+        elif self.rest_params["context"] == "exactmass":
+            return self.base_url + "/".join([self.rest_params.get(p) for p in [
+                "context", "LIPID_abbreviation", "ion_type_value"
+            ]])
 
 
 class MWRESTFile(object):

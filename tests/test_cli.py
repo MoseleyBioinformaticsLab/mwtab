@@ -109,23 +109,6 @@ def test_download_command(command):
     assert file_str
 
 
-# @pytest.mark.parametrize("command", [
-#     "python -m mwtab download study AN000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
-#     "python -m mwtab download study 2 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
-#     "python -m mwtab download study ST000002 --to-path=tests/example_data/tmp/tmp.txt --output-format=txt",
-#     "python -m mwtab download study study_id ST000002 summary --to-path=tests/example_data/tmp/tmp.txt",
-#     "",
-# ])
-# def test_download_command(command):
-#     assert os.system(command) == 0
-#
-#     file_str = ""
-#     with open("tests/example_data/tmp/tmp.txt", "r") as fh:
-#         file_str = fh.read()
-#         fh.close()
-#     assert file_str
-
-
 @pytest.mark.parametrize("input_value, output_format, to_path", [
     ("AN000002", "txt", "tests/example_data/tmp.txt"),
     ("2", "txt", "tests/example_data/tmp.txt"),
