@@ -134,16 +134,30 @@ def generate_urls(input_items, **kwds):
 
 
 class GenericMWURL(object):
-    """GenericMWURL class that stores Metabolomics Workbench REST API keyword argument data in the form of
-    :py:class:`collections.OrderedDict`.
+    """GenericMWURL class that stores and validates parameters specifying a Metabolomics Workbench REST URL.
 
     Metabolomics REST API requests are performed using URL requests in the form of
-        https://www.metabolomicsworkbench.org/rest/<context>/<input specification>/<output specification>
+        https://www.metabolomicsworkbench.org/rest/context/input_specification/output_specification
 
         where:
-            <context> = study | compound | refmet | gene | protein | moverz | exactmass
-            <input specification> = <input item>/<input value>
-            <output specification> = <output item>/[<output format>]
+            if context = "study" | "compound" | "refmet" | "gene" | "protein"
+                input_specification = input_item/input_value
+                output_specification = output_item/[output_format]
+            elif context = "moverz"
+                input_specification = input_item/input_value1/input_value2/input_value3
+                    input_item = "LIPIDS" | "MB" | "REFMET"
+                    input_value1 = m/z_value
+                    input_value2 = ion_type_value
+                    input_value3 = m/z_tolerance_value
+                output_specification = output_format
+                    output_format = "txt"
+            elif context =  "exactmass"
+                input_specification = input_item/input_value1/input_value2
+                    input_item = "LIPIDS" | "MB" | "REFMET"
+                    input_value1 = LIPID_abbreviation
+                    input_value2 = ion_type_value
+                output_specification = None
+
     """
     base_mwrest_url = "https://www.metabolomicsworkbench.org/rest/"
     context = {
@@ -227,7 +241,7 @@ class GenericMWURL(object):
     }
 
     def __init__(self, rest_params, base_url=base_mwrest_url):
-        """File initializer.
+        """URL initializer.
 
         :param dict rest_params: Dictionary of Metabolomics Workbench URL Path items.
         :param str base_url: Base url to Metabolomics Workbench REST API.
@@ -238,10 +252,11 @@ class GenericMWURL(object):
         self.url = self._create_url()
 
     def _validate(self):
-        """Validate keyword arguments. Sub-functions raise error if missing or invalid parameter(s) in self.rest_params.
+        """Validate URL parameters. Raises error if self.rest_params is lacking a "context" keyword. Sub-functions raise
+        error if missing or invalid parameter(s) in self.rest_params.
 
-        :return: URL string.
-        :rtype: :py:class:`str`
+        :return: None
+        :rtype: :py:obj:`None`
         """
         if not self.rest_params["context"] in self.context.keys():
             raise KeyError("Error: Invalid/missing context")
@@ -253,52 +268,55 @@ class GenericMWURL(object):
             self._validate_exactmass()
 
     def _validate_generic(self):
-        """Validate keyword arguments for study, compound, refmet, gene, and protein context.
-        If valid, generates REST URL.
+        """Validates keyword arguments for study, compound, refmet, gene, and protein contexts. Raises error if missing
+        or invalid parameter(s) in self.rest_params.
 
-        <context> = study
-        <input item> = study_id | study_title | institute | last_name | analysis_id | metabolite_id
-        <input value> = <input item value>
-        <output item> = summary | factors | analysis | metabolites | mwtab | source | species | disease |
-            number_of_metabolites | data | datatable | untarg_studies | untarg_factors | untarg_data
-        <output format> = txt | json [Default: json]
+        context = "study"
+        input_item = "study_id" | "study_title" | "institute" | "last_name" | "analysis_id" | "metabolite_id"
+        input_value = input_value
+        output_item = "summary" | "factors" | "analysis" | "metabolites" | "mwtab" | "source" | "species" | "disease" |
+                      "number_of_metabolites" | "data" | "datatable" | "untarg_studies" | "untarg_factors" |
+                      "untarg_data"
+        output_format = "txt" | "json" [Default: "json"]
 
-        <context> = compound
-        <input item> = regno | formula | inchi_key | lm_id | pubchem_cid | hmdb_id | kegg_id | chebi_id |
-            metacyc_id | abbrev
-        <input value> = <input item value>
-        <output item> = all | regno | formula | exactmass | inchi_key | name | sys_name | smiles | lm_id |
-            pubchem_cid | hmdb_id | kegg_id | chebi_id | metacyc_id | classification | molfile | png |
-            regno,formula,exactmass,...
-        <output format> = txt | json [Default: json]
+        context = "compound"
+        input_item = "regno" | "formula" | "inchi_key" | "lm_id" | "pubchem_cid" | "hmdb_id" | "kegg_id" | "chebi_id" |
+                      "metacyc_id" | "abbrev"
+        input_value = input_value
+        output_item = "all" | "regno" | "formula" | "exactmass" | "inchi_key" | "name" | "sys_name" | "smiles" |
+                      "lm_id" | "pubchem_cid" | "hmdb_id" | "kegg_id" | "chebi_id" | "metacyc_id" | "classification" |
+                      "molfile" | "png" | "regno,formula,exactmass,..."
+        output_format = "txt" | "json" [Default: "json"]
 
-        <context> = refmet
-        <input item> = all | match | name | inchi_key | regno | pubchem_cid | formula | main_class | sub_class
-        <input value> = <input item value>
-        <output item> = all | name | inchi_key | regno | pubchem_cid | exactmass | formula | synonyms | sys_name |
-            main_class | sub_class | name,inchi_key,regno,...
-        <output format> = txt | json
+        context = "refmet"
+        input_item = "all" | "match" | "name" | "inchi_key" | "regno" | "pubchem_cid" | "formula" | "main_class" |
+                     "sub_class"
+        input_value = input_value
+        output_item = "all" | "name" | "inchi_key" | "regno" | "pubchem_cid" | "exactmass" | "formula" | "synonyms" |
+                       "sys_name" | "main_class" | "sub_class" | "name,inchi_key,regno,..."
+        output_format = "txt" | "json" [Default: "json"]
 
-        <context> = gene
-        <input item> = mgp_id | gene_id | gene_name | gene_symbol | taxid
-        <input value> = <input item value>
-        <output item> = all | lmp_id | mgp_id | gene_name | gene_symbol | gene_synonyms | alt_names | chromosome |
-            map_location | summary | taxid | species | species_long | mgp_id,gene_id,gene_name,...
-        <output format> = txt | json
+        context = "gene"
+        input_item = "mgp_id" | "gene_id" | "gene_name" | "gene_symbol" | "taxid"
+        input_value = input_value
+        output_item = "all" | "lmp_id" | "mgp_id" | "gene_name" | "gene_symbol" | "gene_synonyms" | "alt_names" |
+                      "chromosome" | "map_location" | "summary" | "taxid" | "species" | "species_long" |
+                      "mgp_id,gene_id,gene_name,..."
+        output_format = "txt" | "json" [Default: "json"]
 
-        <context> = protein
-        <input item> = mgp_id | gene_id | gene_name | gene_symbol | taxid | mrna_id | refseq_id | protein_gi |
-            uniprot_id | protein_entry | protein_name
-        <input value> = <input item value>
-        <output item> = all | mgp_id | gene_id | gene_name | gene_symbol | taxid | species | species_long | mrna_id |
-            refseq_id | protein_gi | uniprot_id | protein_entry | protein_name | seqlength | seq | is_identical_to |
-            mgp_id,gene_id,gene_name,...
-        <output format> = txt | json
+        context = "protein"
+        input_item = "mgp_id" | "gene_id" | "gene_name" | "gene_symbol" | "taxid" | "mrna_id" | "refseq_id" |
+                     "protein_gi" | "uniprot_id" | "protein_entry" | "protein_name"
+        input_value = input_value
+        output_item = "all" | "mgp_id" | "gene_id" | "gene_name" | "gene_symbol" | "taxid" | "species" |
+                      "species_long" | "mrna_id" | "refseq_id" | "protein_gi" | "uniprot_id" | "protein_entry" |
+                      "protein_name" | "seqlength" | "seq" | "is_identical_to" | "mgp_id,gene_id,gene_name,..."
+        output_format = "txt" | "json" [Default: "json"]
 
-        Uses static method self._validate_id() to validate input value.
+        Uses static method self._validate_id() to validate input_value parameter.
 
-        :return: URL string.
-        :rtype: :py:class:`str`
+        :return: None
+        :rtype: :py:obj:`None`
         """
         keywords = {"input_item", "input_value", "output_item"}
         # validate all required parameters are present
@@ -323,21 +341,22 @@ class GenericMWURL(object):
             raise ValueError("Invalid output item")
 
     def _validate_moverz(self):
-        """Validate keyword arguments for moverz context. If valid, generates REST URL.
+        """Validate keyword arguments for moverz context. Raises error if missing or invalid parameter(s) in
+        self.rest_params.
 
-        <context> = moverz
-        <input item> = LIPIDS | MB | REFMET
-        <input value1> = <m/z value>
-        <input value2> = <ion type value>
-        <input value3> = <m/z tolerance value>
-        <output format> = txt
+        context = "moverz"
+        input_item = "LIPIDS" | "MB" | "REFMET"
+        input_value1 = m/z_value
+        input_value2 = ion_type_value
+        input_value3 = m/z_tolerance_value
+        output_format = "txt"
 
-        <m/z value> range: 50-2000
+        m/z_value range: 50-2000
         See CONTEXT variable for supported ion type values.
-        <m/z tolerance value> range: 0.0001-1
+        m/z_tolerance_value range: 0.0001-1
 
         :return: None
-        :rtype: :py:class:`str`
+        :rtype: :py:obj:`None`
         """
         keywords = {"input_item", "m/z_value", "ion_type_value", "m/z_tolerance_value"}
         if not all(k in self.rest_params.keys() for k in keywords):
@@ -352,16 +371,18 @@ class GenericMWURL(object):
             raise ValueError("m/z tolerance value outside of range: 0.0001-1")
 
     def _validate_exactmass(self):
-        """Validate keyword arguments for exactmass context. If valid, generates REST URL.
+        """Validate keyword arguments for exactmass context. Raises error if missing or invalid parameter(s) in
+        self.rest_params.
 
-        <context> = exactmass
-        <input value1> = <LIPID abbreviation>
-        <input value2> = <ion type value>
+        context = "exactmass"
+        LIPID_abbreviation = ...
+        ion_type_value = ...
 
-        See CONTEXT variable for supported LIPID abbreviations and ion type values.
+        See :class:`~mwtab.mwrest.GenericMWURL.context` variable for full list of possible values for LIPID_abbreviation
+        and ion_type_value.
 
-        :return: URL string.
-        :rtype: :py:class:`str`
+        :return: None
+        :rtype: :py:obj:`None`
         """
         keywords = {"LIPID_abbreviation", "ion_type_value"}
         if not all(k in self.rest_params.keys() for k in keywords):
@@ -375,6 +396,9 @@ class GenericMWURL(object):
     def _validate_input(input_item, input_value):
         """Validate keyword arguments for input item where an id is used (ie. study, compound, refmet, gene, and
         protein). If invalid, raises value error.
+
+        :return: None
+        :rtype: :py:obj:`None`
         """
         if input_item == "study_id":
             # allows for pulling a range of entries (ie. ST0001 pulls studies 100-199)
@@ -475,8 +499,7 @@ class GenericMWURL(object):
 
 
 class MWRESTFile(object):
-    """MWRESTFile class that stores data from a single file download
-    through Metabolomics Workbench's REST API.
+    """MWRESTFile class that stores data from a single file download through Metabolomics Workbench's REST API.
 
     Mirrors :class:`~mwtab.mwtab.MWTabFile`.
     """
@@ -508,7 +531,6 @@ class MWRESTFile(object):
 
         :param filehandle: file-like object.
         :type filehandle: :py:class:`io.TextIOWrapper`
-        :param str file_format: Format to use to write data.
         :return: None
         :rtype: :py:obj:`None`
         """
