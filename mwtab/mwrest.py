@@ -22,7 +22,7 @@ BASE_URL = "https://www.metabolomicsworkbench.org/rest/"
 
 def analysis_ids(base_url=BASE_URL):
     """
-    Method for generating a list of urls for every current analysis in Metabolomics Workbench.
+    Method for retrieving a list of analysis ids for every current analysis in Metabolomics Workbench.
 
     :return: Urls to every Metabolomics Workbench analysis.
     :rtype: :py:class:`str`
@@ -39,7 +39,7 @@ def analysis_ids(base_url=BASE_URL):
 
 def study_ids(base_url=BASE_URL):
     """
-    Method for generating a list of urls for every current study in Metabolomics Workbench.
+    Method for retrieving a list of study ids for every current study in Metabolomics Workbench.
 
     :return: Urls to every Metabolomics Workbench study.
     :rtype: :py:class:`str`
@@ -57,7 +57,7 @@ def _pull_study_analysis(base_url=BASE_URL):
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
     API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is
-    converted into a python object (dict) which can then be parsed to create a dictionary wit hthe form study id (key):
+    converted into a python object (dict) which can then be parsed to create a dictionary with the form study id (key):
     analysis id(s) (values).
 
     :return: Dictionary of study ids (keys) and lists of analyses (value).
