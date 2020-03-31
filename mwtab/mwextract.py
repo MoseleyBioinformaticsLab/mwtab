@@ -148,12 +148,15 @@ def write_metadata_csv(to_path, extracted_values, no_header=False):
     :return: None
     :rtype: :py:obj:`None`
     """
-    if not os.path.exists(os.path.dirname(to_path)):
+    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
         dirname = os.path.dirname(to_path)
         if dirname:
             os.makedirs(dirname)
 
-    with open(to_path+".csv", "w") as outfile:
+    if not os.path.splitext(to_path)[1]:
+        to_path += ".csv"
+
+    with open(to_path, "w") as outfile:
         wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
         if not no_header:
             max_value_num = max([len(extracted_values[key]) for key in extracted_values.keys()])
@@ -197,12 +200,15 @@ def write_metabolites_csv(to_path, extracted_values, no_header=False):
             num_samples
         ])
 
-    if not os.path.exists(os.path.dirname(to_path)):
+    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
         dirname = os.path.dirname(to_path)
         if dirname:
             os.makedirs(dirname)
 
-    with open(to_path + ".csv", "w") as outfile:
+    if not os.path.splitext(to_path)[1]:
+        to_path += ".csv"
+
+    with open(to_path, "w") as outfile:
         wr = csv.writer(outfile, quoting=csv.QUOTE_ALL)
         if not no_header:
             wr.writerow(["metabolite_name", "num-studies", "num_analyses", "num_samples"])
@@ -258,10 +264,13 @@ def write_json(to_path, extracted_dict):
     :return: None
     :rtype: :py:obj:`None`
     """
-    if not os.path.exists(os.path.dirname(to_path)):
+    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
         dirname = os.path.dirname(to_path)
         if dirname:
             os.makedirs(dirname)
 
-    with open(to_path+".json", "w") as outfile:
+    if not os.path.splitext(to_path)[1]:
+        to_path += ".json"
+
+    with open(to_path, "w") as outfile:
         json.dump(extracted_dict, outfile, sort_keys=True, indent=4, cls=SetEncoder)
