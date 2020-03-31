@@ -155,6 +155,8 @@ def test_extract_metadata_command(from_path, to_path, key, to_format, no_header)
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", " --no-header"),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "json", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites.csv", "SU:SUBJECT_TYPE", "Plant", "csv", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites.json", "SU:SUBJECT_TYPE", "Plant", "json", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Plant)'\"", "csv", " --no-header"),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Plant)'\"", "csv", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Plant)'\"", "json", "")
@@ -163,12 +165,14 @@ def test_extract_metabolites_command(from_path, to_path, key, value, to_format, 
     command = "python -m mwtab extract metabolites {} {} {} {} --to-format={}{}".format(
         from_path, to_path, key, value, to_format, no_header
     )
-    print(command)
     assert os.system(command) == 0
 
     if to_format == "csv":
-        with open(".".join([to_path, to_format]), "r") as f:
-            data = list(csv.reader(f))
+        filepath = to_path
+        if not os.path.splitext(filepath)[1]:
+            filepath += ".csv"
+        with open(filepath, "r") as fh:
+            data = list(csv.reader(fh))
             if bool(no_header):
                 assert set(data[0]) == {"1,2,4-benzenetriol", "1", "1", "24"}
                 assert len(data) == 191
@@ -176,3 +180,14 @@ def test_extract_metabolites_command(from_path, to_path, key, value, to_format, 
                 assert set(data[0]) == {"metabolite_name", "num-studies", "num_analyses", "num_samples"}
                 assert set(data[1]) == {"1,2,4-benzenetriol", "1", "1", "24"}
                 assert len(data) == 192
+            fh.close()
+    elif to_format == 'json':
+        filepath = to_path
+        if not os.path.splitext(filepath)[1]:
+            filepath += ".json"
+        with open(filepath, "r") as fh:
+            text = fh.read()
+            fh.close()
+        assert text
+    else:
+        assert False
