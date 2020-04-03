@@ -53,7 +53,7 @@ def study_ids(base_url=BASE_URL):
     return studies
 
 
-def _pull_study_analysis(base_url=BASE_URL):
+def _pull_study_analysis(base_url):
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
     API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is
@@ -80,7 +80,7 @@ def _pull_study_analysis(base_url=BASE_URL):
     return study_analysis_dict
 
 
-def generate_mwtab_urls(input_items, output_format='txt'):
+def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt'):
     """
     Method for generating URLS to be used to retrieve `mwtab` files for analyses and
     studies through the REST API of the Metabolomics Workbench database.
@@ -99,7 +99,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 "input_value": analysis_id,
                 "output_item": "mwtab",
                 "output_format": output_format
-            }).url
+            }, base_url).url
         elif re.match(r'(AN[0-9]{6}$)', input_item):
             yield GenericMWURL({
                 "context": "study",
@@ -107,7 +107,7 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 "input_value": input_item,
                 "output_item": "mwtab",
                 "output_format": output_format
-            }).url
+            }, base_url).url
         elif re.match(r'(ST[0-9]{1,6}$)', input_item):
             yield GenericMWURL({
                 "context": "study",
@@ -115,10 +115,10 @@ def generate_mwtab_urls(input_items, output_format='txt'):
                 "input_value": input_item,
                 "output_item": "mwtab",
                 "output_format": output_format
-            }).url
+            }, base_url).url
 
 
-def generate_urls(input_items, **kwds):
+def generate_urls(input_items, base_url=BASE_URL, **kwds):
     """
     Method for creating a generator which yields validated Metabolomics Workbench REST urls.
 
@@ -130,7 +130,7 @@ def generate_urls(input_items, **kwds):
     for input_item in input_items:
         params = dict(kwds)
         params["input_item"] = input_item
-        yield GenericMWURL(params).url
+        yield GenericMWURL(params, base_url).url
 
 
 class GenericMWURL(object):
@@ -159,7 +159,6 @@ class GenericMWURL(object):
                 output_specification = None
 
     """
-    base_mwrest_url = "https://www.metabolomicsworkbench.org/rest/"
     context = {
         "study": {
             "input_item": {
@@ -240,7 +239,7 @@ class GenericMWURL(object):
         }
     }
 
-    def __init__(self, rest_params, base_url=base_mwrest_url):
+    def __init__(self, rest_params, base_url=BASE_URL):
         """URL initializer.
 
         :param dict rest_params: Dictionary of Metabolomics Workbench URL Path items.

@@ -1,10 +1,12 @@
 import pytest
-from mwtab.mwrest import GenericMWURL, _pull_study_analysis
+from mwtab.mwrest import BASE_URL, GenericMWURL, analysis_ids, study_ids
 
 
 def test_study_analysis():
-    test = _pull_study_analysis()
-    assert test
+    an_ids = analysis_ids()
+    assert an_ids
+    st_ids = study_ids()
+    assert st_ids
 
 
 @pytest.mark.parametrize("kwds", [
