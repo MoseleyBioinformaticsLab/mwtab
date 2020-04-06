@@ -24,6 +24,7 @@ def analysis_ids(base_url=BASE_URL):
     """
     Method for retrieving a list of analysis ids for every current analysis in Metabolomics Workbench.
 
+    :param str base_url: Base url to Metabolomics Workbench REST API.
     :return: Urls to every Metabolomics Workbench analysis.
     :rtype: :py:class:`str`
     """
@@ -41,6 +42,7 @@ def study_ids(base_url=BASE_URL):
     """
     Method for retrieving a list of study ids for every current study in Metabolomics Workbench.
 
+    :param str base_url: Base url to Metabolomics Workbench REST API.
     :return: Urls to every Metabolomics Workbench study.
     :rtype: :py:class:`str`
     """
@@ -60,6 +62,7 @@ def _pull_study_analysis(base_url):
     converted into a python object (dict) which can then be parsed to create a dictionary with the form study id (key):
     analysis id(s) (values).
 
+    :param str base_url: Base url to Metabolomics Workbench REST API.
     :return: Dictionary of study ids (keys) and lists of analyses (value).
     :rtype: :py:class:`dict`
     """
@@ -85,8 +88,9 @@ def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt'):
     Method for generating URLS to be used to retrieve `mwtab` files for analyses and
     studies through the REST API of the Metabolomics Workbench database.
 
-    :param list input_items:
-    :param str output_format:
+    :param list input_items: List of Metabolomics Workbench input values for mwTab files.
+    :param str base_url: Base url to Metabolomics Workbench REST API.
+    :param str output_format: Output format for the mwTab files to be retrieved in.
     :return: Metabolomics Workbench REST URL string.
     :rtype: :py:class:`str`
     """
@@ -122,8 +126,9 @@ def generate_urls(input_items, base_url=BASE_URL, **kwds):
     """
     Method for creating a generator which yields validated Metabolomics Workbench REST urls.
 
-    :param list input_items:
-    :param dict kwds:
+    :param list input_items: List of Metabolomics Workbench input values for mwTab files.
+    :param str base_url: Base url to Metabolomics Workbench REST API.
+    :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.
     :return: Metabolomics Workbench REST URL string.
     :rtype: :py:class:`str`
     """
