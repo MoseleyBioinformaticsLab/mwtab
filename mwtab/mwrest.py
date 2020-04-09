@@ -25,8 +25,8 @@ def analysis_ids(base_url=BASE_URL):
     Method for retrieving a list of analysis ids for every current analysis in Metabolomics Workbench.
 
     :param str base_url: Base url to Metabolomics Workbench REST API.
-    :return: Urls to every Metabolomics Workbench analysis.
-    :rtype: :py:class:`str`
+    :return: List of every available Metabolomics Workbench analysis identifier.
+    :rtype: :py:class:`list`
     """
     st_an_dict = _pull_study_analysis(base_url)
     analyses = list()
@@ -43,8 +43,8 @@ def study_ids(base_url=BASE_URL):
     Method for retrieving a list of study ids for every current study in Metabolomics Workbench.
 
     :param str base_url: Base url to Metabolomics Workbench REST API.
-    :return: Urls to every Metabolomics Workbench study.
-    :rtype: :py:class:`str`
+    :return: List of every available Metabolomics Workbench study identifier.
+    :rtype: :py:class:`list`
     """
     st_an_dict = _pull_study_analysis(base_url)
     studies = list(st_an_dict.keys())
@@ -91,7 +91,7 @@ def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt'):
     :param list input_items: List of Metabolomics Workbench input values for mwTab files.
     :param str base_url: Base url to Metabolomics Workbench REST API.
     :param str output_format: Output format for the mwTab files to be retrieved in.
-    :return: Metabolomics Workbench REST URL string.
+    :return: Metabolomics Workbench REST URL string(s).
     :rtype: :py:class:`str`
     """
     for input_item in input_items:
@@ -129,7 +129,7 @@ def generate_urls(input_items, base_url=BASE_URL, **kwds):
     :param list input_items: List of Metabolomics Workbench input values for mwTab files.
     :param str base_url: Base url to Metabolomics Workbench REST API.
     :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.
-    :return: Metabolomics Workbench REST URL string.
+    :return: Metabolomics Workbench REST URL string(s).
     :rtype: :py:class:`str`
     """
     for input_item in input_items:
