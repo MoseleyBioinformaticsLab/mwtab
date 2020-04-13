@@ -98,7 +98,7 @@ def download(context, cmdparams):
         check_filepath(cmdparams["--to-path"])
         filepath = cmdparams["--to-path"]
 
-    with open(filepath, "w") as fh:
+    with open(filepath, "w", encoding="utf-8") as fh:
         mwrestfile.write(fh)
 
 
