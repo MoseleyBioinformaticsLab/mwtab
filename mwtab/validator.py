@@ -189,7 +189,7 @@ def _validate_data(mwtabfile):
     return errors
 
 
-def validate_section(section, schema):
+def _validate_section(section, schema):
     """Validate section of ``mwTab`` formatted file.
 
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
@@ -198,6 +198,28 @@ def validate_section(section, schema):
     :rtype: :py:class:`collections.OrderedDict`
     """
     return schema.validate(section)
+
+
+def _validate_sections(mwtabfile, section_schema_mapping):
+    """Validate section of ``mwTab`` formatted file.
+
+    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
+    :param schema: Schema definition.
+    :return: Validated section.
+    :rtype: :py:class:`collections.OrderedDict`
+    """
+    validated_mwtabfile = OrderedDict()
+    errors = list()
+
+    for section_key, section in mwtabfile.items():
+        try:
+            schema = section_schema_mapping[section_key]
+            _validate_section(section=section, schema=schema)
+            validated_mwtabfile[section_key] = section
+        except Exception as e:
+            errors.append(e)
+
+    return validated_mwtabfile, errors
 
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True,
@@ -222,7 +244,6 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = []
-    validated_mwtabfile = OrderedDict()
 
     if validate_samples or validate_factors:
         errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
@@ -234,13 +255,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
         errors.extend(_validate_data(mwtabfile))
 
     if validate_schema:
-        for section_key, section in mwtabfile.items():
-            try:
-                schema = section_schema_mapping[section_key]
-                validate_section(section=section, schema=schema)
-                validated_mwtabfile[section_key] = section
-            except Exception as e:
-                errors.append(e)
+        validated_mwtabfile, schema_errors = _validate_sections(mwtabfile, section_schema_mapping)
+        errors.extend(schema_errors)
 
     if not test and not errors:
         return validated_mwtabfile
