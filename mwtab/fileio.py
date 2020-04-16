@@ -167,7 +167,7 @@ class GenericFilePath(object):
             if is_url:
                 filehandle = urlopen(self.path)
             else:
-                filehandle = open(self.path, "r")
+                filehandle = open(self.path, "r", encoding="utf-8")
             source = self.path
             yield filehandle, source
             filehandle.close()
