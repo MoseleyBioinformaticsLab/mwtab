@@ -201,11 +201,12 @@ def _validate_section(section, schema):
 
 
 def _validate_sections(mwtabfile, section_schema_mapping):
-    """Validate section of ``mwTab`` formatted file.
+    """Validate sections of ``mwTab`` formatted file.
 
-    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
-    :param schema: Schema definition.
-    :return: Validated section.
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+    :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
     validated_mwtabfile = OrderedDict()
