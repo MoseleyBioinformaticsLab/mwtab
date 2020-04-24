@@ -297,7 +297,7 @@ def _validate_sections(mwtabfile, section_schema_mapping):
 
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, validate_samples=True,
-                  validate_factors=True, validate_features=True, validate_schema=True, validate_data=True,
+                  validate_factors=True, validate_features=True, validate_metabolite_metadata=False, validate_schema=True, validate_data=True,
                   verbose=False, test=False):
     """Validate entire ``mwTab`` formatted file one section at a time.
 
@@ -330,6 +330,9 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
 
     if mwtabfile.get("METABOLITES") and validate_features:
         errors.extend(_validate_metabolites(validated_mwtabfile))
+
+    if mwtabfile.get("METABOLITES") and validate_metabolite_metadata:
+        errors.extend(_validate_metabolites_metadata(validated_mwtabfile))
 
     if validate_data:
         errors.extend(_validate_data(validated_mwtabfile))
