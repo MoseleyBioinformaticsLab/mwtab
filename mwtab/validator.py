@@ -11,15 +11,59 @@ identifiers are consistent across the file, make sure that all
 required key-value pairs are present.
 """
 
+from copy import deepcopy
 from collections import OrderedDict
 from .mwschema import section_schema_mapping
+from re import search
+
+metabolite_metadata_regexs = {
+    "hmdb_id": {
+        r"(?i)[\s|\S]{,}(HMDB)",
+        r"(?i)(Human Metabolome D)[\S]{,}",
+    },
+    "inchi_key": {
+        r"(?i)(inchi)[\S]{,}",
+    },
+    "kegg_id": {
+        r"(?i)(kegg)$",
+        r"(?i)(kegg)(\s|_)(i)",
+    },
+    "moverz": {
+        r"(?i)(m/z)",
+    },
+    "moverz_quant": {
+        r"(?i)(moverz)(\s|_)(quant)",
+        r"(?i)(quan)[\S]{,}(\s|_)(m)[\S]{,}(z)",
+    },
+    "other_id": {
+        r"(?i)(other)(\s|_)(id)$",
+    },
+    "other_id_type": {
+        r"(?i)(other)(\s|_)(id)(\s|_)(type)$",
+    },
+    "pubchem_id": {
+        r"(?i)(pubchem)[\S]{,}",
+    },
+    "retention_index": {
+        r"(?i)(ri)$",
+        r"(?i)(ret)[\s|\S]{,}(index)",
+    },
+    "retention_index_type": {
+        r"(?i)(ri)(\s|_)(type)",
+    },
+    "retention_time": {
+        r"(?i)(r)[\s|\S]{,}(time)[\S]{,}",
+    },
+
+}
 
 
 def _validate_samples_factors(mwtabfile, validate_samples=True, validate_factors=True):
     """Validate ``Samples`` and ``Factors`` identifiers across the file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :param validate_samples: Make sure that sample ids are consistent across file.
     :type validate_samples: :py:obj:`True` or :py:obj:`False`
     :param validate_factors: Make sure that factors are consistent across file.
@@ -99,7 +143,8 @@ def _validate_metabolites(mwtabfile):
     """Validate metabolite ``Features`` across the file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """
@@ -136,6 +181,31 @@ def _validate_metabolites(mwtabfile):
     return errors
 
 
+def _validate_metabolites_metadata(mwtabfile):
+    """Validate metabolite metadata headings (``fields``) in the ``Metabolites`` block.
+
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    :return: List of errors (["None"] if no errors).
+    :rtype: :py:obj:`list`
+    """
+    errors = []
+
+    from_metabolites_fields = mwtabfile["METABOLITES"]["METABOLITES_START"].get("Fields")
+    if from_metabolites_fields:
+        for field in from_metabolites_fields:
+            regex_keys = metabolite_metadata_regexs.keys()
+            if not any(k == field for k in regex_keys):
+                for regex_key in regex_keys:
+                    if any(search(p, field) for p in metabolite_metadata_regexs[regex_key]):
+                        errors.append((field, regex_key))
+                        field = regex_key
+                        break
+
+    return ValueError("`Metabolites` block contains metadata heading(s) which match suggested headings: {}.".format(errors))
+
+
 def _validate_data(mwtabfile):
     """
     Validate data in `MS_METABOLITE_DATA` or `NMR_BINNED_DATA` blocks.
@@ -143,7 +213,8 @@ def _validate_data(mwtabfile):
     Checks for null or negative data values in blocks.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :return: List of errors (["None"] if no errors).
     :rtype: :py:obj:`list`
     """
@@ -193,6 +264,7 @@ def _validate_section(section, schema):
     """Validate section of ``mwTab`` formatted file.
 
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
+    :type section: :py:class:`collections.OrderedDict`
     :param schema: Schema definition.
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
@@ -204,7 +276,8 @@ def _validate_sections(mwtabfile, section_schema_mapping):
     """Validate sections of ``mwTab`` formatted file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
@@ -229,7 +302,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     """Validate entire ``mwTab`` formatted file one section at a time.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
     :param validate_samples: Make sure that sample ids are consistent across file.
     :type validate_samples: :py:obj:`True` or :py:obj:`False`
@@ -245,24 +319,25 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :rtype: :py:class:`collections.OrderedDict`
     """
     errors = []
-
-    if validate_samples or validate_factors:
-        errors.extend(_validate_samples_factors(mwtabfile, validate_samples, validate_factors))
-
-    if mwtabfile.get("METABOLITES") and validate_features:
-        errors.extend(_validate_metabolites(mwtabfile))
-
-    if validate_data:
-        errors.extend(_validate_data(mwtabfile))
+    validated_mwtabfile = deepcopy(OrderedDict(mwtabfile))
 
     if validate_schema:
-        validated_mwtabfile, schema_errors = _validate_sections(mwtabfile, section_schema_mapping)
+        validated_mwtabfile, schema_errors = _validate_sections(validated_mwtabfile, section_schema_mapping)
         errors.extend(schema_errors)
+
+    if validate_samples or validate_factors:
+        errors.extend(_validate_samples_factors(validated_mwtabfile, validate_samples, validate_factors))
+
+    if mwtabfile.get("METABOLITES") and validate_features:
+        errors.extend(_validate_metabolites(validated_mwtabfile))
+
+    if validate_data:
+        errors.extend(_validate_data(validated_mwtabfile))
 
     if not test and not errors:
         return validated_mwtabfile
     elif verbose:
-        print("Errors in file {}:".format(mwtabfile.analysis_id))
+        print("Errors in file {}:".format(validated_mwtabfile["METABOLOMICS WORKBENCH"]["ANALYSIS_ID"]))
         for e in errors:
             print("\t{}".format(str(e)))
     if test:
