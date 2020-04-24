@@ -311,6 +311,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, vali
     :type validate_factors: :py:obj:`True` or :py:obj:`False`
     :param validate_features: Make sure that metabolite features are consistent across file.
     :type validate_features: :py:obj:`True` or :py:obj:`False`
+    :param validate_metabolite_metadata: Make sure that any metabolite headings that match commonly used headings are replaced.
+    :type validate_metabolite_metadata: :py:obj:`True` or :py:obj:`False`
     :param validate_schema: Make sure that sections follow schema.
     :type validate_schema: :py:obj:`True` or :py:obj:`False`
     :param validate_data: Make sure that no null or negative values are present in data blocks.
