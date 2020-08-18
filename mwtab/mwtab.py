@@ -285,11 +285,26 @@ class MWTabFile(OrderedDict):
 
                         elif data_key == "DATA":
                             for data in self[section_key][key][data_key]:
-                                print("\t".join(data.values()), file=f)
+                                print("\t".join([str(val) for val in data.values()]), file=f)
 
                     print(end_key, file=f)
                 else:
-                    print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
+                    if len(str(value)) > 80:
+                        words = str(value).split(" ")
+                        length = 0
+                        line = list()
+                        for word in words:
+                            if length + len(word) + len(line) - 1 <= 80:
+                                line.append(word)
+                                length += len(word)
+                            else:
+                                print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)), file=f)
+                                line = [word]
+                                length = len(word)
+                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)),
+                              file=f)
+                    else:
+                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
 
         elif file_format == "json":
             print(json.dumps(self[section_key], sort_keys=False, indent=4), file=f)

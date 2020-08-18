@@ -277,7 +277,7 @@ analysis_schema = Schema(
         Optional("PROCESSING_PARAMETERS_FILE"): str,
         Optional("DATA_FORMAT"): str,
 
-        # note specified in mwTab specification (assumed)
+        # not specified in mwTab specification (assumed)
         Optional("ACQUISITION_ID"): str,
         Optional("ACQUISITION_TIME"): str,
         Optional("ANALYSIS_COMMENTS"): str,
@@ -401,6 +401,19 @@ metabolites_schema = Schema(
                         Optional(str): str
                     }
                 ]
+            },
+        Optional(Or("EXTENDED_MS_METABOLITE_DATA_START", "EXTENDED_NMR_METABOLITE_DATA_START", only_one=True)):
+            {
+                "Fields": [
+                    "metabolite_name",
+                    Optional(str),
+                    "sample_id"
+                ],
+                "DATA": [
+                    {
+                        Optional(str): str,
+                    }
+                ]
             }
     }
 )
@@ -418,10 +431,11 @@ ms_metabolite_data_schema = Schema(
 
 nmr_binned_data_schema = Schema(
     {
-        "NMR_BINNED_DATA_START": {
-            "Fields": list,
+        Or("NMR_BINNED_DATA_START", "NMR_METABOLITE_DATA", only_one=True): {
+            Or("Fields", "Samples", only_one=True): list,
+            Optional("Factors"): list,
             "DATA": list
-        }
+        },
     }
 )
 

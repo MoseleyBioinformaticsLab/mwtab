@@ -14,7 +14,7 @@ required key-value pairs are present.
 from copy import deepcopy
 from collections import OrderedDict
 from .mwschema import section_schema_mapping
-from re import search
+from re import match
 
 metabolite_metadata_regexs = {
     "hmdb_id": {
@@ -198,12 +198,12 @@ def _validate_metabolites_metadata(mwtabfile):
             regex_keys = metabolite_metadata_regexs.keys()
             if not any(k == field for k in regex_keys):
                 for regex_key in regex_keys:
-                    if any(search(p, field) for p in metabolite_metadata_regexs[regex_key]):
+                    if any(match(p, field) for p in metabolite_metadata_regexs[regex_key]):
                         errors.append((field, regex_key))
                         field = regex_key
                         break
-
-    return ValueError("`Metabolites` block contains metadata heading(s) which match suggested headings: {}.".format(errors))
+    if errors:
+        return [ValueError("`Metabolites` block contains metadata heading(s) which match suggested headings: {}.".format(errors))]
 
 
 def _validate_data(mwtabfile):
@@ -227,9 +227,7 @@ def _validate_data(mwtabfile):
             for k in sample_keys:
                 try:
                     if float(data_list[k]) < 0:
-                        errors.append(ValueError("`MS_METABOLITE_DATA` block contains negative value ({}) for "
-                                                 "metabolite: '{}' and sample: '{}'.".format(
-                                                    data_list[k], data_list["metabolite_name"], k)))
+                        errors.append((data_list["metabolite_name"], k, data_list[k]))
                 except ValueError:
                     # if not any(null_value == data_list[k] for null_value in null_values):
                     #     errors.append(ValueError("`MS_METABOLITE_DATA` block contains non-numeric value ({}) for "
@@ -237,27 +235,10 @@ def _validate_data(mwtabfile):
                     #                                 data_list[k], data_list["metabolite_name"], k)))
                     pass
 
-    if mwtabfile.get("NMR_BINNED_DATA"):
-        for data_list in mwtabfile["NMR_BINNED_DATA"]["NMR_BINNED_DATA_START"]["DATA"]:
-            if not data_list.get("Bin range(ppm)"):
-                errors.append(KeyError("Missing `Bin range(ppm)` key in `NMR_BINNED_DATA` block."))
-                break
-            else:
-                sample_keys = [k for k in data_list.keys() if k != "Bin range(ppm)"]
-                for k in sample_keys:
-                    try:
-                        if float(data_list[k]) < 0:
-                            errors.append(ValueError("`NMR_BINNED_DATA` block contains negative value ({}) for Bin range(ppm): "
-                                                     "'{}' and sample: '{}'.".format(
-                                                        data_list[k], data_list["Bin range(ppm)"], k)))
-                    except ValueError:
-                        # if not any(null_value == data_list[k] for null_value in null_values):
-                        #     errors.append(ValueError("`NMR_BINNED_DATA` block contains non-numeric value ({}) for "
-                        #                              "metabolite: '{}' and sample: '{}'.".format(
-                        #                                 data_list[k], data_list["metabolite_name"], k)))
-                        pass
-
-    return errors
+    if errors:
+        return [ValueError("`MS_METABOLITE_DATA` block contains negative value(s) (metabolite_name, sample_id, value): {}.".format(errors))]
+    else:
+        return dict()
 
 
 def _validate_section(section, schema):
