@@ -111,16 +111,17 @@ subject_schema = Schema(
 )
 
 subject_sample_factors_schema = Schema(
-    {
-        "SUBJECT_SAMPLE_FACTORS": [
-            {
-                "subject_type": str,
-                "local_sample_id": str,
-                "factors": str,
-                "additional_sample_data": str
+    [
+        {
+            "Subject ID": str,
+            "Sample ID": str,
+            "Factors": dict,
+            Optional("Additional sample data"): {
+                "RAW_FILE_NAME": str,
+                Optional(str): str
             }
-        ]
-    }
+        }
+    ]
 )
 
 collection_schema = Schema(
@@ -298,7 +299,7 @@ ms_schema = Schema(
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        Optional("MS_COMMENTS"): str,  # changed to required
+        "MS_COMMENTS": str,  # changed to required
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
