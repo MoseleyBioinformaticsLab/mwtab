@@ -84,7 +84,11 @@ class MWTabFile(OrderedDict):
 
         self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
         self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
-        self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
+        # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
+        self.header = " ".join(
+            ["#METABOLOMICS WORKBENCH"]
+            + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
+        )
 
         filehandle.close()
 
@@ -157,14 +161,26 @@ class MWTabFile(OrderedDict):
         """
         section = OrderedDict()
         token = next(lexer)
+        alias = {
+            "subject_type": "Subject ID",
+            "local_sample_id": "Sample ID",
+            "factors": "Factors",
+            "additional_sample_data": "Additional sample data",
+        }
 
         while not token.key.startswith("#ENDSECTION"):
 
+            # TODO: Move to separate method (no longer works the same way as the other possibilities in _build_block())
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
-                header = token._fields[1:]
-                values = token[1:]
-                section.setdefault("SUBJECT_SAMPLE_FACTORS", [])
-                section["SUBJECT_SAMPLE_FACTORS"].append(OrderedDict(zip(header, values)))
+                # header = token._fields[1:]
+                # values = token[1:]
+                # section.setdefault("SUBJECT_SAMPLE_FACTORS", [])
+                # section["SUBJECT_SAMPLE_FACTORS"].append(
+                #     OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))})
+                # )
+                if type(section) != list:
+                    section = list()
+                section.append(OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))}))
 
             elif token.key.endswith("_START"):
                 section_key = token.key
@@ -201,7 +217,7 @@ class MWTabFile(OrderedDict):
             else:
                 key, value, = token
                 if key in section:
-                    section[key] += "\n{}".format(value)
+                    section[key] += " {}".format(value)
                 else:
                     section[key] = value
             token = next(lexer)
@@ -213,7 +229,6 @@ class MWTabFile(OrderedDict):
         :param io.StringIO f: writable file-like stream.
         :param str file_format: Format to use: `mwtab` or `json`.
         :param f: Print to file or stdout.
-        :param int tw: Tab width.
         :return: None
         :rtype: :py:obj:`None`
         """
@@ -221,16 +236,45 @@ class MWTabFile(OrderedDict):
             for key in self:
                 if key == "SUBJECT_SAMPLE_FACTORS":
                     print("#SUBJECT_SAMPLE_FACTORS:         \tSUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data", file=f)
-                elif key == "METABOLOMICS WORKBENCH":
-                    print(self.header, file=f)
+                    self.print_subject_sample_factors(key, f=f, file_format=file_format)
                 else:
-                    print("#{}".format(key), file=f)
+                    if key == "METABOLOMICS WORKBENCH":
+                        print(self.header, file=f)
+                    else:
+                        print("#{}".format(key), file=f)
 
-                self.print_block(key, f=f, file_format=file_format)
+                    self.print_block(key, f=f, file_format=file_format)
             print("#END", file=f)
 
         elif file_format == "json":
             print(self._to_json(), file=f)
+
+    def print_subject_sample_factors(self, section_key, f=sys.stdout, file_format="mwtab"):
+        """Print `mwtab` `SUBJECT_SAMPLE_FACTORS` section into a file or stdout.
+
+        :param str section_key: Section name.
+        :param io.StringIO f: writable file-like stream.
+        :param str file_format: Format to use: `mwtab` or `json`.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        if file_format == "mwtab":
+            for item in self[section_key]:
+                formatted_items = []
+                for k in item.keys():
+                    if k in ["Subject ID", "Sample ID"]:
+                        formatted_items.append(str(item[k]))
+                    elif k == "Factors":
+                        factors = []
+                        for k2 in item[k]:
+                            factors.append("{}:{}".format(k2, item[k][k2]))
+                        formatted_items.append(" | ".join(factors))
+                    elif k == "Additional sample data":
+                        additional_sample_data = []
+                        for k2 in item[k]:
+                            additional_sample_data.append("{}={}".format(k2, item[k][k2]))
+                        formatted_items.append(";".join(additional_sample_data))
+                print("{}{}\t{}".format(section_key, 33 * " ", "\t".join(formatted_items)), file=f)
 
     def print_block(self, section_key, f=sys.stdout, file_format="mwtab"):
         """Print `mwtab` section into a file or stdout.
@@ -248,18 +292,14 @@ class MWTabFile(OrderedDict):
 
                 if key in ("VERSION", "CREATED_ON"):
                     cw = 20 - len(key)
-                elif key in ("SUBJECT_SAMPLE_FACTORS", ):
-                    cw = 33 - len(key)
+                # elif key in ("SUBJECT_SAMPLE_FACTORS", ):
+                #     cw = 33 - len(key)
                 else:
                     cw = 30 - len(key)
 
                 if "\n" in value:
                     for line in value.split("\n"):
                         print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", line), file=f)
-
-                elif key == "SUBJECT_SAMPLE_FACTORS":
-                    for factor in value:
-                        print("{}{}\t{}".format(key, cw * " ", "\t".join(factor.values())), file=f)
 
                 elif key.endswith(":UNITS"):
                     print("{}\t{}".format(key, value), file=f)

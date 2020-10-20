@@ -16,8 +16,7 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 """
 
 from __future__ import print_function, division, unicode_literals
-from collections import deque
-from collections import namedtuple
+from collections import deque, namedtuple
 
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
@@ -40,7 +39,7 @@ def tokenizer(text, verbose=False):
 
         if line.startswith("#METABOLOMICS WORKBENCH"):
             yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
-            yield KeyValue("HEADER", line)
+            # yield KeyValue("HEADER", line)
 
             for identifier in line.split(" "):
                 if ":" in identifier:
@@ -60,8 +59,15 @@ def tokenizer(text, verbose=False):
 
         elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
             key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
-            # factors = [dict([[i.strip() for i in f.split(":")]]) for f in factors.split("|")]
-            yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_data)
+            factors = {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in factors.split("|")}
+            additional_sample_dict = dict()
+            # if additional_sample_data:
+            #     additional_sample_data = {add_item.split("=")[0].strip(): add_item.split("=")[1].strip() for add_item in additional_sample_data.split(";")}
+            for item in additional_sample_data.split(";"):
+                if "=" in item:
+                    key, value = item.split(":")
+                    additional_sample_dict[key] = value
+            yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_dict)
 
         elif line.endswith("_START"):
             yield KeyValue(line, "\n")
