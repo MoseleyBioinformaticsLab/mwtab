@@ -12,10 +12,10 @@ def test_from_local_file():
 
 
 def test_from_analysis_id():
-    mwtabfile_generator = mwtab.read_files("5")
+    mwtabfile_generator = mwtab.read_files("2")
     mwtabfile = next(mwtabfile_generator)
-    assert mwtabfile.study_id == "ST000004"
-    assert mwtabfile.analysis_id == "AN000005"
+    assert mwtabfile.study_id == "ST000002"
+    assert mwtabfile.analysis_id == "AN000002"
 
 
 @pytest.mark.parametrize("files_source", [
