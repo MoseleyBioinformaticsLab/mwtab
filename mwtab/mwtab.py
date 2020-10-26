@@ -147,7 +147,13 @@ class MWTabFile(OrderedDict):
                 name = token.key[1:]
                 section = self._build_block(lexer)
                 if section:
-                    mwtab_file[name] = section
+                    if name == "METABOLITES":
+                        data_section = next((n for n in mwtab_file.keys() if n in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA")), None)
+                        if data_section:
+                            for key in section.keys():
+                                mwtab_file[data_section][key] = section[key]
+                    else:
+                        mwtab_file[name] = section
             token = next(lexer)
         return mwtab_file
 
@@ -172,37 +178,30 @@ class MWTabFile(OrderedDict):
 
             # TODO: Move to separate method (no longer works the same way as the other possibilities in _build_block())
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
-                # header = token._fields[1:]
-                # values = token[1:]
-                # section.setdefault("SUBJECT_SAMPLE_FACTORS", [])
-                # section["SUBJECT_SAMPLE_FACTORS"].append(
-                #     OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))})
-                # )
                 if type(section) != list:
                     section = list()
                 section.append(OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))}))
 
             elif token.key.endswith("_START"):
-                section_key = token.key
-                section.setdefault(section_key, OrderedDict())
                 data = []
 
                 token = next(lexer)
                 header = list(token.value)
 
                 while not token.key.endswith("_END"):
-                    if token.key == "Samples":
-                        header[0] = "metabolite_name"
-                        section[section_key][token.key] = list(token.value[1:])
-                    elif token.key == "Factors":
-                        section[section_key][token.key] = list(token.value[1:])
-                    elif token.key in ("metabolite_name", "Bin range(ppm)"):
-                        section[section_key]["Fields"] = list(token.value)
+                    if token.key in ("Samples", "Factors", "metabolite_name", "Bin range(ppm)"):
+                        pass
                     else:
-                        data.append(OrderedDict(zip(header, token.value)))
+                        data.append(OrderedDict(zip(["Metabolite"] + header[1:], token.value)))
 
                     token = next(lexer)
-                section[section_key]["DATA"] = data
+
+                if token.key.startswith("METABOLITES"):
+                    section["Metabolites"] = data
+                elif token.key.startswith("EXTENDED_"):
+                    section["Extended"] = data
+                else:
+                    section["Data"] = data
 
             elif token.key.endswith("_RESULTS_FILE"):
                 if len(token) > 2:
@@ -220,7 +219,10 @@ class MWTabFile(OrderedDict):
                     section[key] += " {}".format(value)
                 else:
                     section[key] = value
+
+            # load token(s) (from parsing of next line in file)
             token = next(lexer)
+
         return section
 
     def print_file(self, f=sys.stdout, file_format="mwtab"):
@@ -292,42 +294,61 @@ class MWTabFile(OrderedDict):
 
                 if key in ("VERSION", "CREATED_ON"):
                     cw = 20 - len(key)
-                # elif key in ("SUBJECT_SAMPLE_FACTORS", ):
-                #     cw = 33 - len(key)
+                elif key == "Units":
+                    cw = 33 - len(section_key+":UNITS")
                 else:
                     cw = 30 - len(key)
 
-                if "\n" in value:
-                    for line in value.split("\n"):
-                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", line), file=f)
-
-                elif key.endswith(":UNITS"):
-                    print("{}\t{}".format(key, value), file=f)
-
-                elif key.endswith("_RESULTS_FILE"):
+                if key.endswith("_RESULTS_FILE"):
                     if isinstance(value, dict):
                         print("{}{}               \t{}\t{}:{}".format(self.prefixes.get(section_key, ""),
                                                                       *[i for pair in value.items() for i in pair]), file=f)
                     else:
                         print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
 
-                elif key.endswith("_START"):
-                    start_key = key
-                    end_key = "{}{}".format(start_key[:-5], "END")
-                    print(start_key, file=f)
+                # prints #MS_METABOLITE_DATA, #NMR_METABOLITE_DATA, or #NMR_BINNED_DATA sections
+                elif key == "Units":
+                    print("{}:UNITS{}\t{}".format(section_key, cw * " ", value), file=f)
+                elif key == "Data":
+                    print("{}_START".format(section_key), file=f)
 
-                    for data_key in value:
-                        if data_key in ("Samples", "Factors"):
-                            print("{}\t{}".format(data_key, "\t".join(self[section_key][key][data_key])), file=f)
+                    if "METABOLITE" in section_key:
+                        # prints "Samples" line at head of data section
+                        print("\t".join(["Samples"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
+                        # prints "Factors" line at head of data section
+                        factors_list = ["Factors"]
+                        factors_dict = {i["Sample ID"]: i["Factors"] for i in self["SUBJECT_SAMPLE_FACTORS"]}
+                        for k in [k for k in self[section_key][key][0].keys()][1:]:
+                            factors = [fk + ":" + factors_dict[k][fk] for fk in factors_dict[k].keys()]
+                            factors_list.append(" | ".join(factors))
+                        print("\t".join(factors_list), file=f)
+                        for i in self[section_key][key]:
+                            print("\t".join([i[k] for k in i.keys()]), file=f)
 
-                        elif data_key in ("Fields", ):
-                            print("{}".format("\t".join(self[section_key][key][data_key])), file=f)
+                    else:  # NMR_BINNED_DATA
+                        print("\t".join(["Bin range(ppm)"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
+                        for i in self[section_key][key]:
+                            print("\t".join([i[k] for k in i.keys()]), file=f)
 
-                        elif data_key == "DATA":
-                            for data in self[section_key][key][data_key]:
-                                print("\t".join([str(val) for val in data.values()]), file=f)
+                    print("{}_END".format(section_key), file=f)
 
-                    print(end_key, file=f)
+                # prints #METABOLITES section
+                elif key in ("Metabolites", "Extended"):
+                    if key == "Metabolites":
+                        print("#METABOLITES", file=f)
+                        print("METABOLITES_START", file=f)
+                    else:
+                        print("EXTENDED_{}_START".format(section_key), file=f)
+
+                    print("\t".join(["metabolite_name"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
+                    for i in self[section_key][key]:
+                        print("\t".join(i[k] for k in i.keys()), file=f)
+
+                    if key == "Metabolites":
+                        print("METABOLITES_END", file=f)
+                    else:
+                        print("EXTENDED_{}_END".format(section_key), file=f)
+
                 else:
                     if len(str(value)) > 80:
                         words = str(value).split(" ")

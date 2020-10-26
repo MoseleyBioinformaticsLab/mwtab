@@ -37,41 +37,41 @@ def tokenizer(text, verbose=False):
     while len(stream) > 0:
         line = stream.popleft()
 
+        # header
         if line.startswith("#METABOLOMICS WORKBENCH"):
             yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
-            # yield KeyValue("HEADER", line)
 
             for identifier in line.split(" "):
                 if ":" in identifier:
                     key, value = identifier.split(":")
                     yield KeyValue(key, value)
 
-        elif line.startswith("#ANALYSIS TYPE"):
-            yield KeyValue("HEADER", line)
-
+        # SUBJECT_SAMPLE_FACTORS header (reached new section)
         elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
             yield KeyValue("#ENDSECTION", "\n")
             yield KeyValue("#SUBJECT_SAMPLE_FACTORS", "\n")
 
+        # section header (reached new section)
         elif line.startswith("#"):
             yield KeyValue("#ENDSECTION", "\n")
             yield KeyValue(line.strip(), "\n")
 
+        # SUBJECT_SAMPLE_FACTORS line
         elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
             key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
             factors = {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in factors.split("|")}
             additional_sample_dict = dict()
-            # if additional_sample_data:
-            #     additional_sample_data = {add_item.split("=")[0].strip(): add_item.split("=")[1].strip() for add_item in additional_sample_data.split(";")}
             for item in additional_sample_data.split(";"):
                 if "=" in item:
-                    key, value = item.split(":")
-                    additional_sample_dict[key] = value
+                    k, v = item.split("=")
+                    additional_sample_dict[k.strip()] = v.strip()
             yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_dict)
 
+        # data start header
         elif line.endswith("_START"):
             yield KeyValue(line, "\n")
 
+            # tokenize lines in data section till line ending with "_END" is reached
             while not line.endswith("_END"):
                 line = stream.popleft()
                 if line.endswith("_END"):
@@ -80,6 +80,7 @@ def tokenizer(text, verbose=False):
                     data = line.split("\t")
                     yield KeyValue(data[0], tuple(data))
 
+        # item line in item section (e.g. PROJECT, SUBJECT, etc..)
         else:
             if line:
                 if line.startswith("MS:MS_RESULTS_FILE") or line.startswith("NM:NMR_RESULTS_FILE"):
@@ -97,7 +98,7 @@ def tokenizer(text, verbose=False):
                         key, value = line.split("\t")
                         if ":" in key:
                             if key.startswith("MS_METABOLITE_DATA:UNITS"):
-                                yield KeyValue(key.strip(), value)
+                                yield KeyValue("Units", value)
                             else:
                                 yield KeyValue(key.strip()[3:], value)
                         else:
@@ -107,5 +108,6 @@ def tokenizer(text, verbose=False):
                             print("LINE WITH ERROR:\n\t", repr(line))
                         raise ValueError("LINE WITH ERROR:\n\t", repr(line))
 
+    # end of file
     yield KeyValue("#ENDSECTION", "\n")
     yield KeyValue("!#ENDFILE", "\n")  # This is to ensure that tokenizer terminates when #END is missing.
