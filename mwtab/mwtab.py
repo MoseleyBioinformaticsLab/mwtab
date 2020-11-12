@@ -104,6 +104,7 @@ class MWTabFile(OrderedDict):
         try:
             if file_format == "json":
                 json_str = self._to_json()
+                print(json_str)
                 filehandle.write(json_str)
             elif file_format == "mwtab":
                 mwtab_str = self._to_mwtab()
@@ -152,6 +153,8 @@ class MWTabFile(OrderedDict):
                         if data_section:
                             for key in section.keys():
                                 mwtab_file[data_section][key] = section[key]
+                    elif name == "NMR":
+                        mwtab_file["NM"] = section
                     else:
                         mwtab_file[name] = section
             token = next(lexer)
@@ -242,6 +245,8 @@ class MWTabFile(OrderedDict):
                 else:
                     if key == "METABOLOMICS WORKBENCH":
                         print(self.header, file=f)
+                    elif key == "NM":
+                        print("#NMR", file=f)
                     else:
                         print("#{}".format(key), file=f)
 

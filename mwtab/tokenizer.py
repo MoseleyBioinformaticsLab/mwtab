@@ -83,7 +83,7 @@ def tokenizer(text, verbose=False):
         # item line in item section (e.g. PROJECT, SUBJECT, etc..)
         else:
             if line:
-                if line.startswith("MS:MS_RESULTS_FILE") or line.startswith("NM:NMR_RESULTS_FILE"):
+                if line.endswith("_RESULTS_FILE"):
                     try:
                         key, value = line.split("\t")
                         yield KeyValue(key.strip()[3:], value)
@@ -97,7 +97,7 @@ def tokenizer(text, verbose=False):
                     try:
                         key, value = line.split("\t")
                         if ":" in key:
-                            if key.startswith("MS_METABOLITE_DATA:UNITS"):
+                            if key.endswith("_METABOLITE_DATA:UNITS"):
                                 yield KeyValue("Units", value)
                             else:
                                 yield KeyValue(key.strip()[3:], value)

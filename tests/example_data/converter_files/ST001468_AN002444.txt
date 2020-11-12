@@ -1,0 +1,788 @@
+#METABOLOMICS WORKBENCH huntermoseley_20200822_090922 DATATRACK_ID:2146 STUDY_ID:ST001468 ANALYSIS_ID:AN002444 PROJECT_ID:000000
+VERSION             	1
+CREATED_ON             	August 26, 2020, 5:36 pm
+#PROJECT
+PR:PROJECT_TITLE                 	Metabolomics of lung injury after allogeneic hematopoietic cell transplantation
+PR:PROJECT_SUMMARY               	Allogeneic hematopoietic cell transplantation (allo-HCT) is a potentially
+PR:PROJECT_SUMMARY               	curative treatment option for a variety of hematological malignancies.
+PR:PROJECT_SUMMARY               	Interactions between the donor immune system and the patient tissue result in a
+PR:PROJECT_SUMMARY               	disease, called GVHD. The pathophysiology of acute GVHD can be hypothesized in
+PR:PROJECT_SUMMARY               	three sequential phases: cytokine storm and activation of the antigen-presenting
+PR:PROJECT_SUMMARY               	cells (APC), donor T cell activation and effector cell phase. Idiopathic
+PR:PROJECT_SUMMARY               	pneumonia syndrome (IPS) is one of the most deleterious complications after
+PR:PROJECT_SUMMARY               	allogeneic HCT and is considered not only to be related to conditioning regimen
+PR:PROJECT_SUMMARY               	toxicity but also represents an end organ damage caused by allo-reactive T
+PR:PROJECT_SUMMARY               	cells, therefore making the lung susceptible to a two-pronged attack, one of
+PR:PROJECT_SUMMARY               	which overlaps with GVHD causing other target organ injury. IPS results in
+PR:PROJECT_SUMMARY               	mortality of up to 90% of patients. We will use a murine model of IPS and GVHD
+PR:PROJECT_SUMMARY               	which is well established in our group, and in which disease evolves either
+PR:PROJECT_SUMMARY               	across disparities in major histocompatibility complex (MCH) class I and II,
+PR:PROJECT_SUMMARY               	minor histocompatibility antigens (miHags) or both. Metabolomics changes
+PR:PROJECT_SUMMARY               	following syngeneic and allogeneic HCT at post-transplantation Days +7 (cytokine
+PR:PROJECT_SUMMARY               	storm phase) and Days +42 (cellular effector phase) are compared to baseline
+PR:PROJECT_SUMMARY               	wild-type (naive) controls. Prior to analysis, naïve - and experimental mice
+PR:PROJECT_SUMMARY               	(N=3 from each group) were fed with semi-liquid diet supplemented with tracers
+PR:PROJECT_SUMMARY               	(13C6-glucose ) over 24 hours. At the end of 7 days or 42 days, respectively,
+PR:PROJECT_SUMMARY               	feces and aGVHD target organs (colon, liver and lung) were collected from all
+PR:PROJECT_SUMMARY               	groups and further processed and / or analyzed. We expect to reveal metabolic
+PR:PROJECT_SUMMARY               	pathways affected after allo-HCT which contribute to immune cell mediated lung
+PR:PROJECT_SUMMARY               	injury (IPS) and will potentially identify different metabolic pathways in other
+PR:PROJECT_SUMMARY               	GVHD target organs.
+PR:INSTITUTE                     	University of Kentucky
+PR:DEPARTMENT                    	Markey Cancer Center, Hematology and Blood and Marrow Transplant
+PR:LAST_NAME                     	Hildebrandt
+PR:FIRST_NAME                    	Gerhard
+PR:ADDRESS                       	Gerhard C. Hildebrandt, MD, Room no. CC401A, Ben Roach Building, Markey Cancer
+PR:ADDRESS                       	Center University of Kentucky, Lexington, 40536
+PR:EMAIL                         	gerhard.hildebrandt@uky.edu
+PR:PHONE                         	800-333-8874
+#STUDY
+ST:STUDY_TITLE                   	Metabolomics of lung injury after allogeneic hematopoietic cell transplantation
+ST:STUDY_TITLE                   	- Small Intenstines NMR HSQC
+ST:STUDY_TYPE                    	preliminary data
+ST:STUDY_SUMMARY                 	Allogeneic hematopoietic cell transplantation (allo-HCT) is a potentially
+ST:STUDY_SUMMARY                 	curative treatment option for a variety of hematological malignancies.
+ST:STUDY_SUMMARY                 	Interactions between the donor immune system and the patient tissue result in a
+ST:STUDY_SUMMARY                 	disease, called GVHD. The pathophysiology of acute GVHD can be hypothesized in
+ST:STUDY_SUMMARY                 	three sequential phases: cytokine storm and activation of the antigen-presenting
+ST:STUDY_SUMMARY                 	cells (APC), donor T cell activation and effector cell phase. Idiopathic
+ST:STUDY_SUMMARY                 	pneumonia syndrome (IPS) is one of the most deleterious complications after
+ST:STUDY_SUMMARY                 	allogeneic HCT and is considered not only to be related to conditioning regimen
+ST:STUDY_SUMMARY                 	toxicity but also represents an end organ damage caused by allo-reactive T
+ST:STUDY_SUMMARY                 	cells, therefore making the lung susceptible to a two-pronged attack, one of
+ST:STUDY_SUMMARY                 	which overlaps with GVHD causing other target organ injury. IPS results in
+ST:STUDY_SUMMARY                 	mortality of up to 90% of patients. We will use a murine model of IPS and GVHD
+ST:STUDY_SUMMARY                 	which is well established in our group, and in which disease evolves either
+ST:STUDY_SUMMARY                 	across disparities in major histocompatibility complex (MCH) class I and II,
+ST:STUDY_SUMMARY                 	minor histocompatibility antigens (miHags) or both. Metabolomics changes
+ST:STUDY_SUMMARY                 	following syngeneic and allogeneic HCT at post-transplantation Days +7 (cytokine
+ST:STUDY_SUMMARY                 	storm phase) and Days +42 (cellular effector phase) are compared to baseline
+ST:STUDY_SUMMARY                 	wild-type (naive) controls. Prior to analysis, naïve - and experimental mice
+ST:STUDY_SUMMARY                 	(N=3 from each group) were fed with semi-liquid diet supplemented with tracers
+ST:STUDY_SUMMARY                 	(13C6-glucose ) over 24 hours. At the end of 7 days or 42 days, respectively,
+ST:STUDY_SUMMARY                 	feces and aGVHD target organs (colon, liver and lung) were collected from all
+ST:STUDY_SUMMARY                 	groups and further processed and / or analyzed. We expect to reveal metabolic
+ST:STUDY_SUMMARY                 	pathways affected after allo-HCT which contribute to immune cell mediated lung
+ST:STUDY_SUMMARY                 	injury (IPS) and will potentially identify different metabolic pathways in other
+ST:STUDY_SUMMARY                 	GVHD target organs.
+ST:INSTITUTE                     	University of Kentucky
+ST:DEPARTMENT                    	MCC
+ST:LAST_NAME                     	Hildebrandt
+ST:FIRST_NAME                    	Gerhard
+ST:ADDRESS                       	CTW-453, 900 South Limestone street. UKY. Lexington, Kentucky-40536
+ST:EMAIL                         	gerhard.hildebrandt@uky.edu
+ST:PHONE                         	800-333-8874
+#SUBJECT
+SU:SUBJECT_TYPE                  	Mammal
+SU:SUBJECT_SPECIES               	Mus musculus
+SU:TAXONOMY_ID                   	10090
+#SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Raw file names and additional sample data
+SUBJECT_SAMPLE_FACTORS           	-	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=12_B1-2_syngenic_7days_UKy_GCH_rep3; protocol.id=['syngenic']; replicate=3; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage42']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4225; weight%units=g; lineage_4=12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-protein; protein_weight=0.8102614389604975; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=12_B1-2_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=14_C1-2_allogenic_7days_UKy_GCH_rep2; protocol.id=['allogenic']; replicate=2; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage44']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4114; weight%units=g; lineage_4=14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-protein; protein_weight=2.9949937519110956; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=14_C1-2_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=11_B1-1_syngenic_7days_UKy_GCH_rep2; protocol.id=['syngenic']; replicate=2; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage41']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4188; weight%units=g; lineage_4=11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-protein; protein_weight=2.378970613770366; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=11_B1-1_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:naive	lineage_1=01_A0_naive_0days_UKy_GCH_rep1; protocol.id=['naive']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=-; lineage_2=01_A0_SI_naive_0days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage31']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4062; weight%units=g; lineage_4=01_A0_SI_naive_0days_170427_UKy_GCH_rep1-protein; protein_weight=1.360284489372172; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=01_A0_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=05_B1_syngenic_42days_UKy_GCH_rep2; protocol.id=['syngenic']; replicate=2; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage35']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4121; weight%units=g; lineage_4=05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-protein; protein_weight=1.0010730956302694; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=05_B1_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=15_C1-20_allogenic_7days_UKy_GCH_rep3; protocol.id=['allogenic']; replicate=3; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage45']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.2063; weight%units=g; lineage_4=15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-protein; protein_weight=0.07598828829511124; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=15_C1-20_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=08_C1-2_allogenic_42days_UKy_GCH_rep2; protocol.id=['allogenic']; replicate=2; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage38']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4212; weight%units=g; lineage_4=08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-protein; protein_weight=3.1425075687553528; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=08_C1-2_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A	Treatment Protocol:naive	lineage_1=03_A2_naive_0days_UKy_GCH_rep3; protocol.id=['naive']; replicate=3; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=-; lineage_2=03_A2_SI_naive_0days_170427_UKy_GCH_rep3; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage33']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4066; weight%units=g; lineage_4=03_A2_SI_naive_0days_170427_UKy_GCH_rep3-protein; protein_weight=0.8819362150128038; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=03_A2_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=13_C1-1_allogenic_7days_UKy_GCH_rep1; protocol.id=['allogenic']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage43']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.1982; weight%units=g; lineage_4=13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-protein; protein_weight=1.4507095321124897; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=13_C1-1_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=07_C1-1_allogenic_42days_UKy_GCH_rep1; protocol.id=['allogenic']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage37']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4186; weight%units=g; lineage_4=07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-protein; protein_weight=3.4114953724241492; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=07_C1-1_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:allogenic	lineage_1=09_C2-0_allogenic_42days_UKy_GCH_rep1; protocol.id=['allogenic']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage39']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4195; weight%units=g; lineage_4=09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-protein; protein_weight=2.180889533694321; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=09_C2-0_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=04_B0_syngenic_42days_UKy_GCH_rep1; protocol.id=['syngenic']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage34']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4117; weight%units=g; lineage_4=04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-protein; protein_weight=0.9825758684635557; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=04_B0_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=10_B1-0_syngenic_7days_UKy_GCH_rep1; protocol.id=['syngenic']; replicate=1; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=7; lineage_2=10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage40']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4268; weight%units=g; lineage_4=10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-protein; protein_weight=1.8221409547723206; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=10_B1-0_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A	Treatment Protocol:syngenic	lineage_1=06_B2_syngenic_42days_UKy_GCH_rep3; protocol.id=['syngenic']; replicate=3; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=42; lineage_2=06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage36']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.1639; weight%units=g; lineage_4=06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-protein; protein_weight=0.5913021972603197; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=06_B2_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+SUBJECT_SAMPLE_FACTORS           	-	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A	Treatment Protocol:naive	lineage_1=02_A1_naive_0days_UKy_GCH_rep2; protocol.id=['naive']; replicate=2; species=Mus musculus; species_type=Mouse; taxonomy_id=10090; time_point=-; lineage_2=02_A1_SI_naive_0days_170427_UKy_GCH_rep2; protocol.id=['mouse_tissue_collection', 'tissue_quench', 'frozen_tissue_grind']; lineage_3=02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A; protocol.id=['polar_extraction', 'NMR_file_storage32']; replicate=1; replicate%type=analytical; type=cell_extract; weight=0.4087; weight%units=g; lineage_4=02_A1_SI_naive_0days_170427_UKy_GCH_rep2-protein; protein_weight=1.2310244885693347; protein_weight%units=mg; protocol.id=['protein_extraction']; RAW_FILE_NAME=02_A1_13C6-Glc_UKy_GCH_Ms_SmInt_gHSQCAD_01.fid/fid
+#COLLECTION
+CO:COLLECTION_SUMMARY            	Mouse is sacrificed and tissues are harvested.
+CO:COLLECTION_PROTOCOL_ID        	mouse_tissue_collection
+CO:SAMPLE_TYPE                   	Multiple tissues
+#TREATMENT
+TR:TREATMENT_SUMMARY             	Mouse with allogenic bone marrow transplant. Fed with semi-liquid diet
+TR:TREATMENT_SUMMARY             	supplemented with fully labeled glucose for 24 hours before harvest. Mouse with
+TR:TREATMENT_SUMMARY             	no treatment. Fed with semi-liquid diet supplemented with fully labeled glucose
+TR:TREATMENT_SUMMARY             	for 24 hours before harvest. Mouse with syngenic bone marrow transplant. Fed
+TR:TREATMENT_SUMMARY             	with semi-liquid diet supplemented with fully labeled glucose for 24 hours
+TR:TREATMENT_SUMMARY             	before harvest.
+TR:TREATMENT_PROTOCOL_ID         	allogenic naive syngenic
+#SAMPLEPREP
+SP:SAMPLEPREP_SUMMARY            	Frozen tissue is ground in a SPEX grinder under liquid nitrogen to homogenize
+SP:SAMPLEPREP_SUMMARY            	the sample. Protein extraction and quantification. Tissue is frozen in liquid
+SP:SAMPLEPREP_SUMMARY            	nitrogen to stop metabolic processes. Polar extraction from homogenate,
+SP:SAMPLEPREP_SUMMARY            	lypholized, and frozen.
+SP:SAMPLEPREP_PROTOCOL_ID        	polar_extraction; frozen_tissue_grind; tissue_quench; protein_extraction
+SP:SAMPLEPREP_PROTOCOL_FILENAME  	4D_17Jun4_Fan_Prot_Quant.pdf; 4B_Extract_Polar_Lipid_Prot_Fan_070417.pdf
+#ANALYSIS
+AN:ANALYSIS_TYPE                 	NMR
+#NMR
+NM:INSTRUMENT_NAME               	Agilent 600
+NM:INSTRUMENT_TYPE               	Agilent 600
+NM:NMR_EXPERIMENT_TYPE           	HC-HSQC
+NM:STANDARD_CONCENTRATION        	0.5 mM
+NM:SPECTROMETER_FREQUENCY        	600 MHz
+NM:NMR_PROBE                     	cryogenic triple resonance HCN
+NM:NMR_SOLVENT                   	D20
+NM:NMR_TUBE_SIZE                 	1.7 mm
+NM:SHIMMING_METHOD               	gradient shimming
+NM:PULSE_SEQUENCE                	gHSQCAD
+NM:WATER_SUPPRESSION             	presaturation
+NM:CHEMICAL_SHIFT_REF_CPD        	DSS
+NM:TEMPERATURE                   	15 celsius
+NM:ACQUISITION_TIME              	2 s
+NM:RELAXATION_DELAY              	4 s
+NM:BASELINE_CORRECTION_METHOD    	Bernstein Polynomial
+#NMR_METABOLITE_DATA
+NMR_METABOLITE_DATA:UNITS	normalized peak area
+NMR_METABOLITE_DATA_START
+metabolite_name	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	54.16611129462427	138.3735320093099	119.0788390465373	65.52775022002263	57.77562841793961	2.358752617870189	72.24617619855763	35.02912462503513	85.75252409525586	78.67136836113734	62.42022315314556	43.63311758410446	69.90091043527946	34.69909628067251	74.73967625889097
+AXP-1'_2		177.3815066297807				2.758465345871516									
+AXP-2_1	15.60994580037578	91.39490819950588	34.91628612340728	14.88255410331947	15.330763357346		22.11730704875664		27.42993880271817	15.82456563117886	17.5105068409329	14.9267388539106	17.50992664010149		22.33755732797538
+Ace-2_1	12.68532807615514	41.09029916791431	29.8802611878695	19.21313626845534	15.7160754752465	1.096005141112442	17.09561725708264	9.676406146031862	7.983210082987035	15.52635587357345	10.75225467297317	7.380345459469513	6.242038333153367	4.40297546821317	19.85561903164384
+Ala-3_1	81.66624310940558	235.4364393409952	122.3686459934535	117.7764825975939	115.2395210593264	9.532511735318126	63.2440641261766	68.88937030045048	63.68301341262106	47.19725755077371	59.95224857681336	41.32974343394315	69.38277812231742	28.20559460133086	109.0536781050509
+Ala-3_2	82.99669766044553	217.221942295535	117.9057479296144	111.76002283219	84.02012323667589	4.15204880398294	62.18170192169969	61.02105147909167	62.12956528676656	60.47140701644867	46.70837280643055	44.24664575874103	58.54122966090667	33.12593409749321	100.7812069814139
+Asp-3a_1	147.9192005459315	177.128970427673		41.09766944994549	45.35206348414453	3.87446320905017	37.99919563825069	55.60532314220767	37.67486605483832	82.18095138358905	17.42554612344811	14.93286150436027	42.98669099816217	41.60810105309101	39.39727400220475
+Asp-3a_2		75.31806492277553		75.86941228212255	75.14773591506717	3.734397154310131	101.323787299246		104.317816333119			100.6350916091329			99.34310468101272
+Asp-3a_3		145.0132887005734				1.890562165748444									
+Asp-3a_4		81.08523431638334				1.44033636539409									
+Asp-3b_1	38.38997300475573	207.4397601628802	37.18179047623227	39.80754791274298	40.88571373881818	5.06370740444467	32.21277264959296	25.42878804532181	49.12422496722388	16.57546505572655	19.37790599573023	29.85513995575615	8.994429124136442	13.24156736037705	39.27220905998604
+Asp-3b_2	26.75154682227389	138.5441150121684	34.12522291329071	36.87855905708228	32.25537588564637	2.923287992842424	29.00087222417498	17.50777752464732	31.40632467332694	16.39888296669275	16.47134573822132	24.9250265679469	5.111782004347207		34.19033387854466
+Creat_1	4.508433929946354	11.39446188668711	22.51249660999974	5.863017644856211	5.585905621285694		11.11312792183974	4.679439570377459	4.517849258768513	6.689674634185547	7.331604997456434	3.155942259924078	12.0895139555078		6.445042776288852
+DSS_1	3.854987732563454	2.04108421667505	1.99502254261233	3.777261436088205	4.058798779363197	4.083846652597841	4.252021781417798	4.113381173529785	4.615173522599807	3.658440918286233	4.054049470849923	3.561587883607269	4.032997328587324	4.455588702155687	4.183566094110491
+GSH+GSSG-3_1		143.9971631327897	30.94736375567139		19.29959758674748		50.95046384193322								
+GSH+GSSG-3_2		56.85090930004653													
+GSH+GSSG-4_1	13.785241	60.89244876913205	115.163311	24.02500625	33.9207675	1.515160969195442	41.51250672130512	5.1386065	13.22614325	10.838164	14.2221875	10.60487075	42.98064879255607	0.31283525	12.009121
+GSH+GSSG-4_2	11.281785	55.37722544404089	0.0056365	0.0061975	10.51935225	0.2662883276523012		4.4018105	0.1403605	0.029791	0.69914925	11.45353		1.288428	3.53467175
+GSH+GSSG-4_3			12.740698	11.6828995		0.287729960497037		0.07388725	8.56177825	17.27140225	14.635607			0.15043425	1.46854925
+GSH+GSSG-4_4								15.3622825						11.06617775	21.492791
+GSSG-12_1	33.96776293222568	127.0966256767211	144.5325355031367	49.09950044936733	51.66858628830745		67.3405749179936		43.61853094832723	35.7670905913196		42.85220365972444	103.4944000346191		59.43767687977981
+GXP-1'_1		54.3509156038637							33.26393288272681						
+Gln+Glu-2_1	67.38595723905048	117.8329230414125	202.605847065025	56.33612120743366	87.64686941230673	17.16608822150569	103.8645041488381	122.7534833909506	85.32283417710009	181.8608230615699	40.57847619947155	81.4169459178332	49.47334689956271	63.1446955652771	60.62134179319873
+Gln+Glu-2_2	46.44003772671599	142.6640895957972	125.3432997217719	71.06294950286932	68.13012768059231		67.27834573087186		39.03065918049218		63.10806500294652	8.588975141339114	59.53733841953969		78.31481534394054
+Gln+Glu-2_3	31.8839467789809	215.819675758437	62.29865969796182	42.71191599801551	33.50922154756106		24.46783318468123		27.74129200660024		19.35632718836489		37.94652331452949		29.55553699750052
+Gln+Glu-2_4		71.16832266989684													
+Gln-3_1	170.2573323074217		508.7426547265508	222.5385962978891		17.7367432288274		129.3471854086958		291.8646900348245		100.6943296887411	144.3223659468749	45.38800371152544	
+Glu-3-a_1	546.8207261066723	731.230664066977	255.4746634713326	325.1008101013209	156.5783054613178	44.41818808067993	199.3587566443869	336.2606892784874	405.246595085283	170.7053953940905	314.3247985106211	478.6396076190293	655.5770925021664	211.3183975546678	333.6149943284775
+Glu-3-a_2		174.2001786496439	77.47073354546609	33.37279969440548	75.68563530391025		41.02829387673751		32.6499635981941	134.2045511987084	77.03501692706813				37.56305015231641
+Glu-3-a_3		193.0698977539392	79.36461680234532	40.14081713600048	65.89493197935785		83.35220534935775		26.76845496372894	38.96207137615272	46.62876372934748				51.59480342271212
+Glu-3-a_4		219.4622556585097	103.904782818439		70.05707146673669		54.0888417704135								68.52201834155179
+Glu-3-b_1		563.6021658440586			610.3693291819959		634.1183938945487		189.9650097497392		116.2579292835932				195.4717670101856
+Glu-3-b_2		143.9971631327897													
+Glu-4_1	218.3834238744894	88.13772042557561	202.4021544417971	185.5094395464256	172.6988521627453	27.76771812548272	191.1068481242316	106.9007223743254	189.9650097497392	132.0550996544727	116.2579292835932	131.5889464976475	120.9503767183076	70.05610583078497	195.4717670101856
+Glu-4_2		273.4443166302489	21.17417930112391	24.70384526545803			10.85623082584712								
+Glu-4_3		174.6172643394579													
+Glu-4_4		38.80194270758049													
+Gly_1		76.04062441968716	59.30933791790068	36.39568307941023	33.95904058363281		31.22156703092504						41.11295336201245		34.96304603814549
+Inosine-1'_1	32.27601332157494	107.9496301574851	184.3088714615863	61.65161043911117	92.45906397290996		128.6691177792459	42.56490328956286	14.52510790106939	29.34834784528701	38.21010565479871	33.5873697030393	80.98731475241307	3.433158110486706	63.31413470745763
+Inosine-1'_2														5.193055609028807	
+Lac-2_1	78.95715306165033	59.1431746005813	45.78921256998478	94.0546221068925	94.83438700473884	10.077204	22.34008471739786	62.94122224175631	66.35873586478604	76.72231987904716	101.8177728184488	39.94980440247204	116.086821103631	48.46938034773203	89.29440183874542
+Lac-2_2	104.3285545553756	168.5937711716756	163.8383822151969	115.5848592617463	119.4392146699677	9.610528	100.3278725617855	84.08484400631735	56.3481743897257	107.8411765102366	106.19146036963	38.10871134864408	124.171400349734		114.8600952318004
+Lac-2_3		198.0138136604112	186.3665134216374				115.0082765504328								
+Lac-2_4		30.247104035689	32.74554224066387												
+Lac-3_1	297.383623755795	621.0200439406173	552.3565111356022	318.2380370330024	303.2858768859467	22.65780970461664	323.8198363054462	224.7405863514737	218.4907894643482	205.9587519131796	271.1493477924972	93.6715426379294	287.796384006319	61.63797083262552	275.6676176440729
+Lac-3_2	228.9955190368126	531.5425321642049	449.8321875137951	273.9592268483258	245.0484167203828	24.40396232623527	258.2869092371644	200.8585140677809	166.7085957672415	251.7797246315109	193.1167284819437	96.75323421981203	249.1317867008761	85.03981829927392	305.0837940712068
+P-Cho A_1	12.51171625152546	42.13596841216929	55.62175906500926	14.72618261529226	12.9380387618075		22.57417478954303	10.19709698250937	12.20975771162658	10.40821125686297	15.41776299997965	7.862237800318861	20.52339831030181	2.029660722667516	11.62283459931383
+Succinate-2,3_1	13.9329566657927	36.27688042703533	29.34221492608448	16.20905429609439	21.03309981386656		14.65351556938221	13.23949632325603	11.60414133306165	12.14174914646392	12.80715323275767	9.426279203235612	14.66792401536344	4.461374706711416	19.208495735932
+Tau-1 (SCH2)_1	35.89732196800281	61.91760206647952	72.5785578797422	50.69722799173633	50.93434488734314		68.45872804020509	32.01745090108861	30.91024831711767	31.24488785497963	41.07477770919679	37.10773533302619	68.9691089870668	11.96240422333524	51.46959950443159
+Tau-2 (NCH2)_1	30.43380627592289	136.0545457169125	32.21246295867032	61.5190959250716	66.5322180567217		88.62152579533358	22.41091215864951	38.67562132553931	18.4539702901804	87.0777818235445	21.92179582279675	19.46219851861599	19.38507870915283	50.59449841515767
+Tau-2 (NCH2)_2			89.62964735145678										39.36043195236863		
+Tau-2 (NCH2)_3			5.58335135465268										5.04145348014172		
+Tris_1	6.290237575296477	11.5210130606966	2.531753813092492	10.63927254583071	4.300194736407834	2.318519268868952	4.331654500075596				4.405194522872837	2.505904477589205	3.545046487084379		4.384897890286157
+UXP-1'_1	9.476471205291112	139.3094406202175	131.5059959961924	36.62338626008438	37.2755662734977		67.92528278395736	6.38640960274932	24.40406675230862	33.25672754385452	48.18112568846954	14.21884369278223	47.39844266816992	4.424117020248586	58.38357343662145
+aGlc_1	55.59088566691189	351.2498894021985	152.4640366898957	70.42671971223356	120.0388161667932	5.112101367502849	111.735118094072	61.30826534866679	51.25341240598449	77.74440425795243	152.0034059995181	9.13672602555547	50.08813331252229	12.72098555074425	61.13696171868002
+bGlc_1		143.7765878603212	57.50141107443145		53.18917231436367		39.69455855679108	31.24240840355725		36.09512307993434	64.31041426651124		28.26475074980322		29.34157588505231
+bGlc_2		121.6700723269422	46.94808588613524				43.48862195647044				60.68586954777898				
+m-Ins-1,3_1			14.47365141789538												
+NMR_METABOLITE_DATA_END
+#METABOLITES
+METABOLITES_START
+metabolite_name	base_inchi	isotopic_inchi	peak_description	peak_pattern	proton_count	representative_inchi	transient_peak	transient_peak%type
+AXP-1'_1	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	['InChI=1/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O7P/h11H2/q-2', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O10P2/h11H2/q-3', ' InChI=1/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O13P3/h11H2/q-4']	['[1H31:13C10]HResonance + [1H31:1H30]J3HH', ' [1H35:13C10]HResonance + [1H35:1H34]J3HH', ' [1H39:13C10]HResonance + [1H39:1H38]J3HH']		1	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/fC10H12N5O10P2/h11H2/q-3', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	1	integer
+AXP-1'_2	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	['InChI=1/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O7P/h11H2/q-2', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O10P2/h11H2/q-3', ' InChI=1/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1/i7H,10+1H/fC10H12N5O13P3/h11H2/q-4']	['[1H31:13C10]HResonance + [1H31:1H30]J3HH', ' [1H35:13C10]HResonance + [1H35:1H34]J3HH', ' [1H39:13C10]HResonance + [1H39:1H38]J3HH']		1	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/fC10H12N5O10P2/h11H2/q-3', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	2	integer
+AXP-2_1	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	['InChI=1/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1/i2+1H/fC10H12N5O7P/h11H2/q-2', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/i2+1H/fC10H12N5O10P2/h11H2/q-3', ' InChI=1/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1/i2+1H/fC10H12N5O13P3/h11H2/q-4']	['[1H26:13C2]Hresonance', ' [1H30:13C2]Hresonance', ' [1H34:13C2]Hresonance']		1	['InChI=1S/C10H14N5O7P/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(22-10)1-21-23(18,19)20/h2-4,6-7,10,16-17H,1H2,(H2,11,12,13)(H2,18,19,20)/p-2/t4-,6-,7-,10-/m1/s1', ' InChI=1/C10H15N5O10P2/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(24-10)1-23-27(21,22)25-26(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H2,11,12,13)(H2,18,19,20)/p-3/t4-,6-,7-,10-/m1/s1/fC10H12N5O10P2/h11H2/q-3', ' InChI=1S/C10H16N5O13P3/c11-8-5-9(13-2-12-8)15(3-14-5)10-7(17)6(16)4(26-10)1-25-30(21,22)28-31(23,24)27-29(18,19)20/h2-4,6-7,10,16-17H,1H2,(H,21,22)(H,23,24)(H2,11,12,13)(H2,18,19,20)/p-4/t4-,6-,7-,10-/m1/s1']	1	integer
+Ace-2_1	InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)/p-1	InChI=1/C2H4O2/c1-2(3)4/h1H3,(H,3,4)/p-1/i1+1H3/fC2H3O2/q-1	['[1H5', '1H6', '1H7:13C1]HResonance']		3	InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)/p-1	1	integer
+Ala-3_1	InChI=1S/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1	InChI=1/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1/i1+1H3,2H/f/h4H	['[1H7', '1H8', '1H9:13C1]HResonance + [1H7', '1H8', '1H9:1H10]J3HH']		3	InChI=1/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1/f/h4H	1	integer
+Ala-3_2	InChI=1S/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1	InChI=1/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1/i1+1H3,2H/f/h4H	['[1H7', '1H8', '1H9:13C1]HResonance + [1H7', '1H8', '1H9:1H10]J3HH']		3	InChI=1/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)/t2-/m0/s1/f/h4H	2	integer
+Asp-3a_1	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	1	integer
+Asp-3a_2	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	2	integer
+Asp-3a_3	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	3	integer
+Asp-3a_4	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	4	integer
+Asp-3b_1	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	1	integer
+Asp-3b_2	InChI=1S/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/i1+1H2,2H/fC4H6NO4/h5H/q-1	['[1H10', '1H11:13C1]HResonance + [1H10:1H11]J2HH + [1H10', '1H11:1H12]J3HH']		1	InChI=1/C4H7NO4/c5-2(4(8)9)1-3(6)7/h2H,1,5H2,(H,6,7)(H,8,9)/p-1/t2-/m0/s1/fC4H6NO4/h5H/q-1	2	integer
+Creat_1	InChI=1S/C4H9N3O2/c1-7(4(5)6)2-3(8)9/h2H2,1H3,(H3,5,6)(H,8,9)	InChI=1S/C4H9N3O2/c1-7(4(5)6)2-3(8)9/h2H2,1H3,(H3,5,6)(H,8,9)/i1+1H3	['[1H10', '1H11', '1H12:13C1]HResonance']		3	InChI=1S/C4H9N3O2/c1-7(4(5)6)2-3(8)9/h2H2,1H3,(H3,5,6)(H,8,9)	1	integer
+DSS_1	InChI=1S/C6H16O3SSi/c1-11(2,3)6-4-5-10(7,8)9/h4-6H2,1-3H3,(H,7,8,9)/i4D2,5D2,6D2	InChI=1/C6H16O3SSi/c1-11(2,3)6-4-5-10(7,8)9/h4-6H2,1-3H3,(H,7,8,9)/p-1/i1+1H3,2+1H3,3+1H3,4D2,5D2,6D2/fC6H15O3SSi/q-1	['[1H12', '1H13', '1H14:13C1+1H15', '1H16', '1H17:13C2+1H18', '1H19', '1H20:13C3]Hresonance']		9	InChI=1/C6H16O3SSi/c1-11(2,3)6-4-5-10(7,8)9/h4-6H2,1-3H3,(H,7,8,9)/p-1/i4D2,5D2,6D2/fC6H15O3SSi/q-1	1	integer
+GSH+GSSG-3_1	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1+1H2,2H2,5H/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1+1H2,2+1H2,3H2,4H2,9H,10H/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H21,1H22:13C1]HResonance + [1H21,1H22:1H23,1H24]J3HH + [1H21,1H22:1H29]J3HH', ' [1H41,1H42:13C1+1H43,1H44:13C2]HResonance + [1H41,1H42:1H45,1H46]J3HH + [1H41,1H42:1H57]J3HH + [1H43,1H44:1H47,1H48]J3HH + [1H43,1H44:1H58]J3HH']		2	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	1	integer
+GSH+GSSG-3_2	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1+1H2,2H2,5H/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1+1H2,2+1H2,3H2,4H2,9H,10H/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H21,1H22:13C1]HResonance + [1H21,1H22:1H23,1H24]J3HH + [1H21,1H22:1H29]J3HH', ' [1H41,1H42:13C1+1H43,1H44:13C2]HResonance + [1H41,1H42:1H45,1H46]J3HH + [1H41,1H42:1H57]J3HH + [1H43,1H44:1H47,1H48]J3HH + [1H43,1H44:1H58]J3HH']		2	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	2	integer
+GSH+GSSG-4_1	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1H2,2+1H2/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1H2,2H2,3+1H2,4+1H2/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H23,1H24:13C2]HResonance + [1H23:1H24]J2HH + [1H23,1H24:1H21,1H22]J3HH', ' [1H45,1H46:13C3+1H47,1H48:13C4]HResonance + [1H45:1H46]J2HH + [1H45,1H46:1H41,1H42]J3HH + [1H47:1H48]J2HH + [1H47,1H48:1H43,1H44]J3HH']		4	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	1	integer
+GSH+GSSG-4_2	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1H2,2+1H2/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1H2,2H2,3+1H2,4+1H2/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H23,1H24:13C2]HResonance + [1H23:1H24]J2HH + [1H23,1H24:1H21,1H22]J3HH', ' [1H45,1H46:13C3+1H47,1H48:13C4]HResonance + [1H45:1H46]J2HH + [1H45,1H46:1H41,1H42]J3HH + [1H47:1H48]J2HH + [1H47,1H48:1H43,1H44]J3HH']		4	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	2	integer
+GSH+GSSG-4_3	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1H2,2+1H2/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1H2,2H2,3+1H2,4+1H2/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H23,1H24:13C2]HResonance + [1H23:1H24]J2HH + [1H23,1H24:1H21,1H22]J3HH', ' [1H45,1H46:13C3+1H47,1H48:13C4]HResonance + [1H45:1H46]J2HH + [1H45,1H46:1H41,1H42]J3HH + [1H47:1H48]J2HH + [1H47,1H48:1H43,1H44]J3HH']		4	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	3	integer
+GSH+GSSG-4_4	['InChI=1S/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1', ' InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2']	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/i1H2,2+1H2/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i1H2,2H2,3+1H2,4+1H2/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	['[1H23,1H24:13C2]HResonance + [1H23:1H24]J2HH + [1H23,1H24:1H21,1H22]J3HH', ' [1H45,1H46:13C3+1H47,1H48:13C4]HResonance + [1H45:1H46]J2HH + [1H45,1H46:1H41,1H42]J3HH + [1H47:1H48]J2HH + [1H47,1H48:1H43,1H44]J3HH']		4	['InChI=1/C10H17N3O6S/c11-5(10(18)19)1-2-7(14)13-6(4-20)9(17)12-3-8(15)16/h5-6,20H,1-4,11H2,(H,12,17)(H,13,14)(H,15,16)(H,18,19)/p-1/t5-,6-/m0/s1/fC10H16N3O6S/h11-13H/q-1', ' InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2']	4	integer
+GSSG-12_1	InChI=1S/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2	InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/i7H2,8H2,11+1H,12+1H/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2	['[1H59:13C11+1H60:13C12]HResonance + [1H59:1H53', '1H54]J3HH + [1H60:1H55', '1H56]J3HH']		2	InChI=1/C20H32N6O12S2/c21-9(19(35)36)1-3-13(27)25-11(17(33)23-5-15(29)30)7-39-40-8-12(18(34)24-6-16(31)32)26-14(28)4-2-10(22)20(37)38/h9-12H,1-8,21-22H2,(H,23,33)(H,24,34)(H,25,27)(H,26,28)(H,29,30)(H,31,32)(H,35,36)(H,37,38)/p-2/t9-,10-,11-,12-/m0/s1/fC20H30N6O12S2/h21-22,27-28,33-34H/q-2	1	integer
+GXP-1'_1	['InChI=1/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/p-2/t3-,5-,6-,9-/m1/s1 ', ' InChI=1/C10H15N5O11P2/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(25-9)1-24-28(22,23)26-27(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H2,19,20,21)(H3,11,13,14,18)/p-3/t3-,5-,6-,9-/m1/s1 ', ' InChI=1/C10H16N5O14P3/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(27-9)1-26-31(22,23)29-32(24,25)28-30(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H,24,25)(H2,19,20,21)(H3,11,13,14,18)/p-4/t3-,5-,6-,9-/m1/s1']	['InChI=1/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/p-2/t3-,5-,6-,9-/m1/s1/i6+1H,9+1H/fC10H12N5O8P/h11,13,18H/q-2/b11-10+ ', ' InChI=1/C10H15N5O11P2/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(25-9)1-24-28(22,23)26-27(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H2,19,20,21)(H3,11,13,14,18)/p-3/t3-,5-,6-,9-/m1/s1/i6+1H,9+1H/fC10H12N5O11P2/h11,13,18H/q-3/b11-10+ ', ' InChI=1/C10H16N5O14P3/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(27-9)1-26-31(22,23)29-32(24,25)28-30(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H,24,25)(H2,19,20,21)(H3,11,13,14,18)/p-4/t3-,5-,6-,9-/m1/s1/i6+1H,9+1H/fC10H12N5O14P3/h14H,11H2/q-4']	['[1H31:13C9]HResonance + [1H31:1H30]J3HH ', ' [1H35:13C9]HResonance + [1H35:1H34]J3HH', ' [1H39:13C9]HResonance + [1H39:1H38]J3HH']		1	['InChI=1/C10H14N5O8P/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(23-9)1-22-24(19,20)21/h2-3,5-6,9,16-17H,1H2,(H2,19,20,21)(H3,11,13,14,18)/p-2/t3-,5-,6-,9-/m1/s1/fC10H12N5O8P/h11,13,18H/q-2/b11-10+ ', ' InChI=1/C10H15N5O11P2/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(25-9)1-24-28(22,23)26-27(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H2,19,20,21)(H3,11,13,14,18)/p-3/t3-,5-,6-,9-/m1/s1/fC10H12N5O11P2/h11,13,18H/q-3/b11-10+ ', ' InChI=1/C10H16N5O14P3/c11-10-13-7-4(8(18)14-10)12-2-15(7)9-6(17)5(16)3(27-9)1-26-31(22,23)29-32(24,25)28-30(19,20)21/h2-3,5-6,9,16-17H,1H2,(H,22,23)(H,24,25)(H2,19,20,21)(H3,11,13,14,18)/p-4/t3-,5-,6-,9-/m1/s1/fC10H12N5O14P3/h14H,11H2/q-4']	1	integer
+Gln+Glu-2_1	['InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1', ' InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1']	['InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1']	['[1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH', ' [1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH']		3	['InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/f/h6-8H/b7-4+', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1']	1	integer
+Gln+Glu-2_2	['InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1', ' InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1']	['InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1']	['[1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH', ' [1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH']		3	['InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/f/h6-8H/b7-4+', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1']	2	integer
+Gln+Glu-2_3	['InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1', ' InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1']	['InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1']	['[1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH', ' [1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH']		3	['InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/f/h6-8H/b7-4+', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1']	3	integer
+Gln+Glu-2_4	['InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1', ' InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1']	['InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,3+1H/fC5H8NO4/h6H/q-1']	['[1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH', ' [1H15:13C3]HResonance + [1H15:1H11,1H12]J3HH']		3	['InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/f/h6-8H/b7-4+', ' InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1']	4	integer
+Gln-3_1	InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/i1+1H2,2H2,3H/f/h6-8H/b7-4+	['[1H11', '1H12:13C1]HResonance + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		2	InChI=1/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1/f/h6-8H/b7-4+	1	integer
+Glu-3-a_1	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	1	integer
+Glu-3-a_2	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	2	integer
+Glu-3-a_3	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	3	integer
+Glu-3-a_4	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	4	integer
+Glu-3-b_1	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	1	integer
+Glu-3-b_2	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1+1H2,2H2,3H/fC5H8NO4/h6H/q-1	['[1H11', '1H12:13C1]HResonance + [1H11:1H12]J2HH + [1H11', '1H12:1H13', '1H14]J3HH + [1H11', '1H12:1H15]J3HH']		1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	2	integer
+Glu-4_1	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,2+1H2/fC5H8NO4/h6H/q-1	['[1H13', '1H14:13C2]HResonance + [1H13:1H14]J2HH + [1H13', '1H14:1H11', '1H12]J3HH']		2	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	1	integer
+Glu-4_2	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,2+1H2/fC5H8NO4/h6H/q-1	['[1H13', '1H14:13C2]HResonance + [1H13:1H14]J2HH + [1H13', '1H14:1H11', '1H12]J3HH']		2	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	2	integer
+Glu-4_3	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,2+1H2/fC5H8NO4/h6H/q-1	['[1H13', '1H14:13C2]HResonance + [1H13:1H14]J2HH + [1H13', '1H14:1H11', '1H12]J3HH']		2	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	3	integer
+Glu-4_4	InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/i1H2,2+1H2/fC5H8NO4/h6H/q-1	['[1H13', '1H14:13C2]HResonance + [1H13:1H14]J2HH + [1H13', '1H14:1H11', '1H12]J3HH']		2	InChI=1/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/p-1/t3-/m0/s1/fC5H8NO4/h6H/q-1	4	integer
+Gly_1	InChI=1S/C2H5NO2/c3-1-2(4)5/h1,3H2,(H,4,5)	InChI=1/C2H5NO2/c3-1-2(4)5/h1,3H2,(H,4,5)/i1+1H2/f/h3H	['[1H6', '1H7:13C1]HResonance']		2	InChI=1/C2H5NO2/c3-1-2(4)5/h1,3H2,(H,4,5)/f/h3H	1	integer
+Inosine-1'_1	InChI=1S/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1	InChI=1S/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1/i7H,10+1H	[1H27:13C10]HResonance + [1H27:1H26]J3HH		1	InChI=1/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1/f/h11H	1	integer
+Inosine-1'_2	InChI=1S/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1	InChI=1S/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1/i7H,10+1H	[1H27:13C10]HResonance + [1H27:1H26]J3HH		1	InChI=1/C10H12N4O5/c15-1-4-6(16)7(17)10(19-4)14-3-13-5-8(14)11-2-12-9(5)18/h2-4,6-7,10,15-17H,1H2,(H,11,12,18)/t4-,6-,7-,10-/m1/s1/f/h11H	2	integer
+Lac-2_1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1H3,2+1H/fC3H5O3/q-1	['[1H10:13C2]HResonance + [1H10:1H7', '1H8', '1H9]J3HH']		1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	1	integer
+Lac-2_2	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1H3,2+1H/fC3H5O3/q-1	['[1H10:13C2]HResonance + [1H10:1H7', '1H8', '1H9]J3HH']		1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	2	integer
+Lac-2_3	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1H3,2+1H/fC3H5O3/q-1	['[1H10:13C2]HResonance + [1H10:1H7', '1H8', '1H9]J3HH']		1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	3	integer
+Lac-2_4	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1H3,2+1H/fC3H5O3/q-1	['[1H10:13C2]HResonance + [1H10:1H7', '1H8', '1H9]J3HH']		1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	4	integer
+Lac-3_1	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1+1H3,2H/fC3H5O3/q-1	['[1H7', '1H8', '1H9:13C1]HResonance + [1H7', '1H8', '1H9:1H10]J3HH']		3	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	1	integer
+Lac-3_2	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	InChI=1/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1/t2-/m0/s1/i1+1H3,2H/fC3H5O3/q-1	['[1H7', '1H8', '1H9:13C1]HResonance + [1H7', '1H8', '1H9:1H10]J3HH']		3	InChI=1S/C3H6O3/c1-2(4)3(5)6/h2,4H,1H3,(H,5,6)/p-1	2	integer
+P-Cho A_1	InChI=1S/C5H14NO4P/c1-6(2,3)4-5-10-11(7,8)9/h4-5H2,1-3H3,(H-,7,8,9)/p-1	InChI=1/C5H14NO4P/c1-6(2,3)4-5-10-11(7,8)9/h4-5H2,1-3H3,(H-,7,8,9)/p-1/i1+1H3,2+1H3,3+1H3/fC5H13NO4P/q-1	['[1H12', '1H13', '1H14:13C1+1H15', '1H16', '1H17:13C2+1H18', '1H19', '1H20:13C3]Hresonance']		9	InChI=1S/C5H14NO4P/c1-6(2,3)4-5-10-11(7,8)9/h4-5H2,1-3H3,(H-,7,8,9)/p-1	1	integer
+Succinate-2,3_1	InChI=1S/C4H6O4/c5-3(6)1-2-4(7)8/h1-2H2,(H,5,6)(H,7,8)/p-2	InChI=1/C4H6O4/c5-3(6)1-2-4(7)8/h1-2H2,(H,5,6)(H,7,8)/p-2/i1+1H2,2+1H2/fC4H4O4/q-2	['[1H9', '1H10:13C1+1H11', '1H12:13C2]Hresonance']		4	InChI=1S/C4H6O4/c5-3(6)1-2-4(7)8/h1-2H2,(H,5,6)(H,7,8)/p-2	1	integer
+Tau-1 (SCH2)_1	InChI=1S/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/i1H2,2+1H2/f/h3H	['[1H10', '1H11:13C2]HResonance + [1H10', '1H11:1H8', '1H9]J3HH']		2	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/f/h3H	1	integer
+Tau-2 (NCH2)_1	InChI=1S/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/i1+1H2,2H2/f/h3H	['[1H8', '1H9:13C1]HResonance + [1H8', '1H9:1H10', '1H11]J3HH']		2	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/f/h3H	1	integer
+Tau-2 (NCH2)_2	InChI=1S/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/i1+1H2,2H2/f/h3H	['[1H8', '1H9:13C1]HResonance + [1H8', '1H9:1H10', '1H11]J3HH']		2	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/f/h3H	2	integer
+Tau-2 (NCH2)_3	InChI=1S/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/i1+1H2,2H2/f/h3H	['[1H8', '1H9:13C1]HResonance + [1H8', '1H9:1H10', '1H11]J3HH']		2	InChI=1/C2H7NO3S/c3-1-2-7(4,5)6/h1-3H2,(H,4,5,6)/f/h3H	3	integer
+Tris_1	InChI=1S/C6H16O3SSi/c1-11(2,3)6-4-5-10(7,8)9/h4-6H2,1-3H3,(H,7,8,9)/i4D2,5D2,6D2	InChI=1/C4H11NO3/c5-4(1-6,2-7)3-8/h6-8H,1-3,5H2/p+1/i1+1H2,2+1H2,3+1H2/fC4H12NO3/h5H/q+1	['[1H9', '1H10:13C1+1H11', '1H12:13C2+1H13', '1H14:13C3]Hresonance']		6	InChI=1/C6H16O3SSi/c1-11(2,3)6-4-5-10(7,8)9/h4-6H2,1-3H3,(H,7,8,9)/p-1/i4D2,5D2,6D2/fC6H15O3SSi/q-1 	1	integer
+UXP-1'_1	['InChI=1S/C9H13N2O9P/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(20-8)3-19-21(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,10,12,15)(H2,16,17,18)/p-2/t4-,6-,7-,8-/m1/s1', ' InChI=1S/C9H14N2O12P2/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(22-8)3-21-25(19,20)23-24(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,10,12,15)(H2,16,17,18)/p-2/t4-,6-,7-,8-/m1/s1', ' InChI=1S/C9H15N2O15P3/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(24-8)3-23-28(19,20)26-29(21,22)25-27(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,21,22)(H,10,12,15)(H2,16,17,18)/p-4/t4-,6-,7-,8-/m1/s1']	['InChI=1/C9H13N2O9P/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(20-8)3-19-21(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,10,12,15)(H2,16,17,18)/p-2/t4-,6-,7-,8-/m1/s1/i7H,8+1H/fC9H11N2O9P/h10H/q-2', ' InChI=1/C9H14N2O12P2/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(22-8)3-21-25(19,20)23-24(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,10,12,15)(H2,16,17,18)/p-3/t4-,6-,7-,8-/m1/s1/i7H,8+1H/fC9H11N2O12P2/h10H/q-3', ' InChI=1/C9H15N2O15P3/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(24-8)3-23-28(19,20)26-29(21,22)25-27(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,21,22)(H,10,12,15)(H2,16,17,18)/p-4/t4-,6-,7-,8-/m1/s1/i7H,8+1H/fC9H11N2O15P3/h10H/q-4']	['[1H29:13C8]HResonance + [1H29:1H28]J3HH', ' [1H33:13C8]HResonance + [1H33:1H32]J3HH', ' [1H37:13C8]HResonance + [1H37:1H36]J3HH']		1	['InChI=1/C9H13N2O9P/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(20-8)3-19-21(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,10,12,15)(H2,16,17,18)/p-2/t4-,6-,7-,8-/m1/s1/fC9H11N2O9P/h10H/q-2', ' InChI=1/C9H14N2O12P2/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(22-8)3-21-25(19,20)23-24(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,10,12,15)(H2,16,17,18)/p-3/t4-,6-,7-,8-/m1/s1/fC9H11N2O12P2/h10H/q-3', ' InChI=1/C9H15N2O15P3/c12-5-1-2-11(9(15)10-5)8-7(14)6(13)4(24-8)3-23-28(19,20)26-29(21,22)25-27(16,17)18/h1-2,4,6-8,13-14H,3H2,(H,19,20)(H,21,22)(H,10,12,15)(H2,16,17,18)/p-4/t4-,6-,7-,8-/m1/s1/fC9H11N2O15P3/h10H/q-4']	1	integer
+aGlc_1	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6+/m1/s1	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6+/m1/s1/i5H,6+1H	[1H19:13C6]HResonance + [1H19:1H18]J3HH		0.35	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6+/m1/s1	1	integer
+bGlc_1	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1/i5H,6+1H	[1H19:13C6]HResonance + [1H19:1H18]J3HH		0.65	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1	1	integer
+bGlc_2	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1/i5H,6+1H	[1H19:13C6]HResonance + [1H19:1H18]J3HH		0.65	InChI=1S/C6H12O6/c7-1-2-3(8)4(9)5(10)6(11)12-2/h2-11H,1H2/t2-,3-,4+,5-,6-/m1/s1	2	integer
+m-Ins-1,3_1	InChI=1S/C6H12O6/c7-1-2(8)4(10)6(12)5(11)3(1)9/h1-12H/t1-,2-,3-,4+,5-,6-	InChI=1S/C6H12O6/c7-1-2(8)4(10)6(12)5(11)3(1)9/h1-12H/t1-,2-,3-,4+,5-,6-/i1H,2+1H,3+1H,4H,5H/t1-,2+,3-,4-,5+,6+	[1H13:13C1+1H17:13C5]HResonance + [1H13:1H14]J3HH + [1H13:1H15]J3HH + [1H17:1H15]J3HH + [1H17:1H18]J3HH		2	InChI=1S/C6H12O6/c7-1-2(8)4(10)6(12)5(11)3(1)9/h1-12H/t1-,2-,3-,4+,5-,6-	1	integer
+METABOLITES_END
+EXTENDED_NMR_METABOLITE_DATA_START
+metabolite_name	chemical_shift	peak_area	peak_height	peak_width	sample_id
+AXP-1'_1	6.135585910180523	65.52775022002263	1.796917855313725	13.56614835815454	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.135321384599531	74.73967625889097	2.112520962776425	13.49055786870577	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	6.136150310688142	35.02912462503513	0.978908474628714	13.64479201667233	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-1'_1	6.136377207005812	43.63311758410446	1.308322614464424	12.44412960126481	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.135234997817836	57.77562841793961	1.666313741508962	12.97628770690157	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	6.13772353638586	34.69909628067251	0.7726470693152404	14.3476338701869	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-1'_1	6.137581803284474	78.67136836113734	1.67205365288534	14.71036253500374	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.135644426574324	72.24617619855763	2.264057681685417	12.16766103811848	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	6.13535533039385	62.42022315314556	1.905461297580868	12.47496467990109	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.135446592034243	69.90091043527946	1.987944684687831	13.40782276787217	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.134761588404658	119.0788390465373	3.826511650117464	11.78319888456153	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	6.136405581198007	54.16611129462427	1.580079688236909	13.0715892198782	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-1'_1	6.136531118576038	85.75252409525586	2.284132086713501	13.93231154418978	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-1'_1	6.128933870364247	138.3735320093099	4.646598243695172	8.658361406554219	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_1	6.131326310489663	2.358752617870189	0.1395446134808044	6.035928533928566	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-1'_2	6.138912271225313	177.3815066297807	5.732162153952874	9.161172327871245	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-1'_2	6.142693004656852	2.758465345871516	0.1197044224516796	8.79171948036056	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-2_1	8.249358817872949	14.88255410331947	0.6045444716862907	7.260905252714474	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.249862646987353	22.33755732797538	0.713565062909091	8.73822152139126	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-2_1	8.25081809434914	14.9267388539106	0.4904708758678037	8.672813348753827	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.248889740714269	15.330763357346	0.5335425536605856	8.020762657535698	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-2_1	8.2503272398494	15.82456563117886	0.5748611382408326	7.995687910893195	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.249021122337815	22.11730704875664	0.7970156429311483	7.959430275341274	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-2_1	8.249598819748385	17.5105068409329	0.6813203596596074	7.614752006631318	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.249752182139545	17.50992664010149	0.613947917553203	8.024656335493793	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.24688488111851	34.91628612340728	1.215521418051922	8.220438789584323	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+AXP-2_1	8.250352975918489	15.60994580037578	0.5130325979152849	8.47800450134982	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+AXP-2_1	8.24973111176013	27.42993880271817	1.002906064458949	8.01230625103731	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+AXP-2_1	8.248306835435859	91.39490819950588	2.934225053033766	8.746166560911218	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.907329636361051	57.63940880536602	1.147098793925776	13.90030029374247	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.907557548167192	59.56685709493152	1.270552234423984	12.19115110718137	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.906216617593936	29.02921843809559	0.6268001491681295	12.03733771129747	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Ace-2_1	1.9074770846188	22.14103637840854	0.5325569183922503	11.48294635944965	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.906434742671573	47.14822642573949	1.03940819693003	12.33151570871626	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.907658173678982	13.20892640463951	0.26	14.18126984206728	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Ace-2_1	1.907292920730704	46.57906762072036	0.7243668085125373	16.02987310884403	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.907452144270464	51.28685177124793	1.042236880068236	12.91053854358275	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.906713826785408	32.2567640189195	0.7017974141557048	12.51633431966599	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.907265297524993	18.7261149994601	0.5804249400582632	8.98956097651948	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.908668477657189	89.6407835636085	1.831416880936419	13.17606907122111	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.907879911879713	38.05598422846543	1.209547833446317	8.912985532263114	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Ace-2_1	1.905986303438381	23.9496302489611	0.6732337100508113	9.93010652694187	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ace-2_1	1.90803017439624	123.2708975037429	2.645191941385711	12.13217020340786	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ace-2_1	1.902771641666869	3.288015423337326	0.1055597181797946	11.88367822876957	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_1	1.462193648757326	353.3294477927818	13.12017126100469	7.91895279672975	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.462196254657454	327.1610343151528	12.12316905265065	7.902541063092432	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_1	1.462244507869194	206.6681109013514	7.602311606952954	7.9505241610437	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_1	1.461493036461518	123.9892303018295	5.028603902201908	7.553142524619567	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.461804744917677	345.7185631779793	12.09245827078105	8.200204494232876	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_1	1.461872595832388	84.61678380399259	3.417079653760926	7.481334135357736	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_1	1.461993686754809	141.5917726523211	5.743593359751959	7.401949081599868	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.462592982879638	189.7321923785298	7.249897311855402	7.718816625094985	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_1	1.461645180446223	179.8567457304401	6.397566608883318	8.291888787618864	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.462790803047134	208.1483343669523	7.712481268942196	7.934529980151175	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.463663344681325	367.1059379803605	14.19583189003303	7.736225807399572	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_1	1.462187312029772	244.9987293282167	9.40676714190095	7.731799577629122	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_1	1.461592982879638	191.0490402378632	7.239860888602868	7.797305965215833	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_1	1.462483949104793	706.3093180229856	26.2477236792697	7.92692702534525	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_1	1.462466121565528	28.59753520595438	1.039295684536775	8.284597512959895	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_2	1.474890193157216	335.28006849657	12.74456570917417	7.814422194675696	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.474818098300398	302.3436209442416	11.59846664854504	7.792255575123412	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_2	1.474942211197827	183.063154437275	7.186814898340991	7.585306372276723	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_2	1.473970962956411	132.7399372762231	5.058157511728053	8.022995619192118	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.474338325902563	252.0603697100277	10.42427859462601	7.28240233385952	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_2	1.47456890201012	99.37780229247964	3.68102539047715	8.154908850340734	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_2	1.474722371179007	181.414221049346	6.376759431558093	8.25429425863608	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.475221134985985	186.5451057650991	7.148989308874508	7.696278333466337	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_2	1.474185831139392	140.1251184192917	5.656062614184351	7.441074745038462	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.475534214144998	175.62368898272	7.046262571048295	7.429482971071958	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.476215277122492	353.7172437888431	13.72323958129574	7.565294956760404	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_2	1.474851181768186	248.9900929813366	9.300030892709522	7.893178225853674	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Ala-3_2	1.474238161126454	186.3886958602997	7.117476696513647	7.786392374724955	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Ala-3_2	1.475134497363354	651.6658268866049	24.99525961605552	7.689690301014319	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Ala-3_2	1.475058955142542	12.45614641194882	0.7061885711846829	6.729435001676713	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_1	2.647647757205653	41.09766944994549	1.20699967783061	9.256510070986659	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.647225206208396	39.39727400220475	1.102294585066907	9.523752586334549	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_1	2.664952580526901	55.60532314220767	0.5899427970954618	35.94067174908373	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_1	2.646761122214249	14.93286150436027	0.5548094079656138	7.414206710642276	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.645940098460544	45.35206348414453	1.118894939282335	10.81667343686853	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_1	2.667550577125309	41.60810105309101	0.4014585824880721	39.51999425651086	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_1	2.664733152110015	82.18095138358905	0.6572622378335147	37.9531014120195	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.647959565849027	37.99919563825069	0.8347000819480812	11.20628260645629	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_1	2.648191799289681	17.42554612344811	0.4821548130104426	10.08836623621608	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.672502051351267	42.98669099816217	0.579405226975905	23.54474394734246	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.669034548823527	147.9192005459315	1.24559378821787	34.65350485559295	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_1	2.646597560687932	37.67486605483832	0.953922155990447	10.02109103674969	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_1	2.648415136479779	177.128970427673	4.763314146575717	9.852121263033354	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_1	2.645337140532687	3.87446320905017	0.1696192609476178	6.925902680453632	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_2	2.676216085296087	75.86941228212255	1.47749659856026	13.26730551699197	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_2	2.676057154564764	99.34310468101272	1.427098105479103	19.31812632321863	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_2	2.673922654200536	100.6350916091329	1.089127952533699	25.74925546239248	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_2	2.674834552709925	75.14773591506717	1.129235563092138	18.46945517264942	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_2	2.677253962024022	101.323787299246	1.067043694323036	24.76630871702029	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_2	2.675398793344997	104.317816333119	1.319513913542528	21.42162797733955	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3a_2	2.665242886917212	75.31806492277553	3.006592403030095	7.130322920706558	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_2	2.661425098277516	3.734397154310131	0.1542617203428572	7.304708573542262	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_3	2.67830767007442	145.0132887005734	4.887096407277406	8.42203667528683	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_3	2.675879962132792	1.890562165748444	0.1206497965060711	4.960331167633874	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3a_4	2.694428748794432	81.08523431638334	3.718902921873898	6.872476924854549	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3a_4	2.693693310068751	1.44033636539409	0.08907886631526761	6.144784925314949	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_1	2.790741885257704	39.80754791274298	1.349569369411917	9.581375041391	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.79127000181898	39.27220905998604	1.473995849756806	8.96793076754444	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_1	2.790660648899334	25.42878804532181	0.7848263930098365	10.08300795237739	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_1	2.790164938413879	29.85513995575615	1.02151677209259	9.328141254083647	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.789837720878238	40.88571373881818	1.284917133068296	10.38349086005444	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_1	2.791573995646186	13.24156736037705	0.4335762961524866	9.149471548073638	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_1	2.79110110856547	16.57546505572655	0.6057689747245198	8.731723514002638	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.791013510498682	32.21277264959296	1.177032229865047	9.478610887233192	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_1	2.789829772428003	19.37790599573023	0.5727057672351978	11.25420924426176	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.790793704502287	8.994429124136442	0.3690699528675736	8.582150744678342	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.791197582821042	37.18179047623227	1.203916828275098	9.788524626776757	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_1	2.789956463147375	38.38997300475573	1.155309118997842	10.38906554635106	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_1	2.790266105594879	49.12422496722388	1.553028531198324	9.794030557301838	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_1	2.79064420005696	207.4397601628802	7.226959248634243	9.628615113697945	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_1	2.790931276266187	5.06370740444467	0.1562222661243405	9.63695922088969	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_2	2.819778036430371	36.87855905708228	1.193217617680881	9.662981932890085	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.820537403739535	34.19033387854466	1.256290835385105	9.081591074608186	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_2	2.819882041574245	17.50777752464732	0.5718574323764873	9.701089257576966	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_2	2.82013234294479	24.9250265679469	0.7975178606369502	9.747383825255321	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.819122933893639	32.25537588564637	1.084675060932487	9.618542743844463	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_2	2.820092198483562	16.39888296669275	0.5314016585752099	9.367121389131357	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.820822723072352	29.00087222417498	1.023536672338732	9.580080320214986	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_2	2.818457345462014	16.47134573822132	0.4432349856466095	11.61096589105633	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.81804382539522	5.111782004347207	0.2825526682771299	6.90224090410144	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.820116716364303	34.12522291329071	1.117212917671886	9.841639977701186	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_2	2.820733244824311	26.75154682227389	0.9083343052949789	9.590939427246461	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Asp-3b_2	2.82001449138908	31.40632467332694	1.151038701461994	8.999141231307618	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Asp-3b_2	2.820165031909271	138.5441150121684	5.542691785035091	9.531188914829062	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Asp-3b_2	2.817912297500598	2.923287992842424	0.1196545136249197	7.702382337818629	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Creat_1	3.023169789980363	17.58905293456863	0.8415949456044393	6.534257097163806	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.022933681964202	19.33512832886656	0.7881498475998628	7.235687745176771	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Creat_1	3.023332131747307	14.03831871113238	0.6046753616623696	6.965735587463766	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Creat_1	3.022200259963107	9.467826779772235	0.4272516379777873	6.726379318018067	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.022271183536334	16.75771686385708	0.7296543741968218	6.930544996067143	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Creat_1	3.022978071731265	20.06902390255664	0.8472819463909588	7.189738336228135	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.022969440133096	33.33938376551921	1.480815450874131	6.85922529649395	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Creat_1	3.022142992128282	21.9948149923693	0.9229838661504866	7.110254653681975	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.023259427672439	36.26854186652339	1.4321504114135	7.382921241729743	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.023513828242156	67.53748982999923	2.975846270233376	6.867122954757646	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Creat_1	3.023647249274426	13.52530178983906	0.5658320592526334	7.05019237775301	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Creat_1	3.022633496409636	13.55354777630554	0.629231692217276	6.54843132570131	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Creat_1	3.022985426298454	34.18338566006132	1.516613151242834	6.81663956903229	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	0.0002694014764800632	33.99535292479384	1.455216698542827	7.090986719729357	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	0.0005889159614879156	37.65209484699442	1.513571627734979	7.550938850638234	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	0.0004043542189637033	37.02043056176806	1.42628880384739	7.444757796037691	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+DSS_1	-0.000296777671003801	32.05429095246541	1.405190561891576	6.924138366920318	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	-0.000299691191667329	36.52918901426877	1.501395027391704	7.336178831299036	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	0.0005112846545095492	40.10029831940118	1.58735350562563	7.471514529374496	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+DSS_1	0.0001947314172471198	32.92596826457609	1.418075028131097	7.101133104908628	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	0.0004035177521054985	38.26819603276018	1.562041349180558	7.307433238159191	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	-0.0003233015832554174	36.48644523764931	1.49822633336326	7.374477586547883	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	0.0004376347945861317	36.29697595728592	1.476087502235793	7.455929586973278	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	0.0004686287873219374	17.95520288351097	1.247558052384976	5.490902158526839	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	0.0004314646394755033	34.69488959307109	1.438797381059904	7.188888013240394	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+DSS_1	-0.0001464674782302453	41.53656170339827	1.615220226872395	7.584733975323565	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+DSS_1	0.0003373989909567495	18.36975795007545	1.215530736296863	5.765709064979914	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+DSS_1	0.0003867481347158293	36.75461987338057	1.554198256965283	7.164413824307649	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-3_1	2.149481851592185	38.59919517349496	1.144184953125595	9.416791736222413	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-3_1	2.150493436935562	101.9009276838664	1.805158696996255	14.07834056224131	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-3_1	2.156024055477728	61.89472751134279	1.740965925057569	13.16081936310031	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-3_1	2.148563619122294	287.9943262655794	6.033645043926224	12.91966877112698	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-3_2	2.162034118362134	113.7018186000931	3.077627045030631	10.07894562178023	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.51592	96.100025	0.86	34.414129	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.49782	48.036484	0.69	22.449881	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.49481	20.554426	0.27	23.61831	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_1	2.5133	42.419483	0.58	23.584642	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.51425	135.68307	1.05	38.071697	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.50204	1.251341	0.085368	5.397806	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_1	2.51563	43.352656	0.58	21.715042	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.52753131636773	166.0500268852205	1.166674028881616	46.32574969054892	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.51174	56.88875	0.8	22.931281	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.524075547527012	171.9225951702243	1.161776161551347	52.20171114920434	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.51983	460.653244	2.44	55.840256	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.51725	55.140964	0.8	22.226767	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_1	2.51471	52.904573	0.61	27.000071	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_1	2.513046105465464	243.5697950765282	2.590622778098902	26.24461458895042	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_1	2.540058131162971	6.060643876781766	0.1646312138133042	11.05279345058376	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_2	2.52902	0.02479	0.007922	1.193886	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_2	2.51697	14.138687	0.8	5.51963	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_2	2.51629	17.607242	0.55	10.323348	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_2	2.54189	45.81412	0.74	18.209475	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_2	2.54278	42.077409	0.76	17.853662	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_2	2.5168	5.153712	0.225877	7.355053	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_2	2.52797	0.119164	0.033882	1.341812	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_2	2.52836	2.796597	0.3	2.814644	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_2	2.52934	0.022546	0.008652	0.938779	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_2	2.54383	45.12714	0.684346	18.799996	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_2	2.52862	0.561442	0.078575	2.726059	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_2	2.541326997292915	221.5089017761636	2.516378226436451	23.93054021322049	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_2	2.555817370960119	1.065153310609205	0.06787044803518873	4.821422787673916	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_3	2.54347	46.731598	0.75	18.063733	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_3	2.52815	5.874197	0.58	3.14918	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_3	2.52857	0.295549	0.045106	2.118402	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_3	2.526	0.601737	0.062289	3.685599	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_3	2.54618	69.085609	0.79	27.133249	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_3	2.54334	58.542428	0.9	19.065306	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_3	2.54569	50.962792	0.8	20.542588	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_3	2.54159	34.247113	0.6	18.026784	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSH+GSSG-4_3	2.57006547134126	1.150919841988148	0.06963615613610756	6.305609206396741	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_4	2.54489	85.971164	1.2	20.895134	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+GSH+GSSG-4_4	2.5408	61.44913	0.78	22.670277	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+GSH+GSSG-4_4	2.54007	44.264711	0.448327	29.344448	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+GSSG-12_1	4.764096663336902	49.09950044936733	0.8545992149029015	16.58716717423978	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+GSSG-12_1	4.76522883196415	59.43767687977981	0.9631385549329596	17.44572579425794	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+GSSG-12_1	4.76393748641828	42.85220365972444	0.585847288589678	20.27551926153829	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSSG-12_1	4.76299706727876	51.66858628830745	0.906284384841163	17.34063771823653	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSSG-12_1	4.764325308469869	35.7670905913196	0.6791461001076463	15.2007555976764	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+GSSG-12_1	4.765981815614399	67.3405749179936	1.220438790974941	15.53385864128389	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+GSSG-12_1	4.766295380733437	103.4944000346191	1.47538017726378	18.5849878798105	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSSG-12_1	4.765167027471	144.5325355031367	2.655377360386901	15.19358716468338	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GSSG-12_1	4.765329481532507	33.96776293222568	0.6024808703735559	16.25463992686782	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+GSSG-12_1	4.761089050659744	43.61853094832723	0.8190866040798294	15.89462132676997	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GSSG-12_1	4.763802697518834	127.0966256767211	2.158124056461527	17.11635139416815	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+GXP-1'_1	5.932088153323341	33.26393288272681	0.4604965147835617	20.23712077255484	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+GXP-1'_1	5.931784917580456	54.3509156038637	1.183733229369966	15.27188773390841	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.746354504726792	169.008363622301	3.845802965177848	12.26710592258881	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.746407424812903	181.8640253795962	4.125142237848593	12.29288557432221	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.759919993465423	368.2604501728517	4.642145151341182	23.37213530810285	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_1	3.756090140243124	244.2508377534996	3.908114466819213	20.78779779627507	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.745228511165501	262.9406082369202	4.371167834748578	16.33452929415928	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.759545499605548	189.4340866958313	2.167101512816414	25.44938917405673	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_1	3.758743456075255	545.5824691847097	6.216792313865033	25.76167563280833	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.746738256393046	311.5935124465142	4.91113894041748	17.62234067117387	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.745803563379076	121.7354285984146	2.687946724912921	12.3825151300285	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.745714610262918	148.4200406986881	2.636637150391082	15.6918057123071	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.746192111935269	607.8175411950751	6.55334142420129	26.96700755442826	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.746914969702839	202.1578717171515	3.777896999039641	14.93693503264308	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_1	3.74565116788303	255.9685025313003	4.188820866101728	17.13578331559995	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_1	3.736188966259465	235.6658460828249	6.18710527612463	10.74812191033074	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_1	3.758450912895219	51.49826466451706	0.6020958254575826	26.52622174971584	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_2	3.760218981303866	213.1888485086079	5.167073664480959	11.17437029982992	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_2	3.760429495064369	234.9444460318216	5.360365993180139	11.84019705433735	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_2	3.772676445415038	25.76692542401734	0.9966439059325973	7.522984531515207	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_2	3.759633304379331	204.3903830417769	4.874997252624889	11.38669791105699	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_2	3.760867368387719	201.8350371926156	4.649754907649515	11.79730165960091	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_2	3.759433159421981	189.3241950088396	4.234589988963389	12.18737334003199	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_2	3.760889472029968	178.6120152586191	4.214315911907314	11.5273290686705	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_2	3.761994105232205	376.0298991653157	8.0056458643275	12.35664960504909	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_2	3.76031393971655	139.320113180148	3.548850483659914	10.68763565172006	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_2	3.759496179513356	117.0919775414765	3.097872003906534	10.29355531543474	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_2	3.747993721553365	427.9922687873916	11.45819938019057	10.32567421329356	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_3	3.773648512441654	128.1357479940465	3.512913378964163	10.17419151649004	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_3	3.77355164739305	88.66661099250156	2.824279137064686	9.005466533290683	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_3	3.772267196522707	100.5276646426832	3.082132171254603	9.324455076151889	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_3	3.773292827440512	73.40349955404369	2.512222151194784	8.680542424395957	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_3	3.771417110452185	58.06898156509467	1.956646651808431	8.662730329305743	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_3	3.773796351940929	113.8395699435885	3.051050616191505	10.52547323679096	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_3	3.774405707548541	186.8959790938855	5.558823927962606	9.72980367874393	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_3	3.773613856658218	95.65184033694268	2.636097904825888	10.16994658655365	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln+Glu-2_3	3.772666476370156	83.22387601980073	2.315058798234209	10.03475702264713	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln+Glu-2_3	3.760710459693034	647.4590272753111	15.60574510478635	11.5654843577491	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln+Glu-2_4	3.773998425754645	213.5049680096905	7.456464623066562	8.638764599176307	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln-3_1	2.13140125731037	445.0771925957783	3.797685270972525	40.89024960778416	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln-3_1	2.135722571628231	258.6943708173916	2.449980992049322	39.22590230750667	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln-3_1	2.139750944530006	201.3886593774822	2.046460273413874	37.52419779768962	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln-3_1	2.135228619766146	90.77600742305088	0.7846916852871628	43.13537046844737	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln-3_1	2.133542573647377	583.729380069649	3.633524600084957	50.60914270311081	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln-3_1	2.14493538129619	288.6447318937498	3.689185398680106	29.25797302141029	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gln-3_1	2.133194734512287	1017.485309453102	6.132019269580371	47.32183442042421	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gln-3_1	2.131989841696711	340.5146646148434	3.217371623353783	35.96937199712679	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Gln-3_1	2.133951976862627	35.4734864576548	0.3609938938332864	37.49026292412083	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-3-a_1	2.040834451176581	325.1008101013209	2.897564814295912	33.21731545427195	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.029225572640561	333.6149943284775	2.871758960075032	30.56881763937744	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_1	2.049124317459072	336.2606892784874	2.2534986707417	46.54893910135884	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-3-a_1	2.054429939908827	478.6396076190293	2.520371506685602	47.38952549226872	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.020514505620392	156.5783054613178	2.01558519305224	24.48253363455844	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_1	2.0518638667041	211.3183975546678	1.154544508640326	50.09131734319242	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-3-a_1	2.026586419233464	170.7053953940905	2.438531562631008	20.14040167569841	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.027108788694144	199.3587566443869	2.386973372751468	22.66739509536393	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_1	2.029551690625167	314.3247985106211	2.620083762404782	32.61244932256017	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.054025503551841	655.5770925021664	3.352992431131777	48.12921960390462	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.026514976179283	255.4746634713326	3.569638937189274	20.86326676009016	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_1	2.049330652564942	546.8207261066723	3.599567247507651	44.92230167335646	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-3-a_1	2.038945487102805	405.246595085283	2.902630120119219	38.97163491193008	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_1	2.028106017107841	731.230664066977	7.966562958676093	24.05749994147556	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_1	2.052411800368443	44.41818808067993	0.3947035228396793	33.34133696148982	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-3-a_2	2.055785433239799	33.37279969440548	1.157451830040174	7.671871077971978	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_2	2.04373946363157	37.56305015231641	1.138319542142916	8.695269302944883	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_2	2.041994635767146	75.68563530391025	1.839139053503081	10.8942819727667	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_2	2.052630214878173	134.2045511987084	2.141569273245514	17.06687588595535	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_2	2.043328286638111	41.02829387673751	1.362605992802963	8.262212314136368	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_2	2.053851408927576	77.03501692706813	1.68256134631012	12.30149159147496	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_2	2.044626084173388	77.47073354546609	2.201057598150906	9.444442359547962	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_2	2.055119958292201	32.6499635981941	1.115025856438964	7.730709595740228	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_2	2.043409492243343	174.2001786496439	4.823712264161912	9.551895776190845	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_3	2.069160340666191	40.14081713600048	1.394740230107486	8.108095177288536	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_3	2.055598028903	51.59480342271212	1.812325341014104	7.984751904942355	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_3	2.054464880088081	65.89493197935785	2.046146415386941	8.899584431955994	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_3	2.068242262498106	38.96207137615272	1.213573448956236	8.96473784620369	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_3	2.055642608163598	83.35220534935775	2.429986765660718	9.247877510430632	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_3	2.068500940588771	46.62876372934748	1.305624461553461	9.464830029638385	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_3	2.05657484052011	79.36461680234532	2.762701485556443	8.239664778656662	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_3	2.068271468786328	26.76845496372894	1.122273828972832	6.841338046200807	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-a_3	2.055426180993505	193.0698977539392	6.584234007601481	8.33891833083909	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_4	2.069100590886959	68.52201834155179	2.054800062086845	9.354302495614848	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_4	2.06781777813167	70.05707146673669	1.989078139654076	9.606192290003891	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_4	2.069110200578461	54.0888417704135	1.834653831074823	8.277362954706575	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_4	2.070325046492027	103.904782818439	2.945438415247176	10.00433785248674	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-a_4	2.068842467823397	219.4622556585097	6.76031365623728	9.31435720351139	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-b_1	2.128913130556157	595.5306428959841	4.298981802323577	41.07901874190251	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-b_1	2.124359139615837	610.3693291819959	3.879216271489918	44.80326423731498	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-b_1	2.123687493618048	634.1183938945487	4.371519342789266	41.17032456653339	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-b_1	2.12968757647094	508.603583099403	3.574677721662221	45.71850632745294	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-b_1	2.128004084942383	427.9676451853117	3.491381403504161	40.64131223965862	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-3-b_1	2.107790685550206	563.6021658440586	6.303406094827849	25.44048640864878	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-3-b_2	2.128348150943974	589.4555820898768	7.732261024207638	20.28243982801133	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.333765909013793	371.0188790928512	4.467175423337114	22.57876789282604	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.336379037837265	390.9435340203712	5.006263946301279	24.41502493439686	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.336697519735437	213.8014447486507	2.722567040992748	24.07576263348963	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-4_1	2.336338403521655	263.1778929952951	2.838443690661389	26.95364119060064	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.336266438149546	345.3977043254905	4.312636411265839	24.3108609003036	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.338306702347356	140.1122116615699	1.711399212736665	24.04289658311834	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-4_1	2.336642178657049	264.1101993089453	3.054215191803475	24.80288049424461	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.334005993463346	382.2136962484633	4.493303269490669	23.55454608928131	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.336262773975571	232.5158585671865	2.890536589788409	25.267502498802	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.336093534366549	241.9007534366152	2.760173483488939	24.94563116969646	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.334816267110865	404.8043088835942	4.882246884861896	21.60315917300496	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.336953673820057	436.7668477489789	4.804958080901998	26.07213786871007	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-4_1	2.335568638451643	379.9300194994785	4.663511403104422	24.25503063979805	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_1	2.32158824991221	176.2754408511512	4.854274738963393	9.852121263033354	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_1	2.335338379354778	55.53543625096543	0.6234596689063638	24.86467411470983	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Glu-4_2	2.344880070510958	49.40769053091606	1.311554765490555	9.88778017538217	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Glu-4_2	2.34455217429436	21.71246165169424	0.836787501350345	7.115286012255707	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_2	2.345814522600946	42.34835860224783	1.40795287491239	8.256286182169529	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_2	2.333285206739887	546.8886332604977	11.96836968331164	12.76602188960356	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_3	2.344307802325473	349.2345286789159	9.402007309053358	10.38165099600772	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Glu-4_4	2.355820209466017	77.60388541516099	3.093949957090822	7.108191432670667	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gly_1	3.545960457928489	72.79136615882045	2.561001144916443	8.079190788255065	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Gly_1	3.546194364607527	69.92609207629097	2.294879675353816	8.565337250072227	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Gly_1	3.545329512131691	67.91808116726561	2.127836928613629	8.96526052467132	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gly_1	3.546485045199506	62.44313406185009	1.957934948237359	8.94173489466341	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Gly_1	3.546577552873482	82.2259067240249	2.405326232383609	9.48726936090808	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Gly_1	3.547697781846706	118.6186758358014	4.037696613085679	8.381553946805077	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Gly_1	3.546508527364372	152.0812488393743	5.006248745007171	8.455496717862008	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_1	6.09181243581576	61.65161043911117	1.302955235613101	15.60898638117412	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.092188838612814	63.31413470745763	1.472628392727771	15.92964955907392	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_1	6.091980498261385	42.56490328956286	0.655675290878055	18.96777669132678	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Inosine-1'_1	6.090663647433034	33.5873697030393	0.5188040673050455	17.20052109371576	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.091394707234764	92.45906397290996	1.243061501526554	21.91022136435833	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_1	6.092124511385311	3.433158110486706	0.1343133745281497	7.751020165139592	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Inosine-1'_1	6.098000182739234	29.34834784528701	0.568275257777792	16.65393365958423	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.091498944758381	128.6691177792459	1.680131087172264	22.88566539358602	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_1	6.093696469145498	38.21010565479871	0.946138418005354	15.1225421076418	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.093857286248821	80.98731475241307	1.979347455569654	15.05089817886959	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.092342380534498	184.3088714615863	3.910872305861572	16.55931129405183	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_1	6.095405748992783	32.27601332157494	0.8319953463406959	14.52610708898289	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Inosine-1'_1	6.098481962095034	14.52510790106939	0.3093950685581055	15.90766543111453	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Inosine-1'_1	6.092990065601559	107.9496301574851	2.313867375123856	16.65008493452637	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Inosine-1'_2	6.101492470698838	5.193055609028807	0.1427290698149806	10.15906691325118	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_1	4.095985945736782	94.0546221068925	3.205856862345157	7.987945990491588	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.095797342054647	89.29440183874542	2.932409255561117	8.01361766428459	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_1	4.095681415042369	62.94122224175631	2.179715449016369	7.850053330136722	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_1	4.095022708027775	39.94980440247204	1.038040313245588	9.473665803201087	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.09487038871055	94.83438700473884	3.114181768454931	8.228779920608057	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_1	4.107515762933905	48.46938034773203	1.056963155022147	12.42262284858485	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_1	4.09560144851228	76.72231987904716	2.622272032693142	7.964141384580392	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.083702523589693	22.34008471739786	1.035062492794381	6.55138363645595	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_1	4.094993204150294	101.8177728184488	2.658108791415884	9.48417326159861	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.096069135160536	116.086821103631	3.171612318686938	9.18704717506241	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.084934945323061	45.78921256998478	1.792385922816484	7.170041888981023	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_1	4.095870388710551	78.95715306165033	2.716361533859344	7.92658535363724	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_1	4.094999864978945	66.35873586478604	2.040016132790512	8.462361405005598	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_1	4.084105009370427	59.1431746005813	2.157909706392677	7.636135557502644	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_1	4.09417	10.077204	0.324458	9.740795	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_2	4.108688568821514	115.5848592617463	3.380807259106573	8.948577960208183	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.108641820784817	114.8600952318004	3.115359208806462	9.456065826401703	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_2	4.10862401637879	84.08484400631735	2.362650520662859	9.195190615495559	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_2	4.108029465141687	38.10871134864408	1.081969277813093	9.060204326163204	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.108029465141687	119.4392146699677	3.163019160824383	9.520241372315484	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_2	4.108563398440046	107.8411765102366	2.975613871770576	9.511301121904577	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.096528483435791	100.3278725617855	3.582962143319063	7.816284021962431	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_2	4.108099363263388	106.19146036963	2.752314114220606	9.694802696519133	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.10932226979951	124.171400349734	3.363935496412167	9.406380329100813	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.09760144851228	163.8383822151969	5.803351181241415	7.790493615811851	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_2	4.108691136447116	104.3285545553756	2.879990914937737	9.306832251567537	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_2	4.108029465141687	56.3481743897257	1.863212972273537	8.123308230908531	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-2_2	4.096553732125746	168.5937711716756	6.124149124157864	7.578554817717964	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_2	4.1101	9.610528	0.261668	14.012428	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-2_3	4.109461264941852	115.0082765504328	3.689371464409521	8.611011912395016	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_3	4.110158190436095	186.3665134216374	6.154561472833495	8.381553946805077	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_3	4.109029465141687	198.0138136604112	6.469232959817194	8.455496717862008	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_4	4.122922976610083	32.74554224066387	1.63166226149581	6.317625338010299	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-2_4	4.121654834183404	30.247104035689	1.57503388434132	6.301059366549706	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.312291772514955	954.7141110990071	35.77151742450977	7.735312420269945	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.312215139366335	827.0028529322186	33.01271434755281	7.273896789539771	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.312272877398534	674.221759054421	25.69778322482803	7.560531277651233	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_1	1.311634844643943	281.0146279137882	11.01801489148995	7.593464226408785	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.311416516247024	909.85763065784	34.08479112272111	7.704395950373208	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.312035240994122	184.9139124978766	8.12143279415814	7.033571099034988	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_1	1.312100819310283	617.8762557395387	26.463698086915	7.299747764541092	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.31267400946618	971.4595089163388	35.30432837229262	7.892477101296387	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.311644437122402	813.4480433774914	29.15664693247342	8.000411834899417	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.31272572352502	863.389152018957	32.19302419266797	7.701125729565133	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.31359326597202	1657.069533406807	59.9510258255665	7.892477101296387	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.312488929196436	892.1508712673849	32.7536146009514	7.83207648984	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_1	1.311612635219056	655.4723683930445	22.85331436287013	8.102392969244741	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_1	1.312489136138788	1863.060131821852	68.5481787657761	7.795563841064409	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_1	1.311518200179831	67.97342911384992	2.640558918479775	7.440836558875795	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_2	1.324485728545365	821.8776805449774	32.30157653206516	7.504556316745892	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.324381267658764	915.2513822136204	31.79937971256917	8.104257738404154	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_2	1.324439304497824	602.5755422033428	23.09931852578622	7.554414912275241	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_2	1.323662028361183	290.2597026594361	10.72298262736125	7.882846810373363	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.323606857665119	735.1452501611484	29.850985803409	7.375153259842834	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_2	1.323928475602174	255.1194548978218	9.011329743780596	8.120285099235032	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_2	1.324138866267101	755.3391738945328	28.07107391606742	8.022704055944505	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.324868477513513	774.8607277114932	30.92984548508428	7.38903040113765	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_2	1.323826189812406	579.3501854458312	24.66611350008888	7.135637886689043	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.324888113005289	747.3953601026282	28.66378997487066	7.566977198548455	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.325804867952502	1349.496562541385	52.49192853846445	7.488871377313732	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_2	1.324593938095686	686.9865571104377	28.62766468204547	7.206584049604081	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Lac-3_2	1.323839260853717	500.1257873017244	20.15410600964498	7.319092960266422	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Lac-3_2	1.324719182588964	1594.627596492615	62.36085064627584	7.488061620453713	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Lac-3_2	1.323941042623398	73.2118869787058	2.655712644083908	7.95489717077808	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+P-Cho A_1	3.219445239078343	132.5356435376304	2.181099356972164	16.34787629502839	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.220846119561494	104.6055113938245	2.262374649184596	12.69096587113188	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+P-Cho A_1	3.220209761535471	91.77387284258434	1.516788170364126	15.92673002449056	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+P-Cho A_1	3.219409325225122	70.76014020286975	1.351630865296968	13.87011172074571	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.219753668252171	116.4423488562675	2.221163144911821	13.85776624858151	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+P-Cho A_1	3.219929218715689	18.26694650400765	0.4613439023591244	11.58516640200646	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+P-Cho A_1	3.219399207211822	93.67390131176676	1.809799465372304	14.67190732141214	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.217692019659266	203.1675731058873	2.822168137973907	18.00883186526022	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+P-Cho A_1	3.220139106244776	138.7598669998168	2.640936373988774	14.33410979253848	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.221522865841652	184.7105847927163	3.154815119092585	14.41237298397117	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.22195184360594	500.5958315850834	7.913839640244153	15.77750388371756	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+P-Cho A_1	3.218967263099298	112.6054462637291	1.346553798708461	20.585115576833	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+P-Cho A_1	3.217245811904465	109.8878194046392	1.732710732949911	17.24093153417576	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+P-Cho A_1	3.218589495988239	379.2237157095236	5.093360943740905	20.60418683901967	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Succinate-2,3_1	2.396500890268863	64.83621718437756	2.91582143728483	6.856111404111448	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.396349122654182	76.833982943728	3.220549376795704	7.206195436109504	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Succinate-2,3_1	2.396492165604533	52.95798529302412	2.212130467053929	7.266671117150527	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Succinate-2,3_1	2.396086507495511	37.70511681294245	1.637757985388006	7.029285506150695	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.395806190700831	84.13239925546623	3.459597266353294	7.28065631665232	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Succinate-2,3_1	2.396592867442237	17.84549882684566	0.7710632620144189	7.411847184062562	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Succinate-2,3_1	2.396451802554402	48.56699658585566	1.965184972343684	7.400496979528813	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.397008330232488	58.61406227752882	2.5318164174757	7.025110320961718	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Succinate-2,3_1	2.395688281023831	51.22861293103068	2.100658050493685	7.269632905729464	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.397216025699325	58.67169606145378	2.492663056418633	7.125725745217229	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.397785033916549	117.3688597043379	4.983358688787021	7.105554772279792	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Succinate-2,3_1	2.396475602949919	55.73182666317079	2.308831794167872	7.3269929016927	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Succinate-2,3_1	2.395992622144134	46.41656533224662	2.056818445640883	6.928703741809022	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Succinate-2,3_1	2.396540577340371	145.1075217081413	5.751179681049766	7.475540102990585	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-1 (SCH2)_1	3.255969504459364	101.3944559834727	2.291038144828093	13.05339388735139	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.255999721538173	102.9391990088632	2.153942336520944	14.62949065492031	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-1 (SCH2)_1	3.255907273445893	64.03490180217722	1.295947190840372	13.40578086740777	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-1 (SCH2)_1	3.254523568896676	74.21547066605238	1.481762997991157	13.61610644447618	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.254881170161376	101.8686897746863	2.362361857475062	13.97531873257538	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-1 (SCH2)_1	3.256103735347911	23.92480844667048	0.5052772249784455	14.05616947744049	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-1 (SCH2)_1	3.255484341541032	62.48977570995925	1.278579449898855	13.75496893810775	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.256043740611416	136.9174560804102	3.007845892400755	12.52969567246813	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-1 (SCH2)_1	3.254782425464517	82.14955541839359	1.78423241051272	13.4317471338852	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.256613736324685	137.9382179741336	3.333832515552339	13.44003422906258	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.256310160866009	145.1571157594844	4.860957241902893	8.381553946805077	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-1 (SCH2)_1	3.255711605807161	71.79464393600563	1.578890616628328	13.1308801821553	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-1 (SCH2)_1	3.254151616721225	61.82049663423535	1.378630407734204	11.76911401483718	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-1 (SCH2)_1	3.255151616721225	123.835204132959	3.631651815439215	9.33243861800605	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_1	3.407722890239977	123.0381918501432	2.051453451097529	16.83149341227418	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.409849326348799	101.1889968303153	1.953341761546007	13.00874317892637	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_1	3.409869895041509	44.82182431729903	0.8489823103466385	12.99596433499337	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-2 (NCH2)_1	3.409602705971517	43.8435916455935	1.157102408639328	9.848100593613824	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.403907147874098	133.0644361134434	1.922886074049502	21.18646611702582	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_1	3.409064832545996	38.77015741830565	0.6670769943323523	16.2234251526648	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-2 (NCH2)_1	3.409867354489683	36.90794058036081	1.134956664201407	9.002637180311869	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.407322123397217	177.2430515906672	2.813823360910703	17.93001032435544	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_1	3.405200179023043	174.155563647089	2.03658779611077	23.34545706749207	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.399170397662005	38.92439703723198	1.327387873491295	8.116205620615267	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.399841889355331	64.42492591734063	2.12270131493813	8.264775110274343	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_1	3.410136294687953	60.86761255184577	1.458260265589584	10.5233512880089	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Tau-2 (NCH2)_1	3.406870298356544	77.35124265107862	1.307834822880433	16.97126651056796	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_1	3.404920453374127	272.1090914338249	4.523679572585364	19.02712328886022	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_2	3.410980205903057	78.72086390473726	2.712929898887837	8.112619076375436	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_2	3.411617602926343	179.2592947029136	5.087760336208156	9.334787009673846	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tau-2 (NCH2)_3	3.422747621950779	10.08290696028344	0.597282471108367	5.124137533275053	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tau-2 (NCH2)_3	3.423913866783151	11.16670270930536	0.8034085812459947	4.661662309930596	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.718381624382794	63.83563527498423	2.226090477551195	8.079190788255065	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+Tris_1	3.718256328958958	26.30938734171695	1.02981739020208	7.190827378914347	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.717549284370786	15.03542686553523	0.7286892119057624	6.283244021174816	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tris_1	3.717298772668706	25.801168418447	0.9848156460501394	7.312235427553404	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.718442343600622	25.98992700045358	1.039290431534179	6.9805409509319	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.717461363393675	26.43116713723702	1.007120672805227	7.312270687939327	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+Tris_1	3.718982866680522	21.27027892250627	0.9639229400734062	6.267171444902357	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+Tris_1	3.719009949548511	15.19052287855495	0.9335476509588896	4.939136402054971	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.718099735669393	37.74142545177886	1.385892985003049	7.813118686436845	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+Tris_1	3.718083392279843	69.12607836417958	2.337426178142828	8.288071882179246	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+Tris_1	3.718188849499465	13.91111561321371	0.4912052934201824	7.905327565780958	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+UXP-1'_1	5.987845327568522	36.62338626008438	0.5939906637720987	16.52698196425312	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.985680433841633	58.38357343662145	0.7525274385958349	20.17828433017635	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+UXP-1'_1	5.987002270325481	6.38640960274932	0.2112432404915093	8.439075973815687	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+UXP-1'_1	5.987113461178757	14.21884369278223	0.2616872652686759	15.16710312946776	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.98307992958515	37.2755662734977	0.5736143325748382	18.0722745585199	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+UXP-1'_1	5.989523820426931	4.424117020248586	0.118562153065815	14.23627139039581	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+UXP-1'_1	5.987867949935001	33.25672754385452	0.4943053710358644	18.60337389910789	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.985104527902084	67.92528278395736	0.9526305241710504	19.3840356318862	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+UXP-1'_1	5.986279682587569	48.18112568846954	0.62837116406118	20.96959469418633	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.989723458836517	47.39844266816992	0.6941195771799211	19.06122147397461	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.986509366563457	131.5059959961924	1.599670783476026	22.36201845367309	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+UXP-1'_1	5.987401822607782	9.476471205291112	0.2593882467654886	13.93844780285609	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+UXP-1'_1	5.985608887910264	24.40406675230862	0.4564787065961051	14.37174302035723	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+UXP-1'_1	5.986674759378896	139.3094406202175	2.133110633115618	18.56262498551072	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.22190684744553	24.64935189928174	0.7253394438690605	10.52530547818291	01_A0_SI_naive_0days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.221466944529229	21.39793660153801	0.728403155852017	9.436676744675133	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.221519171122389	21.45789287203338	0.5990730926914711	10.79644111150019	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+aGlc_1	5.220432722144166	3.197854108944414	0.117761048780568	7.580152277224174	04_B0_SI_syngenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.220434642722591	42.01358565837762	1.107986121667709	11.02871242716175	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.222302900234351	4.452344942760488	0.1546839276120622	8.034605565692825	06_B2_SI_syngenic_42days_170427_UKy_GCH_rep3-polar-NMR_A
+aGlc_1	5.221657700246436	27.21054149028335	0.8583676060334959	9.91107461709177	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.221362364968425	39.10729133292521	1.167001027565627	10.2073970789214	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.22076786825365	53.20119209983133	1.617068258880066	10.08114314140681	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.222429577985097	17.5308466593828	0.5642720580536313	9.430378700823624	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.222975278885886	53.36241284146348	1.714141202577779	9.845688735204865	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.221526581192143	19.45680998341916	0.590230758109697	10.11302909535979	12_B1-2_SI_syngenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+aGlc_1	5.219999338687727	17.93869434209457	0.5283484657557124	10.56628752955269	13_C1-1_SI_allogenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+aGlc_1	5.221819056200094	122.9374612907695	3.703699397243544	10.29813028290922	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+aGlc_1	5.220350617027115	1.789235478625997	0.07341346656786003	6.803191842130268	15_C1-20_SI_allogenic_7days_170427_UKy_GCH_rep3-polar-NMR_A
+bGlc_1	4.628928543863557	19.072024325284	0.5568897317374608	9.027780589827858	02_A1_SI_naive_0days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_1	4.629528492482319	20.30756546231222	0.5721400337893245	10.18057025807042	03_A2_SI_naive_0days_170427_UKy_GCH_rep3-polar-NMR_A
+bGlc_1	4.628544043973339	34.57296200433639	0.9298325427521437	9.954088294520963	05_B1_SI_syngenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_1	4.628544043973339	23.46183000195732	0.6172420557080507	9.879579080455912	07_C1-1_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+bGlc_1	4.629303595792423	25.8014630619142	0.947694789816077	7.860411079424535	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_1	4.628027273289602	41.80176927323231	1.440493354755772	8.323385038443837	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+bGlc_1	4.629544043973339	18.37208798737209	0.5062120828695035	9.866502876663523	10_B1-0_SI_syngenic_7days_170427_UKy_GCH_rep1-polar-NMR_A
+bGlc_1	4.630516208618591	37.37591719838044	1.385955143957913	7.824471354664716	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_1	4.629094609196839	93.45478210920878	3.139064889952949	8.38655897047257	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_2	4.643259405628441	28.26760427170579	1.024905215614301	7.963663262339358	08_C1-2_SI_allogenic_42days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_2	4.641927663796281	39.44581520605634	1.421548276973478	7.957181944099113	09_C2-0_SI_allogenic_42days_170427_UKy_GCH_rep1-polar-NMR_A
+bGlc_2	4.644409724357362	30.5162558259879	1.287335836311829	7.045892300354459	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+bGlc_2	4.643271744145058	79.08554701251242	2.947668971043995	7.685007309397716	14_C1-2_SI_allogenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+m-Ins-1,3_1	3.532169523436529	28.94730283579077	0.9187681642306855	8.55018352640442	11_B1-1_SI_syngenic_7days_170427_UKy_GCH_rep2-polar-NMR_A
+EXTENDED_NMR_METABOLITE_DATA_END
+#END
