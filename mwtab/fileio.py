@@ -22,7 +22,6 @@ import zipfile
 import tarfile
 import bz2
 import gzip
-import json
 from re import match
 
 from . import mwtab

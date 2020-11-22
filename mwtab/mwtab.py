@@ -104,7 +104,6 @@ class MWTabFile(OrderedDict):
         try:
             if file_format == "json":
                 json_str = self._to_json()
-                print(json_str)
                 filehandle.write(json_str)
             elif file_format == "mwtab":
                 mwtab_str = self._to_mwtab()

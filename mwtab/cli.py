@@ -42,9 +42,7 @@ Options:
     For extraction <to-path> can take a "-" which will use stdout.
 """
 
-from . import fileio
-from . import mwextract
-from . import mwrest
+from . import fileio, mwextract, mwrest, __version__
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping
@@ -56,12 +54,25 @@ from urllib.parse import quote_plus
 import json
 import re
 
+# remove
+import time
+import datetime
+
+
+OUTPUT_FORMATS = {
+    "txt": "txt",
+    "mwtab": "txt",
+    "json": "json",
+}
+VERBOSE=False
+
 
 def check_filepath(filepath):
     """
     Method for validating that a given path directory exits. If not, the directory is created.
 
-    :param str filepath: File path string.
+    :param filepath: File path string.
+    :type filepath: :py:class:`str`
     :return: None
     :rtype: :py:obj:`None`
     """
@@ -71,42 +82,69 @@ def check_filepath(filepath):
             makedirs(dirname)
 
 
+def get_file_path(dir_path, filename, extension):
+    """
+    Helper method for validating that the commandline arguments "--to-path" or _ are not "None". Returns the given
+    command argument if not none or creates a default file path from the given filename and the current working
+    directory.
+
+    :param dir_path:
+    :type dir_path: :py:class:`str` or :py:class:`None`
+    :param filename:
+    :type filename: :py:class:`str`
+    :param extension:
+    :type extension: :py:class:`str`
+    :return:
+    """
+    # check to see if given directory path is not None
+    dir_path = dir_path if dir_path else getcwd()
+    extension = extension if extension else "txt"
+    return join(dir_path, ".".join([quote_plus(filename).replace(".", "_"), extension]))
+
+
 def download(context, cmdparams):
     """
     Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
     Retrieved data is then saved out as specified.
 
-    :param str context: String indicating the type of data to be accessed from the Metabolomics Workbench.
-    :param dict cmdparams: Commandline arguments specifiying data to be accessed from Metabolomics Workbench.
+    :param context: String indicating the type of data to be accessed from the Metabolomics Workbench.
+    :type context: :py:class:`str`
+    :param cmdparams: Commandline arguments specifying data to be accessed from Metabolomics Workbench.
+    :type cmdparams: :py:class:`dict`
     :return: None
     :rtype: :py:obj:`None`
     """
-    mwresturl = mwrest.GenericMWURL({
-        "context": context,
-        "input_item": cmdparams["<input-item>"],
-        "input_value": cmdparams["<input-value>"],
-        "output_item": cmdparams["<output-item>"],
-        "output_format": cmdparams["--output-format"],
-    }).url
-    mwrestfile = next(fileio.read_mwrest(mwresturl))
+    try:
+        # TODO: Convert to using mwrest.generate_study_urls() method
+        # create and validate a callable URL to pull data from Metabolomics Workbench's REST API
+        mwresturl = mwrest.GenericMWURL({
+            "context": context,
+            "input_item": cmdparams.get("<input-item>") if cmdparams.get("<input-item>") else "analysis_id",
+            "input_value": cmdparams["<input-value>"],
+            "output_item": cmdparams.get("<output-item>") if cmdparams.get("<output-item>") else "mwtab",
+            "output_format": OUTPUT_FORMATS[cmdparams.get("--output-format")] if cmdparams.get("--output-format") else "txt",
+        }).url
+        mwrestfile = next(fileio.read_mwrest(mwresturl))
 
-    # filepath validation
-    extention = "txt"
-    filepath = join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + "." + (
-        cmdparams["--output-format"] or extention))
-    if cmdparams["--to-path"]:
-        check_filepath(cmdparams["--to-path"])
-        filepath = cmdparams["--to-path"]
-
-    with open(filepath, "w", encoding="utf-8") as fh:
-        mwrestfile.write(fh)
+        if mwrestfile.text:  # if the text file isn't blank
+            with open(get_file_path(
+                    cmdparams.get("--to-path"),
+                    mwrestfile.source,
+                    OUTPUT_FORMATS[cmdparams.get("--output-format")]
+            ), "w", encoding="utf-8") as fh:
+                mwrestfile.write(fh)
+    except Exception as e:
+        print(e)
 
 
 def cli(cmdargs):
 
+    VERBOSE = cmdargs["--verbose"]
     fileio.VERBOSE = cmdargs["--verbose"]
-    mwrest.VERBOSE = cmdargs["--verbose"]
     fileio.MWREST = cmdargs["--mw-rest"]
+    mwrest.VERBOSE = cmdargs["--verbose"]
+
+    print("mwtab {}".format(__version__))
 
     # mwtab convert ...
     if cmdargs["convert"]:
@@ -132,10 +170,12 @@ def cli(cmdargs):
         # mwtab download url ...
         if cmdargs["<url>"]:
             mwrestfile = next(fileio.read_mwrest(cmdargs["<url>"]))
-            with open(
-                    cmdargs["--to-path"] or join(getcwd(), quote_plus(cmdargs["<url>"]).replace(".", "_") + "." +
-                                                           cmdargs["--output-format"]),
-                    "w"
+            with open(get_file_path(
+                    cmdargs["--to-path"],
+                    mwrestfile.source,
+                    OUTPUT_FORMATS[cmdargs["--output-format"]]),
+                "w",
+                encoding="utf-8"
             ) as fh:
                 mwrestfile.write(fh)
 
@@ -144,25 +184,28 @@ def cli(cmdargs):
 
             # mwtab download study all ...
             if cmdargs["all"]:
-                # mwtab download study all --input-item=analysis_id
-                if not cmdargs["--input-item"] or cmdargs["--input-item"] == "analysis_id":
-                    mwtabfiles = fileio.read_files(
-                        *mwrest.generate_mwtab_urls(mwrest.analysis_ids(), cmdargs["--output-format"]),
-                        valdate=cmdargs.get("--validate")
-                    )
-                    for mwtabfile in mwtabfiles:
-                        print(quote_plus(mwtabfile.source).replace(".", "_"))
-                        with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwtabfile.source).replace(".", "_")) + "." + cmdargs["--output-format"], "w") as fh:
-                            mwtabfile.write(fh, cmdargs["--output-format"])
-                # mwtab download study all --input-item=study_id
-                elif cmdargs["--input-item"] == "study_id":
-                    mwtabfiles = fileio.read_files(
-                        *mwrest.generate_mwtab_urls(mwrest.study_ids(), cmdargs["--output-format"]),
-                        valdate=cmdargs.get("--validate")
-                    )
-                    for mwtabfile in mwtabfiles:
-                        with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwtabfile.source).replace(".", "_")) + "." + cmdargs["--output-format"], "w") as fh:
-                            mwtabfile.write(fh, cmdargs["--output-format"])
+                # mwtab download study all ...
+                # mwtab download study all --input-item=analysis_id ...
+                # mwtab download study all --input-item=study_id ...
+                # TODO: mwtab download study all --input-item=project_id ...
+                if not cmdargs["--input-item"] or cmdargs["--input-item"] in ("analysis_id", "study_id"):
+                    cmdargs["<input-item>"] = cmdargs["--input-item"]
+
+                    id_list = list()
+                    if not cmdargs["--input-item"] or cmdargs["--input-item"] == "analysis_id":
+                        id_list = mwrest.analysis_ids()
+                    elif cmdargs["--input-item"] == "study_id":
+                        id_list = mwrest.study_ids()
+
+                    for count, input_id in enumerate(id_list):
+                        if VERBOSE:
+                            print("[{:4}/{:4}]".format(count+1, len(id_list)), input_id, datetime.datetime.now())
+                        cmdargs["<input-value>"] = input_id
+                        download("study", cmdargs)
+                        time.sleep(3)
+
+                else:
+                    raise ValueError("Unknown \"--input-item\" {}".format(cmdargs["--input-item"]))
 
             # mwtab download study <input_value> ...
             elif cmdargs["<input-value>"] and not cmdargs["<input-item>"]:

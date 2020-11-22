@@ -33,7 +33,7 @@ def analysis_ids(base_url=BASE_URL):
     [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
 
     if VERBOSE:
-        print("Found {} analysis file to download.".format(len(analyses)))
+        print("Found {} Analysis Files to be Downloaded".format(len(analyses)))
 
     return analyses
 
@@ -50,7 +50,7 @@ def study_ids(base_url=BASE_URL):
     studies = list(st_an_dict.keys())
 
     if VERBOSE:
-        print("Found {} study file to download.".format(len(studies)))
+        print("Found {} Study Files to be Downloaded".format(len(studies)))
 
     return studies
 
@@ -525,9 +525,9 @@ class MWRESTFile(object):
         :return: None
         :rtype: :py:obj:`None`
         """
-        input_str = filehandle.read().decode("utf-8")
-        self.text = input_str
-        self.text = re.sub(r"</br>", "", self.text)  # included to remove remaining HTML tags
+        self.text = filehandle.read().decode("utf-8")
+        # input_str = input_str.replace("\r\n", "\n")
+        # self.text = re.sub(r"</br>", "", self.text)  # included to remove remaining HTML tags
         filehandle.close()
 
     def write(self, filehandle):
