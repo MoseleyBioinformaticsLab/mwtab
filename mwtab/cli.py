@@ -48,7 +48,7 @@ from .validator import validate_file
 from .mwschema import section_schema_mapping
 
 from os import getcwd, makedirs, path
-from os.path import join
+from os.path import join, isfile
 from urllib.parse import quote_plus
 
 import json
@@ -133,6 +133,8 @@ def download(context, cmdparams):
                     OUTPUT_FORMATS[cmdparams.get("--output-format")]
             ), "w", encoding="utf-8") as fh:
                 mwrestfile.write(fh)
+        else:
+            print("BLANK FILE")
     except Exception as e:
         print(e)
 
@@ -209,29 +211,43 @@ def cli(cmdargs):
 
             # mwtab download study <input_value> ...
             elif cmdargs["<input-value>"] and not cmdargs["<input-item>"]:
-                input_item = cmdargs.get("--input-item")
-                input_value = cmdargs["<input-value>"]
-                if not input_item:
-                    if input_value.isdigit():
-                        input_value = "AN{}".format(input_value.zfill(6))
-                        input_item = "analysis_id"
-                    elif re.match(r'(AN[0-9]{6}$)', input_value):
-                        input_item = "analysis_id"
-                    elif re.match(r'(ST[0-9]{6}$)', input_value):
-                        input_item = "study_id"
-                mwresturl = mwrest.GenericMWURL({
-                    "context": "study",
-                    "input_item": input_item,
-                    "input_value": input_value,
-                    "output_item": cmdargs.get("--output-item") or "mwtab",
-                    "output_format": cmdargs["--output-format"],
-                }, cmdargs["--mw-rest"]).url
-                mwrestfile = next(fileio.read_mwrest(mwresturl))
-                with open(cmdargs["--to-path"] or join(getcwd(),
-                                                       quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdargs[
-                                                           "--output-format"]),
-                          "w") as fh:
-                    mwrestfile.write(fh)
+                if isfile(cmdargs["<input-value>"]):
+                    with open(cmdargs["<input-value>"], "r") as fh:
+                        id_list = json.loads(fh.read())
+
+                    if VERBOSE:
+                        print("Found {} Files to be Downloaded".format(len(id_list)))
+                    for count, input_id in enumerate(id_list):
+                        if VERBOSE:
+                            print("[{:4}/{:4}]".format(count + 1, len(id_list)), input_id, datetime.datetime.now())
+                        cmdargs["<input-value>"] = input_id
+                        download("study", cmdargs)
+                        time.sleep(3)
+
+                else:
+                    input_item = cmdargs.get("--input-item")
+                    input_value = cmdargs["<input-value>"]
+                    if not input_item:
+                        if input_value.isdigit():
+                            input_value = "AN{}".format(input_value.zfill(6))
+                            input_item = "analysis_id"
+                        elif re.match(r'(AN[0-9]{6}$)', input_value):
+                            input_item = "analysis_id"
+                        elif re.match(r'(ST[0-9]{6}$)', input_value):
+                            input_item = "study_id"
+                    mwresturl = mwrest.GenericMWURL({
+                        "context": "study",
+                        "input_item": input_item,
+                        "input_value": input_value,
+                        "output_item": cmdargs.get("--output-item") or "mwtab",
+                        "output_format": cmdargs["--output-format"],
+                    }, cmdargs["--mw-rest"]).url
+                    mwrestfile = next(fileio.read_mwrest(mwresturl))
+                    with open(cmdargs["--to-path"] or join(getcwd(),
+                                                           quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdargs[
+                                                               "--output-format"]),
+                              "w", encoding="utf-8") as fh:
+                        mwrestfile.write(fh)
 
             # mwtab download (study | ...) <input_item> ...
             elif cmdargs["<input-item>"]:

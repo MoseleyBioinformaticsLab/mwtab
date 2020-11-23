@@ -24,7 +24,7 @@ SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type"
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
-def tokenizer(text, verbose=False):
+def tokenizer(text):
     """A lexical analyzer for the `mwtab` formatted files.
 
     :param str text: `mwtab` formatted text.
@@ -41,10 +41,13 @@ def tokenizer(text, verbose=False):
         if line.startswith("#METABOLOMICS WORKBENCH"):
             yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
 
-            for identifier in line.split(" "):
-                if ":" in identifier:
-                    key, value = identifier.split(":")
-                    yield KeyValue(key, value)
+            try:
+                for identifier in line.split(" "):
+                    if ":" in identifier:
+                        key, value = identifier.split(":")
+                        yield KeyValue(key, value)
+            except ValueError as e:
+                raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
 
         # SUBJECT_SAMPLE_FACTORS header (reached new section)
         elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
@@ -58,14 +61,17 @@ def tokenizer(text, verbose=False):
 
         # SUBJECT_SAMPLE_FACTORS line
         elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
-            key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
-            factors = {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in factors.split("|")}
-            additional_sample_dict = dict()
-            for item in additional_sample_data.split(";"):
-                if "=" in item:
-                    k, v = item.split("=")
-                    additional_sample_dict[k.strip()] = v.strip()
-            yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_dict)
+            try:
+                key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
+                factors = {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in factors.split("|")}
+                additional_sample_dict = dict()
+                for item in additional_sample_data.split(";"):
+                    if "=" in item:
+                        k, v = item.split("=")
+                        additional_sample_dict[k.strip()] = v.strip()
+                yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_dict)
+            except ValueError as e:
+                raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
 
         # data start header
         elif line.endswith("_START"):
@@ -83,16 +89,13 @@ def tokenizer(text, verbose=False):
         # item line in item section (e.g. PROJECT, SUBJECT, etc..)
         else:
             if line:
-                if line.endswith("_RESULTS_FILE"):
-                    try:
-                        key, value = line.split("\t")
-                        yield KeyValue(key.strip()[3:], value)
-                    except ValueError:
-                        split_keys_values = line.split("\t")
-                        key = split_keys_values[0]
-                        value = split_keys_values[1]
-                        extra = [tuple(pair.split(":")) for pair in split_keys_values[2:]]
-                        yield KeyValueExtra(key.strip()[3:], value, extra)
+                if "_RESULTS_FILE" in line:
+                    line_items = line.split("\t")
+                    if len(line_items) > 2:
+                        extra_items = [tuple(extra_item.split(":")) for extra_item in line_items[2:] if ":" in extra_item]
+                        yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
+                    else:
+                        yield KeyValue(line_items[0].strip()[3:], line_items[1])
                 else:
                     try:
                         key, value = line.split("\t")
@@ -103,10 +106,8 @@ def tokenizer(text, verbose=False):
                                 yield KeyValue(key.strip()[3:], value)
                         else:
                             yield KeyValue(key.strip(), value)
-                    except ValueError:
-                        if verbose:
-                            print("LINE WITH ERROR:\n\t", repr(line))
-                        raise ValueError("LINE WITH ERROR:\n\t", repr(line))
+                    except ValueError as e:
+                        raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
 
     # end of file
     yield KeyValue("#ENDSECTION", "\n")
