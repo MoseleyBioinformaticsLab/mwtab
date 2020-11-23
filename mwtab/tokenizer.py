@@ -87,27 +87,29 @@ def tokenizer(text):
                     yield KeyValue(data[0], tuple(data))
 
         # item line in item section (e.g. PROJECT, SUBJECT, etc..)
-        else:
-            if line:
+        elif line:
+            try:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
                     if len(line_items) > 2:
-                        extra_items = [tuple(extra_item.split(":")) for extra_item in line_items[2:] if ":" in extra_item]
+                        extra_items = list()
+                        for extra_item in line_items[2:]:
+                            k, v = extra_item.split(":")
+                            extra_items.append(tuple([k.strip(), v.strip()]))
                         yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
                     else:
                         yield KeyValue(line_items[0].strip()[3:], line_items[1])
                 else:
-                    try:
-                        key, value = line.split("\t")
-                        if ":" in key:
-                            if key.endswith("_METABOLITE_DATA:UNITS"):
-                                yield KeyValue("Units", value)
-                            else:
-                                yield KeyValue(key.strip()[3:], value)
+                    key, value = line.split("\t")
+                    if ":" in key:
+                        if key.endswith("_METABOLITE_DATA:UNITS"):
+                            yield KeyValue("Units", value)
                         else:
-                            yield KeyValue(key.strip(), value)
-                    except ValueError as e:
-                        raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
+                            yield KeyValue(key.strip()[3:], value)
+                    else:
+                        yield KeyValue(key.strip(), value)
+            except ValueError as e:
+                raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
 
     # end of file
     yield KeyValue("#ENDSECTION", "\n")
