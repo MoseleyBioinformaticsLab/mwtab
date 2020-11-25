@@ -82,13 +82,16 @@ class MWTabFile(OrderedDict):
         else:
             raise TypeError("Unknown file format")
 
-        self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
-        self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
-        # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
-        self.header = " ".join(
-            ["#METABOLOMICS WORKBENCH"]
-            + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
-        )
+        try:
+            self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
+            self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
+            # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
+            self.header = " ".join(
+                ["#METABOLOMICS WORKBENCH"]
+                + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
+            )
+        except KeyError as e:
+            raise KeyError("File missing header information \"METABOLOMICS WORKBENCH\"", e)
 
         filehandle.close()
 
