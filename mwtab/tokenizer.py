@@ -27,7 +27,8 @@ KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 def tokenizer(text):
     """A lexical analyzer for the `mwtab` formatted files.
 
-    :param str text: `mwtab` formatted text.
+    :param text: `mwTab` formatted text.
+    :type text: py:class:`str`
     :return: Tuples of data.
     :rtype: py:class:`~collections.namedtuple`
     """
@@ -83,18 +84,19 @@ def tokenizer(text):
             elif line:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
-                    if len(line_items) > 2:
-                        extra_items = list()
-                        for extra_item in line_items[2:]:
-                            k, v = extra_item.split(":")
-                            extra_items.append(tuple([k.strip(), v.strip()]))
-                        yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
-                    else:
-                        yield KeyValue(line_items[0].strip()[3:], line_items[1])
+                    # if len(line_items) > 2:
+                    #     extra_items = list()
+                    #     for extra_item in line_items[2:]:
+                    #         k, v = extra_item.split(":")
+                    #         extra_items.append(tuple([k.strip(), v.strip()]))
+                    #     yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
+                    # else:
+                    #     yield KeyValue(line_items[0].strip()[3:], line_items[1])
+                    yield KeyValue(line_items[0].strip()[3:], " ".join(line_items[1:]))
                 else:
                     key, value = line.split("\t")
                     if ":" in key:
-                        if key.endswith("_METABOLITE_DATA:UNITS"):
+                        if ":UNITS" in key:
                             yield KeyValue("Units", value)
                         else:
                             yield KeyValue(key.strip()[3:], value)

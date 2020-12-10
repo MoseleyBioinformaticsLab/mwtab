@@ -23,7 +23,7 @@ metabolomics_workbench_schema = Schema(
         "CREATED_ON": str,
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
-        Optional("PROJECT_ID"): str,  # assumed
+        Optional("PROJECT_ID"): str,
         Optional("HEADER"): str,
         Optional("DATATRACK_ID"): str
     }
@@ -117,7 +117,7 @@ subject_sample_factors_schema = Schema(
             "Sample ID": str,
             "Factors": dict,
             Optional("Additional sample data"): {
-                "RAW_FILE_NAME": str,
+                Optional("RAW_FILE_NAME"): str,
                 Optional(str): str
             }
         }
@@ -391,52 +391,38 @@ nmr_schema = Schema(
     }
 )
 
-metabolites_schema = Schema(
-    {
-        "METABOLITES_START":
-            {
-                "Fields": list,
-                "DATA": [
-                    {
-                        "metabolite_name": str,
-                        Optional(str): str
-                    }
-                ]
-            },
-        Optional(Or("EXTENDED_MS_METABOLITE_DATA_START", "EXTENDED_NMR_METABOLITE_DATA_START", only_one=True)):
-            {
-                "Fields": [
-                    "metabolite_name",
-                    Optional(str),
-                    "sample_id"
-                ],
-                "DATA": [
-                    {
-                        Optional(str): str,
-                    }
-                ]
-            }
-    }
+data_schema = Schema(
+    [
+        {
+            Or("Metabolite", "Bin range(ppm)", only_one=True): str,
+            Optional(str): str,
+        },
+    ]
+)
+
+extended_schema = Schema(
+    [
+        {
+            "Metabolite": str,
+            Optional(str): str,
+            "sample_id": str
+        },
+    ]
 )
 
 ms_metabolite_data_schema = Schema(
     {
-        "MS_METABOLITE_DATA:UNITS": str,
-        "MS_METABOLITE_DATA_START": {
-            "Samples": list,
-            "Factors": list,
-            "DATA": list
-        }
+        "Units": str,
+        "Data": data_schema,
+        "Metabolites": data_schema,
+        Optional("Extended"): extended_schema
     }
 )
 
 nmr_binned_data_schema = Schema(
     {
-        Or("NMR_BINNED_DATA_START", "NMR_METABOLITE_DATA", only_one=True): {
-            Or("Fields", "Samples", only_one=True): list,
-            Optional("Factors"): list,
-            "DATA": list
-        },
+        "Units": str,
+        "Data": data_schema
     }
 )
 
@@ -452,8 +438,8 @@ section_schema_mapping = {
     "SAMPLEPREP": sampleprep_schema,
     "CHROMATOGRAPHY": chromatography_schema,
     "MS": ms_schema,
-    "NMR": nmr_schema,
-    "METABOLITES": metabolites_schema,
+    "NM": nmr_schema,
     "MS_METABOLITE_DATA": ms_metabolite_data_schema,
-    "NMR_BINNED_DATA": nmr_binned_data_schema
+    "NMR_METABOLITE_DATA": ms_metabolite_data_schema,
+    "NMR_BINNED_DATA": nmr_binned_data_schema,
 }
