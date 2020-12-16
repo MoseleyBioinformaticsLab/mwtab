@@ -223,7 +223,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping):
     for section_key, section in mwtabfile.items():
         try:
             schema = section_schema_mapping[section_key]
-            validate_section_schema(section, schema, section_key)
+            section, section_errors = validate_section_schema(section, schema, section_key)
+            errors.extend(section_errors)
             validated_mwtabfile[section_key] = section
         except Exception as e:
             errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
@@ -244,7 +245,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping):
 
     else:
         if "MS" in validated_mwtabfile.keys():
-            errors.append("DATA: Missing MS_METABOLITE_DATA section.")
+            if not validated_mwtabfile["MS"].get("MS_RESULTS_FILE"):
+                errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
         elif "NM":
             errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section.")
 
