@@ -16,11 +16,10 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 """
 
 from __future__ import print_function, division, unicode_literals
-from collections import deque, namedtuple
+from collections import deque, namedtuple, OrderedDict
 
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
-SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type", "local_sample_id", "factors", "additional_sample_data"])
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
@@ -58,14 +57,18 @@ def tokenizer(text):
 
             # SUBJECT_SAMPLE_FACTORS line
             elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
-                key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
-                factors = {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in factors.split("|")}
-                additional_sample_dict = dict()
-                for item in additional_sample_data.split(";"):
-                    if "=" in item:
-                        k, v = item.split("=")
-                        additional_sample_dict[k.strip()] = v.strip()
-                yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_dict)
+                line_items = line.split("\t")
+                subject_sample_factors_dict = OrderedDict({
+                    "Subject ID": line_items[1],
+                    "Sample ID": line_items[2],
+                    "Factors": {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in
+                                line_items[3].split("|")}
+                })
+                if line_items[4]:
+                    subject_sample_factors_dict["Additional sample data"] = {
+                        factor_item.split("=")[0].strip(): factor_item.split("=")[1].strip() for factor_item in line_items[4].split(";")
+                    }
+                yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
 
             # data start header
             elif line.endswith("_START"):

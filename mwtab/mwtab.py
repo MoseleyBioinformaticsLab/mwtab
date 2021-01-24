@@ -22,7 +22,6 @@ from collections import OrderedDict
 import io
 import sys
 import json
-
 from .tokenizer import tokenizer
 
 
@@ -185,7 +184,10 @@ class MWTabFile(OrderedDict):
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
                 if type(section) != list:
                     section = list()
-                section.append(OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))}))
+                # sample_dict = OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))})
+                # if not sample_dict.get("Additional sample data"):
+                #     del sample_dict["Additional sample data"]
+                section.append(token.value)
 
             elif token.key.endswith("_START"):
                 data = []
