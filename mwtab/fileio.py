@@ -50,14 +50,15 @@ def _generate_filenames(sources):
     """
     for source in sources:
         if os.path.isdir(source):
-            for path, dirlist, filelist in os.walk(source):
+            for path, _, filelist in os.walk(source):
                 for fname in filelist:
-                    if GenericFilePath.is_compressed(fname):
-                        if VERBOSE:
-                            print("Skipping compressed file: {}".format(os.path.abspath(fname)))
-                        continue
-                    else:
-                        yield os.path.join(path, fname)
+                    if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json", ".zip", ".gz", ".bz2"}:
+                        if GenericFilePath.is_compressed(fname):
+                            if VERBOSE:
+                                print("Skipping compressed file: {}".format(os.path.abspath(fname)))
+                            continue
+                        else:
+                            yield os.path.join(path, fname)
 
         elif os.path.isfile(source):
             yield source
