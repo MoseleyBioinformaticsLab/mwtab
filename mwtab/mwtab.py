@@ -285,7 +285,12 @@ class MWTabFile(OrderedDict):
                         for k2 in item[k]:
                             additional_sample_data.append("{}={}".format(k2, item[k][k2]))
                         formatted_items.append(";".join(additional_sample_data))
-                print("{}{}\t{}".format(section_key, 33 * " ", "\t".join(formatted_items)), file=f)
+                line = "{}{}\t{}".format(section_key, 33 * " ", "\t".join(formatted_items))
+                # for file missing "Additional sample data" items
+                if len(formatted_items) < 4:
+                    line += "\t"
+                else:
+                    print(line, file=f)
 
     def print_block(self, section_key, f=sys.stdout, file_format="mwtab"):
         """Print `mwtab` section into a file or stdout.
@@ -407,9 +412,9 @@ class MWTabFile(OrderedDict):
         :rtype: :py:class:`str` or :py:obj:`False`
         """
         if isinstance(string, str):
-            lines = string.split("\n")
+            lines = string.replace("\r", "\n").split("\n")
         elif isinstance(string, bytes):
-            lines = string.decode("utf-8").split("\n")
+            lines = string.decode("utf-8").replace("\r", "\n").split("\n")
         else:
             raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
 

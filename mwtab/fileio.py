@@ -44,7 +44,8 @@ VERBOSE = False
 def _generate_filenames(sources):
     """Generate filenames.
 
-    :param tuple sources: Sequence of strings representing path to file(s).
+    :param sources: Sequence of strings representing path to file(s).
+    :type sources: :py:class:`tuple`
     :return: Path to file(s).
     :rtype: :py:class:`str`
     """
@@ -52,7 +53,7 @@ def _generate_filenames(sources):
         if os.path.isdir(source):
             for path, _, filelist in os.walk(source):
                 for fname in filelist:
-                    if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json", ".zip", ".gz", ".bz2"}:
+                    if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json"}:
                         if GenericFilePath.is_compressed(fname):
                             if VERBOSE:
                                 print("Skipping compressed file: {}".format(os.path.abspath(fname)))
@@ -105,9 +106,7 @@ def read_files(*sources, **kwds):
 
             if kwds.get('validate'):
                 validator.validate_file(mwtabfile=f,
-                                        section_schema_mapping=mwschema.section_schema_mapping,
-                                        validate_samples=True,
-                                        validate_factors=True)
+                                        section_schema_mapping=mwschema.section_schema_mapping)
 
             if VERBOSE:
                 print("Processed file: {}".format(os.path.abspath(source)))
@@ -149,7 +148,8 @@ class GenericFilePath(object):
     def __init__(self, path):
         """Initialize path.
 
-        :param str path: String representing a path to local file(s) or valid URL address of file(s).
+        :param path: String representing a path to local file(s) or valid URL address of file(s).
+        :type path: :py:class:`str`
         """
         self.path = path
 
@@ -214,7 +214,8 @@ class GenericFilePath(object):
     def is_compressed(path):
         """Test if path represents compressed file(s).
 
-        :param str path: Path to file(s).
+        :param path: Path to file(s).
+        :type path: :py:class:`str`
         :return: String specifying compression type if compressed, "" otherwise.
         :rtype: :py:class:`str`
         """
@@ -236,7 +237,8 @@ class GenericFilePath(object):
     def is_url(path):
         """Test if path represents a valid URL.
 
-        :param str path: Path to file.
+        :param path: Path to file.
+        :type path: :py:class:`str`
         :return: True if path is valid url string, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
         """
