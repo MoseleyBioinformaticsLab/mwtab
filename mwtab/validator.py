@@ -92,11 +92,11 @@ def validate_subject_samples_factors(mwtabfile):
             errors.append("SUBJECT_SAMPLE_FACTORS: Entry #{} missing Subject ID.".format(index+1))
         if not subject_sample_factor["Sample ID"]:
             errors.append("SUBJECT_SAMPLE_FACTORS: Entry #{} missing Sample ID.".format(index+1))
-        if subject_sample_factor["Factors"]:
+        if subject_sample_factor.get("Factors"):
             for factor_key in subject_sample_factor["Factors"]:
                 if not subject_sample_factor["Factors"][factor_key]:
                     errors.append("SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key))
-        if subject_sample_factor["Additional sample data"]:
+        if subject_sample_factor.get("Additional sample data"):
             for additional_key in subject_sample_factor["Additional sample data"]:
                 if not subject_sample_factor["Additional sample data"][additional_key]:
                     errors.append("SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Additional sample data {}.".format(index + 1, additional_key))

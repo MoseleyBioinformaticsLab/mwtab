@@ -98,6 +98,8 @@ def get_file_path(dir_path, filename, extension):
     """
     # check to see if given directory path is not None
     dir_path = dir_path if dir_path else getcwd()
+    if path.splitext(dir_path)[1]:
+        return dir_path
     extension = extension if extension else "txt"
     return join(dir_path, ".".join([quote_plus(filename).replace(".", "_"), extension]))
 
