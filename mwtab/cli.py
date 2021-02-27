@@ -71,8 +71,7 @@ def check_filepath(filepath):
     """
     Method for validating that a given path directory exits. If not, the directory is created.
 
-    :param filepath: File path string.
-    :type filepath: :py:class:`str`
+    :param str filepath: File path string.
     :return: None
     :rtype: :py:obj:`None`
     """
@@ -88,13 +87,12 @@ def get_file_path(dir_path, filename, extension):
     command argument if not none or creates a default file path from the given filename and the current working
     directory.
 
-    :param dir_path:
+    :param dir_path: Path to directory file is to be saved in.
     :type dir_path: :py:class:`str` or :py:class:`None`
-    :param filename:
-    :type filename: :py:class:`str`
-    :param extension:
-    :type extension: :py:class:`str`
-    :return:
+    :param str filename: Filename processed file is to be saved as.
+    :param str extension: File extension.
+    :return: Complete file path.
+    :rtype: :py:class:`str`
     """
     # check to see if given directory path is not None
     dir_path = dir_path if dir_path else getcwd()
@@ -109,10 +107,8 @@ def download(context, cmdparams):
     Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
     Retrieved data is then saved out as specified.
 
-    :param context: String indicating the type of data to be accessed from the Metabolomics Workbench.
-    :type context: :py:class:`str`
-    :param cmdparams: Commandline arguments specifying data to be accessed from Metabolomics Workbench.
-    :type cmdparams: :py:class:`dict`
+    :param str context: String indicating the type of data ("context") to be accessed from the Metabolomics Workbench.
+    :param dict cmdparams: Commandline arguments specifying data to be accessed from Metabolomics Workbench.
     :return: None
     :rtype: :py:obj:`None`
     """

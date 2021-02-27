@@ -44,8 +44,7 @@ VERBOSE = False
 def _generate_filenames(sources):
     """Generate filenames.
 
-    :param sources: Sequence of strings representing path to file(s).
-    :type sources: :py:class:`tuple`
+    :param tuple sources: Sequence of strings representing path to file(s).
     :return: Path to file(s).
     :rtype: :py:class:`str`
     """
@@ -148,8 +147,7 @@ class GenericFilePath(object):
     def __init__(self, path):
         """Initialize path.
 
-        :param path: String representing a path to local file(s) or valid URL address of file(s).
-        :type path: :py:class:`str`
+        :param str path: String representing a path to local file(s) or valid URL address of file(s).
         """
         self.path = path
 
@@ -214,8 +212,7 @@ class GenericFilePath(object):
     def is_compressed(path):
         """Test if path represents compressed file(s).
 
-        :param path: Path to file(s).
-        :type path: :py:class:`str`
+        :param str path: Path to file(s).
         :return: String specifying compression type if compressed, "" otherwise.
         :rtype: :py:class:`str`
         """
@@ -237,8 +234,7 @@ class GenericFilePath(object):
     def is_url(path):
         """Test if path represents a valid URL.
 
-        :param path: Path to file.
-        :type path: :py:class:`str`
+        :param str path: Path to file.
         :return: True if path is valid url string, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
         """

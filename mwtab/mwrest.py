@@ -401,6 +401,8 @@ class GenericMWURL(object):
         """Validate keyword arguments for input item where an id is used (ie. study, compound, refmet, gene, and
         protein). If invalid, raises value error.
 
+        :param str input_item: String representing the input item from the input specification.
+        :param str input_value: String representing the input vlaue from the input specification.
         :return: None
         :rtype: :py:obj:`None`
         """

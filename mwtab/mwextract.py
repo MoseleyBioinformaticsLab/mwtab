@@ -97,16 +97,15 @@ def generate_matchers(items):
 def extract_metabolites(sources, matchers):
     """Extract metabolite data from ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
 
-    :param generator sources:
-    :param generator matchers:
+    :param generator sources: Generator of mwtab file objects (:class:`~mwtab.mwtab.MWTabFile`).
+    :param generator matchers: Generator of matcher objects (:class:`~mwtab.mwextract.ItemMatcher` or
+    :class:`~mwtab.mwextract.ReGeXMatcher`).
     :return: Extracted metabolites dictionary.
     :rtype: :py:class:`dict`
     """
     metabolites = dict()
     for mwtabfile in sources:
         if all(matcher(mwtabfile) for matcher in matchers):
-            print(mwtabfile.analysis_id)
-            # for metabolite in mwtabfile["METABOLITES"]["METABOLITES_START"]["DATA"]:
             data_section_key = list(set(mwtabfile.keys()) & {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})[0]
             for data_list in mwtabfile[data_section_key]["Data"]:
                 for test_key in (key for key in data_list.keys() if key != "Metabolite"):
@@ -121,8 +120,9 @@ def extract_metabolites(sources, matchers):
 def extract_metadata(mwtabfile, keys):
     """Extract metadata data from ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
 
-    :param generator mwtabfile:
-    :param list keys:
+    :param mwtabfile: mwTab file object for metadata to be extracted from.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :param list keys: List of metadata field keys for metadata values to be extracted.
     :return: Extracted metadata dictionary.
     :rtype: :py:class:`dict`
     """

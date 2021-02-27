@@ -235,9 +235,9 @@ class MWTabFile(OrderedDict):
     def print_file(self, f=sys.stdout, file_format="mwtab"):
         """Print :class:`~mwtab.mwtab.MWTabFile` into a file or stdout.
 
-        :param io.StringIO f: writable file-like stream.
+        :param f: writable file-like stream.
+        :type f: :py:class:`io.StringIO`
         :param str file_format: Format to use: `mwtab` or `json`.
-        :param f: Print to file or stdout.
         :return: None
         :rtype: :py:obj:`None`
         """
@@ -264,7 +264,8 @@ class MWTabFile(OrderedDict):
         """Print `mwtab` `SUBJECT_SAMPLE_FACTORS` section into a file or stdout.
 
         :param str section_key: Section name.
-        :param io.StringIO f: writable file-like stream.
+        :param f: writable file-like stream.
+        :type f: :py:class:`io.StringIO`
         :param str file_format: Format to use: `mwtab` or `json`.
         :return: None
         :rtype: :py:obj:`None`
@@ -296,7 +297,8 @@ class MWTabFile(OrderedDict):
         """Print `mwtab` section into a file or stdout.
 
         :param str section_key: Section name.
-        :param io.StringIO f: writable file-like stream.
+        :param f: writable file-like stream.
+        :type f: :py:class:`io.StringIO`
         :param str file_format: Format to use: `mwtab` or `json`.
         :return: None
         :rtype: :py:obj:`None`
