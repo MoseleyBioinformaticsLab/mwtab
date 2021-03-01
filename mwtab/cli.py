@@ -68,8 +68,7 @@ VERBOSE=False
 
 
 def check_filepath(filepath):
-    """
-    Method for validating that a given path directory exits. If not, the directory is created.
+    """Method for validating that a given path directory exits. If not, the directory is created.
 
     :param str filepath: File path string.
     :return: None
@@ -82,8 +81,7 @@ def check_filepath(filepath):
 
 
 def get_file_path(dir_path, filename, extension):
-    """
-    Helper method for validating that the commandline arguments "--to-path" or _ are not "None". Returns the given
+    """Helper method for validating that the commandline arguments "--to-path" or _ are not "None". Returns the given
     command argument if not none or creates a default file path from the given filename and the current working
     directory.
 
@@ -103,8 +101,7 @@ def get_file_path(dir_path, filename, extension):
 
 
 def download(context, cmdparams):
-    """
-    Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
+    """Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
     Retrieved data is then saved out as specified.
 
     :param str context: String indicating the type of data ("context") to be accessed from the Metabolomics Workbench.
@@ -138,6 +135,10 @@ def download(context, cmdparams):
 
 
 def cli(cmdargs):
+    """Implements the command line interface.
+
+    param dict cmdargs: dictionary of command line arguments.
+    """
 
     VERBOSE = cmdargs["--verbose"]
     fileio.VERBOSE = cmdargs["--verbose"]

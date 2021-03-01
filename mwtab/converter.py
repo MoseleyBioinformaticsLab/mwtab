@@ -142,11 +142,12 @@ class MWTabFileToMWTabFile(Translator):
                       "mwtab": ".txt"}
 
     def __init__(self, from_path, to_path, from_format=None, to_format=None, validate=False):
-        """StarFileToStarFile translator initializer.
+        """MWTabFileToMWTabFile translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
+        :param bool validate: whether to validate or not.
         """
         super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format, validate)
 
@@ -164,8 +165,11 @@ class Converter(object):
 
     def __init__(self, from_path, to_path, from_format="mwtab", to_format="json", validate=False):
         """Converter initializer.
-        :param file_generator:
-        :type file_generator: :class:`mwtab.converter.Translator`
+        :param str from_path: Path to input file(s).
+        :param str to_path: Path to output file(s).
+        :param str from_format: Input format: `mwtab` or `json`.
+        :param str to_format: Output format: `mwtab` or `json`.
+        :param bool validate: whether to validate or not.
         """
         self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format, validate)
 

@@ -85,6 +85,7 @@ def validate_subject_samples_factors(mwtabfile, error_stream):
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
                      :py:class:`collections.OrderedDict`
+    :param error_stream: IO stream to print errors to.
     """
     for index, subject_sample_factor in enumerate(mwtabfile["SUBJECT_SAMPLE_FACTORS"]):
         if not subject_sample_factor["Subject ID"]:
@@ -117,6 +118,8 @@ def validate_data(mwtabfile, data_section_key, error_stream, null_values):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param error_stream: IO stream to print errors to.
+    :param bool null_values: whether null values are present.
     """
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
 
@@ -141,6 +144,7 @@ def validate_metabolites(mwtabfile, data_section_key, error_stream):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param error_stream: IO stream to print errors to.
     """
     for index, metabolite in enumerate(mwtabfile[data_section_key]["Metabolites"]):
         for field_key in list(metabolite.keys())[1:]:
@@ -160,6 +164,7 @@ def validate_extended(mwtabfile, data_section_key, error_stream):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param error_stream: IO stream to print errors to.
     """
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
@@ -185,6 +190,7 @@ def validate_section_schema(section, schema, section_key, error_stream):
     :param schema: Schema definition.
     :type schema: :py:class:`~schema.schema`
     :param str section_key: Section key.
+    :param error_stream: IO stream to print errors to.
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
@@ -204,6 +210,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
                      :py:class:`collections.OrderedDict`
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+    :param bool verbose: whether to be verbose or not.
+    :param bool metabolites: whether to validate metabolites section.
     :return: Validated file.
     :rtype: :py:class:`collections.OrderedDict`
     """
