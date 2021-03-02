@@ -145,8 +145,6 @@ def cli(cmdargs):
     fileio.MWREST = cmdargs["--mw-rest"]
     mwrest.VERBOSE = cmdargs["--verbose"]
 
-    print("mwtab {}".format(__version__))
-
     # mwtab convert ...
     if cmdargs["convert"]:
         converter = Converter(from_path=cmdargs["<from-path>"],
