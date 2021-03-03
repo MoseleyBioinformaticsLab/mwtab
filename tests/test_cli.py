@@ -129,33 +129,34 @@ def test_download_command(command):
         fh.close()
     assert file_str
 
-# @pytest.mark.parametrize("from_path, to_path, key, to_format, no_header", [
-#     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", " --no-header"),
-#     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", ""),
-#     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", "")
-# ])
-# def test_extract_metadata_command(from_path, to_path, key, to_format, no_header):
-#     command = "python -m mwtab extract metadata {} {} {} --to-format={}{}".format(
-#         from_path, to_path, key, to_format, no_header
-#     )
-#     assert os.system(command) == 0
-#
-#     with open(".".join([to_path, to_format]), "r") as f:
-#         if to_format == "csv":
-#             data = list(csv.reader(f))
-#             if bool(no_header):
-#                 assert set(data[0]) == {"SUBJECT_TYPE", "Human", "Plant"}
-#             else:
-#                 assert set(data[0]) == {"metadata", "value0", "value1"}
-#                 assert set(data[1]) == {"SUBJECT_TYPE", "Human", "Plant"}
-#         elif to_format == "json":
-#             data = json.load(f)
-#             data["SUBJECT_TYPE"] = set(data["SUBJECT_TYPE"])
-#             assert data == {"SUBJECT_TYPE": {"Human", "Plant"}}
-#         else:
-#             assert False
-#
-#
+
+@pytest.mark.parametrize("from_path, to_path, key, to_format, no_header", [
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", " --no-header"),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", ""),
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", "")
+])
+def test_extract_metadata_command(from_path, to_path, key, to_format, no_header):
+    command = "python -m mwtab extract metadata {} {} {} --to-format={}{}".format(
+        from_path, to_path, key, to_format, no_header
+    )
+    assert os.system(command) == 0
+
+    with open(".".join([to_path, to_format]), "r") as f:
+        if to_format == "csv":
+            data = list(csv.reader(f))
+            if bool(no_header):
+                assert set(data[0]) == {"SUBJECT_TYPE", "Human"}
+            else:
+                assert set(data[0]) == {"metadata", "value0"}
+                assert set(data[1]) == {"SUBJECT_TYPE", "Human"}
+        elif to_format == "json":
+            data = json.load(f)
+            data["SUBJECT_TYPE"] = set(data["SUBJECT_TYPE"])
+            assert data == {"SUBJECT_TYPE": {"Human"}}
+        else:
+            assert False
+
+
 # @pytest.mark.parametrize("from_path, to_path, key, value, to_format, no_header", [
 #     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", " --no-header"),
 #     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "Plant", "csv", ""),
