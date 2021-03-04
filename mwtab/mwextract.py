@@ -109,11 +109,14 @@ def extract_metabolites(sources, matchers):
             data_section_key = list(set(mwtabfile.keys()) & {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})[0]
             for data_list in mwtabfile[data_section_key]["Data"]:
                 for test_key in (key for key in data_list.keys() if key != "Metabolite"):
-                    if float(data_list[test_key]) > 0:
-                        metabolites.setdefault(data_list["Metabolite"], dict())\
-                            .setdefault(mwtabfile.study_id, dict())\
-                            .setdefault(mwtabfile.analysis_id, set())\
-                            .add(test_key)
+                    try:
+                        if float(data_list[test_key]) > 0:
+                            metabolites.setdefault(data_list["Metabolite"], dict())\
+                                .setdefault(mwtabfile.study_id, dict())\
+                                .setdefault(mwtabfile.analysis_id, set())\
+                                .add(test_key)
+                    except Exception as e:
+                        pass
     return metabolites
 
 
