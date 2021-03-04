@@ -36,7 +36,7 @@ Options:
                                     compound, refmet, gene, protein, moverz, exactmass [default: study].
     --input-item=<item>             Item to search Metabolomics Workbench with.
     --output-item=<item>            Item to be retrieved from Metabolomics Workbench.
-    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json [default: json]
+    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json.
     --no-header                     Include header at the top of csv formatted files.
 
     For extraction <to-path> can take a "-" which will use stdout.
@@ -63,8 +63,9 @@ OUTPUT_FORMATS = {
     "txt": "txt",
     "mwtab": "txt",
     "json": "json",
+    None: None
 }
-VERBOSE=False
+VERBOSE = False
 
 
 def check_filepath(filepath):
@@ -169,7 +170,7 @@ def cli(cmdargs):
             with open(get_file_path(
                     cmdargs["--to-path"],
                     mwrestfile.source,
-                    OUTPUT_FORMATS[cmdargs["--output-format"]]),
+                    OUTPUT_FORMATS[cmdargs.get("--output-format")]),
                 "w",
                 encoding="utf-8"
             ) as fh:
