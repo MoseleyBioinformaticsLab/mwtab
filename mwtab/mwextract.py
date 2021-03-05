@@ -36,7 +36,8 @@ class ItemMatcher(object):
         """ItemMatcher initializer.
 
         :param str full_key: Key to match in :class:`~mwtab.mwtab.MWTabFile`.
-        :param str value_comparison: Value to match in :class:`~mwtab.mwtab.MWTabFile`.
+        :param value_comparison: Value to match in :class:`~mwtab.mwtab.MWTabFile`.
+        :type value_comparison: :class:`re.Pattern` or :py:class:`str`
         """
         self.full_key = full_key
         self.section, self.key = self.full_key.split(":")
@@ -63,8 +64,9 @@ class ReGeXMatcher(ItemMatcher):
         """ItemMatcher initializer.
 
         :param str full_key: Key to match in :class:`~mwtab.mwtab.MWTabFile`.
-        :param str value_comparison: Value, in the form of a regular expression, to match in
+        :param value_comparison: Value, in the form of a regular expression, to match in
         :class:`~mwtab.mwtab.MWTabFile`.
+        :type value_comparison: :class:`re.Pattern`
         """
         super(ReGeXMatcher, self).__init__(full_key, value_comparison)
 
@@ -76,7 +78,7 @@ class ReGeXMatcher(ItemMatcher):
         :return: True if key and value are present, False otherwise.
         :rtype: :py:obj:`True` or :py:obj:`False`
         """
-        return re.search(r"{}".format(self.value_comparison), mwtabfile[self.section][self.key])
+        return re.search(self.value_comparison, mwtabfile[self.section][self.key])
 
 
 def generate_matchers(items):
@@ -88,8 +90,9 @@ def generate_matchers(items):
     :rtype: :class:`~mwtab.mwtab.ItemMatcher` or :class:`~mwtab.mwtab.ReGeXMatcher`
     """
     for item in items:
-        if item[1][:2] == "r\'":
-            yield ReGeXMatcher(item[0], item[1].replace("r\'", "")[:-1])
+        if type(item[1]) == re.Pattern:
+            yield ReGeXMatcher(item[0], item[1])
+
         else:
             yield ItemMatcher(item[0], item[1])
 

@@ -36,6 +36,16 @@ The mwtab API Reference
 .. autofunction:: validate_file
 
 
+.. automodule:: mwtab.mwrest
+   :member-order: bysource
+   :members:
+
+
+.. automodule:: mwtab.mwextract
+   :member-order: bysource
+   :members:
+
+
 .. automodule:: mwtab.mwschema
 
 .. autodata:: metabolomics_workbench_schema

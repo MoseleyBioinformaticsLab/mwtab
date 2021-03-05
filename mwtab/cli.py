@@ -290,10 +290,11 @@ def cli(cmdargs):
         if cmdargs["metabolites"]:
             metabolites_dict = mwextract.extract_metabolites(
                 mwfile_generator,
-                mwextract.generate_matchers([(
-                    cmdargs["<key>"][i],
-                    cmdargs["<value>"][i])
-                    for i in range(len(cmdargs["<key>"]))])
+                mwextract.generate_matchers(
+                    [(cmdargs["<key>"][i],
+                      cmdargs["<value>"][i] if not cmdargs["<value>"][i][:2] == "r'" else re.compile(cmdargs["<value>"][i][2:-1]))
+                     for i in range(len(cmdargs["<key>"]))]
+                )
             )
 
             if cmdargs["<to-path>"] != "-":
