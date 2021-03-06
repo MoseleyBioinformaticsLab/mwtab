@@ -7,7 +7,11 @@ from . import cli
 from . import __version__
 
 
-if __name__ == "__main__":
+def main():
 
     args = docopt.docopt(cli.__doc__, version=__version__)
     cli.cli(args)
+
+
+if __name__ == "__main__":
+    main()

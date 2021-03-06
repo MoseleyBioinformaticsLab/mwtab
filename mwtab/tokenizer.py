@@ -16,87 +16,101 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 """
 
 from __future__ import print_function, division, unicode_literals
-from collections import deque
-from collections import namedtuple
+from collections import deque, namedtuple, OrderedDict
 
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
-SubjectSampleFactors = namedtuple("SubjectSampleFactors", ["key", "subject_type", "local_sample_id", "factors", "additional_sample_data"])
-KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extrakey", "extravalue"])
+KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
 def tokenizer(text):
     """A lexical analyzer for the `mwtab` formatted files.
 
-    :param str text: `mwtab` formatted text.
+    :param text: `mwTab` formatted text.
+    :type text: py:class:`str`
     :return: Tuples of data.
     :rtype: py:class:`~collections.namedtuple`
     """
-
     stream = deque(text.split("\n"))
 
     while len(stream) > 0:
         line = stream.popleft()
+        try:
 
-        if line.startswith("#METABOLOMICS WORKBENCH"):
-            yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
-            yield KeyValue("HEADER", line)
+            # header
+            if line.startswith("#METABOLOMICS WORKBENCH"):
+                yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
+                for identifier in line.split(" "):
+                    if ":" in identifier:
+                        key, value = identifier.split(":")
+                        yield KeyValue(key, value)
 
-            for identifier in line.split(" "):
-                if ":" in identifier:
-                    key, value = identifier.split(":")
-                    yield KeyValue(key, value)
+            # SUBJECT_SAMPLE_FACTORS header (reached new section)
+            elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
+                yield KeyValue("#ENDSECTION", "\n")
+                yield KeyValue("#SUBJECT_SAMPLE_FACTORS", "\n")
 
-        elif line.startswith("#ANALYSIS TYPE"):
-            yield KeyValue("HEADER", line)
+            # section header (reached new section)
+            elif line.startswith("#"):
+                yield KeyValue("#ENDSECTION", "\n")
+                yield KeyValue(line.strip(), "\n")
 
-        elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
-            yield KeyValue("#ENDSECTION", "\n")
-            yield KeyValue("#SUBJECT_SAMPLE_FACTORS", "\n")
+            # SUBJECT_SAMPLE_FACTORS line
+            elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
+                line_items = line.split("\t")
+                subject_sample_factors_dict = OrderedDict({
+                    "Subject ID": line_items[1],
+                    "Sample ID": line_items[2],
+                    "Factors": {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in
+                                line_items[3].split("|")}
+                })
+                if line_items[4]:
+                    subject_sample_factors_dict["Additional sample data"] = {
+                        factor_item.split("=")[0].strip(): factor_item.split("=")[1].strip() for factor_item in line_items[4].split(";")
+                    }
+                yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
 
-        elif line.startswith("#"):
-            yield KeyValue("#ENDSECTION", "\n")
-            yield KeyValue(line.strip(), "\n")
+            # data start header
+            elif line.endswith("_START"):
+                yield KeyValue(line, "\n")
 
-        elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
-            key, subject_type, local_sample_id, factors, additional_sample_data = line.split("\t")
-            # factors = [dict([[i.strip() for i in f.split(":")]]) for f in factors.split("|")]
-            yield SubjectSampleFactors(key.strip(), subject_type, local_sample_id, factors, additional_sample_data)
+                # tokenize lines in data section till line ending with "_END" is reached
+                while not line.endswith("_END"):
+                    line = stream.popleft()
+                    if line.endswith("_END"):
+                        yield KeyValue(line.strip(), "\n")
+                    else:
+                        data = line.split("\t")
+                        yield KeyValue(data[0], tuple(data))
 
-        elif line.endswith("_START"):
-            yield KeyValue(line, "\n")
-
-            while not line.endswith("_END"):
-                line = stream.popleft()
-                if line.endswith("_END"):
-                    yield KeyValue(line.strip(), "\n")
+            # item line in item section (e.g. PROJECT, SUBJECT, etc..)
+            elif line:
+                if "_RESULTS_FILE" in line:
+                    line_items = line.split("\t")
+                    # if len(line_items) > 2:
+                    #     extra_items = list()
+                    #     for extra_item in line_items[2:]:
+                    #         k, v = extra_item.split(":")
+                    #         extra_items.append(tuple([k.strip(), v.strip()]))
+                    #     yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
+                    # else:
+                    #     yield KeyValue(line_items[0].strip()[3:], line_items[1])
+                    yield KeyValue(line_items[0].strip()[3:], " ".join(line_items[1:]))
                 else:
-                    data = line.split("\t")
-                    yield KeyValue(data[0], tuple(data))
-
-        else:
-            if line:
-                if line.startswith("MS:MS_RESULTS_FILE") or line.startswith("NM:NMR_RESULTS_FILE"):
-                    try:
-                        key, value, extra = line.split("\t")
-                        extra_key, extra_value = extra.strip().split(":")
-                        yield KeyValueExtra(key.strip()[3:], value, extra_key, extra_value)
-                    except ValueError:
-                        key, value = line.split("\t")
-                        yield KeyValue(key.strip()[3:], value)
-                else:
-                    try:
-                        key, value = line.split("\t")
-                        if ":" in key:
-                            if key.startswith("MS_METABOLITE_DATA:UNITS"):
-                                yield KeyValue(key.strip(), value)
-                            else:
-                                yield KeyValue(key.strip()[3:], value)
+                    key, value = line.split("\t")
+                    if ":" in key:
+                        if ":UNITS" in key:
+                            yield KeyValue("Units", value)
                         else:
-                            yield KeyValue(key.strip(), value)
-                    except ValueError:
-                        print("LINE WITH ERROR:\n\t", repr(line))
-                        raise
+                            yield KeyValue(key.strip()[3:], value)
+                    else:
+                        yield KeyValue(key.strip(), value)
 
+        except IndexError as e:
+            raise IndexError("LINE WITH ERROR:\n\t", repr(line), e)
+        except ValueError as e:
+            raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
+
+    # end of file
     yield KeyValue("#ENDSECTION", "\n")
     yield KeyValue("!#ENDFILE", "\n")  # This is to ensure that tokenizer terminates when #END is missing.
