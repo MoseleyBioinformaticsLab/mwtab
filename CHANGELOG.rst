@@ -3,38 +3,41 @@
 Release History
 ===============
 
-0.1.11 (2020-02-xx)
+1.0.1 (2021-03-06)
 ~~~~~~~~~~~~~~~~~~~
 
 **Improvements**
 
-- Added ``mwrest.py`` module for working with Metabolomics Workbench's REST API.
+- Updated ``~mwtab.mwtab.MWTabFile`` to match Metabolomics Workbench JSON
+  format.
 
-    - Added methods in ``test_mwrest.py`` to test module methods.
-- Updated ``validator.py``.
-
-    - Validator now collects all present errors.
-    - Validates consistency of metabolite features between `#METABOLITES` and
-      `#MS_METABOLITE_DATA` blocks.
-    - Validates data in `#MS_METABOLITE_DATA` and `#NMR_BINNED_DATA` blocks.
-
-        - Ensure data does not contain non-numeric or negative values.
-
-**Bugfixes**
+    - Internal dictionary representation now matches Metabolomics Workbench
+      JSON format.
+    - ``~mwtab.mwtab.MWTabFile.write()`` and
+      ``~mwtab.mwtab.MWTabFile.write_str()`` methods now produce files
+      consistent with Metabolomics Workbench's JSON format.
 
 - Updated ``mwschema.py`` to be consistent with Metabolomics Workbench's
   updated `mwTab` format specification.
 
-     - Adds `PROJECT_ID` as optional schema field in `#METABOLOMICS WORKBENCH` block.
-     - Changes `METABOLITES` block schema to all for user specified fields.
-- Updated ``validator.py`` to be consistent Metabolomics Workbench's
-  updated `mwTab` format specification.
+- Added ``mwrest.py`` module for working with Metabolomics Workbench's REST API.
 
-     - Now accepts `samples` and `factors` in a files `#MS_METABOLITE_DATA` and
-       `#NMR_BINNED_DATA` blocks to be subsets of `sample` and `factors`
-       listed in the file's `#SAMPLE_FACTORS` block.
-- Fixed bug preventing files with multiple additional key value pairs in
-  `_RESULTS_FILE` lines.
+    - Allows for additional data file to be requested through Metabolomics
+      Workbench's REST API.
+
+- Added ``mwextract.py`` module for extracting metadata and metabolites from
+  `mwTab` formatted files.
+
+- Updated ``validator.py``.
+
+    - Validator now collects all present errors.
+    - Performs detection of common field names in `#METABOLITES` blocks.
+
+- Updated ``docs/tutorial.ipynb`` to document improved and updated package
+  functionality.
+
+- Updated `mwtab` package to include Python 3.8 support.
+
 
 0.1.10 (2019-02-18)
 ~~~~~~~~~~~~~~~~~~~
