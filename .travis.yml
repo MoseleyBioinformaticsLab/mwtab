@@ -1,17 +1,42 @@
 language: python
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
   - pip install codecov
   - pip install pytest-cov
 # command to run tests
-script:
-  - python -m pytest -v --cov=./mwtab
+jobs:
+  include:
+    - stage: test
+      dist: bionic
+      python: "2.7"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: xenial
+      python: "3.4"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: xenial
+      python: "3.5"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: bionic
+      python: "3.6"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: bionic
+      python: "3.7"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: bionic
+      python: "3.8"
+      script:
+        - python -m pytest -v --cov=./mwtab
 #generate code coverage report
 after_success:
   - codecov
