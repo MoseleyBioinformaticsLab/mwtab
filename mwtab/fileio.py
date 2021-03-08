@@ -22,10 +22,12 @@ import zipfile
 import tarfile
 import bz2
 import gzip
+from re import match
 
 from . import mwtab
 from . import validator
 from . import mwschema
+from . import mwrest
 
 
 if sys.version_info.major == 3:
@@ -37,7 +39,6 @@ else:
 
 
 VERBOSE = False
-MWREST = "https://www.metabolomicsworkbench.org/rest/study/analysis_id/{}/mwtab/txt"
 
 
 def _generate_filenames(sources):
@@ -49,22 +50,25 @@ def _generate_filenames(sources):
     """
     for source in sources:
         if os.path.isdir(source):
-            for path, dirlist, filelist in os.walk(source):
+            for path, _, filelist in os.walk(source):
                 for fname in filelist:
-                    if GenericFilePath.is_compressed(fname):
-                        if VERBOSE:
-                            print("Skipping compressed file: {}".format(os.path.abspath(fname)))
-                        continue
-                    else:
-                        yield os.path.join(path, fname)
+                    if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json"}:
+                        if GenericFilePath.is_compressed(fname):
+                            if VERBOSE:
+                                print("Skipping compressed file: {}".format(os.path.abspath(fname)))
+                            continue
+                        else:
+                            yield os.path.join(path, fname)
 
         elif os.path.isfile(source):
             yield source
 
         elif source.isdigit():
-            analysis_id = "AN{}".format(source.zfill(6))
-            url = MWREST.format(analysis_id)
-            yield url
+            yield next(mwrest.generate_mwtab_urls([source]))
+
+        # TODO: Add ST parsing
+        elif match(r"(AN[0-9]{6}$)", source):
+            yield next(mwrest.generate_mwtab_urls([source]))
 
         elif GenericFilePath.is_url(source):
             yield source
@@ -101,17 +105,39 @@ def read_files(*sources, **kwds):
 
             if kwds.get('validate'):
                 validator.validate_file(mwtabfile=f,
-                                        section_schema_mapping=mwschema.section_schema_mapping,
-                                        validate_samples=True,
-                                        validate_factors=True)
-            yield f
+                                        section_schema_mapping=mwschema.section_schema_mapping)
 
             if VERBOSE:
                 print("Processed file: {}".format(os.path.abspath(source)))
 
+            yield f
+
         except Exception as e:
             if VERBOSE:
                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
+            raise e
+
+
+def read_mwrest(*sources, **kwds):
+    """Construct a generator that yields file instances.
+
+    :param sources: One or more strings representing path to file(s).
+    """
+    filenames = _generate_filenames(sources)
+    filehandles = _generate_handles(filenames)
+    for fh, source in filehandles:
+        try:
+            f = mwrest.MWRESTFile(source)
+            f.read(fh)
+
+            if VERBOSE:
+                print("Processed url: {}".format(source))
+
+            yield f
+
+        except Exception as e:
+            if VERBOSE:
+                print("Error processing url: ", source, "\nReason:", e)
             pass
 
 
@@ -139,7 +165,7 @@ class GenericFilePath(object):
             if is_url:
                 filehandle = urlopen(self.path)
             else:
-                filehandle = open(self.path, "r")
+                filehandle = open(self.path, "r", encoding="utf-8")
             source = self.path
             yield filehandle, source
             filehandle.close()

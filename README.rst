@@ -139,34 +139,6 @@ Quickstart
           library and as a command-line tool.
 
 
-File Formatting Issues
-~~~~~~~~~~~~~~~~~~~~~~
-
-Currently there are 5 files that are failing to parse due to formatting issues
-within them:
-
-   * ST000258_AN000410.txt
-
-      - extra tab character on line 360 ('MS_ALL_DATA:UNITS   \t\t')
-
-   * ST000365_AN000598.txt
-
-      - ST:EMAIL line is broken on line 53, 54 ('ST:EMAIL            \n@unc.edu')
-      - extra tab on line 155 ('NMR_BINNED_DATA:UNITS\tppm\t')
-
-   * ST000445_AN000696.txt
-
-      - extra tab character on line 135 ('CH:CHROMATOGRAPHY_SUMMARY     \t\tThe gradient composition was changed linearly from 50% to 100% solvent B')
-
-   * ST000901_AN001467.txt
-
-      - extra tab character on lines 61-78  ('SP:SAMPLEPREP_SUMMARY            \tPreparation of SPE on vacuum manifold: 1.\tClean 60 mg Oasis HLB (Waters) spe ...')
-
-   * ST000902_AN001468.txt
-
-      - Header line is broken into two lines on lines 1-2 ('#METABOLOMICS WORKBENCH hover_20170726_173354 DATATRACK_ID:1171\n STUDY_ID:ST000902 ANALYSIS_ID:AN001468')
-
-
 License
 ~~~~~~~
 

@@ -1,7 +1,43 @@
 .. :changelog:
 
 Release History
-=============== 
+===============
+
+1.0.1 (2021-03-06)
+~~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Updated ``~mwtab.mwtab.MWTabFile`` to match Metabolomics Workbench JSON
+  format.
+
+    - Internal dictionary representation now matches Metabolomics Workbench
+      JSON format.
+    - ``~mwtab.mwtab.MWTabFile.write()`` and
+      ``~mwtab.mwtab.MWTabFile.write_str()`` methods now produce files
+      consistent with Metabolomics Workbench's JSON format.
+
+- Updated ``mwschema.py`` to be consistent with Metabolomics Workbench's
+  updated `mwTab` format specification.
+
+- Added ``mwrest.py`` module for working with Metabolomics Workbench's REST API.
+
+    - Allows for additional data file to be requested through Metabolomics
+      Workbench's REST API.
+
+- Added ``mwextract.py`` module for extracting metadata and metabolites from
+  `mwTab` formatted files.
+
+- Updated ``validator.py``.
+
+    - Validator now collects all present errors.
+    - Performs detection of common field names in `#METABOLITES` blocks.
+
+- Updated ``docs/tutorial.ipynb`` to document improved and updated package
+  functionality.
+
+- Updated `mwtab` package to include Python 3.8 support.
+
 
 0.1.10 (2019-02-18)
 ~~~~~~~~~~~~~~~~~~~

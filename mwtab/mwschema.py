@@ -23,6 +23,7 @@ metabolomics_workbench_schema = Schema(
         "CREATED_ON": str,
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
+        Optional("PROJECT_ID"): str,
         Optional("HEADER"): str,
         Optional("DATATRACK_ID"): str
     }
@@ -67,34 +68,8 @@ study_schema = Schema(
         Optional("NUM_MALES"): str,
         Optional("NUM_FEMALES"): str,
         Optional("STUDY_COMMENTS"): str,
-        Optional("PUBLICATIONS"): str,
-        Optional("SUBMIT_DATE"): str
-    }
-)
-
-analysis_schema = Schema(
-    {
-        "ANALYSIS_TYPE": str,
-        Optional("NUM_FACTORS"): str,
-        Optional("ACQUISITION_TIME"): str,
-        Optional("PROCESSING_PARAMETERS_FILE"): str,
-        Optional("ANALYSIS_DISPLAY"): str,
-        Optional("ANALYSIS_COMMENTS"): str,
-        Optional("LABORATORY_NAME"): str,
-        Optional("DETECTOR_TYPE"): str,
-        Optional("SOFTWARE_VERSION"): str,
-        Optional("OPERATOR_NAME"): str,
-        Optional("INSTRUMENT_NAME"): str,
-        Optional("ACQUISITION_DATE"): str,
-        Optional("DATA_FORMAT"): str,
-        Optional("NUM_METABOLITES"): str,
-        Optional("ACQUISITION_ID"): str,
-        Optional("RAW_FILE"): str,
-        Optional("PROCESSED_FILE"): str,
-        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
-        Optional("ACQUISITION_PARAMETERS_FILE"): str,
-        Optional("ANALYSIS_PROTOCOL_FILE"): str,
-        Optional("RANDOMIZATION_ORDER"): str
+        Optional("PUBLICATIONS"): str,  # assumed
+        Optional("SUBMIT_DATE"): str  # assumed
     }
 )
 
@@ -136,16 +111,17 @@ subject_schema = Schema(
 )
 
 subject_sample_factors_schema = Schema(
-    {
-        "SUBJECT_SAMPLE_FACTORS": [
-            {
-                "subject_type": str,
-                "local_sample_id": str,
-                "factors": str,
-                "additional_sample_data": str
+    [
+        {
+            "Subject ID": str,
+            "Sample ID": str,
+            "Factors": dict,
+            Optional("Additional sample data"): {
+                Optional("RAW_FILE_NAME"): str,
+                Optional(str): str
             }
-        ]
-    }
+        }
+    ]
 )
 
 collection_schema = Schema(
@@ -154,7 +130,7 @@ collection_schema = Schema(
         Optional("COLLECTION_PROTOCOL_ID"): str,
         Optional("COLLECTION_PROTOCOL_FILENAME"): str,
         Optional("COLLECTION_PROTOCOL_COMMENTS"): str,
-        Optional("SAMPLE_TYPE"): str,
+        Optional("SAMPLE_TYPE"): str,  # assumed optional due to large number of files without
         Optional("COLLECTION_METHOD"): str,
         Optional("COLLECTION_LOCATION"): str,
         Optional("COLLECTION_FREQUENCY"): str,
@@ -170,7 +146,6 @@ collection_schema = Schema(
         Optional("TISSUE_CELL_IDENTIFICATION"): str,
         Optional("TISSUE_CELL_QUANTITY_TAKEN"): str
     }
-
 )
 
 treatment_schema = Schema(
@@ -289,13 +264,42 @@ chromatography_schema = Schema(
         Optional("CHROMATOGRAPHY_COMMENTS"): str
     }
 )
+
+analysis_schema = Schema(
+    {
+        "ANALYSIS_TYPE": str,
+        Optional("LABORATORY_NAME"): str,
+        Optional("OPERATOR_NAME"): str,
+        Optional("DETECTOR_TYPE"): str,
+        Optional("SOFTWARE_VERSION"): str,
+        Optional("ACQUISITION_DATE"): str,
+        Optional("ANALYSIS_PROTOCOL_FILE"): str,
+        Optional("ACQUISITION_PARAMETERS_FILE"): str,
+        Optional("PROCESSING_PARAMETERS_FILE"): str,
+        Optional("DATA_FORMAT"): str,
+
+        # not specified in mwTab specification (assumed)
+        Optional("ACQUISITION_ID"): str,
+        Optional("ACQUISITION_TIME"): str,
+        Optional("ANALYSIS_COMMENTS"): str,
+        Optional("ANALYSIS_DISPLAY"): str,
+        Optional("INSTRUMENT_NAME"): str,
+        Optional("INSTRUMENT_PARAMETERS_FILE"): str,
+        Optional("NUM_FACTORS"): str,
+        Optional("NUM_METABOLITES"): str,
+        Optional("PROCESSED_FILE"): str,
+        Optional("RANDOMIZATION_ORDER"): str,
+        Optional("RAW_FILE"): str,
+    }
+)
+
 ms_schema = Schema(
     {
         "INSTRUMENT_NAME": str,
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        Optional("MS_COMMENTS"): str,
+        "MS_COMMENTS": str,  # changed to required
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
@@ -387,45 +391,38 @@ nmr_schema = Schema(
     }
 )
 
-metabolites_schema = Schema(
-    {
-        "METABOLITES_START":
-            {
-                "Fields": list,
-                "DATA": [
-                    {
-                        "metabolite_name": str,
-                        Optional("moverz_quant"): str,
-                        Optional("ri"): str,
-                        Optional("ri_type"): str,
-                        Optional("pubchem_id"): str,
-                        Optional("inchi_key"): str,
-                        Optional("kegg_id"): str,
-                        Optional("other_id"): str,
-                        Optional("other_id_type"): str
-                    }
-                ]
-            }
-    }
+data_schema = Schema(
+    [
+        {
+            Or("Metabolite", "Bin range(ppm)", only_one=True): str,
+            Optional(str): str,
+        },
+    ]
+)
+
+extended_schema = Schema(
+    [
+        {
+            "Metabolite": str,
+            Optional(str): str,
+            "sample_id": str
+        },
+    ]
 )
 
 ms_metabolite_data_schema = Schema(
     {
-        "MS_METABOLITE_DATA:UNITS": str,
-        "MS_METABOLITE_DATA_START": {
-            "Samples": list,
-            "Factors": list,
-            "DATA": list
-        }
+        "Units": str,
+        "Data": data_schema,
+        "Metabolites": data_schema,
+        Optional("Extended"): extended_schema
     }
 )
 
 nmr_binned_data_schema = Schema(
     {
-        "NMR_BINNED_DATA_START": {
-            "Fields": list,
-            "DATA": list
-        }
+        "Units": str,
+        "Data": data_schema
     }
 )
 
@@ -441,8 +438,8 @@ section_schema_mapping = {
     "SAMPLEPREP": sampleprep_schema,
     "CHROMATOGRAPHY": chromatography_schema,
     "MS": ms_schema,
-    "NMR": nmr_schema,
-    "METABOLITES": metabolites_schema,
+    "NM": nmr_schema,
     "MS_METABOLITE_DATA": ms_metabolite_data_schema,
-    "NMR_BINNED_DATA": nmr_binned_data_schema
+    "NMR_METABOLITE_DATA": ms_metabolite_data_schema,
+    "NMR_BINNED_DATA": nmr_binned_data_schema,
 }
