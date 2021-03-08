@@ -64,3 +64,4 @@ setup(
     ],
     entry_points={"console_scripts": ["mwtab = mwtab.__main__:main"]},
 )
+
