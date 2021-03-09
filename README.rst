@@ -78,7 +78,7 @@ Links
 Installation
 ~~~~~~~~~~~~
 
-The ``mwtab`` package runs under Python 2.7 and Python 3.4+. Use pip_ to install.
+The ``mwtab`` package runs under Python 3.4+. Use pip_ to install.
 Starting with Python 3.4, pip_ is included by default.
 
 
