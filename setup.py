@@ -63,5 +63,9 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     entry_points={"console_scripts": ["mwtab = mwtab.__main__:main"]},
+<<<<<<< HEAD
 )
 
+=======
+)
+>>>>>>> 9a4d809d8d544dddf91d4a17231b8734bd42e52d
