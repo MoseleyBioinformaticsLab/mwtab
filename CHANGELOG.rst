@@ -3,6 +3,20 @@
 Release History
 ===============
 
+
+1.1.0 (2021-03-08)
+~~~~~~~~~~~~~~~~~~~
+
+**Bugfixes**
+
+- Removes Python 2.7 testing/support and adds Python 3.9 testing/support.
+
+    - Removes Python 2.7 Travis CI job in .travis.yml config file.
+    - Removes Python 2.7 support listing in setup.py (for PyPI).
+    - Adds Python 3.9 Travis CI job in .travis.yml config file.
+    - Adds Python 3.9 support listing in setup.py (for PyPI).
+
+
 1.0.1 (2021-03-06)
 ~~~~~~~~~~~~~~~~~~~
 

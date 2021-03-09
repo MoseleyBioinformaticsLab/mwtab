@@ -58,9 +58,9 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     entry_points={"console_scripts": ["mwtab = mwtab.__main__:main"]},
 )
-

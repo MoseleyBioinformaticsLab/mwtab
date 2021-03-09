@@ -49,7 +49,7 @@ from .validator import validate_file
 from .mwrest import GenericMWURL
 
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 
 try:  # Python 2/3 compatibility code
