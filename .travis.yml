@@ -8,11 +8,6 @@ install:
 jobs:
   include:
     - stage: test
-      dist: bionic
-      python: "2.7"
-      script:
-        - python -m pytest -v --cov=./mwtab
-    - stage: test
       dist: xenial
       python: "3.4"
       script:
