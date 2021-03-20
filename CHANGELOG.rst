@@ -4,6 +4,21 @@ Release History
 ===============
 
 
+1.1.1 (2021-03-20)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Adds new citation to README.rst and PUBLICATIONS.rst.
+
+**Bugfixes**
+
+- Removes some unneeded Python 2.7 compatibility code.
+- Fixes issue where "--verbose" parameter cannot be passed to validate function from commandline interface.
+- Changes error messages from validating `MS_METABOLITE_DATA` and `NMR_METABOLITE_DATA`.
+- Cleans up ``docs/`` files.
+
+
 1.1.0 (2021-03-08)
 ~~~~~~~~~~~~~~~~~~~
 

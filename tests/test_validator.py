@@ -30,11 +30,11 @@ def test_validate_subject_sample_factors(file_source):
     "tests/example_data/validation_files/ST000122_AN000204_error_2.txt",
     "tests/example_data/validation_files/ST000122_AN000204_error_2.txt"
 ])
-def test_validate_subject_sample_factors(file_source):
+def test_validate_data_section(file_source):
     mwfile = next(mwtab.read_files(file_source))
     _, validation_errors = mwtab.validate_file(mwfile, metabolites=False)
 
-    assert "Sample IDs not matching those in SUBJECT_SAMPLE_FACTORS section" in validation_errors
+    assert "\" missing data entry for" in validation_errors
 
 
 @pytest.mark.parametrize("file_source", [

@@ -123,9 +123,9 @@ def validate_data(mwtabfile, data_section_key, error_stream, null_values):
     """
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
 
-    for index, metabolite in enumerate(mwtabfile[data_section_key]["Data"]):
+    for metabolite in mwtabfile[data_section_key]["Data"]:
         if set(list(metabolite.keys())[1:]) != sample_id_set:
-            print("{}: Data entry #{} contains Sample IDs not matching those in SUBJECT_SAMPLE_FACTORS section.".format(data_section_key, index + 1), file=error_stream)
+            print("{}: Metabolite/Bin Range \"{}\" missing data entry for {} samples".format(data_section_key, metabolite[list(metabolite.keys())[0]], len(sample_id_set.symmetric_difference(set(list(metabolite.keys())[1:])))), file=error_stream)
         if null_values:
             for data_point_key in metabolite.keys():
                 if data_point_key != "Metabolite":
@@ -133,7 +133,7 @@ def validate_data(mwtabfile, data_section_key, error_stream, null_values):
                         float(metabolite[data_point_key])
                     except ValueError as e:
                         metabolite[data_point_key] = ""
-                        print("{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1), file=error_stream)
+                        print("{}: Metabolite/Bin Range \"{}\" contains non-numeric value converted to \"\".".format(data_section_key, metabolite[list(metabolite.keys())[0]]), file=error_stream)
 
 
 def validate_metabolites(mwtabfile, data_section_key, error_stream):
