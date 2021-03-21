@@ -138,7 +138,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'mwtab.tex', 'mwtab Documentation',
-     'Christian D. Powell', 'Andrey Smelter, Hunter N.B. Moseley', 'manual'),
+     'Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley', 'manual'),
 ]
 
 
