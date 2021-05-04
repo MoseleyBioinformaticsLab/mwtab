@@ -4,6 +4,22 @@ Release History
 ===============
 
 
+1.1.2 (2021-05-04)
+~~~~~~~~~~~~
+
+**Bugfixes**
+
+- Updates  `~mwtab.mwrest.pull_study_analysis()` function.
+
+    - Changes function from being protected method to public method (ie. `~mwtab.mwrest._pull_study_analysis()` ->
+      `~mwtab.mwrest.pull_study_analysis()`.
+    - Adds default to `base_url` parameter (ie. `base_url="https://www.metabolomicsworkbench.org/rest/"`).
+
+- Updates citation link Shield IO badge to direct to latest publication in MDPI metabolites:
+  https://doi.org/10.3390/metabo11030163.
+- Cleans up `~mwtab.validator.validate_file()` method for ReadTheDocs documentation.
+
+
 1.1.1 (2021-03-20)
 ~~~~~~~~~~~~~~~~~~
 

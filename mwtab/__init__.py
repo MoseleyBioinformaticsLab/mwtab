@@ -49,7 +49,7 @@ from .validator import validate_file
 from .mwrest import GenericMWURL
 
 
-__version__ = "1.1.2"
+__version__ = "1.1.2.post1"
 
 
 # Setting default logging handler
