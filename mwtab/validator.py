@@ -13,7 +13,7 @@ required key-value pairs are present.
 
 from copy import deepcopy
 from collections import OrderedDict
-from .mwschema import section_schema_mapping
+from .mwschema import section_schema_mapping as SSM
 from re import match
 import io
 import sys
@@ -203,7 +203,7 @@ def validate_section_schema(section, schema, section_key, error_stream):
     return schema.validate(section)
 
 
-def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verbose=False, metabolites=True):
+def validate_file(mwtabfile, section_schema_mapping=None, verbose=False, metabolites=True):
     """Validate ``mwTab`` formatted file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -216,6 +216,9 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     :rtype: :py:class:`collections.OrderedDict`
     """
     # setup
+    if not section_schema_mapping:
+        section_schema_mapping = SSM
+
     if not verbose:
         error_stout = io.StringIO()
     else:

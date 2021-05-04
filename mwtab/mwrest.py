@@ -28,7 +28,7 @@ def analysis_ids(base_url=BASE_URL):
     :return: List of every available Metabolomics Workbench analysis identifier.
     :rtype: :py:class:`list`
     """
-    st_an_dict = _pull_study_analysis(base_url)
+    st_an_dict = pull_study_analysis(base_url)
     analyses = list()
     [analyses.extend(st_an_dict[k]) for k in st_an_dict.keys()]
 
@@ -46,7 +46,7 @@ def study_ids(base_url=BASE_URL):
     :return: List of every available Metabolomics Workbench study identifier.
     :rtype: :py:class:`list`
     """
-    st_an_dict = _pull_study_analysis(base_url)
+    st_an_dict = pull_study_analysis(base_url)
     studies = list(st_an_dict.keys())
 
     if VERBOSE:
@@ -55,7 +55,7 @@ def study_ids(base_url=BASE_URL):
     return studies
 
 
-def _pull_study_analysis(base_url):
+def pull_study_analysis(base_url=BASE_URL):
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
     API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is
