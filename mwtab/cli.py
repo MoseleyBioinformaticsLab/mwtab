@@ -158,8 +158,11 @@ def cli(cmdargs):
     # mwtab validate ...
     elif cmdargs["validate"]:
         for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
-            validate_file(mwtabfile=mwfile,
-                          section_schema_mapping=section_schema_mapping)
+            validate_file(
+                mwtabfile=mwfile,
+                section_schema_mapping=section_schema_mapping,
+                verbose=cmdargs.get("--verbose")
+            )
 
     # mwtab download ...
     elif cmdargs["download"]:

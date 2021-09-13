@@ -55,7 +55,7 @@ def study_ids(base_url=BASE_URL):
     return studies
 
 
-def _pull_study_analysis(base_url):
+def _pull_study_analysis(base_url=BASE_URL):
     """
     Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench's REST
     API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is

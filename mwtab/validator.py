@@ -13,12 +13,11 @@ required key-value pairs are present.
 
 from copy import deepcopy
 from collections import OrderedDict
+from datetime import datetime
 from .mwschema import section_schema_mapping
 from re import match
 import io
 import sys
-import logging
-import warnings
 
 
 VERBOSE = False
@@ -78,39 +77,53 @@ ITEM_SECTIONS = {
     "NM",
 }
 
+VALIDATION_LOG_HEADER = \
+"""Validation Log
+{}
+mwtab Python Library Version: {}
+Source:        {}
+Study ID:      {}
+Analysis ID:   {}
+File format:   {}"""
 
-def validate_subject_samples_factors(mwtabfile, error_stream):
+
+def validate_subject_samples_factors(mwtabfile):
     """Validate ``SUBJECT_SAMPLE_FACTORS`` section.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
                      :py:class:`collections.OrderedDict`
-    :param error_stream: IO stream to print errors to.
     """
+    subject_samples_factors_errors = list()
+
     for index, subject_sample_factor in enumerate(mwtabfile["SUBJECT_SAMPLE_FACTORS"]):
         if not subject_sample_factor["Subject ID"]:
-            print("SUBJECT_SAMPLE_FACTORS: Entry #{} missing Subject ID.".format(index+1), file=error_stream)
+            subject_samples_factors_errors.append(
+                "SUBJECT_SAMPLE_FACTORS: Entry #{} missing Subject ID.".format(index+1)
+            )
         if not subject_sample_factor["Sample ID"]:
-            print("SUBJECT_SAMPLE_FACTORS: Entry #{} missing Sample ID.".format(index + 1), file=error_stream)
+            subject_samples_factors_errors.append(
+                "SUBJECT_SAMPLE_FACTORS: Entry #{} missing Sample ID.".format(index + 1)
+            )
         if subject_sample_factor.get("Factors"):
             for factor_key in subject_sample_factor["Factors"]:
                 if not subject_sample_factor["Factors"][factor_key]:
-                    print(
-                        "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key),
-                        file=error_stream
+                    subject_samples_factors_errors.append(
+                        "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key)
                     )
         if subject_sample_factor.get("Additional sample data"):
             for additional_key in subject_sample_factor["Additional sample data"]:
                 if not subject_sample_factor["Additional sample data"][additional_key]:
-                    print(
+                    subject_samples_factors_errors.append(
                         "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Additional sample data {}.".format(
                             index + 1, additional_key
-                        ),
-                        file=error_stream
+                        )
                     )
 
+    return subject_samples_factors_errors
 
-def validate_data(mwtabfile, data_section_key, error_stream, null_values):
+
+def validate_data(mwtabfile, data_section_key, null_values):
     """Validates ``MS_METABOLITE_DATA``, ``NMR_METABOLITE_DATA``, and ``NMR_BINNED_DATA`` sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -118,14 +131,35 @@ def validate_data(mwtabfile, data_section_key, error_stream, null_values):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
-    :param error_stream: IO stream to print errors to.
     :param bool null_values: whether null values are present.
     """
-    sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
+    data_errors = list()
+
+    subject_sample_factors_sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
+    data_sample_id_set = set(list(mwtabfile[data_section_key]["Data"][0].keys())[1:])
+
+    if subject_sample_factors_sample_id_set - data_sample_id_set:
+        data_errors.append("{}: Section missing data entry for sample(s): {}.".format(
+            data_section_key,
+            subject_sample_factors_sample_id_set - data_sample_id_set
+        ))
+    if data_sample_id_set - subject_sample_factors_sample_id_set:
+        data_errors.append("SUBJECT_SAMPLE_FACTORS: Section missing sample ID(s) {} found in {} section.".format(
+            data_sample_id_set - subject_sample_factors_sample_id_set,
+            data_section_key
+        ))
 
     for index, metabolite in enumerate(mwtabfile[data_section_key]["Data"]):
-        if set(list(metabolite.keys())[1:]) != sample_id_set:
-            print("{}: Data entry #{} contains Sample IDs not matching those in SUBJECT_SAMPLE_FACTORS section.".format(data_section_key, index + 1), file=error_stream)
+        # if set(list(metabolite.keys())[1:]) != subject_sample_factors_sample_id_set:
+        #     print(len(subject_sample_factors_sample_id_set), len(metabolite) - 1)
+        #     print(
+        #         "{}: Metabolite \"{}\" missing data entry for {} samples".format(
+        #             data_section_key,
+        #             metabolite[list(metabolite.keys())[0]],
+        #             len(subject_sample_factors_sample_id_set - set(list(metabolite.keys())[1:]))
+        #         ),
+        #         file=error_stream
+        #     )
         if null_values:
             for data_point_key in metabolite.keys():
                 if data_point_key != "Metabolite":
@@ -133,10 +167,13 @@ def validate_data(mwtabfile, data_section_key, error_stream, null_values):
                         float(metabolite[data_point_key])
                     except ValueError as e:
                         metabolite[data_point_key] = ""
-                        print("{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1), file=error_stream)
+                        data_errors.append(
+                            "{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1))
+
+    return data_errors
 
 
-def validate_metabolites(mwtabfile, data_section_key, error_stream):
+def validate_metabolites(mwtabfile, data_section_key):
     """Validate ``METABOLITES`` section.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -144,19 +181,22 @@ def validate_metabolites(mwtabfile, data_section_key, error_stream):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
-    :param error_stream: IO stream to print errors to.
     """
+    metabolites_errors = list()
+
     for index, metabolite in enumerate(mwtabfile[data_section_key]["Metabolites"]):
         for field_key in list(metabolite.keys())[1:]:
             if not any(k == field_key for k in METABOLITES_REGEXS.keys()):
                 for regex_key in METABOLITES_REGEXS.keys():
                     if any(match(p, field_key) for p in METABOLITES_REGEXS[regex_key]):
-                        print("METABOLITES: Data entry #{} contains field name \"{}\" which matches a commonly used field name \"{}\".".format(index + 1, field_key, regex_key), file=error_stream)
+                        metabolites_errors.append("METABOLITES: Data entry #{} contains field name \"{}\" which matches a commonly used field name \"{}\".".format(index + 1, field_key, regex_key))
                         field_key = regex_key
                         break
 
+    return metabolites_errors
 
-def validate_extended(mwtabfile, data_section_key, error_stream):
+
+def validate_extended(mwtabfile, data_section_key):
     """Validate ``EXTENDED_MS_METABOLITE_DATA``, ``EXTENDED_NMR_METABOLITE_DATA``, and ``EXTENDED_NMR_BINNED_DATA`` sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -164,25 +204,25 @@ def validate_extended(mwtabfile, data_section_key, error_stream):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
-    :param error_stream: IO stream to print errors to.
     """
+    extended_errors = list()
+
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
 
     for index, extended_data in enumerate(mwtabfile[data_section_key]["Extended"]):
         if "sample_id" not in extended_data.keys():
-            print("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1),
-                  file=error_stream)
+            extended_errors.append("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1))
         elif not extended_data["sample_id"] in sample_id_set:
-            print(
+            extended_errors.append(
                 "EXTENDED_{}: Data entry #{} contains Sample ID \"{}\" not found in SUBJECT_SAMPLE_FACTORS section.".format(
                     data_section_key, index + 1, extended_data["sample_id"]
-                ),
-                file=error_stream
-            )
+                ))
+
+    return extended_errors
 
 
-def validate_section_schema(section, schema, section_key, error_stream):
+def validate_section_schema(section, schema, section_key):
     """Validate section of ``mwTab`` formatted file.
 
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
@@ -190,17 +230,19 @@ def validate_section_schema(section, schema, section_key, error_stream):
     :param schema: Schema definition.
     :type schema: :py:class:`~schema.schema`
     :param str section_key: Section key.
-    :param error_stream: IO stream to print errors to.
+
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
+    schema_errors = list()
+
     if section_key in ITEM_SECTIONS:
         for key in section.keys():
             if not section[key]:
-                print("{}: Contains item \"{}\" with null value.".format(section_key, key), file=error_stream)
+                schema_errors.append("{}: Contains item \"{}\" with null value.".format(section_key, key))
                 del section[key]
 
-    return schema.validate(section)
+    return schema.validate(section), schema_errors
 
 
 def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verbose=False, metabolites=True):
@@ -222,41 +264,70 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         error_stout = sys.stdout
     validated_mwtabfile = deepcopy(OrderedDict(mwtabfile))
 
+    # generate validation log header(s)
+    file_format = mwtabfile.source.split("/")[-1] if "https://www.metabolomicsworkbench.org/" in mwtabfile.source else \
+        mwtabfile.source.split(".")[1]
+    print(VALIDATION_LOG_HEADER.format(
+        str(datetime.now()),
+        "1.2.1",
+        mwtabfile.source,
+        mwtabfile.study_id,
+        mwtabfile.analysis_id,
+        file_format
+    ), file=error_stout)
+
+    # create list to collect validation errors
+    errors = list()
+
     # validate PROJECT, STUDY, ANALYSIS... and Schemas
     for section_key, section in mwtabfile.items():
         try:
             schema = section_schema_mapping[section_key]
-            section = validate_section_schema(section, schema, section_key, error_stout)
+            # section = validate_section_schema(section, schema, section_key, error_stout)
+            section, schema_errors = validate_section_schema(section, schema, section_key)
+            errors.extend(schema_errors)
             validated_mwtabfile[section_key] = section
         except Exception as e:
-            print("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e), file=error_stout)
+            errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
 
     # validate SUBJECT_SAMPLE_FACTORS
-    validate_subject_samples_factors(validated_mwtabfile, error_stout)
+    # validate_subject_samples_factors(validated_mwtabfile, error_stout)
+    errors.extend(validate_subject_samples_factors(validated_mwtabfile))
 
-    data_section_key = list(set(validated_mwtabfile.keys()) & {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})
+    # validate ..._DATA sections
+    data_section_key = list(set(validated_mwtabfile.keys()) &
+                            {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})
     if data_section_key:
         data_section_key = data_section_key[0]
-        validate_data(validated_mwtabfile, data_section_key, error_stout, False)
+        # validate_data(validated_mwtabfile, data_section_key, error_stout, False)
+        errors.extend(validate_data(validated_mwtabfile, data_section_key, False))
+
         if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
             # temp for testing
             if metabolites:
                 if "Metabolites" in validated_mwtabfile[data_section_key].keys():
-                    validate_metabolites(validated_mwtabfile, data_section_key, error_stout)
+                    errors.extend(validate_metabolites(validated_mwtabfile, data_section_key))
                 else:
-                    print("DATA: Missing METABOLITES section.", file=error_stout)
+                    errors.append("DATA: Missing METABOLITES section.")
         if "Extended" in validated_mwtabfile[data_section_key].keys():
-            validate_extended(validated_mwtabfile, data_section_key, error_stout)
+            errors.extend(validate_extended(validated_mwtabfile, data_section_key))
 
     else:
         if "MS" in validated_mwtabfile.keys():
             if not validated_mwtabfile["MS"].get("MS_RESULTS_FILE"):
-                print("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.", file=error_stout)
+                errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
         elif "NM":
-            print("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section.", file=error_stout)
+            errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section.")
 
-    errors = ""
-    if not verbose:
-        errors = error_stout.getvalue()
+    # finish writing validation/error log
+    if errors:
+        print("Status: Contains Validation Errors", file=error_stout)
+        print("Number Errors: {}\n".format(len(errors)), file=error_stout)
+        print("Error Log:\n" + "\n".join(errors), file=error_stout)
+    else:
+        print("Status: Passing", file=error_stout)
 
-    return validated_mwtabfile, errors
+    if verbose:
+        return validated_mwtabfile, None
+    else:
+        return validated_mwtabfile, error_stout.getvalue()
