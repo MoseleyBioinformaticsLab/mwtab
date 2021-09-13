@@ -3,8 +3,30 @@
 Release History
 ===============
 
+1.2.1 (2021-09-03)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Updates format of ``~mwtab.mwtab.validate_file()`` validation log generated during validation.
+
+    - Includes metadata header in validation logs containing; datetime, mwtab version, file source, study id, analysis
+      id, and file format.
+
+    - Minor changes to error messages for MS(NMR)_METABOLITE_DATA, NMR_BINNED_DATA, and SUBJECT_SAMPLE_FACTORS sections.
+
+**Bugfixes**
+
+- Fixes error where pytests for ``~mwtab.mwtab.validate_file()`` method were repeatedly using the same text files for
+validation rather than both the test text and JSON files.
+
+- Verbose file validation enabled in commandline.
+
+- Default value given to ``base_url`` parameter in ``~mwtab.mwatb._pull_study_analysis()`` methods.
+
+
 1.0.1 (2021-03-06)
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 **Improvements**
 
