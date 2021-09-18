@@ -42,7 +42,7 @@ Options:
     For extraction <to-path> can take a "-" which will use stdout.
 """
 
-from . import fileio, mwextract, mwrest, __version__
+from . import fileio, mwextract, mwrest
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import section_schema_mapping

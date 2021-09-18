@@ -57,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'mwtab'
-copyright = '2017, Andrey Smelter, Hunter N.B. Moseley'
-author = 'Andrey Smelter, Hunter N.B. Moseley'
+copyright = '2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley'
+author = 'Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -138,7 +138,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'mwtab.tex', 'mwtab Documentation',
-     'Andrey Smelter, Hunter N.B. Moseley', 'manual'),
+     'Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley', 'manual'),
 ]
 
 

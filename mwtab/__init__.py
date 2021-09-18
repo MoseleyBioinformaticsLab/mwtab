@@ -43,7 +43,7 @@ This package includes the following modules:
     used to request data from Metabolomics Workbench through their REST API.
 """
 
-import logging
+from logging import getLogger, NullHandler
 from .fileio import read_files, read_mwrest
 from .validator import validate_file
 from .mwrest import GenericMWURL
@@ -52,13 +52,5 @@ from .mwrest import GenericMWURL
 __version__ = "1.2.1"
 
 
-try:  # Python 2/3 compatibility code
-    from logging import NullHandler
-except ImportError:
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
-
-
 # Setting default logging handler
-logging.getLogger(__name__).addHandler(NullHandler())
+getLogger(__name__).addHandler(NullHandler())

@@ -25,8 +25,8 @@ mwtab
    :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
    :alt: Code coverage information
 
-.. image:: https://img.shields.io/badge/DOI-10.1007%2Fs11306--018--1356--6-blue.svg
-   :target: http://dx.doi.org/10.1007/s11306-018-1356-6
+.. image:: https://img.shields.io/badge/DOI-10.3390%2Fmetabo11030163-blue.svg
+   :target: https://doi.org/10.3390/metabo11030163
    :alt: Citation link
 
 .. image:: https://img.shields.io/github/stars/MoseleyBioinformaticsLab/mwtab.svg?style=social&label=Star
@@ -60,7 +60,12 @@ The ``mwtab`` package can be used in several ways:
 Citation
 ~~~~~~~~
 
-When using ``mwtab`` package in published work, please cite the following paper:
+When using ``mwtab`` package in published work, please cite the following papers:
+
+   * Powell, Christian D., and Hunter NB Moseley. "The mwtab Python Library for RESTful
+     Access and Enhanced Quality Control, Deposition, and Curation of the Metabolomics
+     Workbench Data Repository." *Metabolites* 11.3 (2021): 163. doi:
+     `10.3390/metabo11030163`_.
 
    * Smelter, Andrey and Hunter NB Moseley. "A Python library for FAIRer access and
      deposition to the Metabolomics Workbench Data Repository."
@@ -78,7 +83,7 @@ Links
 Installation
 ~~~~~~~~~~~~
 
-The ``mwtab`` package runs under Python 2.7 and Python 3.4+. Use pip_ to install.
+The ``mwtab`` package runs under Python 3.4+. Use pip_ to install.
 Starting with Python 3.4, pip_ is included by default.
 
 
@@ -151,4 +156,5 @@ This package is distributed under the BSD_ `license`.
 .. _PyPI: https://pypi.org/project/mwtab
 .. _pip: https://pip.pypa.io
 .. _BSD: https://choosealicense.com/licenses/bsd-3-clause-clear/
+.. _10.3390/metabo11030163: https://doi.org/10.3390/metabo11030163
 .. _10.1007/s11306-018-1356-6: http://dx.doi.org/10.1007/s11306-018-1356-6

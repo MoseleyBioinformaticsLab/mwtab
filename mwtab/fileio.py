@@ -17,7 +17,6 @@ from difference kinds of sources:
 
 import os
 import io
-import sys
 import zipfile
 import tarfile
 import bz2
@@ -29,13 +28,8 @@ from . import validator
 from . import mwschema
 from . import mwrest
 
-
-if sys.version_info.major == 3:
-    from urllib.request import urlopen
-    from urllib.parse import urlparse
-else:
-    from urllib2 import urlopen
-    from urlparse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 
 
 VERBOSE = False

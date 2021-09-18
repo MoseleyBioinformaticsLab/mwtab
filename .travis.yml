@@ -9,11 +9,6 @@ jobs:
   include:
     - stage: test
       dist: xenial
-      python: "3.4"
-      script:
-        - python -m pytest -v --cov=./mwtab
-    - stage: test
-      dist: xenial
       python: "3.5"
       script:
         - python -m pytest -v --cov=./mwtab
@@ -30,6 +25,11 @@ jobs:
     - stage: test
       dist: bionic
       python: "3.8"
+      script:
+        - python -m pytest -v --cov=./mwtab
+    - stage: test
+      dist: bionic
+      python: "3.9"
       script:
         - python -m pytest -v --cov=./mwtab
 #generate code coverage report
