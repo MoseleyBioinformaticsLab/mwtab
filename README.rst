@@ -17,13 +17,9 @@ mwtab
    :target: http://mwtab.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation status
 
-.. image:: https://api.travis-ci.org/MoseleyBioinformaticsLab/mwtab.svg?branch=master
-   :target: https://travis-ci.org/MoseleyBioinformaticsLab/mwtab
-   :alt: Travis CI status
-
-.. image:: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab/branch/master/graphs/badge.svg?branch=master
-   :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
-   :alt: Code coverage information
+.. image:: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml/badge.svg
+    :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
+    :alt: Build status
 
 .. image:: https://img.shields.io/badge/DOI-10.3390%2Fmetabo11030163-blue.svg
    :target: https://doi.org/10.3390/metabo11030163
