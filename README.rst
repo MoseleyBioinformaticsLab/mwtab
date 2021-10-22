@@ -18,16 +18,20 @@ mwtab
    :alt: Documentation status
 
 .. image:: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml/badge.svg
-    :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
-    :alt: Build status
+   :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
+   :alt: Build status
+
+.. image:: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab/branch/master/graph/badge.svg?token=jhjMsP1qma
+   :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
+   :alt: CodeCov
 
 .. image:: https://img.shields.io/badge/DOI-10.3390%2Fmetabo11030163-blue.svg
    :target: https://doi.org/10.3390/metabo11030163
    :alt: Citation link
 
 .. image:: https://img.shields.io/github/stars/MoseleyBioinformaticsLab/mwtab.svg?style=social&label=Star
-    :target: https://github.com/MoseleyBioinformaticsLab/mwtab
-    :alt: GitHub project
+   :target: https://github.com/MoseleyBioinformaticsLab/mwtab
+   :alt: GitHub project
 
 |
 

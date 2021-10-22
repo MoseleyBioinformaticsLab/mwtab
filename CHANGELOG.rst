@@ -1,6 +1,24 @@
 Release History
 ===============
 
+
+1.2.2 (2021-10-22)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Migrates Continuous Integration (CI) from Travis CI to GitHub Actions.
+
+    - Adds ``.github/workflows/`` folder which contains .yml files for workflows.
+
+        - Adds ``build.yml`` to folder for testing build with pytest.
+
+        - Adds ``codecov.yml`` to folder for generating/uploading code coverage info to codecov.io
+          (https://app.codecov.io/gh/MoseleyBioinformaticsLab/mwtab).
+
+    - Changes build and codecov badges to match new sources.
+
+
 1.2.1 (2021-09-03)
 ~~~~~~~~~~~~~~~~~~
 
