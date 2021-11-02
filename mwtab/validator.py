@@ -18,6 +18,7 @@ from .mwschema import section_schema_mapping
 from re import match
 import io
 import sys
+import mwtab
 
 
 VERBOSE = False
@@ -269,7 +270,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         mwtabfile.source.split(".")[1]
     print(VALIDATION_LOG_HEADER.format(
         str(datetime.now()),
-        "1.2.1",
+        mwtab.__version__,
         mwtabfile.source,
         mwtabfile.study_id,
         mwtabfile.analysis_id,

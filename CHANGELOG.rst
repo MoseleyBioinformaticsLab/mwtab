@@ -2,6 +2,16 @@ Release History
 ===============
 
 
+1.2.3 (2021-11-02)
+~~~~~~~~~~~~~~~~~~
+
+**Bugfixes**
+
+- Removes hard coding of version number in ``validator.validate_file()`` method.
+
+- Removes mention of Python 3.4 support in README.
+
+
 1.2.2 (2021-10-22)
 ~~~~~~~~~~~~~~~~~~
 
