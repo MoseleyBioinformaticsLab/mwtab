@@ -69,6 +69,10 @@ class MWTabFile(OrderedDict):
         :rtype: :py:obj:`None`
         """
         input_str = filehandle.read()
+
+        if not input_str:
+            raise ValueError("Blank input string retrieved from source.")
+
         mwtab_str = self._is_mwtab(input_str)
         json_str = self._is_json(input_str)
 

@@ -2,6 +2,14 @@ Release History
 ===============
 
 
+1.2.4 (2022-01-07)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Adds check for blank source files when parsing to create ``mwtab`` objects.
+
+
 1.2.3 (2021-11-02)
 ~~~~~~~~~~~~~~~~~~
 
