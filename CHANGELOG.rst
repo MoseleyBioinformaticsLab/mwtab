@@ -2,6 +2,22 @@ Release History
 ===============
 
 
+1.2.5 (2022-03-18)
+~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Updates ``mwschema.py`` and ``validator.py`` modules to match Metabolomics Workbench's mwTab File Format
+Specification Version 1.5 (March 2022).
+
+    - Adds optional NMR_RESULTS_FILE field to NMR block.
+
+    - Adds optional MS_COMMENTS field to MS block.
+
+    - Removes requirement for there to be data results for every sample listed in the Study Design
+(SUBJECT_SAMPLE_FACTORS). Allows for instances where samples have technical issues preventing data from being provided.
+
+
 1.2.4 (2022-01-07)
 ~~~~~~~~~~~~~~~~~~
 

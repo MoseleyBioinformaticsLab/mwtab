@@ -139,11 +139,12 @@ def validate_data(mwtabfile, data_section_key, null_values):
     subject_sample_factors_sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
     data_sample_id_set = set(list(mwtabfile[data_section_key]["Data"][0].keys())[1:])
 
-    if subject_sample_factors_sample_id_set - data_sample_id_set:
-        data_errors.append("{}: Section missing data entry for sample(s): {}.".format(
-            data_section_key,
-            subject_sample_factors_sample_id_set - data_sample_id_set
-        ))
+    # Removed for mwTab File Spec. 1.5
+    # if subject_sample_factors_sample_id_set - data_sample_id_set:
+    #     data_errors.append("{}: Section missing data entry for sample(s): {}.".format(
+    #         data_section_key,
+    #         subject_sample_factors_sample_id_set - data_sample_id_set
+    #     ))
     if data_sample_id_set - subject_sample_factors_sample_id_set:
         data_errors.append("SUBJECT_SAMPLE_FACTORS: Section missing sample ID(s) {} found in {} section.".format(
             data_sample_id_set - subject_sample_factors_sample_id_set,
@@ -317,8 +318,9 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         if "MS" in validated_mwtabfile.keys():
             if not validated_mwtabfile["MS"].get("MS_RESULTS_FILE"):
                 errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
-        elif "NM":
-            errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section.")
+        elif "NM" in validated_mwtabfile.keys():
+            if not validated_mwtabfile['NM'].get('NMR_RESULTS_FILE'):
+                errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section or NMR_RESULTS_FILE item in NM secction.")
 
     # finish writing validation/error log
     if errors:

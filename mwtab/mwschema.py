@@ -68,7 +68,7 @@ study_schema = Schema(
         Optional("NUM_MALES"): str,
         Optional("NUM_FEMALES"): str,
         Optional("STUDY_COMMENTS"): str,
-        Optional("PUBLICATIONS"): str,  # assumed
+        Optional("PUBLICATIONS"): str,
         Optional("SUBMIT_DATE"): str  # assumed
     }
 )
@@ -130,7 +130,7 @@ collection_schema = Schema(
         Optional("COLLECTION_PROTOCOL_ID"): str,
         Optional("COLLECTION_PROTOCOL_FILENAME"): str,
         Optional("COLLECTION_PROTOCOL_COMMENTS"): str,
-        Optional("SAMPLE_TYPE"): str,  # assumed optional due to large number of files without
+        Optional("SAMPLE_TYPE"): str,  # required as of mwTab file format specification 1.5
         Optional("COLLECTION_METHOD"): str,
         Optional("COLLECTION_LOCATION"): str,
         Optional("COLLECTION_FREQUENCY"): str,
@@ -299,7 +299,7 @@ ms_schema = Schema(
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        "MS_COMMENTS": str,  # changed to required
+        Optional("MS_COMMENTS"): str,  # changed to optional mwTab File Format Spec. 1.5
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
@@ -387,7 +387,8 @@ nmr_schema = Schema(
         Optional("BINNED_DATA_NORMALIZATION_METHOD"): str,
         Optional("BINNED_DATA_PROTOCOL_FILE"): str,
         Optional("BINNED_DATA_CHEMICAL_SHIFT_RANGE"): str,
-        Optional("BINNED_DATA_EXCLUDED_RANGE"): str
+        Optional("BINNED_DATA_EXCLUDED_RANGE"): str,
+        Optional("NMR_RESULTS_FILE"): Or(str, dict)  # add mwTab File Format Spec. 1.5
     }
 )
 
