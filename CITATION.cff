@@ -26,8 +26,6 @@ preferred-citation:
   doi: "10.3390/metabo11030163"
   journal: "Metabolites"
   month: 3
-  start: 1 # First page number
-  end: 16 # Last page number
   title: "The mwtab Python Library for RESTful Access and Enhanced Quality Control, Deposition, and Curation of the Metabolomics Workbench Data Repository"
   issue: 11
   volume: 3
