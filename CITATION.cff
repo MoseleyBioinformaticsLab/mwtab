@@ -1,0 +1,34 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Powell"
+  given-names: "Christian"
+  orcid: "https://orcid.org/0000-0002-4242-080X"
+- family-names: "Smelter"
+  given-names: "Andrey"
+  orcid: "https://orcid.org/0000-0003-3056-9225"
+- family-names: "Moseley"
+  given-names: "Hunter"
+  orcid: "https://orcid.org/0000-0003-3995-5368"
+title: "mwtab"
+version: 1.2.5
+date-released: 2017-03-18
+url: "https://github.com/MoseleyBioinformaticsLab/mwtab"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Powell"
+    given-names: "Christian"
+    orcid: "https://orcid.org/0000-0002-4242-080X"
+  - family-names: "Moseley"
+    given-names: "Hunter"
+    orcid: "https://orcid.org/0000-0003-3995-5368"
+  doi: "10.3390/metabo11030163"
+  journal: "Metabolites"
+  month: 3
+  start: 1 # First page number
+  end: 16 # Last page number
+  title: "The mwtab Python Library for RESTful Access and Enhanced Quality Control, Deposition, and Curation of the Metabolomics Workbench Data Repository"
+  issue: 11
+  volume: 3
+  year: 2021

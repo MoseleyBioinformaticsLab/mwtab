@@ -2,6 +2,16 @@ Release History
 ===============
 
 
+1.2.5.post1 (2022-05-11)
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Improvements**
+
+- Add citation information to GitHub repository.
+
+    - Adds CITATION.cff file with citation info.
+
+
 1.2.5 (2022-03-18)
 ~~~~~~~~~~~~~~~~~~
 
