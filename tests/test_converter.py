@@ -44,6 +44,7 @@ def compare_item_sections(dict1, dict2):
     assert not keys1 ^ keys2
 
     for key in keys1 & keys2:
+        print(key)
         assert dict1[key] == dict2[key]
 
 
@@ -58,14 +59,14 @@ def test_convert_mwtab_to_json(mwtab_file_path, json_file_path):
     mwfile = next(mwtab.read_files(mwtab_file_path))
     if not os.path.exists("tests/example_data/tmp/"):
         os.makedirs("tests/example_data/tmp/")
-    with open("tests/example_data/tmp/tmp.json", "w") as f:
+    with open("tests/example_data/tmp/tmp.json", "w", encoding="utf-8") as f:
         mwfile.write(f, file_format="json")
         f.close()
 
     # open files
-    with open("tests/example_data/tmp/tmp.json", "r") as f:
+    with open("tests/example_data/tmp/tmp.json", "r", encoding="utf-8") as f:
         mwtab_file = loads(f.read())
-    with open(json_file_path, "r") as f:
+    with open(json_file_path, "r", encoding="utf-8") as f:
         json_file = loads(f.read())
 
     # assert both files contain the same sections
@@ -73,6 +74,7 @@ def test_convert_mwtab_to_json(mwtab_file_path, json_file_path):
 
     # Assert item sections are equal
     for section_key in ITEM_SECTIONS:
+        print(section_key)
         if section_key in set(mwtab_file.keys()) & set(json_file.keys()):
             compare_item_sections(mwtab_file[section_key], json_file[section_key])
 

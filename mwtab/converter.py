@@ -242,7 +242,7 @@ class Converter(object):
             if not os.path.exists(os.path.dirname(outpath)):
                 os.makedirs(os.path.dirname(outpath))
 
-            with open(outpath, mode="w") as outfile:
+            with open(outpath, mode="w", encoding="utf-8") as outfile:
                 f.write(outfile, file_generator.to_format)
 
     def _to_zipfile(self, file_generator):
@@ -304,7 +304,7 @@ class Converter(object):
             if file_generator.to_path.endswith(file_generator.file_extension[file_generator.to_format]) \
             else file_generator.to_path + file_generator.file_extension[file_generator.to_format]
 
-        with open(to_path, mode="w") as outfile:
+        with open(to_path, mode="w", encoding="utf-8") as outfile:
             for f in file_generator:
                 outfile.write(f.writestr(file_generator.to_format))
 

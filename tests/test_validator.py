@@ -32,7 +32,7 @@ def test_validate_subject_sample_factors(file_source):
     "tests/example_data/validation_files/ST000122_AN000204_error_2.txt",
     "tests/example_data/validation_files/ST000122_AN000204_error_2.json"
 ])
-def test_validate_subject_sample_factors(file_source):
+def test_validate_subject_sample_factors2(file_source):
     mwfile = next(mwtab.read_files(file_source))
     _, validation_log = mwtab.validate_file(mwfile, metabolites=False)
     # assert "Section missing data entry for sample(s):" in validation_log
@@ -47,6 +47,8 @@ def test_validate_metabolites(file_source):
     mwfile = next(mwtab.read_files(file_source))
     _, validation_log = mwtab.validate_file(mwfile)
     assert "which matches a commonly used field name" in validation_log
+    assert 'DATA: Data entry #8, "Corticosterone_ DOC", is not in the Metabolites section.' in validation_log
+    assert 'METABOLITES: Data entry #8, "Corticosterone, DOC", is not in the Data section.' in validation_log
 
 
 @pytest.mark.parametrize("file_source", [

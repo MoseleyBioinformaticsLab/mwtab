@@ -124,7 +124,7 @@ def validate_subject_samples_factors(mwtabfile):
     return subject_samples_factors_errors
 
 
-def validate_data(mwtabfile, data_section_key, null_values):
+def validate_data(mwtabfile, data_section_key, null_values, metabolites):
     """Validates ``MS_METABOLITE_DATA``, ``NMR_METABOLITE_DATA``, and ``NMR_BINNED_DATA`` sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -133,11 +133,14 @@ def validate_data(mwtabfile, data_section_key, null_values):
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
     :param bool null_values: whether null values are present.
+    :param bool metabolites: whether to check that metabolites in the Data section are in the Metabolites section.
     """
     data_errors = list()
 
     subject_sample_factors_sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
     data_sample_id_set = set(list(mwtabfile[data_section_key]["Data"][0].keys())[1:])
+    if metabolites:
+        metabolites_in_metabolites_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
 
     # Removed for mwTab File Spec. 1.5
     # if subject_sample_factors_sample_id_set - data_sample_id_set:
@@ -151,7 +154,7 @@ def validate_data(mwtabfile, data_section_key, null_values):
             data_section_key
         ))
 
-    for index, metabolite in enumerate(mwtabfile[data_section_key]["Data"]):
+    for index, metabolite_dict in enumerate(mwtabfile[data_section_key]["Data"]):
         # if set(list(metabolite.keys())[1:]) != subject_sample_factors_sample_id_set:
         #     print(len(subject_sample_factors_sample_id_set), len(metabolite) - 1)
         #     print(
@@ -162,13 +165,21 @@ def validate_data(mwtabfile, data_section_key, null_values):
         #         ),
         #         file=error_stream
         #     )
+        
+        # Check whther the metabolite is in the Metabolites section.
+        if metabolites:
+            metabolite = metabolite_dict["Metabolite"]
+            if metabolite not in metabolites_in_metabolites_section:
+                data_errors.append("DATA: Data entry #{}, \"{}\", is not in the Metabolites section.".format(index + 1, metabolite))
+        
+        # Check if there are null values.
         if null_values:
-            for data_point_key in metabolite.keys():
+            for data_point_key in metabolite_dict.keys():
                 if data_point_key != "Metabolite":
                     try:
-                        float(metabolite[data_point_key])
+                        float(metabolite_dict[data_point_key])
                     except ValueError as e:
-                        metabolite[data_point_key] = ""
+                        metabolite_dict[data_point_key] = ""
                         data_errors.append(
                             "{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1))
 
@@ -185,9 +196,17 @@ def validate_metabolites(mwtabfile, data_section_key):
     :type data_section_key: :py:class:`str`
     """
     metabolites_errors = list()
+    
+    metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
 
-    for index, metabolite in enumerate(mwtabfile[data_section_key]["Metabolites"]):
-        for field_key in list(metabolite.keys())[1:]:
+    for index, metabolite_dict in enumerate(mwtabfile[data_section_key]["Metabolites"]):
+        # Check whether the metabolite is in the Data section.
+        metabolite = metabolite_dict["Metabolite"]
+        if metabolite not in metabolites_in_data_section:
+            metabolites_errors.append("METABOLITES: Data entry #{}, \"{}\", is not in the Data section.".format(index + 1, metabolite))
+        
+        # Check if fields are recognized variations and report the standardized name to the user.
+        for field_key in list(metabolite_dict.keys())[1:]:
             if not any(k == field_key for k in METABOLITES_REGEXS.keys()):
                 for regex_key in METABOLITES_REGEXS.keys():
                     if any(match(p, field_key) for p in METABOLITES_REGEXS[regex_key]):
@@ -302,7 +321,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     if data_section_key:
         data_section_key = data_section_key[0]
         # validate_data(validated_mwtabfile, data_section_key, error_stout, False)
-        errors.extend(validate_data(validated_mwtabfile, data_section_key, False))
+        errors.extend(validate_data(validated_mwtabfile, data_section_key, False, metabolites))
 
         if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
             # temp for testing

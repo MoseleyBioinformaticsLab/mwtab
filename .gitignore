@@ -5,3 +5,8 @@ data/*
 .DS_Store
 .ipynb_checkpoints
 .idea
+/build
+.coverage
+*.json
+/htmlcov
+/mwtab.egg-info
