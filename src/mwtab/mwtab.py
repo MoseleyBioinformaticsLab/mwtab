@@ -396,6 +396,7 @@ class MWTabFile(OrderedDict):
         :return: JSON string.
         :rtype: :py:class:`str`
         """
+        self._set_key_order()
         return json.dumps(self, sort_keys=False, indent=4)
 
     def _to_mwtab(self):
@@ -404,6 +405,7 @@ class MWTabFile(OrderedDict):
         :return: NMR-STAR string.
         :rtype: :py:class:`str`
         """
+        self._set_key_order()
         mwtab_str = io.StringIO()
         self.print_file(mwtab_str)
         return mwtab_str.getvalue()
@@ -450,3 +452,386 @@ class MWTabFile(OrderedDict):
             return json_str
         except ValueError:
             return False
+        
+    def _set_key_order(self):
+        """
+        """
+        # This is a way to build the key_order diction from the schema, but it can't be used 
+        # until we only support Python > 3.6 because we have to be able to rely on ordered 
+        # dict behavior.
+        # from .mwschema import section_schema_mapping
+        # key_order = {}
+        # for key, schema in section_schema_mapping.items():
+        #     json_schema = schema.json_schema("asdf")
+        #     if "properties" in json_schema:
+        #         key_order[key] = {}
+        #         for json_property, property_dict in json_schema["properties"].items():
+        #             if "items" in property_dict:
+        #                 key_order[key][json_property] = list(property_dict["items"]["properties"].keys())
+        #             else:
+        #                 key_order[key][json_property] = []
+        #     elif "items" in json_schema:
+        #         key_order[key] = {json_property:[] for json_property in json_schema["items"]["properties"]}
+               
+        key_order = \
+            {'METABOLOMICS WORKBENCH': {'VERSION': [],
+              'CREATED_ON': [],
+              'STUDY_ID': [],
+              'ANALYSIS_ID': [],
+              'PROJECT_ID': [],
+              'HEADER': [],
+              'DATATRACK_ID': []},
+             'PROJECT': {'PROJECT_TITLE': [],
+              'PROJECT_TYPE': [],
+              'PROJECT_SUMMARY': [],
+              'INSTITUTE': [],
+              'DEPARTMENT': [],
+              'LABORATORY': [],
+              'LAST_NAME': [],
+              'FIRST_NAME': [],
+              'ADDRESS': [],
+              'EMAIL': [],
+              'PHONE': [],
+              'FUNDING_SOURCE': [],
+              'PROJECT_COMMENTS': [],
+              'PUBLICATIONS': [],
+              'CONTRIBUTORS': [],
+              'DOI': []},
+             'STUDY': {'STUDY_TITLE': [],
+              'STUDY_TYPE': [],
+              'STUDY_SUMMARY': [],
+              'INSTITUTE': [],
+              'DEPARTMENT': [],
+              'LABORATORY': [],
+              'LAST_NAME': [],
+              'FIRST_NAME': [],
+              'ADDRESS': [],
+              'EMAIL': [],
+              'PHONE': [],
+              'NUM_GROUPS': [],
+              'TOTAL_SUBJECTS': [],
+              'NUM_MALES': [],
+              'NUM_FEMALES': [],
+              'STUDY_COMMENTS': [],
+              'PUBLICATIONS': [],
+              'SUBMIT_DATE': []},
+             'ANALYSIS': {'ANALYSIS_TYPE': [],
+              'LABORATORY_NAME': [],
+              'OPERATOR_NAME': [],
+              'DETECTOR_TYPE': [],
+              'SOFTWARE_VERSION': [],
+              'ACQUISITION_DATE': [],
+              'ANALYSIS_PROTOCOL_FILE': [],
+              'ACQUISITION_PARAMETERS_FILE': [],
+              'PROCESSING_PARAMETERS_FILE': [],
+              'DATA_FORMAT': [],
+              'ACQUISITION_ID': [],
+              'ACQUISITION_TIME': [],
+              'ANALYSIS_COMMENTS': [],
+              'ANALYSIS_DISPLAY': [],
+              'INSTRUMENT_NAME': [],
+              'INSTRUMENT_PARAMETERS_FILE': [],
+              'NUM_FACTORS': [],
+              'NUM_METABOLITES': [],
+              'PROCESSED_FILE': [],
+              'RANDOMIZATION_ORDER': [],
+              'RAW_FILE': []},
+             'SUBJECT': {'SUBJECT_TYPE': [],
+              'SUBJECT_SPECIES': [],
+              'TAXONOMY_ID': [],
+              'GENOTYPE_STRAIN': [],
+              'AGE_OR_AGE_RANGE': [],
+              'WEIGHT_OR_WEIGHT_RANGE': [],
+              'HEIGHT_OR_HEIGHT_RANGE': [],
+              'GENDER': [],
+              'HUMAN_RACE': [],
+              'HUMAN_ETHNICITY': [],
+              'HUMAN_TRIAL_TYPE': [],
+              'HUMAN_LIFESTYLE_FACTORS': [],
+              'HUMAN_MEDICATIONS': [],
+              'HUMAN_PRESCRIPTION_OTC': [],
+              'HUMAN_SMOKING_STATUS': [],
+              'HUMAN_ALCOHOL_DRUG_USE': [],
+              'HUMAN_NUTRITION': [],
+              'HUMAN_INCLUSION_CRITERIA': [],
+              'HUMAN_EXCLUSION_CRITERIA': [],
+              'ANIMAL_ANIMAL_SUPPLIER': [],
+              'ANIMAL_HOUSING': [],
+              'ANIMAL_LIGHT_CYCLE': [],
+              'ANIMAL_FEED': [],
+              'ANIMAL_WATER': [],
+              'ANIMAL_INCLUSION_CRITERIA': [],
+              'CELL_BIOSOURCE_OR_SUPPLIER': [],
+              'CELL_STRAIN_DETAILS': [],
+              'SUBJECT_COMMENTS': [],
+              'CELL_PRIMARY_IMMORTALIZED': [],
+              'CELL_PASSAGE_NUMBER': [],
+              'CELL_COUNTS': [],
+              'SPECIES_GROUP': []},
+             'SUBJECT_SAMPLE_FACTORS': {'Subject ID': [],
+              'Sample ID': [],
+              'Factors': [],
+              'Additional sample data': []},
+             'COLLECTION': {'COLLECTION_SUMMARY': [],
+              'COLLECTION_PROTOCOL_ID': [],
+              'COLLECTION_PROTOCOL_FILENAME': [],
+              'COLLECTION_PROTOCOL_COMMENTS': [],
+              'SAMPLE_TYPE': [],
+              'COLLECTION_METHOD': [],
+              'COLLECTION_LOCATION': [],
+              'COLLECTION_FREQUENCY': [],
+              'COLLECTION_DURATION': [],
+              'COLLECTION_TIME': [],
+              'VOLUMEORAMOUNT_COLLECTED': [],
+              'STORAGE_CONDITIONS': [],
+              'COLLECTION_VIALS': [],
+              'STORAGE_VIALS': [],
+              'COLLECTION_TUBE_TEMP': [],
+              'ADDITIVES': [],
+              'BLOOD_SERUM_OR_PLASMA': [],
+              'TISSUE_CELL_IDENTIFICATION': [],
+              'TISSUE_CELL_QUANTITY_TAKEN': []},
+             'TREATMENT': {'TREATMENT_SUMMARY': [],
+              'TREATMENT_PROTOCOL_ID': [],
+              'TREATMENT_PROTOCOL_FILENAME': [],
+              'TREATMENT_PROTOCOL_COMMENTS': [],
+              'TREATMENT': [],
+              'TREATMENT_COMPOUND': [],
+              'TREATMENT_ROUTE': [],
+              'TREATMENT_DOSE': [],
+              'TREATMENT_DOSEVOLUME': [],
+              'TREATMENT_DOSEDURATION': [],
+              'TREATMENT_VEHICLE': [],
+              'ANIMAL_VET_TREATMENTS': [],
+              'ANIMAL_ANESTHESIA': [],
+              'ANIMAL_ACCLIMATION_DURATION': [],
+              'ANIMAL_FASTING': [],
+              'ANIMAL_ENDP_EUTHANASIA': [],
+              'ANIMAL_ENDP_TISSUE_COLL_LIST': [],
+              'ANIMAL_ENDP_TISSUE_PROC_METHOD': [],
+              'ANIMAL_ENDP_CLINICAL_SIGNS': [],
+              'HUMAN_FASTING': [],
+              'HUMAN_ENDP_CLINICAL_SIGNS': [],
+              'CELL_STORAGE': [],
+              'CELL_GROWTH_CONTAINER': [],
+              'CELL_GROWTH_CONFIG': [],
+              'CELL_GROWTH_RATE': [],
+              'CELL_INOC_PROC': [],
+              'CELL_MEDIA': [],
+              'CELL_ENVIR_COND': [],
+              'CELL_HARVESTING': [],
+              'PLANT_GROWTH_SUPPORT': [],
+              'PLANT_GROWTH_LOCATION': [],
+              'PLANT_PLOT_DESIGN': [],
+              'PLANT_LIGHT_PERIOD': [],
+              'PLANT_HUMIDITY': [],
+              'PLANT_TEMP': [],
+              'PLANT_WATERING_REGIME': [],
+              'PLANT_NUTRITIONAL_REGIME': [],
+              'PLANT_ESTAB_DATE': [],
+              'PLANT_HARVEST_DATE': [],
+              'PLANT_GROWTH_STAGE': [],
+              'PLANT_METAB_QUENCH_METHOD': [],
+              'PLANT_HARVEST_METHOD': [],
+              'PLANT_STORAGE': [],
+              'CELL_PCT_CONFLUENCE': [],
+              'CELL_MEDIA_LASTCHANGED': []},
+             'SAMPLEPREP': {'SAMPLEPREP_SUMMARY': [],
+              'SAMPLEPREP_PROTOCOL_ID': [],
+              'SAMPLEPREP_PROTOCOL_FILENAME': [],
+              'SAMPLEPREP_PROTOCOL_COMMENTS': [],
+              'PROCESSING_METHOD': [],
+              'PROCESSING_STORAGE_CONDITIONS': [],
+              'EXTRACTION_METHOD': [],
+              'EXTRACT_CONCENTRATION_DILUTION': [],
+              'EXTRACT_ENRICHMENT': [],
+              'EXTRACT_CLEANUP': [],
+              'EXTRACT_STORAGE': [],
+              'SAMPLE_RESUSPENSION': [],
+              'SAMPLE_DERIVATIZATION': [],
+              'SAMPLE_SPIKING': [],
+              'ORGAN': [],
+              'ORGAN_SPECIFICATION': [],
+              'CELL_TYPE': [],
+              'SUBCELLULAR_LOCATION': []},
+             'CHROMATOGRAPHY': {'CHROMATOGRAPHY_SUMMARY': [],
+              'CHROMATOGRAPHY_TYPE': [],
+              'INSTRUMENT_NAME': [],
+              'COLUMN_NAME': [],
+              'FLOW_GRADIENT': [],
+              'FLOW_RATE': [],
+              'COLUMN_TEMPERATURE': [],
+              'METHODS_FILENAME': [],
+              'SOLVENT_A': [],
+              'SOLVENT_B': [],
+              'METHODS_ID': [],
+              'COLUMN_PRESSURE': [],
+              'INJECTION_TEMPERATURE': [],
+              'INTERNAL_STANDARD': [],
+              'INTERNAL_STANDARD_MT': [],
+              'RETENTION_INDEX': [],
+              'RETENTION_TIME': [],
+              'SAMPLE_INJECTION': [],
+              'SAMPLING_CONE': [],
+              'ANALYTICAL_TIME': [],
+              'CAPILLARY_VOLTAGE': [],
+              'MIGRATION_TIME': [],
+              'OVEN_TEMPERATURE': [],
+              'PRECONDITIONING': [],
+              'RUNNING_BUFFER': [],
+              'RUNNING_VOLTAGE': [],
+              'SHEATH_LIQUID': [],
+              'TIME_PROGRAM': [],
+              'TRANSFERLINE_TEMPERATURE': [],
+              'WASHING_BUFFER': [],
+              'WEAK_WASH_SOLVENT_NAME': [],
+              'WEAK_WASH_VOLUME': [],
+              'STRONG_WASH_SOLVENT_NAME': [],
+              'STRONG_WASH_VOLUME': [],
+              'TARGET_SAMPLE_TEMPERATURE': [],
+              'SAMPLE_LOOP_SIZE': [],
+              'SAMPLE_SYRINGE_SIZE': [],
+              'RANDOMIZATION_ORDER': [],
+              'CHROMATOGRAPHY_COMMENTS': []},
+             'MS': {'INSTRUMENT_NAME': [],
+              'INSTRUMENT_TYPE': [],
+              'MS_TYPE': [],
+              'ION_MODE': [],
+              'MS_COMMENTS': [],
+              'CAPILLARY_TEMPERATURE': [],
+              'CAPILLARY_VOLTAGE': [],
+              'COLLISION_ENERGY': [],
+              'COLLISION_GAS': [],
+              'DRY_GAS_FLOW': [],
+              'DRY_GAS_TEMP': [],
+              'FRAGMENT_VOLTAGE': [],
+              'FRAGMENTATION_METHOD': [],
+              'GAS_PRESSURE': [],
+              'HELIUM_FLOW': [],
+              'ION_SOURCE_TEMPERATURE': [],
+              'ION_SPRAY_VOLTAGE': [],
+              'IONIZATION': [],
+              'IONIZATION_ENERGY': [],
+              'IONIZATION_POTENTIAL': [],
+              'MASS_ACCURACY': [],
+              'PRECURSOR_TYPE': [],
+              'REAGENT_GAS': [],
+              'SOURCE_TEMPERATURE': [],
+              'SPRAY_VOLTAGE': [],
+              'ACTIVATION_PARAMETER': [],
+              'ACTIVATION_TIME': [],
+              'ATOM_GUN_CURRENT': [],
+              'AUTOMATIC_GAIN_CONTROL': [],
+              'BOMBARDMENT': [],
+              'CDL_SIDE_OCTOPOLES_BIAS_VOLTAGE': [],
+              'CDL_TEMPERATURE': [],
+              'DATAFORMAT': [],
+              'DESOLVATION_GAS_FLOW': [],
+              'DESOLVATION_TEMPERATURE': [],
+              'INTERFACE_VOLTAGE': [],
+              'IT_SIDE_OCTOPOLES_BIAS_VOLTAGE': [],
+              'LASER': [],
+              'MATRIX': [],
+              'NEBULIZER': [],
+              'OCTPOLE_VOLTAGE': [],
+              'PROBE_TIP': [],
+              'RESOLUTION_SETTING': [],
+              'SAMPLE_DRIPPING': [],
+              'SCAN_RANGE_MOVERZ': [],
+              'SCANNING': [],
+              'SCANNING_CYCLE': [],
+              'SCANNING_RANGE': [],
+              'SKIMMER_VOLTAGE': [],
+              'TUBE_LENS_VOLTAGE': [],
+              'MS_RESULTS_FILE': []},
+             'NM': {'INSTRUMENT_NAME': [],
+              'INSTRUMENT_TYPE': [],
+              'NMR_EXPERIMENT_TYPE': [],
+              'NMR_COMMENTS': [],
+              'FIELD_FREQUENCY_LOCK': [],
+              'STANDARD_CONCENTRATION': [],
+              'SPECTROMETER_FREQUENCY': [],
+              'NMR_PROBE': [],
+              'NMR_SOLVENT': [],
+              'NMR_TUBE_SIZE': [],
+              'SHIMMING_METHOD': [],
+              'PULSE_SEQUENCE': [],
+              'WATER_SUPPRESSION': [],
+              'PULSE_WIDTH': [],
+              'POWER_LEVEL': [],
+              'RECEIVER_GAIN': [],
+              'OFFSET_FREQUENCY': [],
+              'PRESATURATION_POWER_LEVEL': [],
+              'CHEMICAL_SHIFT_REF_CPD': [],
+              'TEMPERATURE': [],
+              'NUMBER_OF_SCANS': [],
+              'DUMMY_SCANS': [],
+              'ACQUISITION_TIME': [],
+              'RELAXATION_DELAY': [],
+              'SPECTRAL_WIDTH': [],
+              'NUM_DATA_POINTS_ACQUIRED': [],
+              'REAL_DATA_POINTS': [],
+              'LINE_BROADENING': [],
+              'ZERO_FILLING': [],
+              'APODIZATION': [],
+              'BASELINE_CORRECTION_METHOD': [],
+              'CHEMICAL_SHIFT_REF_STD': [],
+              'BINNED_INCREMENT': [],
+              'BINNED_DATA_NORMALIZATION_METHOD': [],
+              'BINNED_DATA_PROTOCOL_FILE': [],
+              'BINNED_DATA_CHEMICAL_SHIFT_RANGE': [],
+              'BINNED_DATA_EXCLUDED_RANGE': [],
+              'NMR_RESULTS_FILE': []},
+             'MS_METABOLITE_DATA': {'Units': [],
+              'Data': ['Metabolite', 'Bin range(ppm)'],
+              'Metabolites': ['Metabolite', 'Bin range(ppm)'],
+              'Extended': ['Metabolite', 'sample_id']},
+             'NMR_METABOLITE_DATA': {'Units': [],
+              'Data': ['Metabolite', 'Bin range(ppm)'],
+              'Metabolites': ['Metabolite', 'Bin range(ppm)'],
+              'Extended': ['Metabolite', 'sample_id']},
+             'NMR_BINNED_DATA': {'Units': [], 'Data': ['Metabolite', 'Bin range(ppm)']}}
+    
+        for key, sub_keys in key_order.items():
+            if key in self:
+                # SUBJECT_SAMPLE_FACTORS is the only list as of now.
+                if isinstance(self[key], list):
+                    temp_list = []
+                    for i, element in enumerate(self[key]):
+                        temp_list.append(OrderedDict())
+                        for sub_key in sub_keys:
+                            if sub_key in element:
+                                temp_list[i][sub_key] = element[sub_key]
+                    del self[key]
+                    self[key] = temp_list
+                else:
+                    temp_dict = OrderedDict()
+                    for sub_key, sub_sub_keys in sub_keys.items():
+                        if sub_key in self[key]:
+                            # For the Data, Metabolites, and Extended sections.
+                            if isinstance(self[key][sub_key], list):
+                                temp_list = []
+                                for i, element in enumerate(self[key][sub_key]):
+                                    temp_list.append(OrderedDict())
+                                    for sub_sub_key in sub_sub_keys:
+                                        if sub_sub_key in element:
+                                            temp_list[i][sub_sub_key] = element[sub_sub_key]
+                                    # Add the elements that aren't in the key_order.
+                                    for unordered_key in element:
+                                        if unordered_key not in temp_list[i]:
+                                            temp_list[i][unordered_key] = element[unordered_key]
+                                temp_dict[sub_key] = temp_list
+                            else:
+                                temp_dict[sub_key] = self[key][sub_key]
+                    # Add any unknown sub_keys that aren't in key_order.
+                    for unordered_sub_key in self[key]:
+                        if unordered_sub_key not in temp_dict:
+                            temp_dict[unordered_sub_key] = self[key][unordered_sub_key]
+                            
+                    del self[key]
+                    self[key] = temp_dict
+    
+    
+    
+    
+    

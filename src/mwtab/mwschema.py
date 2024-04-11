@@ -19,10 +19,10 @@ if sys.version_info.major == 2:
 
 metabolomics_workbench_schema = Schema(
     {
-        "VERSION": str,
-        "CREATED_ON": str,
         Optional("STUDY_ID"): str,
         Optional("ANALYSIS_ID"): str,
+        "VERSION": str,
+        "CREATED_ON": str,
         Optional("PROJECT_ID"): str,
         Optional("HEADER"): str,
         Optional("DATATRACK_ID"): str
@@ -63,13 +63,13 @@ study_schema = Schema(
         "ADDRESS": str,
         "EMAIL": str,
         "PHONE": str,
+        Optional("SUBMIT_DATE"): str,  # assumed
         Optional("NUM_GROUPS"): str,
         Optional("TOTAL_SUBJECTS"): str,
         Optional("NUM_MALES"): str,
         Optional("NUM_FEMALES"): str,
         Optional("STUDY_COMMENTS"): str,
-        Optional("PUBLICATIONS"): str,
-        Optional("SUBMIT_DATE"): str  # assumed
+        Optional("PUBLICATIONS"): str
     }
 )
 
@@ -431,13 +431,13 @@ section_schema_mapping = {
     "METABOLOMICS WORKBENCH": metabolomics_workbench_schema,
     "PROJECT": project_schema,
     "STUDY": study_schema,
-    "ANALYSIS": analysis_schema,
     "SUBJECT": subject_schema,
     "SUBJECT_SAMPLE_FACTORS": subject_sample_factors_schema,
     "COLLECTION": collection_schema,
     "TREATMENT": treatment_schema,
     "SAMPLEPREP": sampleprep_schema,
     "CHROMATOGRAPHY": chromatography_schema,
+    "ANALYSIS": analysis_schema,
     "MS": ms_schema,
     "NM": nmr_schema,
     "MS_METABOLITE_DATA": ms_metabolite_data_schema,

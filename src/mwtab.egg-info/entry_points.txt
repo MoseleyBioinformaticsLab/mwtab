@@ -1,2 +1,0 @@
-[console_scripts]
-mwtab = mwtab.__main__:main
