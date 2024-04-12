@@ -14,7 +14,7 @@ required key-value pairs are present.
 from copy import deepcopy
 from collections import OrderedDict
 from datetime import datetime
-from .mwschema import section_schema_mapping
+from .mwschema import section_schema_mapping, base_schema
 from re import match
 import io
 import sys
@@ -299,6 +299,12 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
 
     # create list to collect validation errors
     errors = list()
+    
+    try:
+        base_schema.validate(validated_mwtabfile)
+    except Exception as e:
+        errors.append("SCHEMA: There is an issue with the top level of the data." + 
+                      "\n".join([message for message in e.autos[1:] if message]))
 
     # validate PROJECT, STUDY, ANALYSIS... and Schemas
     for section_key, section in mwtabfile.items():

@@ -10,8 +10,10 @@ This module provides schema definitions for different sections of the
 """
 
 import sys
+from copy import deepcopy
+from collections import OrderedDict
 
-from schema import Schema, Optional, Or
+from schema import Schema, Optional, Or, And
 
 if sys.version_info.major == 2:
     str = unicode
@@ -444,3 +446,66 @@ section_schema_mapping = {
     "NMR_METABOLITE_DATA": ms_metabolite_data_schema,
     "NMR_BINNED_DATA": nmr_binned_data_schema,
 }
+
+
+_common_base = {
+ "METABOLOMICS WORKBENCH": Or(dict, OrderedDict),
+ "PROJECT": Or(dict, OrderedDict),
+ "STUDY": Or(dict, OrderedDict),
+ "SUBJECT": Or(dict, OrderedDict),
+ "SUBJECT_SAMPLE_FACTORS": list,
+ "COLLECTION": Or(dict, OrderedDict),
+ "TREATMENT": Or(dict, OrderedDict),
+ "SAMPLEPREP": Or(dict, OrderedDict),
+ "CHROMATOGRAPHY": Or(dict, OrderedDict),
+ "ANALYSIS": Or(dict, OrderedDict),
+ }
+
+_ms_base = deepcopy(_common_base)
+_ms_base["MS"] = Or(dict, OrderedDict)
+_ms_base["MS_METABOLITE_DATA"] = Or(dict, OrderedDict)
+
+_nmr_base = deepcopy(_common_base)
+_nmr_base["NM"] = Or(dict, OrderedDict)
+_nmr_base["NMR_METABOLITE_DATA"] = Or(dict, OrderedDict)
+
+_nmr_binned_base = deepcopy(_common_base)
+_nmr_binned_base["NM"] = Or(dict, OrderedDict)
+_nmr_binned_base["NMR_BINNED_DATA"] = Or(dict, OrderedDict)
+
+base_schema = Or(
+    Schema(_ms_base),
+    Schema(_nmr_base),
+    Schema(_nmr_binned_base),
+    # only_one=True
+    )
+
+# temp = {
+#   "METABOLOMICS WORKBENCH": OrderedDict({}),
+#   "PROJECT": {},
+#   "STUDY": {},
+#   "SUBJECT": {},
+#   "SUBJECT_SAMPLE_FACTORS": [],
+#   "COLLECTION": {},
+#   "TREATMENT": {},
+#   "SAMPLEPREP": {},
+#   "CHROMATOGRAPHY": {},
+#   "ANALYSIS": {},
+#   'MS': {}, 'MS_METABOLITE_DATA': {},
+#   }
+
+# exception = []
+# try:
+#     base_schema.validate(temp)
+# except Exception as e:
+#     print("asdf")
+#     exception = e
+
+
+# test_schema = Schema({"MS_METABOLITE_DATA": Or(dict, OrderedDict)}, ignore_extra_keys = True)
+
+# try:
+#     base_schema.validate(validated_mwtabfile)
+# except:
+#     print("asdf")
+

@@ -86,3 +86,27 @@ def test_validation_log_web(file_source):
     assert "Study ID:      {}".format("ST000002") in validation_log
     assert "Analysis ID:   {}".format("AN000002") in validation_log
     assert "File format:   {}".format("txt") in validation_log
+
+
+def test_base_schema_error_extra_key():
+    """Test that if extra keys are included there is an error."""
+    mwfile = next(mwtab.read_files("tests/example_data/mwtab_files/ST000122_AN000204.json"))
+    mwfile["NM"] = {}
+    _, validation_log = mwtab.validate_file(mwfile)
+        
+    assert "Wrong key 'NM' in" in validation_log
+    assert "Missing key: 'NMR_METABOLITE_DATA'" in validation_log
+    assert "Missing key: 'NMR_BINNED_DATA'" in validation_log
+    
+
+def test_base_schema_error_missing_key():
+    """Test that if a key is missing then there is an error."""
+    mwfile = next(mwtab.read_files("tests/example_data/mwtab_files/ST000122_AN000204.json"))
+    del mwfile["METABOLOMICS WORKBENCH"]
+    _, validation_log = mwtab.validate_file(mwfile)
+    
+    assert "Missing key: 'METABOLOMICS WORKBENCH'" in validation_log
+    assert "Missing keys: 'METABOLOMICS WORKBENCH', 'NM', 'NMR_METABOLITE_DATA'" in validation_log
+    assert "Missing keys: 'METABOLOMICS WORKBENCH', 'NM', 'NMR_BINNED_DATA'" in validation_log
+    
+    

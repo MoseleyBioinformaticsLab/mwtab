@@ -69,9 +69,9 @@ def test_read_in_and_reorder_keys():
     if not os.path.exists("tests/example_data/tmp/"):
         os.makedirs("tests/example_data/tmp/")
     
-    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/mwtab_files/incorrect_section_order.json")
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/incorrect_section_order.json")
         
-    with open("tests/example_data/mwtab_files/incorrect_section_order.json", "r", encoding="utf-8") as f:
+    with open("tests/example_data/other_mwtab_files/incorrect_section_order.json", "r", encoding="utf-8") as f:
         mwtabfile.read(f)
     
     with open("tests/example_data/tmp/tmp.json", "w", encoding="utf-8") as f:
@@ -80,7 +80,7 @@ def test_read_in_and_reorder_keys():
     with open("tests/example_data/tmp/tmp.json", "r", encoding="utf-8") as f:
         json_file = loads(f.read())
     
-    with open("tests/example_data/mwtab_files/corrected_section_order.json", "r", encoding="utf-8") as f:
+    with open("tests/example_data/other_mwtab_files/corrected_section_order.json", "r", encoding="utf-8") as f:
         expected_dict = loads(f.read())
         
     assert expected_dict == json_file
