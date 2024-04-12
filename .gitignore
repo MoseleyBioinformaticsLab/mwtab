@@ -11,3 +11,4 @@ data/*
 /htmlcov
 /mwtab.egg-info
 /src/mwtab.egg-info
+src/mwtab/_version.py

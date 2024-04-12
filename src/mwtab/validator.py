@@ -243,25 +243,29 @@ def validate_extended(mwtabfile, data_section_key):
     return extended_errors
 
 
-def validate_section_schema(section, schema, section_key):
+def validate_section_schema(section, schema, section_key, cleaning=False):
     """Validate section of ``mwTab`` formatted file.
-
+    
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
     :type section: :py:class:`collections.OrderedDict`
     :param schema: Schema definition.
     :type schema: :py:class:`~schema.schema`
     :param str section_key: Section key.
-
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
     schema_errors = list()
 
+    keys_to_delete = []
     if section_key in ITEM_SECTIONS:
         for key in section.keys():
             if not section[key]:
                 schema_errors.append("{}: Contains item \"{}\" with null value.".format(section_key, key))
-                del section[key]
+                keys_to_delete.append(key)
+
+    if cleaning:
+        for key in keys_to_delete:
+            del section[key]
 
     return schema.validate(section), schema_errors
 
