@@ -108,6 +108,8 @@ import zipfile
 import tarfile
 import bz2
 import gzip
+import traceback
+import sys
 
 from . import fileio
 
@@ -156,7 +158,13 @@ class MWTabFileToMWTabFile(Translator):
         :return: instance of :class:`~mwtab.mwtab.MWTabFile` object instance.
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
-        for mwtabfile in fileio.read_files(self.from_path, validate=self.validate):
+        for mwtabfile, e in fileio.read_files(self.from_path, validate=self.validate, return_exceptions=True):
+            if e is not None:
+                file_source = mwtabfile if isinstance(mwtabfile, str) else self.from_path
+                print("Something went wrong when trying to read " + file_source)
+                traceback.print_exception(e, file=sys.stdout)
+                print()
+                continue
             yield mwtabfile
 
 

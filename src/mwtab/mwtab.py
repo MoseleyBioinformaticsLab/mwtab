@@ -175,12 +175,12 @@ class MWTabFile(OrderedDict):
         """
         section = OrderedDict()
         token = next(lexer)
-        alias = {
-            "subject_type": "Subject ID",
-            "local_sample_id": "Sample ID",
-            "factors": "Factors",
-            "additional_sample_data": "Additional sample data",
-        }
+        # alias = {
+        #     "subject_type": "Subject ID",
+        #     "local_sample_id": "Sample ID",
+        #     "factors": "Factors",
+        #     "additional_sample_data": "Additional sample data",
+        # }
 
         while not token.key.startswith("#ENDSECTION"):
 

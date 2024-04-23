@@ -4,11 +4,22 @@ import mwtab
 import os
 import shutil
 from json import loads
+import time
+import pathlib
 
 
 def teardown_module(module):
-    if os.path.exists("tests/example_data/tmp"):
-        shutil.rmtree("tests/example_data/tmp")
+    path = pathlib.Path("tests/example_data/tmp/")
+    if os.path.exists(path):
+        shutil.rmtree(path)
+        time_to_wait=10
+        time_counter = 0
+        while path.exists():
+            time.sleep(1)
+            time_counter += 1
+            if time_counter > time_to_wait:
+                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+
         
 
 def test_keys_reorder():

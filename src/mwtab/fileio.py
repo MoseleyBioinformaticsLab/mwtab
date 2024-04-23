@@ -22,6 +22,7 @@ import tarfile
 import bz2
 import gzip
 from re import match
+import pathlib
 
 from . import mwtab
 from . import validator
@@ -33,66 +34,137 @@ from urllib.parse import urlparse
 
 
 VERBOSE = False
+MWREST_URL = mwrest.BASE_URL
 
 
-def _generate_filenames(sources):
+def _create_save_path(path):
+    """Create directories in the path that don't already exist.
+    
+    :param str path: Path to save something to.
+    """
+    path = pathlib.Path(path)
+    # Assume if there is a suffix (file extension) that it's a file and only make the parent path.
+    if path.suffix:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        path.mkdir(parents=True, exist_ok=True)
+
+
+def _return_correct_yield(*payload, exception, return_exceptions):
+    """Simple helper to yield either payload or payload and exception for generators.
+    
+    :param Any payload: Any object(s) to be yielded back.
+    :param Exception or None exception: Any excpetion that occurred during the execution of the generator
+    :param bool return_exceptions: Whether to yield a tuple with payload and exception or just the payload.
+    :return: If return_exceptions is True return a tuple of payload and exception, else return only payload.
+    """
+    if exception is not None and not return_exceptions:
+        raise exception
+    return (*payload, exception) if return_exceptions else payload[0] if len(payload) == 1 else payload
+
+
+def _generate_filenames(sources, return_exceptions=False):
     """Generate filenames.
 
     :param tuple sources: Sequence of strings representing path to file(s).
-    :return: Path to file(s).
+    :param bool return_exceptions: Whether to yield a tuple with path and exception or just the path.
+    :return: Path to file(s), or a tuple of path and exceptions.
     :rtype: :py:class:`str`
     """
     for source in sources:
-        if os.path.isdir(source):
-            for path, _, filelist in os.walk(source):
-                for fname in filelist:
-                    if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json"}:
-                        if GenericFilePath.is_compressed(fname):
-                            if VERBOSE:
-                                print("Skipping compressed file: {}".format(os.path.abspath(fname)))
-                            continue
-                        else:
-                            yield os.path.join(path, fname)
+        try:
+            if os.path.isdir(source):
+                for path, _, filelist in os.walk(source):
+                    for fname in sorted(filelist):
+                        if os.path.splitext(fname)[1].lower() in {".csv", ".txt", ".json"}:
+                            if GenericFilePath.is_compressed(fname):
+                                if VERBOSE:
+                                    print("Skipping compressed file: {}".format(os.path.abspath(fname)))
+                                continue
+                            else:
+                                yield _return_correct_yield(os.path.join(path, fname), 
+                                                            exception=None, 
+                                                            return_exceptions=return_exceptions)
+    
+            elif os.path.isfile(source):
+                yield _return_correct_yield(source, 
+                                            exception=None, 
+                                            return_exceptions=return_exceptions)
+    
+            elif source.isdigit():
+                url, e = next(mwrest.generate_mwtab_urls([source], base_url=MWREST_URL, return_exceptions=True))
+                yield _return_correct_yield(url, 
+                                            exception=e, 
+                                            return_exceptions=return_exceptions)
+    
+            # TODO: Add ST parsing
+            elif match(r"(AN[0-9]{6}$)", source):
+                url, e = next(mwrest.generate_mwtab_urls([source], base_url=MWREST_URL, return_exceptions=True))
+                yield _return_correct_yield(url, 
+                                            exception=e, 
+                                            return_exceptions=return_exceptions)
+    
+            elif GenericFilePath.is_url(source):
+                yield _return_correct_yield(source, 
+                                            exception=None, 
+                                            return_exceptions=return_exceptions)
+    
+            else:
+                yield _return_correct_yield(source, 
+                                            exception=TypeError("Unknown file source."), 
+                                            return_exceptions=return_exceptions)
+        except Exception as e:
+            yield _return_correct_yield(source, 
+                                        exception=e, 
+                                        return_exceptions=return_exceptions)
 
-        elif os.path.isfile(source):
-            yield source
 
-        elif source.isdigit():
-            yield next(mwrest.generate_mwtab_urls([source]))
-
-        # TODO: Add ST parsing
-        elif match(r"(AN[0-9]{6}$)", source):
-            yield next(mwrest.generate_mwtab_urls([source]))
-
-        elif GenericFilePath.is_url(source):
-            yield source
-
-        else:
-            raise TypeError("Unknown file source.")
-
-
-def _generate_handles(filenames):
+def _generate_handles(filenames, return_exceptions=False):
     """Open a sequence of filenames one at time producing file objects.
     The file is closed immediately when proceeding to the next iteration.
 
     :param generator filenames: Generator object that yields the path to each file, one at a time.
+    :param bool return_exceptions: Whether to yield a tuple with filehandle and exception or just the filehandle.
     :return: Filehandle to be processed into an instance.
     """
-    for fname in filenames:
-        path = GenericFilePath(fname)
-        for filehandle, source in path.open():
-            yield filehandle, source
-            filehandle.close()
+    for fname, exc in filenames:
+        if exc is not None:
+            yield _return_correct_yield(None, fname,
+                                        exception=exc, 
+                                        return_exceptions=return_exceptions)
+            continue
+        try:
+            path = GenericFilePath(fname)
+            for filehandle, source in path.open():
+                yield _return_correct_yield(filehandle, source, 
+                                            exception=None, 
+                                            return_exceptions=return_exceptions)
+                filehandle.close()
+        except Exception as e:
+            yield _return_correct_yield(None, fname, 
+                                        exception=e, 
+                                        return_exceptions=return_exceptions)
 
 
-def read_files(*sources, **kwds):
+def read_files(*sources, return_exceptions=False, **kwds):
     """Construct a generator that yields file instances.
 
     :param sources: One or more strings representing path to file(s).
+    :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
     """
-    filenames = _generate_filenames(sources)
-    filehandles = _generate_handles(filenames)
-    for fh, source in filehandles:
+    try:
+        filenames = _generate_filenames(sources, True)
+        filehandles = _generate_handles(filenames, True)
+    except Exception as e:
+        yield _return_correct_yield(None, 
+                                    exception=e, 
+                                    return_exceptions=return_exceptions)
+    for fh, source, exc in filehandles:
+        if exc is not None:
+            yield _return_correct_yield(source, 
+                                        exception=exc, 
+                                        return_exceptions=return_exceptions)
+            continue
         try:
             f = mwtab.MWTabFile(source)
             f.read(fh)
@@ -103,23 +175,33 @@ def read_files(*sources, **kwds):
 
             if VERBOSE:
                 print("Processed file: {}".format(os.path.abspath(source)))
-
-            yield f
+            
+            yield _return_correct_yield(f, 
+                                        exception=None, 
+                                        return_exceptions=return_exceptions)
 
         except Exception as e:
             if VERBOSE:
                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
-            raise e
+            yield _return_correct_yield(source, 
+                                        exception=e, 
+                                        return_exceptions=return_exceptions)
 
 
-def read_mwrest(*sources, **kwds):
+def read_mwrest(*sources, return_exceptions=False, **kwds):
     """Construct a generator that yields file instances.
 
     :param sources: One or more strings representing path to file(s).
+    :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
     """
-    filenames = _generate_filenames(sources)
-    filehandles = _generate_handles(filenames)
-    for fh, source in filehandles:
+    try:
+        filenames = _generate_filenames(sources, True)
+        filehandles = _generate_handles(filenames, True)
+    except Exception as e:
+        yield _return_correct_yield(None, 
+                                    exception=e, 
+                                    return_exceptions=return_exceptions)
+    for fh, source, exc in filehandles:
         try:
             f = mwrest.MWRESTFile(source)
             f.read(fh)
@@ -127,12 +209,16 @@ def read_mwrest(*sources, **kwds):
             if VERBOSE:
                 print("Processed url: {}".format(source))
 
-            yield f
+            yield _return_correct_yield(f, 
+                                        exception=None, 
+                                        return_exceptions=return_exceptions)
 
         except Exception as e:
             if VERBOSE:
                 print("Error processing url: ", source, "\nReason:", e)
-            pass
+            yield _return_correct_yield(None, 
+                                        exception=e, 
+                                        return_exceptions=return_exceptions)
 
 
 class GenericFilePath(object):

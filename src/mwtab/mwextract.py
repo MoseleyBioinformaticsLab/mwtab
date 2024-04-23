@@ -12,6 +12,10 @@ import csv
 import json
 import os
 import re
+import traceback
+import sys
+
+from mwtab import fileio
 
 
 class ItemMatcher(object):
@@ -97,24 +101,31 @@ def generate_matchers(items):
             yield ItemMatcher(item[0], item[1])
 
 
-def extract_metabolites(sources, matchers):
+def extract_metabolites(sources, matcher_generator):
     """Extract metabolite data from ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
 
     :param generator sources: Generator of mwtab file objects (:class:`~mwtab.mwtab.MWTabFile`).
-    :param generator matchers: Generator of matcher objects (:class:`~mwtab.mwextract.ItemMatcher` or
+    :param generator matcher_generator: Generator of matcher objects (:class:`~mwtab.mwextract.ItemMatcher` or
     :class:`~mwtab.mwextract.ReGeXMatcher`).
     :return: Extracted metabolites dictionary.
     :rtype: :py:class:`dict`
     """
+    matchers = [matcher for matcher in matcher_generator]
     metabolites = dict()
-    for mwtabfile in sources:
-        if all(matcher(mwtabfile) for matcher in matchers):
+    for mwtabfile, e in sources:
+        if e is not None:
+            file_source = mwtabfile if isinstance(mwtabfile, str) else "from the given input."
+            print("Something went wrong when trying to read " + file_source)
+            traceback.print_exception(e, file=sys.stdout)
+            print()
+            continue
+        if all([matcher(mwtabfile) for matcher in matchers]):
             data_section_key = list(set(mwtabfile.keys()) & {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})[0]
-            for data_list in mwtabfile[data_section_key]["Data"]:
-                for test_key in (key for key in data_list.keys() if key != "Metabolite"):
+            for data_dict in mwtabfile[data_section_key]["Data"]:
+                for test_key in (key for key in data_dict.keys() if key != "Metabolite"):
                     try:
-                        if float(data_list[test_key]) > 0:
-                            metabolites.setdefault(data_list["Metabolite"], dict())\
+                        if float(data_dict[test_key]) > 0:
+                            metabolites.setdefault(data_dict["Metabolite"], dict())\
                                 .setdefault(mwtabfile.study_id, dict())\
                                 .setdefault(mwtabfile.analysis_id, set())\
                                 .add(test_key)
@@ -155,10 +166,11 @@ def write_metadata_csv(to_path, extracted_values, no_header=False):
     :return: None
     :rtype: :py:obj:`None`
     """
-    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-        dirname = os.path.dirname(to_path)
-        if dirname:
-            os.makedirs(dirname)
+    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
+    #     dirname = os.path.dirname(to_path)
+    #     if dirname:
+    #         os.makedirs(dirname)
+    fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:
         to_path += ".csv"
@@ -207,10 +219,11 @@ def write_metabolites_csv(to_path, extracted_values, no_header=False):
             num_samples
         ])
 
-    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-        dirname = os.path.dirname(to_path)
-        if dirname:
-            os.makedirs(dirname)
+    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
+    #     dirname = os.path.dirname(to_path)
+    #     if dirname:
+    #         os.makedirs(dirname)
+    fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:
         to_path += ".csv"
@@ -271,10 +284,11 @@ def write_json(to_path, extracted_dict):
     :return: None
     :rtype: :py:obj:`None`
     """
-    if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-        dirname = os.path.dirname(to_path)
-        if dirname:
-            os.makedirs(dirname)
+    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
+    #     dirname = os.path.dirname(to_path)
+    #     if dirname:
+    #         os.makedirs(dirname)
+    fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:
         to_path += ".json"

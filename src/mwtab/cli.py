@@ -50,9 +50,10 @@ from .mwschema import section_schema_mapping
 from os import getcwd, makedirs, path
 from os.path import join, isfile
 from urllib.parse import quote_plus
-
+import traceback
 import json
 import re
+import sys
 
 # remove
 import time
@@ -119,20 +120,23 @@ def download(context, cmdparams):
             "input_value": cmdparams["<input-value>"],
             "output_item": cmdparams.get("<output-item>") if cmdparams.get("<output-item>") else "mwtab",
             "output_format": OUTPUT_FORMATS[cmdparams.get("--output-format")] if cmdparams.get("--output-format") else "txt",
-        }).url
+        }, cmdparams["--mw-rest"]).url
         mwrestfile = next(fileio.read_mwrest(mwresturl))
 
         if mwrestfile.text:  # if the text file isn't blank
-            with open(get_file_path(
-                    cmdparams.get("--to-path"),
-                    mwrestfile.source,
-                    OUTPUT_FORMATS[cmdparams.get("--output-format")]
-            ), "w", encoding="utf-8") as fh:
+            path_to_save = get_file_path(
+                                        cmdparams.get("--to-path"),
+                                        mwrestfile.source,
+                                        OUTPUT_FORMATS[cmdparams.get("--output-format")])
+            fileio._create_save_path(path_to_save)
+            with open(path_to_save, "w", encoding="utf-8") as fh:
                 mwrestfile.write(fh)
         else:
-            print("BLANK FILE")
+            print("When trying to download a file for the value, \"" + 
+                  cmdparams["<input-value>"] + 
+                  "\", a blank file or an error was returned, so no file was created for it.")
     except Exception as e:
-        print(e)
+        raise e
 
 
 def cli(cmdargs):
@@ -143,7 +147,7 @@ def cli(cmdargs):
 
     VERBOSE = cmdargs["--verbose"]
     fileio.VERBOSE = cmdargs["--verbose"]
-    fileio.MWREST = cmdargs["--mw-rest"]
+    fileio.MWREST_URL = cmdargs["--mw-rest"]
     mwrest.VERBOSE = cmdargs["--verbose"]
 
     # mwtab convert ...
@@ -157,7 +161,13 @@ def cli(cmdargs):
 
     # mwtab validate ...
     elif cmdargs["validate"]:
-        for mwfile in fileio.read_files(cmdargs["<from-path>"], validate=cmdargs["--validate"]):
+        for i, (mwfile, e) in enumerate(fileio.read_files(cmdargs["<from-path>"], return_exceptions=True)):
+            if e is not None:
+                file_source = mwfile if isinstance(mwfile, str) else cmdargs["<from-path>"]
+                print("Something went wrong when trying to read " + file_source)
+                traceback.print_exception(e, file=sys.stdout)
+                print()
+                continue
             validate_file(
                 mwtabfile=mwfile,
                 section_schema_mapping=section_schema_mapping,
@@ -170,13 +180,12 @@ def cli(cmdargs):
         # mwtab download url ...
         if cmdargs["<url>"]:
             mwrestfile = next(fileio.read_mwrest(cmdargs["<url>"]))
-            with open(get_file_path(
-                    cmdargs["--to-path"],
-                    mwrestfile.source,
-                    OUTPUT_FORMATS[cmdargs.get("--output-format")]),
-                "w",
-                encoding="utf-8"
-            ) as fh:
+            path_to_save = get_file_path(
+                                        cmdargs["--to-path"],
+                                        mwrestfile.source,
+                                        OUTPUT_FORMATS[cmdargs.get("--output-format")])
+            fileio._create_save_path(path_to_save)
+            with open(path_to_save, "w", encoding="utf-8") as fh:
                 mwrestfile.write(fh)
 
         # mwtab download study ...
@@ -201,7 +210,12 @@ def cli(cmdargs):
                         if VERBOSE:
                             print("[{:4}/{:4}]".format(count+1, len(id_list)), input_id, datetime.datetime.now())
                         cmdargs["<input-value>"] = input_id
-                        download("study", cmdargs)
+                        try:
+                            download("study", cmdargs)
+                        except Exception:
+                            print("Something went wrong and " + input_id + " could not be downloaded.")
+                            traceback.print_exc(file=sys.stdout)
+                            print()
                         time.sleep(3)
 
                 else:
@@ -212,14 +226,38 @@ def cli(cmdargs):
                 if isfile(cmdargs["<input-value>"]):
                     with open(cmdargs["<input-value>"], "r") as fh:
                         id_list = json.loads(fh.read())
-
+                    
+                    if cmdargs["--input-item"]:
+                        if cmdargs["--input-item"] in ("analysis_id", "study_id"):
+                            item_list = [cmdargs["--input-item"]]*len(id_list)
+                        else:
+                            raise ValueError("Unknown \"--input-item\" {}".format(cmdargs["--input-item"]))
+                    else:
+                        item_list = []
+                        for i, input_value in enumerate(id_list):
+                            if input_value.isdigit():
+                                id_list[i] = "AN{}".format(input_value.zfill(6))
+                                item_list.append("analysis_id")
+                            elif re.match(r'(AN[0-9]{6}$)', input_value):
+                                item_list.append("analysis_id")
+                            elif re.match(r'(ST[0-9]{6}$)', input_value):
+                                item_list.append("study_id")
+                            else:
+                                item_list.append("analysis_id")
+                    
                     if VERBOSE:
                         print("Found {} Files to be Downloaded".format(len(id_list)))
                     for count, input_id in enumerate(id_list):
                         if VERBOSE:
                             print("[{:4}/{:4}]".format(count + 1, len(id_list)), input_id, datetime.datetime.now())
                         cmdargs["<input-value>"] = input_id
-                        download("study", cmdargs)
+                        cmdargs["<input-item>"] = item_list[count]
+                        try:
+                            download("study", cmdargs)
+                        except Exception:
+                            print("Something went wrong and " + input_id + " could not be downloaded.")
+                            traceback.print_exc(file=sys.stdout)
+                            print()
                         time.sleep(3)
 
                 else:
@@ -241,10 +279,13 @@ def cli(cmdargs):
                         "output_format": cmdargs["--output-format"],
                     }, cmdargs["--mw-rest"]).url
                     mwrestfile = next(fileio.read_mwrest(mwresturl))
-                    with open(cmdargs["--to-path"] or join(getcwd(),
-                                                           quote_plus(mwrestfile.source).replace(".", "_") + "." + cmdargs[
-                                                               "--output-format"]),
-                              "w", encoding="utf-8") as fh:
+                    if cmdargs["--to-path"]:
+                        to_path = cmdargs["--to-path"]
+                    else:
+                        to_path = join(getcwd(),
+                                       quote_plus(mwrestfile.source).replace(".", "_") + 
+                                                  "." + cmdargs["--output-format"])
+                    with open(to_path, "w", encoding="utf-8") as fh:
                         mwrestfile.write(fh)
 
             # mwtab download (study | ...) <input_item> ...
@@ -269,7 +310,7 @@ def cli(cmdargs):
                 "m/z_value": cmdargs["<m/z-value>"],
                 "ion_type_value": cmdargs["<ion-type-value>"],
                 "m/z_tolerance_value": cmdargs["<m/z-tolerance-value>"],
-            }).url
+            }, cmdargs["--mw-rest"]).url
             mwrestfile = next(fileio.read_mwrest(mwresturl))
             with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + ".txt"),
                       "w") as fh:
@@ -281,7 +322,7 @@ def cli(cmdargs):
                 "context": "exactmass",
                 "LIPID_abbreviation": cmdargs["<LIPID-abbreviation>"],
                 "ion_type_value": cmdargs["<ion-type-value>"],
-            }).url
+            }, cmdargs["--mw-rest"]).url
             mwrestfile = next(fileio.read_mwrest(mwresturl))
             with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + ".txt"),
                       "w") as fh:
@@ -289,7 +330,7 @@ def cli(cmdargs):
 
     # mwtab extract ...
     elif cmdargs["extract"]:
-        mwfile_generator = fileio.read_files(cmdargs["<from-path>"])
+        mwfile_generator = fileio.read_files(cmdargs["<from-path>"], return_exceptions=True)
         if cmdargs["metabolites"]:
             metabolites_dict = mwextract.extract_metabolites(
                 mwfile_generator,
@@ -299,24 +340,39 @@ def cli(cmdargs):
                      for i in range(len(cmdargs["<key>"]))]
                 )
             )
-
-            if cmdargs["<to-path>"] != "-":
-                if cmdargs["--to-format"] == "csv":
-                    mwextract.write_metabolites_csv(cmdargs["<to-path>"], metabolites_dict, cmdargs["--no-header"])
+            
+            if metabolites_dict:
+                if cmdargs["<to-path>"] != "-":
+                    if cmdargs["--to-format"] == "csv":
+                        mwextract.write_metabolites_csv(cmdargs["<to-path>"], metabolites_dict, cmdargs["--no-header"])
+                    else:
+                        mwextract.write_json(cmdargs["<to-path>"], metabolites_dict)
                 else:
-                    mwextract.write_json(cmdargs["<to-path>"], metabolites_dict)
+                    print(json.dumps(metabolites_dict, indent=4, cls=mwextract.SetEncoder))
             else:
-                print(json.dumps(metabolites_dict, indent=4, cls=mwextract.SetEncoder))
+                print("No metabolites extracted. No file was saved. " 
+                      "This is likely due to key value pairs filtering all of the studies out. "
+                      "Check your key value pairs and data.")
 
         elif cmdargs["metadata"]:
             metadata = dict()
-            for mwtabfile in mwfile_generator:
+            for mwtabfile, e in mwfile_generator:
+                if e is not None:
+                    file_source = mwtabfile if isinstance(mwtabfile, str) else cmdargs["<from-path>"]
+                    print("Something went wrong when trying to read " + file_source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
+                    continue
                 extracted_values = mwextract.extract_metadata(mwtabfile, cmdargs["<key>"])
                 [metadata.setdefault(key, set()).update(val) for (key, val) in extracted_values.items()]
-            if cmdargs["<to-path>"] != "-":
-                if cmdargs["--to-format"] == "csv":
-                    mwextract.write_metadata_csv(cmdargs["<to-path>"], metadata, cmdargs["--no-header"])
+            if metadata:
+                if cmdargs["<to-path>"] != "-":
+                    if cmdargs["--to-format"] == "csv":
+                        mwextract.write_metadata_csv(cmdargs["<to-path>"], metadata, cmdargs["--no-header"])
+                    else:
+                        mwextract.write_json(cmdargs["<to-path>"], metadata)
                 else:
-                    mwextract.write_json(cmdargs["<to-path>"], metadata)
+                    print(metadata)
             else:
-                print(metadata)
+                print("No metadata extracted. No file was saved.")
+

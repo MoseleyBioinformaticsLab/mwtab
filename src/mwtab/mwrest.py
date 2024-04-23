@@ -83,7 +83,7 @@ def _pull_study_analysis(base_url=BASE_URL):
     return study_analysis_dict
 
 
-def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt'):
+def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt', return_exceptions=False):
     """
     Method for generating URLS to be used to retrieve `mwtab` files for analyses and
     studies through the REST API of the Metabolomics Workbench database.
@@ -91,51 +91,74 @@ def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt'):
     :param list input_items: List of Metabolomics Workbench input values for mwTab files.
     :param str base_url: Base url to Metabolomics Workbench REST API.
     :param str output_format: Output format for the mwTab files to be retrieved in.
+    :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.
     :return: Metabolomics Workbench REST URL string(s).
     :rtype: :py:class:`str`
     """
     for input_item in input_items:
-        if input_item.isdigit():
-            analysis_id = "AN{}".format(input_item.zfill(6))
-            yield GenericMWURL({
-                "context": "study",
-                "input_item": "analysis_id",
-                "input_value": analysis_id,
-                "output_item": "mwtab",
-                "output_format": output_format
-            }, base_url).url
-        elif re.match(r'(AN[0-9]{6}$)', input_item):
-            yield GenericMWURL({
-                "context": "study",
-                "input_item": "analysis_id",
-                "input_value": input_item,
-                "output_item": "mwtab",
-                "output_format": output_format
-            }, base_url).url
-        elif re.match(r'(ST[0-9]{1,6}$)', input_item):
-            yield GenericMWURL({
-                "context": "study",
-                "input_item": "study_id",
-                "input_value": input_item,
-                "output_item": "mwtab",
-                "output_format": output_format
-            }, base_url).url
+        try:
+            if input_item.isdigit():
+                analysis_id = "AN{}".format(input_item.zfill(6))
+                yield fileio._return_correct_yield(
+                    GenericMWURL({
+                    "context": "study",
+                    "input_item": "analysis_id",
+                    "input_value": analysis_id,
+                    "output_item": "mwtab",
+                    "output_format": output_format
+                    }, base_url).url, 
+                    exception=None, 
+                    return_exceptions=return_exceptions)
+            elif re.match(r'(AN[0-9]{6}$)', input_item):
+                yield fileio._return_correct_yield(
+                    GenericMWURL({
+                    "context": "study",
+                    "input_item": "analysis_id",
+                    "input_value": input_item,
+                    "output_item": "mwtab",
+                    "output_format": output_format
+                    }, base_url).url, 
+                    exception=None, 
+                    return_exceptions=return_exceptions)
+            elif re.match(r'(ST[0-9]{1,6}$)', input_item):
+                yield fileio._return_correct_yield(
+                    GenericMWURL({
+                    "context": "study",
+                    "input_item": "study_id",
+                    "input_value": input_item,
+                    "output_item": "mwtab",
+                    "output_format": output_format
+                    }, base_url).url, 
+                    exception=None, 
+                    return_exceptions=return_exceptions)
+        except Exception as e:
+            yield fileio._return_correct_yield(None, 
+                                               exception=e, 
+                                               return_exceptions=return_exceptions)
 
 
-def generate_urls(input_items, base_url=BASE_URL, **kwds):
+def generate_urls(input_items, base_url=BASE_URL, return_exceptions=False, **kwds):
     """
     Method for creating a generator which yields validated Metabolomics Workbench REST urls.
 
     :param list input_items: List of Metabolomics Workbench input values for mwTab files.
     :param str base_url: Base url to Metabolomics Workbench REST API.
+    :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.
     :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.
     :return: Metabolomics Workbench REST URL string(s).
     :rtype: :py:class:`str`
     """
     for input_item in input_items:
-        params = dict(kwds)
-        params["input_item"] = input_item
-        yield GenericMWURL(params, base_url).url
+        try:
+            params = dict(kwds)
+            params["input_item"] = input_item
+            yield fileio._return_correct_yield(GenericMWURL(params, base_url).url, 
+                                               exception=None, 
+                                               return_exceptions=return_exceptions)
+        except Exception as e:
+            yield fileio._return_correct_yield(None, 
+                                               exception=e, 
+                                               return_exceptions=return_exceptions)
 
 
 class GenericMWURL(object):
