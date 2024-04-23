@@ -11,8 +11,8 @@ Usage:
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
     mwtab download url <url> [--to-path=<path>] [--verbose]
-    mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
-    mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--validate] [--verbose]
+    mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+    mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
     mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
     mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
     mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
@@ -40,6 +40,7 @@ Options:
     --no-header                     Include header at the top of csv formatted files.
 
     For extraction <to-path> can take a "-" which will use stdout.
+    All <from-path>'s can be single files, directories, or urls.
 """
 
 from . import fileio, mwextract, mwrest
@@ -223,6 +224,7 @@ def cli(cmdargs):
 
             # mwtab download study <input_value> ...
             elif cmdargs["<input-value>"] and not cmdargs["<input-item>"]:
+                # Read a json file with a list and make a best attempt to parse and downlod studies and analyses from the list.
                 if isfile(cmdargs["<input-value>"]):
                     with open(cmdargs["<input-value>"], "r") as fh:
                         id_list = json.loads(fh.read())
@@ -260,6 +262,7 @@ def cli(cmdargs):
                             print()
                         time.sleep(3)
 
+                # Assume input value is a single analysis or study id and use --input-item to decide which, default to analysis_id
                 else:
                     input_item = cmdargs.get("--input-item")
                     input_value = cmdargs["<input-value>"]
@@ -271,6 +274,8 @@ def cli(cmdargs):
                             input_item = "analysis_id"
                         elif re.match(r'(ST[0-9]{6}$)', input_value):
                             input_item = "study_id"
+                        else:
+                            input_item = "analysis_id"
                     mwresturl = mwrest.GenericMWURL({
                         "context": "study",
                         "input_item": input_item,
