@@ -40,7 +40,10 @@ Options:
     --no-header                     Include header at the top of csv formatted files.
 
     For extraction <to-path> can take a "-" which will use stdout.
-    All <from-path>'s can be single files, directories, or urls.
+    All <from-path>'s can be single files, directories, or URLs.
+
+Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
+GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
 
 from . import fileio, mwextract, mwrest
