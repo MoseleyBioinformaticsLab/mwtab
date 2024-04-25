@@ -15,6 +15,8 @@ from collections import OrderedDict
 
 from schema import Schema, Optional, Or, And
 
+from . import mwtab
+
 if sys.version_info.major == 2:
     str = unicode
 
@@ -120,7 +122,7 @@ subject_sample_factors_schema = Schema(
             "Factors": dict,
             Optional("Additional sample data"): {
                 Optional("RAW_FILE_NAME"): str,
-                Optional(str): str
+                Optional(str): Or(str, mwtab._duplicate_key_list)
             }
         }
     ]

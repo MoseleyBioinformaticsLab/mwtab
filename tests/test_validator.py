@@ -108,5 +108,14 @@ def test_base_schema_error_missing_key():
     assert "Missing key: 'METABOLOMICS WORKBENCH'" in validation_log
     assert "Missing keys: 'METABOLOMICS WORKBENCH', 'NM', 'NMR_METABOLITE_DATA'" in validation_log
     assert "Missing keys: 'METABOLOMICS WORKBENCH', 'NM', 'NMR_BINNED_DATA'" in validation_log
+
+
+def test_duplicate_keys():
+    """Test that duplicate keys in Additional sample data print a message."""
+    mwfile = next(mwtab.read_files("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.json"))
+    _, validation_log = mwtab.validate_file(mwfile)
+    print(validation_log)
+    
+    assert "SUBJECT_SAMPLE_FACTORS: Entry #1 has the following duplicate keys:\n\tkey_1" in validation_log
     
     

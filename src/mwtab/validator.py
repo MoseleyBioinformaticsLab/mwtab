@@ -120,6 +120,13 @@ def validate_subject_samples_factors(mwtabfile):
                             index + 1, additional_key
                         )
                     )
+            
+            duplicate_keys = [key for key, value in subject_sample_factor["Additional sample data"].items() 
+                              if isinstance(value, mwtab.mwtab._duplicate_key_list)]
+            if duplicate_keys:
+                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                                                      " has the following duplicate keys:\n\t" + 
+                                                      "\n\t".join(duplicate_keys))
 
     return subject_samples_factors_errors
 

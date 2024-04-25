@@ -96,3 +96,50 @@ def test_read_in_and_reorder_keys():
         
     assert expected_dict == json_file
 
+
+def test_read_in_duplicate_keys_json():
+    """Test that a file with duplicate keys is handled correctly for JSON files."""
+    
+    if not os.path.exists("tests/example_data/tmp/"):
+        os.makedirs("tests/example_data/tmp/")
+    
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.json")
+        
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.json", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    
+    assert isinstance(mwtabfile["SUBJECT_SAMPLE_FACTORS"][0]["Additional sample data"]['key_1'], mwtab.mwtab._duplicate_key_list)
+    
+    with open("tests/example_data/tmp/tmp.json", "w", encoding="utf-8") as f:
+        mwtabfile.write(f, file_format="json")
+    
+    new_mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/tmp/tmp.json")
+    with open("tests/example_data/tmp/tmp.json", "r", encoding="utf-8") as f:
+        new_mwtabfile.read(f)
+    
+    assert isinstance(new_mwtabfile["SUBJECT_SAMPLE_FACTORS"][0]["Additional sample data"]['key_1'], mwtab.mwtab._duplicate_key_list)
+
+
+def test_read_in_duplicate_keys_tab():
+    """Test that a file with duplicate keys is handled correctly for tab files."""
+    
+    if not os.path.exists("tests/example_data/tmp/"):
+        os.makedirs("tests/example_data/tmp/")
+    
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt")
+        
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    
+    assert isinstance(mwtabfile["SUBJECT_SAMPLE_FACTORS"][0]["Additional sample data"]['key_1'], mwtab.mwtab._duplicate_key_list)
+    
+    with open("tests/example_data/tmp/tmp.txt", "w", encoding="utf-8") as f:
+        mwtabfile.write(f, file_format="mwtab")
+    
+    new_mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/tmp/tmp.txt")
+    with open("tests/example_data/tmp/tmp.txt", "r", encoding="utf-8") as f:
+        new_mwtabfile.read(f)
+    
+    assert isinstance(new_mwtabfile["SUBJECT_SAMPLE_FACTORS"][0]["Additional sample data"]['key_1'], mwtab.mwtab._duplicate_key_list)    
+
+

@@ -22,7 +22,49 @@ from collections import OrderedDict
 import io
 import sys
 import json
+import re
+import copy
+
+import json_duplicate_keys as jdks
+
 from .tokenizer import tokenizer
+
+
+# The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
+# Python's parser can't do it and you have to do some workarounds for it.
+class _duplicate_key_list(list):
+    """Class identical to list that can be used for type checking. Used to handle dealing with parsing duplicate keys in JSON."""
+    def __init__(self, *args, **kwargs):
+        super(_duplicate_key_list, self).__init__(*args, **kwargs)
+
+
+# From https://stackoverflow.com/questions/14902299/json-loads-allows-duplicate-keys-in-a-dictionary-overwriting-the-first-value
+def _array_on_duplicate_keys(ordered_pairs):
+    """Convert duplicate keys to arrays."""
+    d = {}
+    for k, v in ordered_pairs:
+        if k in d:
+            if isinstance(d[k], _duplicate_key_list):
+                d[k].append(v)
+            else:
+                d[k] = _duplicate_key_list([d[k],v])
+        else:
+           d[k] = v
+    return d
+
+
+SORT_KEYS = False
+INDENT = 4
+def _JSON_serializer_for_dupe_class(o):
+    """ """
+    return o.dumps(sort_keys=SORT_KEYS, indent=INDENT)
+
+
+def _match_process(matchobj):
+    temp_string = matchobj.group(1)
+    temp_string = temp_string.replace('\\"', '"')
+    temp_string = temp_string.replace('\\n',  '\n' + ' '*(3*INDENT))
+    return '"Additional sample data": {' + temp_string + '}'
 
 
 class MWTabFile(OrderedDict):
@@ -288,7 +330,11 @@ class MWTabFile(OrderedDict):
                     elif k == "Additional sample data":
                         additional_sample_data = []
                         for k2 in item[k]:
-                            additional_sample_data.append("{}={}".format(k2, item[k][k2]))
+                            if isinstance(item[k][k2], _duplicate_key_list):
+                                for value in item[k][k2]:
+                                    additional_sample_data.append("{}={}".format(k2, value))
+                            else:
+                                additional_sample_data.append("{}={}".format(k2, item[k][k2]))
                         formatted_items.append(";".join(additional_sample_data))
                 line = "{}{}\t{}".format(section_key, 33 * " ", "\t".join(formatted_items))
                 # for file missing "Additional sample data" items
@@ -388,7 +434,7 @@ class MWTabFile(OrderedDict):
                         print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
 
         elif file_format == "json":
-            print(json.dumps(self[section_key], sort_keys=False, indent=4), file=f)
+            print(json.dumps(self[section_key], sort_keys=SORT_KEYS, indent=INDENT), file=f)
 
     def _to_json(self):
         """Save :class:`~mwtab.mwtab.MWTabFile` into JSON string.
@@ -397,7 +443,24 @@ class MWTabFile(OrderedDict):
         :rtype: :py:class:`str`
         """
         self._set_key_order()
-        return json.dumps(self, sort_keys=False, indent=4)
+        temp = copy.deepcopy(OrderedDict(self))
+        temp = jdks.JSON_DUPLICATE_KEYS(temp)
+        for ssf_dict in temp.getObject()["SUBJECT_SAMPLE_FACTORS"]:
+            if "Additional sample data" in ssf_dict:
+                additional_dict = ssf_dict["Additional sample data"]
+                new_additional_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                for key, value in additional_dict.items():
+                    if isinstance(value, _duplicate_key_list):
+                        for item in value:
+                            new_additional_dict.set(key, item)
+                    else:
+                        new_additional_dict.set(key, value)
+                    ssf_dict["Additional sample data"] = new_additional_dict
+        json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
+        json_string = re.sub(r'"Additional sample data": "\{(.*)\}"', _match_process, json_string)
+        return json_string
+        # return json.dumps(self, sort_keys=False, indent=4)
+    
 
     def _to_mwtab(self):
         """Save :class:`~mwtab.mwtab.MWTabFile` in `mwtab` formatted string.
@@ -444,9 +507,9 @@ class MWTabFile(OrderedDict):
         """
         try:
             if isinstance(string, bytes):
-                json_str = json.loads(string.decode("utf-8"), object_pairs_hook=OrderedDict)
+                json_str = json.loads(string.decode("utf-8"), object_pairs_hook=_array_on_duplicate_keys)
             elif isinstance(string, str):
-                json_str = json.loads(string, object_pairs_hook=OrderedDict)
+                json_str = json.loads(string, object_pairs_hook=_array_on_duplicate_keys)
             else:
                 raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
             return json_str

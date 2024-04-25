@@ -1,6 +1,14 @@
 Release History
 ===============
 
+1.2.6
+~~~~
+-Can now read duplicate keys in "Additional sample data" and reproduce it in write, will validate it as an error.
+-Writing out now ensures correct key ordering for JSON.
+-Validation now validates the main sections not just the internals of them.
+-Validate now checks that metabolites in the Data section are in the Metabolites section and vice versa.
+-Batch processing from the command line is more fault tolerant and won't stop the batch for 1 bad file.
+
 
 1.2.5.post1 (2022-05-11)
 ~~~~~~~~~~~~~~~~~~~~~~~~

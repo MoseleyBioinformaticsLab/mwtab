@@ -18,6 +18,8 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 from __future__ import print_function, division, unicode_literals
 from collections import deque, namedtuple, OrderedDict
 
+from . import mwtab
+
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
@@ -65,9 +67,22 @@ def tokenizer(text):
                                 line_items[3].split("|")}
                 })
                 if line_items[4]:
-                    subject_sample_factors_dict["Additional sample data"] = {
-                        factor_item.split("=")[0].strip(): factor_item.split("=")[1].strip() for factor_item in line_items[4].split(";")
-                    }
+                    additional_data = {}
+                    for factor_item in line_items[4].split(";"):
+                        key, value = factor_item.split("=")
+                        key = key.strip()
+                        value = value.strip()
+                        if key in additional_data:
+                            if not isinstance(additional_data[key], mwtab._duplicate_key_list):
+                                additional_data[key] = mwtab._duplicate_key_list([additional_data[key], value])
+                            else:
+                                additional_data[key].append(value)
+                        else:
+                            additional_data[key] = value
+                    # subject_sample_factors_dict["Additional sample data"] = {
+                    #     factor_item.split("=")[0].strip(): factor_item.split("=")[1].strip() for factor_item in line_items[4].split(";")
+                    # }
+                    subject_sample_factors_dict["Additional sample data"] = additional_data
                 yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
 
             # data start header
