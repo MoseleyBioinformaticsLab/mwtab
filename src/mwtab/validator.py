@@ -14,10 +14,13 @@ required key-value pairs are present.
 from copy import deepcopy
 from collections import OrderedDict
 from datetime import datetime
-from .mwschema import section_schema_mapping, base_schema
 from re import match
 import io
 import sys
+import traceback
+
+from .mwschema import section_schema_mapping, base_schema
+
 import mwtab
 
 
@@ -145,8 +148,12 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
     data_errors = list()
 
     subject_sample_factors_sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
-    data_sample_id_set = set(list(mwtabfile[data_section_key]["Data"][0].keys())[1:])
-    if metabolites:
+    if mwtabfile[data_section_key]["Data"]:
+        data_keys = list(mwtabfile[data_section_key]["Data"][0].keys())
+        data_sample_id_set = set(data_keys[1:])
+    else:
+        data_sample_id_set = set()
+    if metabolites and "Metabolites" in mwtabfile[data_section_key]:
         metabolites_in_metabolites_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
 
     # Removed for mwTab File Spec. 1.5
@@ -174,7 +181,7 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
         #     )
         
         # Check whther the metabolite is in the Metabolites section.
-        if metabolites:
+        if metabolites and "Metabolites" in mwtabfile[data_section_key]:
             metabolite = metabolite_dict["Metabolite"]
             if metabolite not in metabolites_in_metabolites_section:
                 data_errors.append("DATA: Data entry #{}, \"{}\", is not in the Metabolites section.".format(index + 1, metabolite))
@@ -362,7 +369,16 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     if errors:
         print("Status: Contains Validation Errors", file=error_stout)
         print("Number Errors: {}\n".format(len(errors)), file=error_stout)
-        print("Error Log:\n" + "\n".join(errors), file=error_stout)
+        try:
+            print("Error Log:\n" + "\n".join(errors), file=error_stout)
+        except UnicodeEncodeError:
+            try:
+                print("An error occurred when trying to print the error log with unicode. Trying UTF-8.")
+                print(("Error Log:\n" + "\n".join(errors)).encode('utf-8'), file=error_stout)
+            except Exception as e:
+                print("An error occurred when trying to print the error log, so it could not be printed.")
+                print("Error Log Exception:\n")
+                traceback.print_exception(e, file=error_stout)
     else:
         print("Status: Passing", file=error_stout)
 
