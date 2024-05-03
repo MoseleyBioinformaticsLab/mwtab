@@ -15,7 +15,13 @@ from collections import OrderedDict
 
 from schema import Schema, Optional, Or, And
 
-from . import mwtab
+
+class _duplicate_key_list(list):
+    """Class identical to list that can be used for type checking. Used to handle dealing with parsing duplicate keys in JSON."""
+    def __init__(self, *args, **kwargs):
+        super(_duplicate_key_list, self).__init__(*args, **kwargs)
+
+
 
 if sys.version_info.major == 2:
     str = unicode
@@ -122,7 +128,7 @@ subject_sample_factors_schema = Schema(
             "Factors": dict,
             Optional("Additional sample data"): {
                 Optional("RAW_FILE_NAME"): str,
-                Optional(str): Or(str, mwtab._duplicate_key_list)
+                Optional(str): Or(str, _duplicate_key_list)
             }
         }
     ]

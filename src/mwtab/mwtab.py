@@ -28,14 +28,16 @@ import copy
 import json_duplicate_keys as jdks
 
 from .tokenizer import tokenizer
+from .validator import validate_file
+from .mwschema import section_schema_mapping, _duplicate_key_list
 
 
 # The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
 # Python's parser can't do it and you have to do some workarounds for it.
-class _duplicate_key_list(list):
-    """Class identical to list that can be used for type checking. Used to handle dealing with parsing duplicate keys in JSON."""
-    def __init__(self, *args, **kwargs):
-        super(_duplicate_key_list, self).__init__(*args, **kwargs)
+# class _duplicate_key_list(list):
+#     """Class identical to list that can be used for type checking. Used to handle dealing with parsing duplicate keys in JSON."""
+#     def __init__(self, *args, **kwargs):
+#         super(_duplicate_key_list, self).__init__(*args, **kwargs)
 
 
 # From https://stackoverflow.com/questions/14902299/json-loads-allows-duplicate-keys-in-a-dictionary-overwriting-the-first-value
@@ -67,6 +69,52 @@ def _match_process(matchobj):
     return '"Additional sample data": {' + temp_string + '}'
 
 
+# Descriptor to handle the convenience properties for MWTabFile.
+class MWTabProperty:
+    def __set_name__(self, owner, name):
+        self._name = name
+    
+    def __get__(self, obj, type=None):
+        if obj.__dict__.get("_" + self._name + "_was_set"):
+            return obj.__dict__[self._name]
+        
+        if self._name == "study_id" or self._name == "analysis_id":
+            try:
+                return obj["METABOLOMICS WORKBENCH"].get(self._name.upper())
+            except Exception:
+                return None
+        
+        if self._name == "header":
+            try:
+                return " ".join(
+                    ["#METABOLOMICS WORKBENCH"]
+                    + [item[0] + ":" + item[1] for item in obj["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
+                )
+            except Exception:
+                return None
+        
+        # try:
+        #     if self._name == "study_id":
+        #         return obj["METABOLOMICS WORKBENCH"].get("STUDY_ID")
+        #     if self._name == "analysis_id":
+        #         return obj["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
+        #     if self._name == "header":
+        #         return " ".join(
+        #             ["#METABOLOMICS WORKBENCH"]
+        #             + [item[0] + ":" + item[1] for item in obj["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
+        #         )
+        # except KeyError:
+        #     raise KeyError("Missing header information \"METABOLOMICS WORKBENCH\"")
+        # raise AttributeError("Unknown attribute " + self._name)
+    
+    def __set__(self, obj, value):
+        obj.__dict__[self._name] = value
+        obj.__dict__["_" + self._name + "_was_set"] = True
+    
+    def __delete__(self, obj):
+        del obj.__dict__[self._name]
+
+
 class MWTabFile(OrderedDict):
     """MWTabFile class that stores data from a single ``mwTab`` formatted file in
     the form of :py:class:`collections.OrderedDict`.
@@ -89,6 +137,10 @@ class MWTabFile(OrderedDict):
         "NMR_BINNED_DATA": "",
         "METABOLITES": ""
     }
+    
+    study_id = MWTabProperty()
+    analysis_id = MWTabProperty()
+    header = MWTabProperty()
 
     def __init__(self, source, *args, **kwds):
         """File initializer.
@@ -97,10 +149,41 @@ class MWTabFile(OrderedDict):
         """
         super(MWTabFile, self).__init__(*args, **kwds)
         self.source = source
-        self.study_id = ""
-        self.analysis_id = ""
-        self.header = ""
-
+        self._study_id = None
+        self._study_id_was_set = False
+        self._analysis_id = None
+        self._analysis_id_was_set = False
+        self._header = None
+        self._header_was_set = False
+        
+    def validate(self, section_schema_mapping=section_schema_mapping, verbose=True, metabolites=True):
+        """Validate the instance.
+        
+        :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+        :param bool verbose: whether to be verbose or not.
+        :param bool metabolites: whether to validate metabolites section.
+        :return: Validated file and errors if verbose is False.
+        :rtype: :py:class:`collections.OrderedDict`, _io.StringIO
+        """
+        return validate_file(
+                    mwtabfile=self,
+                    section_schema_mapping=section_schema_mapping,
+                    verbose=verbose,
+                    metabolites=metabolites
+                )
+    
+    @classmethod
+    def from_dict(cls, input_dict):
+        """Create a new MWTabFile instance from input_dict.
+        
+        :param dict input_dict: Dictionary to create the new instance from.
+        :return: New instance of MWTabFile
+        :rtype: :class:`~mwtab.mwtab.MWTabFile`
+        """
+        new_mwtabfile = cls("Internal dictionary. ID: " + str(id(input_dict)))
+        new_mwtabfile.update(input_dict)
+        return new_mwtabfile
+        
     def read(self, filehandle):
         """Read data into a :class:`~mwtab.mwtab.MWTabFile` instance.
 
@@ -127,16 +210,20 @@ class MWTabFile(OrderedDict):
         else:
             raise TypeError("Unknown file format")
 
-        try:
-            self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
-            self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
-            # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
-            self.header = " ".join(
-                ["#METABOLOMICS WORKBENCH"]
-                + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
-            )
-        except KeyError as e:
-            raise KeyError("File missing header information \"METABOLOMICS WORKBENCH\"", e)
+        # try:
+        #     # Call managed property getters to set initial value.
+        #     self.study_id
+        #     self.analysis_id
+        #     self.header
+        #     # self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
+        #     # self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
+        #     # # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
+        #     # self.header = " ".join(
+        #     #     ["#METABOLOMICS WORKBENCH"]
+        #     #     + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
+        #     # )
+        # except KeyError as e:
+        #     raise KeyError("File missing header information \"METABOLOMICS WORKBENCH\"", e)
 
         filehandle.close()
 

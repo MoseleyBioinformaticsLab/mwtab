@@ -143,3 +143,63 @@ def test_read_in_duplicate_keys_tab():
     assert isinstance(new_mwtabfile["SUBJECT_SAMPLE_FACTORS"][0]["Additional sample data"]['key_1'], mwtab.mwtab._duplicate_key_list)    
 
 
+def test_validate():
+    """Test that the validate method validates the object."""
+    
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt")
+        
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    
+    _, errors = mwtabfile.validate(verbose=False)
+    
+    assert "duplicate keys" in errors
+    
+    
+def test_from_dict():
+    """Test that the from_dict method works to create a new MWTabFile object."""
+    
+    with open("tests/example_data/other_mwtab_files/incorrect_section_order.json", "r", encoding="utf-8") as f:
+        json_file = loads(f.read())
+    
+    mwtabfile = mwtab.mwtab.MWTabFile.from_dict(json_file)
+    
+    assert mwtabfile.study_id == "ST000000"
+
+
+def test_properties():
+    """Test that the study_id, analysis_id, and header properties behave as expected."""
+    
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt")
+        
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    
+    assert mwtabfile.study_id == "ST000122"
+    assert mwtabfile.analysis_id == "AN000204"
+    assert mwtabfile.header == "#METABOLOMICS WORKBENCH STUDY_ID:ST000122 ANALYSIS_ID:AN000204 PROJECT_ID:PR000109"
+    
+    temp = mwtabfile["METABOLOMICS WORKBENCH"]
+    del mwtabfile["METABOLOMICS WORKBENCH"]
+    
+    assert mwtabfile.study_id is None
+    assert mwtabfile.analysis_id is None
+    assert mwtabfile.header is None
+    
+    mwtabfile["METABOLOMICS WORKBENCH"] = temp
+    
+    assert mwtabfile.study_id == "ST000122"
+    assert mwtabfile.analysis_id == "AN000204"
+    assert mwtabfile.header == "#METABOLOMICS WORKBENCH STUDY_ID:ST000122 ANALYSIS_ID:AN000204 PROJECT_ID:PR000109"
+    
+    mwtabfile.study_id = "asdf"
+    mwtabfile.analysis_id = "qwer"
+    mwtabfile.header = "zxcv"
+    
+    assert mwtabfile.study_id == "asdf"
+    assert mwtabfile.analysis_id == "qwer"
+    assert mwtabfile.header == "zxcv"
+
+
+
+

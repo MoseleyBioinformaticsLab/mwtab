@@ -19,7 +19,7 @@ import io
 import sys
 import traceback
 
-from .mwschema import section_schema_mapping, base_schema
+from .mwschema import section_schema_mapping, base_schema, _duplicate_key_list
 
 import mwtab
 
@@ -125,7 +125,7 @@ def validate_subject_samples_factors(mwtabfile):
                     )
             
             duplicate_keys = [key for key, value in subject_sample_factor["Additional sample data"].items() 
-                              if isinstance(value, mwtab.mwtab._duplicate_key_list)]
+                              if isinstance(value, _duplicate_key_list)]
             if duplicate_keys:
                 subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
                                                       " has the following duplicate keys:\n\t" + 
@@ -293,8 +293,8 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
     :param bool verbose: whether to be verbose or not.
     :param bool metabolites: whether to validate metabolites section.
-    :return: Validated file.
-    :rtype: :py:class:`collections.OrderedDict`
+    :return: Validated file and errors if verbose is False.
+    :rtype: :py:class:`collections.OrderedDict`, _io.StringIO
     """
     # setup
     if not verbose:

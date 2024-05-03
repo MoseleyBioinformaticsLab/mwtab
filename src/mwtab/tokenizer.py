@@ -18,7 +18,7 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 from __future__ import print_function, division, unicode_literals
 from collections import deque, namedtuple, OrderedDict
 
-from . import mwtab
+from .mwschema import _duplicate_key_list
 
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
@@ -73,8 +73,8 @@ def tokenizer(text):
                         key = key.strip()
                         value = value.strip()
                         if key in additional_data:
-                            if not isinstance(additional_data[key], mwtab._duplicate_key_list):
-                                additional_data[key] = mwtab._duplicate_key_list([additional_data[key], value])
+                            if not isinstance(additional_data[key], _duplicate_key_list):
+                                additional_data[key] = _duplicate_key_list([additional_data[key], value])
                             else:
                                 additional_data[key].append(value)
                         else:
