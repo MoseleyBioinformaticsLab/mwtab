@@ -245,13 +245,18 @@ class Converter(object):
         :rtype: :py:obj:`None`
         """
         for f in file_generator:
-            outpath = self._output_path(f.source, file_generator.to_format)
-
-            if not os.path.exists(os.path.dirname(outpath)):
-                os.makedirs(os.path.dirname(outpath))
-
-            with open(outpath, mode="w", encoding="utf-8") as outfile:
-                f.write(outfile, file_generator.to_format)
+            try:
+                outpath = self._output_path(f.source, file_generator.to_format)
+    
+                if not os.path.exists(os.path.dirname(outpath)):
+                    os.makedirs(os.path.dirname(outpath))
+    
+                with open(outpath, mode="w", encoding="utf-8") as outfile:
+                    f.write(outfile, file_generator.to_format)
+            except Exception as e:
+                print("Something went wrong when trying to convert " + f.source)
+                traceback.print_exception(e, file=sys.stdout)
+                print()
 
     def _to_zipfile(self, file_generator):
         """Convert files to zip archive.
@@ -260,8 +265,13 @@ class Converter(object):
         """
         with zipfile.ZipFile(file_generator.to_path, mode="w", compression=zipfile.ZIP_DEFLATED) as outfile:
             for f in file_generator:
-                outpath = self._output_path(f.source, file_generator.to_format, archive=True)
-                outfile.writestr(outpath, f.writestr(file_generator.to_format))
+                try:
+                    outpath = self._output_path(f.source, file_generator.to_format, archive=True)
+                    outfile.writestr(outpath, f.writestr(file_generator.to_format))
+                except Exception as e:
+                    print("Something went wrong when trying to convert " + f.source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
 
     def _to_tarfile(self, file_generator):
         """Convert files to tar archive.
@@ -279,11 +289,16 @@ class Converter(object):
 
         with tarfile.open(file_generator.to_path, mode=tar_mode) as outfile:
             for f in file_generator:
-                outpath = self._output_path(f.source, file_generator.to_format, archive=True)
-                info = tarfile.TarInfo(outpath)
-                data = f.writestr(file_generator.to_format).encode()
-                info.size = len(data)
-                outfile.addfile(tarinfo=info, fileobj=io.BytesIO(data))
+                try:
+                    outpath = self._output_path(f.source, file_generator.to_format, archive=True)
+                    info = tarfile.TarInfo(outpath)
+                    data = f.writestr(file_generator.to_format).encode()
+                    info.size = len(data)
+                    outfile.addfile(tarinfo=info, fileobj=io.BytesIO(data))
+                except Exception as e:
+                    print("Something went wrong when trying to convert " + f.source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
 
     def _to_bz2file(self, file_generator):
         """Convert file to bz2-compressed file.
@@ -292,7 +307,12 @@ class Converter(object):
         """
         with bz2.BZ2File(file_generator.to_path, mode="wb") as outfile:
             for f in file_generator:
-                outfile.write(f.writestr(file_generator.to_format).encode())
+                try:
+                    outfile.write(f.writestr(file_generator.to_format).encode())
+                except Exception as e:
+                    print("Something went wrong when trying to convert " + f.source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
 
     def _to_gzipfile(self, file_generator):
         """Convert file to gzip-compressed file.
@@ -301,7 +321,12 @@ class Converter(object):
         """
         with gzip.GzipFile(file_generator.to_path, mode="wb") as outfile:
             for f in file_generator:
-                outfile.write(f.writestr(file_generator.to_format).encode())
+                try:
+                    outfile.write(f.writestr(file_generator.to_format).encode())
+                except Exception as e:
+                    print("Something went wrong when trying to convert " + f.source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
 
     def _to_textfile(self, file_generator):
         """Convert file to regular text file.
@@ -314,7 +339,12 @@ class Converter(object):
 
         with open(to_path, mode="w", encoding="utf-8") as outfile:
             for f in file_generator:
-                outfile.write(f.writestr(file_generator.to_format))
+                try:
+                    outfile.write(f.writestr(file_generator.to_format))
+                except Exception as e:
+                    print("Something went wrong when trying to convert " + f.source)
+                    traceback.print_exception(e, file=sys.stdout)
+                    print()
 
     def _output_path(self, input_path, to_format, archive=False):
         """Construct an output path string from an input path string.
@@ -335,5 +365,8 @@ class Converter(object):
             outdirpath = os.path.join(*outparts) if outparts else ""
         else:
             outdirpath = os.path.join(self.file_generator.to_path, *outparts)
+        
+        if not fname.endswith(self.file_generator.file_extension[to_format]):
+            fname = fname + self.file_generator.file_extension[to_format]
 
-        return os.path.join(outdirpath, fname + self.file_generator.file_extension[to_format])
+        return os.path.join(outdirpath, fname)

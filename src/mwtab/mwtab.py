@@ -31,7 +31,6 @@ from .tokenizer import tokenizer
 from .validator import validate_file
 from .mwschema import section_schema_mapping, _duplicate_key_list
 
-
 # The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
 # Python's parser can't do it and you have to do some workarounds for it.
 # class _duplicate_key_list(list):
@@ -63,10 +62,29 @@ def _JSON_serializer_for_dupe_class(o):
 
 
 def _match_process(matchobj):
-    temp_string = matchobj.group(1)
+    temp_string = matchobj.group(2)
     temp_string = temp_string.replace('\\"', '"')
     temp_string = temp_string.replace('\\n',  '\n' + ' '*(3*INDENT))
-    return '"Additional sample data": {' + temp_string + '}'
+    return matchobj.group(1) + ': {' + temp_string + '}'
+
+
+def _parse_header_input(input_str):
+    """Attempt to parse a header string into a dict.
+    """
+    match_re = re.match(r"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*", input_str)
+    if match_re:
+        key_values = re.findall(r" (\w*:\w*)", input_str)
+        temp_dict = {}
+        for key_value in key_values:
+            key, new_value = key_value.split(":")
+            temp_dict[key] = new_value
+        
+        if match_re.group(2):
+            temp_dict["filename"] = match_re.group(2)
+        
+        return temp_dict
+    else:
+        raise ValueError("header cannot be set because it is not of the form \"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*\"")
 
 
 # Descriptor to handle the convenience properties for MWTabFile.
@@ -75,9 +93,6 @@ class MWTabProperty:
         self._name = name
     
     def __get__(self, obj, type=None):
-        if obj.__dict__.get("_" + self._name + "_was_set"):
-            return obj.__dict__[self._name]
-        
         if self._name == "study_id" or self._name == "analysis_id":
             try:
                 return obj["METABOLOMICS WORKBENCH"].get(self._name.upper())
@@ -86,31 +101,38 @@ class MWTabProperty:
         
         if self._name == "header":
             try:
-                return " ".join(
-                    ["#METABOLOMICS WORKBENCH"]
-                    + [item[0] + ":" + item[1] for item in obj["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
-                )
+                header_str = "#METABOLOMICS WORKBENCH"
+                if "filename" in obj["METABOLOMICS WORKBENCH"]:
+                    header_str += " " + obj["METABOLOMICS WORKBENCH"]["filename"]
+                pairs = " ".join([item[0] + ":" + item[1] for item in obj["METABOLOMICS WORKBENCH"].items() 
+                                  if item[0] not in ["filename", "VERSION", "CREATED_ON"]])
+                header_str += " " + pairs
+                return header_str
             except Exception:
                 return None
-        
-        # try:
-        #     if self._name == "study_id":
-        #         return obj["METABOLOMICS WORKBENCH"].get("STUDY_ID")
-        #     if self._name == "analysis_id":
-        #         return obj["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
-        #     if self._name == "header":
-        #         return " ".join(
-        #             ["#METABOLOMICS WORKBENCH"]
-        #             + [item[0] + ":" + item[1] for item in obj["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
-        #         )
-        # except KeyError:
-        #     raise KeyError("Missing header information \"METABOLOMICS WORKBENCH\"")
-        # raise AttributeError("Unknown attribute " + self._name)
     
     def __set__(self, obj, value):
-        obj.__dict__[self._name] = value
-        obj.__dict__["_" + self._name + "_was_set"] = True
-    
+        if not isinstance(value, str):
+            raise TypeError("The value for " + self._name + " must be a string.")
+        
+        if "METABOLOMICS WORKBENCH" in obj:
+            if self._name == "study_id" or self._name == "analysis_id":
+                if isinstance(obj["METABOLOMICS WORKBENCH"], (dict, OrderedDict)):
+                    obj["METABOLOMICS WORKBENCH"][self._name.upper()] = value
+                else:
+                    raise TypeError("The \"METABOLOMICS WORKBENCH\" key is not a dictionary, so " + self._name + " cannot be set.")
+            
+            if self._name == "header":
+                temp_dict = _parse_header_input(value)
+                obj["METABOLOMICS WORKBENCH"].update(temp_dict)
+        else:
+            if self._name == "study_id" or self._name == "analysis_id":
+                obj["METABOLOMICS WORKBENCH"] = {self._name.upper() : value}
+            
+            if self._name == "header":
+                temp_dict = _parse_header_input(value)
+                obj["METABOLOMICS WORKBENCH"]  = temp_dict
+            
     def __delete__(self, obj):
         del obj.__dict__[self._name]
 
@@ -133,10 +155,14 @@ class MWTabFile(OrderedDict):
         "ANALYSIS": "AN:",
         "MS": "MS:",
         "NMR": "NM:",
+        "NM": "NM:",
         "MS_METABOLITE_DATA": "",
+        "NMR_METABOLITE_DATA": "",
         "NMR_BINNED_DATA": "",
-        "METABOLITES": ""
+        "METABOLITES": "",
     }
+    
+    result_file_keys = ["UNITS", "Has m/z", "Has RT", "RT units"]
     
     study_id = MWTabProperty()
     analysis_id = MWTabProperty()
@@ -149,12 +175,16 @@ class MWTabFile(OrderedDict):
         """
         super(MWTabFile, self).__init__(*args, **kwds)
         self.source = source
-        self._study_id = None
-        self._study_id_was_set = False
-        self._analysis_id = None
-        self._analysis_id_was_set = False
-        self._header = None
-        self._header_was_set = False
+        self._factors = None
+        self._samples = None
+        self._metabolite_header = None
+        self._extended_metabolite_header = None
+        self._binned_header = None
+        self._short_headers = set()
+        self._duplicate_sub_sections = {}
+        # self._study_id = None
+        # self._analysis_id = None
+        # self._header = None
         
     def validate(self, section_schema_mapping=section_schema_mapping, verbose=True, metabolites=True):
         """Validate the instance.
@@ -209,21 +239,6 @@ class MWTabFile(OrderedDict):
             self._build_mwtabfile(mwtab_str)
         else:
             raise TypeError("Unknown file format")
-
-        # try:
-        #     # Call managed property getters to set initial value.
-        #     self.study_id
-        #     self.analysis_id
-        #     self.header
-        #     # self.study_id = self["METABOLOMICS WORKBENCH"].get("STUDY_ID")
-        #     # self.analysis_id = self["METABOLOMICS WORKBENCH"].get("ANALYSIS_ID")
-        #     # # self.header = self["METABOLOMICS WORKBENCH"].get("HEADER")
-        #     # self.header = " ".join(
-        #     #     ["#METABOLOMICS WORKBENCH"]
-        #     #     + [item[0] + ":" + item[1] for item in self["METABOLOMICS WORKBENCH"].items() if item[0] not in ["VERSION", "CREATED_ON"]]
-        #     # )
-        # except KeyError as e:
-        #     raise KeyError("File missing header information \"METABOLOMICS WORKBENCH\"", e)
 
         filehandle.close()
 
@@ -280,23 +295,27 @@ class MWTabFile(OrderedDict):
         while token.key != "!#ENDFILE":
             if token.key.startswith("#"):
                 name = token.key[1:]
-                section = self._build_block(lexer)
-                if section:
-                    if name == "METABOLITES":
-                        data_section = next((n for n in mwtab_file.keys() if n in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA")), None)
-                        if data_section:
-                            for key in section.keys():
-                                mwtab_file[data_section][key] = section[key]
-                    elif name == "NMR":
-                        mwtab_file["NM"] = section
-                    else:
-                        mwtab_file[name] = section
+                section = self._build_block(name, lexer)
+                # if section:
+                if name == "METABOLITES":
+                    data_section = next((n for n in mwtab_file.keys() if n in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA")), None)
+                    if data_section:
+                        for key in section.keys():
+                            mwtab_file[data_section][key] = section[key]
+                elif name == "NMR":
+                    mwtab_file["NM"] = section
+                elif name == "END":
+                    pass
+                else:
+                    mwtab_file[name] = section
             token = next(lexer)
         return mwtab_file
 
-    def _build_block(self, lexer):
+    def _build_block(self, name, lexer):
         """Build individual text block of :class:`~mwtab.mwtab.MWTabFile` instance.
 
+        :param name: name of the block, used for errors.
+        :type name: str
         :param lexer: instance of the mwtab tokenizer.
         :type lexer: :func:`~mwtab.tokenizer.tokenizer`
         :return: Section dictionary.
@@ -323,18 +342,64 @@ class MWTabFile(OrderedDict):
                 section.append(token.value)
 
             elif token.key.endswith("_START"):
+                section_name = token.key
                 data = []
 
                 token = next(lexer)
                 header = list(token.value)
-
+                # Sometimes there can be extra tabs at the end of the line that results in 
+                # an empty string as the token value, so remove it.
+                while not header[-1]:
+                    header.pop()
+                metabolite_header = ["Metabolite"] + header[1:]
+                
+                loop_count = 0
                 while not token.key.endswith("_END"):
-                    if token.key in ("Samples", "Factors", "metabolite_name", "Bin range(ppm)"):
-                        pass
+                    # Sometimes there can be extra tabs at the end of the line that results in 
+                    # an empty string as the token value, so remove it.
+                    token_value = list(token.value)
+                    while not token_value[-1]:
+                        token_value.pop()
+                    
+                    if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
+                        self._binned_header = token_value[1:]
+                    # Have seen Factors section in incorrect sections such as METABOLITES, 
+                    # and seen multiple Factors sections in a single METABOLITE_DATA section.
+                    # So just grab the one near the top.
+                    elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 3:
+                        self._factors = {}
+                        for i, factor_string in enumerate(token_value[1:]):
+                            factor_pairs = factor_string.split("|")
+                            factor_dict = {}
+                            for pair in factor_pairs:
+                                factor_key, factor_value = pair.split(":")
+                                factor_dict[factor_key.strip()] = factor_value.strip()
+                            self._factors[header[i+1]] = factor_dict
+                    
+                    elif token.key == "Samples" and "METABOLITE_DATA" in section_name and loop_count < 3:
+                        self._sanples = token_value[1:]
+                    
+                    elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
+                        self._metabolite_header = token_value[1:]
+                    
+                    elif token.key.lower() == "metabolite_name" and "EXTENDED" in section_name and loop_count < 2:
+                        self._extended_metabolite_header = token_value[1:]
+                        
                     else:
-                        data.append(OrderedDict(zip(["Metabolite"] + header[1:], token.value)))
+                        temp_dict = OrderedDict()
+                        token_len = len(token_value)
+                        for i, header_name in enumerate(metabolite_header):
+                            if i < token_len:
+                                temp_dict[header_name] = token_value[i]
+                            else:
+                                temp_dict[header_name] = ""
+                        data.append(temp_dict)
+                        
+                        if token_len > len(metabolite_header):
+                            self._short_headers.add(section_name)
 
                     token = next(lexer)
+                    loop_count += 1
 
                 if token.key.startswith("METABOLITES"):
                     section["Metabolites"] = data
@@ -344,18 +409,29 @@ class MWTabFile(OrderedDict):
                     section["Data"] = data
 
             elif token.key.endswith("_RESULTS_FILE"):
-                if len(token) > 2:
-                    key, value, extra = token
-                    section[key] = OrderedDict([(key, value)])
-                    for pair in extra:
-                        section[key].update((pair,))
-                else:
-                    key, value = token
-                    section[key] = value
+                key, values = token
+                results_file_dict = {}
+                for i, value in enumerate(values):
+                    if not value:
+                        continue
+                    if i == 0 and ':' not in value:
+                        results_file_dict["filename"] = value
+                    else:
+                        split_value = value.split(':')
+                        if len(split_value) == 2:
+                            results_file_dict[split_value[0]] = split_value[1]
+                        else:
+                            results_file_dict[split_value[0]] = ":".join(split_value[1:])
+                section[key] = results_file_dict
 
             else:
                 key, value, = token
                 if key in section:
+                    if section[key] == value:
+                        if name in self._duplicate_sub_sections:
+                            self._duplicate_sub_sections[name][key] = value
+                        else:
+                            self._duplicate_sub_sections[name] = {key : value}
                     section[key] += " {}".format(value)
                 else:
                     section[key] = value
@@ -412,7 +488,11 @@ class MWTabFile(OrderedDict):
                     elif k == "Factors":
                         factors = []
                         for k2 in item[k]:
-                            factors.append("{}:{}".format(k2, item[k][k2]))
+                            if isinstance(item[k][k2], _duplicate_key_list):
+                                for value in item[k][k2]:
+                                    factors.append("{}:{}".format(k2, value))
+                            else:
+                                factors.append("{}:{}".format(k2, item[k][k2]))
                         formatted_items.append(" | ".join(factors))
                     elif k == "Additional sample data":
                         additional_sample_data = []
@@ -423,12 +503,11 @@ class MWTabFile(OrderedDict):
                             else:
                                 additional_sample_data.append("{}={}".format(k2, item[k][k2]))
                         formatted_items.append(";".join(additional_sample_data))
-                line = "{}{}\t{}".format(section_key, 33 * " ", "\t".join(formatted_items))
+                line = "{}{}\t{}".format(section_key, 11 * " ", "\t".join(formatted_items))
                 # for file missing "Additional sample data" items
                 if len(formatted_items) < 4:
                     line += "\t"
-                else:
-                    print(line, file=f)
+                print(line, file=f)
 
     def print_block(self, section_key, f=sys.stdout, file_format="mwtab"):
         """Print `mwtab` section into a file or stdout.
@@ -453,11 +532,34 @@ class MWTabFile(OrderedDict):
                     cw = 30 - len(key)
 
                 if key.endswith("_RESULTS_FILE"):
-                    if isinstance(value, dict):
-                        print("{}{}               \t{}\t{}:{}".format(self.prefixes.get(section_key, ""),
-                                                                      *[i for pair in value.items() for i in pair]), file=f)
-                    else:
-                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
+                    # if isinstance(value, dict):
+                    #     print("{}{}               \t{}\t{}:{}".format(self.prefixes.get(section_key, ""),
+                    #                                                   *[i for pair in value.items() for i in pair]), file=f)
+                    # else:
+                    #     print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
+                    
+                    results_string = self.prefixes.get(section_key, "") + key + cw * " " + "\t"
+                    results_string += self._create_result_file_string(section_key, key, "mwtab")
+                    
+                    # split_value = value.split(':')
+                    # result_value = value.split(' ')[0]
+                    # for i, piece in enumerate(split_value):
+                    #     for result_key in self.result_file_keys:
+                    #         if piece.endswith(result_key):
+                    #             if i == 0:
+                    #                 result_value += "\t"
+                    #             result_value += result_key + ":"
+                    #             if i+2 < len(split_value):
+                    #                 next_piece = split_value[i+1]
+                    #                 for result_key_2 in self.result_file_keys:
+                    #                     if next_piece.endswith(result_key_2):
+                    #                         result_value += next_piece.replace(result_key_2, '').strip() + '\t'
+                    #                         break
+                    #             else:
+                    #                 result_value += split_value[-1]
+                    #             break
+                    # results_string += result_value
+                    print(results_string, file=f)
 
                 # prints #MS_METABOLITE_DATA, #NMR_METABOLITE_DATA, or #NMR_BINNED_DATA sections
                 elif key == "Units":
@@ -467,19 +569,42 @@ class MWTabFile(OrderedDict):
 
                     if "METABOLITE" in section_key:
                         # prints "Samples" line at head of data section
-                        print("\t".join(["Samples"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
-                        # prints "Factors" line at head of data section
-                        factors_list = ["Factors"]
-                        factors_dict = {i["Sample ID"]: i["Factors"] for i in self["SUBJECT_SAMPLE_FACTORS"]}
-                        for k in [k for k in self[section_key][key][0].keys()][1:]:
-                            factors = [fk + ":" + factors_dict[k][fk] for fk in factors_dict[k].keys()]
-                            factors_list.append(" | ".join(factors))
-                        print("\t".join(factors_list), file=f)
+                        sample_names = None
+                        if self._samples is not None:
+                            sample_names = self._samples
+                        elif self[section_key][key]:
+                            sample_names = [k for k in self[section_key][key][0].keys()][1:]
+                        if sample_names:
+                            print("\t".join(["Samples"] + sample_names), file=f)
+                            # prints "Factors" line at head of data section
+                            if self._factors is not None:
+                                factors_dict = self._factors
+                            else:
+                                factors_dict = {i["Sample ID"]: i["Factors"] for i in self["SUBJECT_SAMPLE_FACTORS"]}
+                            
+                            factors_list = []
+                            for k in sample_names:
+                                # Need to make sure the factors always line up with samples.
+                                if k not in factors_dict:
+                                    factors_list = []
+                                    break
+                                factors = [fk + ":" + factors_dict[k][fk] for fk in factors_dict[k].keys()]
+                                factors_list.append(" | ".join(factors))
+                            if factors_list:
+                                print("\t".join(["Factors"] + factors_list), file=f)
+                        
                         for i in self[section_key][key]:
                             print("\t".join([i[k] for k in i.keys()]), file=f)
 
                     else:  # NMR_BINNED_DATA
-                        print("\t".join(["Bin range(ppm)"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
+                        # Only print if there is data to print.
+                        if self._binned_header is not None:
+                            binned_header = self._binned_header
+                        elif self[section_key][key]:
+                            binned_header = [k for k in self[section_key][key][0].keys()][1:]
+                        
+                        print("\t".join(["Bin range(ppm)"] + binned_header), file=f)
+                        
                         for i in self[section_key][key]:
                             print("\t".join([i[k] for k in i.keys()]), file=f)
 
@@ -492,8 +617,15 @@ class MWTabFile(OrderedDict):
                         print("METABOLITES_START", file=f)
                     else:
                         print("EXTENDED_{}_START".format(section_key), file=f)
-
-                    print("\t".join(["metabolite_name"] + [k for k in self[section_key][key][0].keys()][1:]), file=f)
+                    
+                    if key == "Metabolites" and self._metabolite_header is not None:
+                        metabolite_header = self._metabolite_header
+                    elif key == "Extended" and self._extended_metabolite_header is not None:
+                        metabolite_header = self._extended_metabolite_header
+                    elif self[section_key][key]:
+                        metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
+                    print("\t".join(["metabolite_name"] + metabolite_header), file=f)
+                    
                     for i in self[section_key][key]:
                         print("\t".join(i[k] for k in i.keys()), file=f)
 
@@ -503,16 +635,21 @@ class MWTabFile(OrderedDict):
                         print("EXTENDED_{}_END".format(section_key), file=f)
 
                 else:
-                    if len(str(value)) > 80:
+                    # Filenames don't get split.
+                    if len(str(value)) > 80 and not key.endswith("_FILENAME"):
                         words = str(value).split(" ")
                         length = 0
                         line = list()
                         for word in words:
-                            if length + len(word) + len(line) - 1 <= 80:
+                            if length + len(word) + len(line) - 1 < 80:
                                 line.append(word)
                                 length += len(word)
                             else:
-                                print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)), file=f)
+                                # Long filenames were printing 2 lines, with the top one being blank.
+                                # I fixed this by adding a check to skip filenames, but just in case I also don't 
+                                # let empty lines be printed.
+                                if line:
+                                    print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)), file=f)
                                 line = [word]
                                 length = len(word)
                         print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)),
@@ -531,8 +668,30 @@ class MWTabFile(OrderedDict):
         """
         self._set_key_order()
         temp = copy.deepcopy(OrderedDict(self))
+        # Special filename key shouldn't be printed.
+        if "filename" in temp["METABOLOMICS WORKBENCH"]:
+            del temp["METABOLOMICS WORKBENCH"]["filename"]
+        # Result files end up being a dictionary, but need to printed as a string.
+        for section_key, section_value in temp.items():
+            if isinstance(section_value, (dict, OrderedDict)):
+                for key in section_value:
+                    if key.endswith("_RESULTS_FILE"):
+                        temp[section_key][key] = self._create_result_file_string(section_key, key, "json")
+        # Handle duplicate keys in SSF.
         temp = jdks.JSON_DUPLICATE_KEYS(temp)
         for ssf_dict in temp.getObject()["SUBJECT_SAMPLE_FACTORS"]:
+            
+            if "Factors" in ssf_dict:
+                factor_dict = ssf_dict["Factors"]
+                new_factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                for key, value in factor_dict.items():
+                    if isinstance(value, _duplicate_key_list):
+                        for item in value:
+                            new_factor_dict.set(key, item)
+                    else:
+                        new_factor_dict.set(key, value)
+                    ssf_dict["Factors"] = new_factor_dict
+            
             if "Additional sample data" in ssf_dict:
                 additional_dict = ssf_dict["Additional sample data"]
                 new_additional_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
@@ -543,8 +702,10 @@ class MWTabFile(OrderedDict):
                     else:
                         new_additional_dict.set(key, value)
                     ssf_dict["Additional sample data"] = new_additional_dict
+        
         json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
-        json_string = re.sub(r'"Additional sample data": "\{(.*)\}"', _match_process, json_string)
+        json_string = re.sub(r'("Additional sample data"): "\{(.*)\}"', _match_process, json_string)
+        json_string = re.sub(r'("Factors"): "\{(.*)\}"', _match_process, json_string)
         return json_string
         # return json.dumps(self, sort_keys=False, indent=4)
     
@@ -602,7 +763,31 @@ class MWTabFile(OrderedDict):
             return json_str
         except ValueError:
             return False
+    
+    def _create_result_file_string(self, section_key, key, to_format):
+        """
+        """
+        delimiter = "\t" if to_format == "mwtab" else " "
         
+        if "filename" in self[section_key][key]:
+            new_value = self[section_key][key]["filename"]
+        else:
+            new_value = ""
+        
+        other_pair_strings = []
+        for result_key, result_value in self[section_key][key].items():
+            if result_key != "filename":
+                other_pair_strings.append(result_key + ":" + result_value)
+        
+        joined_pairs = delimiter.join(other_pair_strings)
+        
+        if new_value:
+            if joined_pairs:
+                new_value += delimiter + joined_pairs
+        elif joined_pairs:
+            new_value += joined_pairs
+        return new_value
+    
     def _set_key_order(self):
         """
         """
@@ -624,322 +809,29 @@ class MWTabFile(OrderedDict):
         #         key_order[key] = {json_property:[] for json_property in json_schema["items"]["properties"]}
                
         key_order = \
-            {'METABOLOMICS WORKBENCH': {'VERSION': [],
-              'CREATED_ON': [],
-              'STUDY_ID': [],
-              'ANALYSIS_ID': [],
-              'PROJECT_ID': [],
-              'HEADER': [],
-              'DATATRACK_ID': []},
-             'PROJECT': {'PROJECT_TITLE': [],
-              'PROJECT_TYPE': [],
-              'PROJECT_SUMMARY': [],
-              'INSTITUTE': [],
-              'DEPARTMENT': [],
-              'LABORATORY': [],
-              'LAST_NAME': [],
-              'FIRST_NAME': [],
-              'ADDRESS': [],
-              'EMAIL': [],
-              'PHONE': [],
-              'FUNDING_SOURCE': [],
-              'PROJECT_COMMENTS': [],
-              'PUBLICATIONS': [],
-              'CONTRIBUTORS': [],
-              'DOI': []},
-             'STUDY': {'STUDY_TITLE': [],
-              'STUDY_TYPE': [],
-              'STUDY_SUMMARY': [],
-              'INSTITUTE': [],
-              'DEPARTMENT': [],
-              'LABORATORY': [],
-              'LAST_NAME': [],
-              'FIRST_NAME': [],
-              'ADDRESS': [],
-              'EMAIL': [],
-              'PHONE': [],
-              'NUM_GROUPS': [],
-              'TOTAL_SUBJECTS': [],
-              'NUM_MALES': [],
-              'NUM_FEMALES': [],
-              'STUDY_COMMENTS': [],
-              'PUBLICATIONS': [],
-              'SUBMIT_DATE': []},
-             'ANALYSIS': {'ANALYSIS_TYPE': [],
-              'LABORATORY_NAME': [],
-              'OPERATOR_NAME': [],
-              'DETECTOR_TYPE': [],
-              'SOFTWARE_VERSION': [],
-              'ACQUISITION_DATE': [],
-              'ANALYSIS_PROTOCOL_FILE': [],
-              'ACQUISITION_PARAMETERS_FILE': [],
-              'PROCESSING_PARAMETERS_FILE': [],
-              'DATA_FORMAT': [],
-              'ACQUISITION_ID': [],
-              'ACQUISITION_TIME': [],
-              'ANALYSIS_COMMENTS': [],
-              'ANALYSIS_DISPLAY': [],
-              'INSTRUMENT_NAME': [],
-              'INSTRUMENT_PARAMETERS_FILE': [],
-              'NUM_FACTORS': [],
-              'NUM_METABOLITES': [],
-              'PROCESSED_FILE': [],
-              'RANDOMIZATION_ORDER': [],
-              'RAW_FILE': []},
-             'SUBJECT': {'SUBJECT_TYPE': [],
-              'SUBJECT_SPECIES': [],
-              'TAXONOMY_ID': [],
-              'GENOTYPE_STRAIN': [],
-              'AGE_OR_AGE_RANGE': [],
-              'WEIGHT_OR_WEIGHT_RANGE': [],
-              'HEIGHT_OR_HEIGHT_RANGE': [],
-              'GENDER': [],
-              'HUMAN_RACE': [],
-              'HUMAN_ETHNICITY': [],
-              'HUMAN_TRIAL_TYPE': [],
-              'HUMAN_LIFESTYLE_FACTORS': [],
-              'HUMAN_MEDICATIONS': [],
-              'HUMAN_PRESCRIPTION_OTC': [],
-              'HUMAN_SMOKING_STATUS': [],
-              'HUMAN_ALCOHOL_DRUG_USE': [],
-              'HUMAN_NUTRITION': [],
-              'HUMAN_INCLUSION_CRITERIA': [],
-              'HUMAN_EXCLUSION_CRITERIA': [],
-              'ANIMAL_ANIMAL_SUPPLIER': [],
-              'ANIMAL_HOUSING': [],
-              'ANIMAL_LIGHT_CYCLE': [],
-              'ANIMAL_FEED': [],
-              'ANIMAL_WATER': [],
-              'ANIMAL_INCLUSION_CRITERIA': [],
-              'CELL_BIOSOURCE_OR_SUPPLIER': [],
-              'CELL_STRAIN_DETAILS': [],
-              'SUBJECT_COMMENTS': [],
-              'CELL_PRIMARY_IMMORTALIZED': [],
-              'CELL_PASSAGE_NUMBER': [],
-              'CELL_COUNTS': [],
-              'SPECIES_GROUP': []},
+            {'METABOLOMICS WORKBENCH': {},
+             'PROJECT': {},
+             'STUDY': {},
+             'SUBJECT': {},
              'SUBJECT_SAMPLE_FACTORS': {'Subject ID': [],
               'Sample ID': [],
               'Factors': [],
               'Additional sample data': []},
-             'COLLECTION': {'COLLECTION_SUMMARY': [],
-              'COLLECTION_PROTOCOL_ID': [],
-              'COLLECTION_PROTOCOL_FILENAME': [],
-              'COLLECTION_PROTOCOL_COMMENTS': [],
-              'SAMPLE_TYPE': [],
-              'COLLECTION_METHOD': [],
-              'COLLECTION_LOCATION': [],
-              'COLLECTION_FREQUENCY': [],
-              'COLLECTION_DURATION': [],
-              'COLLECTION_TIME': [],
-              'VOLUMEORAMOUNT_COLLECTED': [],
-              'STORAGE_CONDITIONS': [],
-              'COLLECTION_VIALS': [],
-              'STORAGE_VIALS': [],
-              'COLLECTION_TUBE_TEMP': [],
-              'ADDITIVES': [],
-              'BLOOD_SERUM_OR_PLASMA': [],
-              'TISSUE_CELL_IDENTIFICATION': [],
-              'TISSUE_CELL_QUANTITY_TAKEN': []},
-             'TREATMENT': {'TREATMENT_SUMMARY': [],
-              'TREATMENT_PROTOCOL_ID': [],
-              'TREATMENT_PROTOCOL_FILENAME': [],
-              'TREATMENT_PROTOCOL_COMMENTS': [],
-              'TREATMENT': [],
-              'TREATMENT_COMPOUND': [],
-              'TREATMENT_ROUTE': [],
-              'TREATMENT_DOSE': [],
-              'TREATMENT_DOSEVOLUME': [],
-              'TREATMENT_DOSEDURATION': [],
-              'TREATMENT_VEHICLE': [],
-              'ANIMAL_VET_TREATMENTS': [],
-              'ANIMAL_ANESTHESIA': [],
-              'ANIMAL_ACCLIMATION_DURATION': [],
-              'ANIMAL_FASTING': [],
-              'ANIMAL_ENDP_EUTHANASIA': [],
-              'ANIMAL_ENDP_TISSUE_COLL_LIST': [],
-              'ANIMAL_ENDP_TISSUE_PROC_METHOD': [],
-              'ANIMAL_ENDP_CLINICAL_SIGNS': [],
-              'HUMAN_FASTING': [],
-              'HUMAN_ENDP_CLINICAL_SIGNS': [],
-              'CELL_STORAGE': [],
-              'CELL_GROWTH_CONTAINER': [],
-              'CELL_GROWTH_CONFIG': [],
-              'CELL_GROWTH_RATE': [],
-              'CELL_INOC_PROC': [],
-              'CELL_MEDIA': [],
-              'CELL_ENVIR_COND': [],
-              'CELL_HARVESTING': [],
-              'PLANT_GROWTH_SUPPORT': [],
-              'PLANT_GROWTH_LOCATION': [],
-              'PLANT_PLOT_DESIGN': [],
-              'PLANT_LIGHT_PERIOD': [],
-              'PLANT_HUMIDITY': [],
-              'PLANT_TEMP': [],
-              'PLANT_WATERING_REGIME': [],
-              'PLANT_NUTRITIONAL_REGIME': [],
-              'PLANT_ESTAB_DATE': [],
-              'PLANT_HARVEST_DATE': [],
-              'PLANT_GROWTH_STAGE': [],
-              'PLANT_METAB_QUENCH_METHOD': [],
-              'PLANT_HARVEST_METHOD': [],
-              'PLANT_STORAGE': [],
-              'CELL_PCT_CONFLUENCE': [],
-              'CELL_MEDIA_LASTCHANGED': []},
-             'SAMPLEPREP': {'SAMPLEPREP_SUMMARY': [],
-              'SAMPLEPREP_PROTOCOL_ID': [],
-              'SAMPLEPREP_PROTOCOL_FILENAME': [],
-              'SAMPLEPREP_PROTOCOL_COMMENTS': [],
-              'PROCESSING_METHOD': [],
-              'PROCESSING_STORAGE_CONDITIONS': [],
-              'EXTRACTION_METHOD': [],
-              'EXTRACT_CONCENTRATION_DILUTION': [],
-              'EXTRACT_ENRICHMENT': [],
-              'EXTRACT_CLEANUP': [],
-              'EXTRACT_STORAGE': [],
-              'SAMPLE_RESUSPENSION': [],
-              'SAMPLE_DERIVATIZATION': [],
-              'SAMPLE_SPIKING': [],
-              'ORGAN': [],
-              'ORGAN_SPECIFICATION': [],
-              'CELL_TYPE': [],
-              'SUBCELLULAR_LOCATION': []},
-             'CHROMATOGRAPHY': {'CHROMATOGRAPHY_SUMMARY': [],
-              'CHROMATOGRAPHY_TYPE': [],
-              'INSTRUMENT_NAME': [],
-              'COLUMN_NAME': [],
-              'FLOW_GRADIENT': [],
-              'FLOW_RATE': [],
-              'COLUMN_TEMPERATURE': [],
-              'METHODS_FILENAME': [],
-              'SOLVENT_A': [],
-              'SOLVENT_B': [],
-              'METHODS_ID': [],
-              'COLUMN_PRESSURE': [],
-              'INJECTION_TEMPERATURE': [],
-              'INTERNAL_STANDARD': [],
-              'INTERNAL_STANDARD_MT': [],
-              'RETENTION_INDEX': [],
-              'RETENTION_TIME': [],
-              'SAMPLE_INJECTION': [],
-              'SAMPLING_CONE': [],
-              'ANALYTICAL_TIME': [],
-              'CAPILLARY_VOLTAGE': [],
-              'MIGRATION_TIME': [],
-              'OVEN_TEMPERATURE': [],
-              'PRECONDITIONING': [],
-              'RUNNING_BUFFER': [],
-              'RUNNING_VOLTAGE': [],
-              'SHEATH_LIQUID': [],
-              'TIME_PROGRAM': [],
-              'TRANSFERLINE_TEMPERATURE': [],
-              'WASHING_BUFFER': [],
-              'WEAK_WASH_SOLVENT_NAME': [],
-              'WEAK_WASH_VOLUME': [],
-              'STRONG_WASH_SOLVENT_NAME': [],
-              'STRONG_WASH_VOLUME': [],
-              'TARGET_SAMPLE_TEMPERATURE': [],
-              'SAMPLE_LOOP_SIZE': [],
-              'SAMPLE_SYRINGE_SIZE': [],
-              'RANDOMIZATION_ORDER': [],
-              'CHROMATOGRAPHY_COMMENTS': []},
-             'MS': {'INSTRUMENT_NAME': [],
-              'INSTRUMENT_TYPE': [],
-              'MS_TYPE': [],
-              'ION_MODE': [],
-              'MS_COMMENTS': [],
-              'CAPILLARY_TEMPERATURE': [],
-              'CAPILLARY_VOLTAGE': [],
-              'COLLISION_ENERGY': [],
-              'COLLISION_GAS': [],
-              'DRY_GAS_FLOW': [],
-              'DRY_GAS_TEMP': [],
-              'FRAGMENT_VOLTAGE': [],
-              'FRAGMENTATION_METHOD': [],
-              'GAS_PRESSURE': [],
-              'HELIUM_FLOW': [],
-              'ION_SOURCE_TEMPERATURE': [],
-              'ION_SPRAY_VOLTAGE': [],
-              'IONIZATION': [],
-              'IONIZATION_ENERGY': [],
-              'IONIZATION_POTENTIAL': [],
-              'MASS_ACCURACY': [],
-              'PRECURSOR_TYPE': [],
-              'REAGENT_GAS': [],
-              'SOURCE_TEMPERATURE': [],
-              'SPRAY_VOLTAGE': [],
-              'ACTIVATION_PARAMETER': [],
-              'ACTIVATION_TIME': [],
-              'ATOM_GUN_CURRENT': [],
-              'AUTOMATIC_GAIN_CONTROL': [],
-              'BOMBARDMENT': [],
-              'CDL_SIDE_OCTOPOLES_BIAS_VOLTAGE': [],
-              'CDL_TEMPERATURE': [],
-              'DATAFORMAT': [],
-              'DESOLVATION_GAS_FLOW': [],
-              'DESOLVATION_TEMPERATURE': [],
-              'INTERFACE_VOLTAGE': [],
-              'IT_SIDE_OCTOPOLES_BIAS_VOLTAGE': [],
-              'LASER': [],
-              'MATRIX': [],
-              'NEBULIZER': [],
-              'OCTPOLE_VOLTAGE': [],
-              'PROBE_TIP': [],
-              'RESOLUTION_SETTING': [],
-              'SAMPLE_DRIPPING': [],
-              'SCAN_RANGE_MOVERZ': [],
-              'SCANNING': [],
-              'SCANNING_CYCLE': [],
-              'SCANNING_RANGE': [],
-              'SKIMMER_VOLTAGE': [],
-              'TUBE_LENS_VOLTAGE': [],
-              'MS_RESULTS_FILE': []},
-             'NM': {'INSTRUMENT_NAME': [],
-              'INSTRUMENT_TYPE': [],
-              'NMR_EXPERIMENT_TYPE': [],
-              'NMR_COMMENTS': [],
-              'FIELD_FREQUENCY_LOCK': [],
-              'STANDARD_CONCENTRATION': [],
-              'SPECTROMETER_FREQUENCY': [],
-              'NMR_PROBE': [],
-              'NMR_SOLVENT': [],
-              'NMR_TUBE_SIZE': [],
-              'SHIMMING_METHOD': [],
-              'PULSE_SEQUENCE': [],
-              'WATER_SUPPRESSION': [],
-              'PULSE_WIDTH': [],
-              'POWER_LEVEL': [],
-              'RECEIVER_GAIN': [],
-              'OFFSET_FREQUENCY': [],
-              'PRESATURATION_POWER_LEVEL': [],
-              'CHEMICAL_SHIFT_REF_CPD': [],
-              'TEMPERATURE': [],
-              'NUMBER_OF_SCANS': [],
-              'DUMMY_SCANS': [],
-              'ACQUISITION_TIME': [],
-              'RELAXATION_DELAY': [],
-              'SPECTRAL_WIDTH': [],
-              'NUM_DATA_POINTS_ACQUIRED': [],
-              'REAL_DATA_POINTS': [],
-              'LINE_BROADENING': [],
-              'ZERO_FILLING': [],
-              'APODIZATION': [],
-              'BASELINE_CORRECTION_METHOD': [],
-              'CHEMICAL_SHIFT_REF_STD': [],
-              'BINNED_INCREMENT': [],
-              'BINNED_DATA_NORMALIZATION_METHOD': [],
-              'BINNED_DATA_PROTOCOL_FILE': [],
-              'BINNED_DATA_CHEMICAL_SHIFT_RANGE': [],
-              'BINNED_DATA_EXCLUDED_RANGE': [],
-              'NMR_RESULTS_FILE': []},
+             'COLLECTION': {},
+             'TREATMENT': {},
+             'SAMPLEPREP': {},
+             'CHROMATOGRAPHY': {},
+             'ANALYSIS': {},
+             'MS': {},
+             'NM': {},
              'MS_METABOLITE_DATA': {'Units': [],
               'Data': ['Metabolite', 'Bin range(ppm)'],
               'Metabolites': ['Metabolite', 'Bin range(ppm)'],
-              'Extended': ['Metabolite', 'sample_id']},
+              'Extended': ['Metabolite']},
              'NMR_METABOLITE_DATA': {'Units': [],
               'Data': ['Metabolite', 'Bin range(ppm)'],
               'Metabolites': ['Metabolite', 'Bin range(ppm)'],
-              'Extended': ['Metabolite', 'sample_id']},
+              'Extended': ['Metabolite']},
              'NMR_BINNED_DATA': {'Units': [], 'Data': ['Metabolite', 'Bin range(ppm)']}}
     
         for key, sub_keys in key_order.items():
@@ -980,6 +872,17 @@ class MWTabFile(OrderedDict):
                             
                     del self[key]
                     self[key] = temp_dict
+        
+        # Handle unrecognized keys, put them at the end.
+        keys_to_move = []
+        for key in self:
+            if key not in key_order:
+                keys_to_move.append(key)
+        
+        for key in keys_to_move:
+            temp = self[key]
+            del self[key]
+            self[key] = temp
     
     
     

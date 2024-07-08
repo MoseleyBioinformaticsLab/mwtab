@@ -45,6 +45,7 @@ Options:
 Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
 GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
+# TODO add option to print duplicate keys. change code so it errors if try to print duplicate keys.
 
 from . import fileio, mwextract, mwrest
 from .converter import Converter

@@ -35,7 +35,8 @@ metabolomics_workbench_schema = Schema(
         "CREATED_ON": str,
         Optional("PROJECT_ID"): str,
         Optional("HEADER"): str,
-        Optional("DATATRACK_ID"): str
+        Optional("DATATRACK_ID"): str,
+        Optional("filename"): str
     }
 )
 
@@ -241,6 +242,7 @@ chromatography_schema = Schema(
         Optional("FLOW_RATE"): str,
         Optional("COLUMN_TEMPERATURE"): str,
         Optional("METHODS_FILENAME"): str,
+        Optional("SAMPLE_INJECTION"): str,
         Optional("SOLVENT_A"): str,
         Optional("SOLVENT_B"): str,
         Optional("METHODS_ID"): str,
@@ -250,7 +252,6 @@ chromatography_schema = Schema(
         Optional("INTERNAL_STANDARD_MT"): str,
         Optional("RETENTION_INDEX"): str,
         Optional("RETENTION_TIME"): str,
-        Optional("SAMPLE_INJECTION"): str,
         Optional("SAMPLING_CONE"): str,
         Optional("ANALYTICAL_TIME"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
@@ -279,10 +280,10 @@ analysis_schema = Schema(
     {
         "ANALYSIS_TYPE": str,
         Optional("LABORATORY_NAME"): str,
+        Optional("ACQUISITION_DATE"): str,
+        Optional("SOFTWARE_VERSION"): str,
         Optional("OPERATOR_NAME"): str,
         Optional("DETECTOR_TYPE"): str,
-        Optional("SOFTWARE_VERSION"): str,
-        Optional("ACQUISITION_DATE"): str,
         Optional("ANALYSIS_PROTOCOL_FILE"): str,
         Optional("ACQUISITION_PARAMETERS_FILE"): str,
         Optional("PROCESSING_PARAMETERS_FILE"): str,
@@ -309,7 +310,6 @@ ms_schema = Schema(
         "INSTRUMENT_TYPE": str,
         "MS_TYPE": str,
         "ION_MODE": str,
-        Optional("MS_COMMENTS"): str,  # changed to optional mwTab File Format Spec. 1.5
         Optional("CAPILLARY_TEMPERATURE"): str,
         Optional("CAPILLARY_VOLTAGE"): str,
         Optional("COLLISION_ENERGY"): str,
@@ -355,7 +355,8 @@ ms_schema = Schema(
         Optional("SCANNING_RANGE"): str,
         Optional("SKIMMER_VOLTAGE"): str,
         Optional("TUBE_LENS_VOLTAGE"): str,
-        Optional("MS_RESULTS_FILE"): Or(str, dict)
+        Optional("MS_RESULTS_FILE"): Or(str, dict),
+        Optional("MS_COMMENTS"): str,  # changed to optional mwTab File Format Spec. 1.5
     }
 )
 
@@ -485,35 +486,6 @@ base_schema = Or(
     Schema(_ms_base),
     Schema(_nmr_base),
     Schema(_nmr_binned_base),
-    # only_one=True
     )
 
-# temp = {
-#   "METABOLOMICS WORKBENCH": OrderedDict({}),
-#   "PROJECT": {},
-#   "STUDY": {},
-#   "SUBJECT": {},
-#   "SUBJECT_SAMPLE_FACTORS": [],
-#   "COLLECTION": {},
-#   "TREATMENT": {},
-#   "SAMPLEPREP": {},
-#   "CHROMATOGRAPHY": {},
-#   "ANALYSIS": {},
-#   'MS': {}, 'MS_METABOLITE_DATA': {},
-#   }
-
-# exception = []
-# try:
-#     base_schema.validate(temp)
-# except Exception as e:
-#     print("asdf")
-#     exception = e
-
-
-# test_schema = Schema({"MS_METABOLITE_DATA": Or(dict, OrderedDict)}, ignore_extra_keys = True)
-
-# try:
-#     base_schema.validate(validated_mwtabfile)
-# except:
-#     print("asdf")
 

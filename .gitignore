@@ -12,3 +12,4 @@ data/*
 /mwtab.egg-info
 /src/mwtab.egg-info
 src/mwtab/_version.py
+/scratch

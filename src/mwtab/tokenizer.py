@@ -17,6 +17,7 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 
 from __future__ import print_function, division, unicode_literals
 from collections import deque, namedtuple, OrderedDict
+import re
 
 from .mwschema import _duplicate_key_list
 
@@ -42,10 +43,12 @@ def tokenizer(text):
             # header
             if line.startswith("#METABOLOMICS WORKBENCH"):
                 yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
-                for identifier in line.split(" "):
+                for i, identifier in enumerate(re.split(r' |\t', line)):
                     if ":" in identifier:
                         key, value = identifier.split(":")
                         yield KeyValue(key, value)
+                    elif i == 2:
+                        yield KeyValue("filename", identifier)
 
             # SUBJECT_SAMPLE_FACTORS header (reached new section)
             elif line.startswith("#SUBJECT_SAMPLE_FACTORS:"):
@@ -60,15 +63,29 @@ def tokenizer(text):
             # SUBJECT_SAMPLE_FACTORS line
             elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
                 line_items = line.split("\t")
+                
+                factor_pairs = line_items[3].split(" | ")
+                factor_dict = {}
+                for pair in factor_pairs:
+                    factor_key, factor_value = pair.split(":")
+                    factor_key = factor_key.strip()
+                    factor_value = factor_value.strip()
+                    if factor_key in factor_dict:
+                        if not isinstance(factor_dict[factor_key], _duplicate_key_list):
+                            factor_dict[factor_key] = _duplicate_key_list([factor_dict[factor_key], factor_value])
+                        else:
+                            factor_dict[factor_key].append(factor_value)
+                    else:
+                        factor_dict[factor_key] = factor_value
+                
                 subject_sample_factors_dict = OrderedDict({
                     "Subject ID": line_items[1],
                     "Sample ID": line_items[2],
-                    "Factors": {factor_item.split(":")[0].strip(): factor_item.split(":")[1].strip() for factor_item in
-                                line_items[3].split("|")}
+                    "Factors": factor_dict
                 })
                 if line_items[4]:
                     additional_data = {}
-                    for factor_item in line_items[4].split(";"):
+                    for factor_item in line_items[4].split("; "):
                         key, value = factor_item.split("=")
                         key = key.strip()
                         value = value.strip()
@@ -96,23 +113,16 @@ def tokenizer(text):
                         yield KeyValue(line.strip(), "\n")
                     else:
                         data = line.split("\t")
+                        data = [token.strip('" ') for token in data]
                         yield KeyValue(data[0], tuple(data))
 
             # item line in item section (e.g. PROJECT, SUBJECT, etc..)
             elif line:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
-                    # if len(line_items) > 2:
-                    #     extra_items = list()
-                    #     for extra_item in line_items[2:]:
-                    #         k, v = extra_item.split(":")
-                    #         extra_items.append(tuple([k.strip(), v.strip()]))
-                    #     yield KeyValueExtra(line_items[0].strip()[3:], line_items[1], extra_items)
-                    # else:
-                    #     yield KeyValue(line_items[0].strip()[3:], line_items[1])
-                    yield KeyValue(line_items[0].strip()[3:], " ".join(line_items[1:]))
+                    yield KeyValue(line_items[0].strip()[3:], line_items[1:])
                 else:
-                    key, value = line.split("\t")
+                    key, value = line.split("\t", 1)
                     if ":" in key:
                         if ":UNITS" in key:
                             yield KeyValue("Units", value)

@@ -91,6 +91,110 @@ Analysis ID:   {}
 File format:   {}"""
 
 
+
+def validate_sub_section_uniqueness(mwtabfile):
+    """Validate that the sub-sections don't repeat.
+    
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    """
+    errors = []
+    if mwtabfile._duplicate_sub_sections:
+        for block_name, sub_section in mwtabfile._duplicate_sub_sections.items():
+            for sub_section_name in sub_section:
+                errors.append("Error: The block, " + block_name + ", has a sub-section, "
+                              + sub_section_name + ", that is duplicated.")
+    return errors
+
+
+def validate_header_lengths(mwtabfile):
+    """Validate that the headers are the correct size.
+    
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    """
+    errors = []
+    if mwtabfile._short_headers:
+        for block in mwtabfile._short_headers:
+            errors.append("Error: The block, " + block + ", has a mismatch between the "
+                          "number of headers and the number of elements in each "
+                          "line. Either a line(s) has more values than headers or "
+                          "there are too few headers.")
+    return errors
+
+
+def validate_factors(mwtabfile):
+    """Validate that the subject sample factors and factors in the metabolites data match.
+    
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    """
+    errors = []
+    if mwtabfile._factors:
+        factors_dict = {i["Sample ID"]: i["Factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
+        if factors_dict != mwtabfile._factors:
+            errors.append("SUBJECT_SAMPLE_FACTORS: The factors in the "
+                          "METABOLITE_DATA section and SUBJECT_SAMPLE_FACTORS section "
+                          "do not match.")
+    return errors
+
+
+def validate_metabolite_headers(mwtabfile):
+    """Validate that the headers in the METABOLITES, EXTENDED_METABOLITES, and BINNED_DATA section are unique.
+    
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    """
+    errors = []
+    if mwtabfile._metabolite_header and (len(mwtabfile._metabolite_header) > len(set(mwtabfile._metabolite_header))):
+        errors.append("METABOLITES: There are duplicate metabolite headers in the "
+                      "METABOLITES section. (metabolite_name line)")
+    if mwtabfile._extended_metabolite_header and (len(mwtabfile._extended_metabolite_header) > len(set(mwtabfile._extended_metabolite_header))):
+        errors.append("EXTENDED_METABOLITES: There are duplicate metabolite headers in the "
+                      "EXTENDED_METABOLITES section. (metabolite_name line)")
+    if mwtabfile._binned_header and (len(mwtabfile._binned_header) > len(set(mwtabfile._binned_header))):
+        errors.append("BINNED_DATA: There are duplicate headers in the "
+                      "BINNED_DATA section. (Bin range(ppm) line)")
+    return errors
+
+
+def validate_samples(mwtabfile, data_section_key):
+    """Validate that the samples in SUBJECT_SAMPLE_FACTORS and METABOLITE_DATA are the same.
+    
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
+    :type data_section_key: :py:class:`str`
+    """
+    errors = []
+    
+    diff = None
+    if "SUBJECT_SAMPLE_FACTORS" in mwtabfile:
+        ssf_samples = {ssf_dict["Sample ID"] for ssf_dict in mwtabfile["SUBJECT_SAMPLE_FACTORS"] if 
+                       "Sample ID" in ssf_dict and ssf_dict["Sample ID"]}
+    else:
+        return errors
+    
+    if mwtabfile._samples:
+        diff = set(mwtabfile._samples) ^ ssf_samples
+    elif "Data" in mwtabfile[data_section_key] and mwtabfile[data_section_key]["Data"]:
+        samples = {sample for sample in mwtabfile[data_section_key]["Data"][0] if sample != "Metabolite"}
+        diff = samples ^ ssf_samples
+    if diff:
+        errors.append(
+            "Samples: The Sample ID's in the SUBJECT_SAMPLE_FACTORS do not match what is in the METABOLITE_DATA section."
+        )
+    if mwtabfile._samples and (len(mwtabfile._samples) > len(set(mwtabfile._samples))):
+        errors.append("METABOLITE_DATA: There are duplicate Samples in the "
+                      "METABOLITE_DATA section. (Samples line)")
+    return errors
+
+
 def validate_subject_samples_factors(mwtabfile):
     """Validate ``SUBJECT_SAMPLE_FACTORS`` section.
 
@@ -99,7 +203,8 @@ def validate_subject_samples_factors(mwtabfile):
                      :py:class:`collections.OrderedDict`
     """
     subject_samples_factors_errors = list()
-
+    
+    seen_samples = set()
     for index, subject_sample_factor in enumerate(mwtabfile["SUBJECT_SAMPLE_FACTORS"]):
         if not subject_sample_factor["Subject ID"]:
             subject_samples_factors_errors.append(
@@ -109,12 +214,26 @@ def validate_subject_samples_factors(mwtabfile):
             subject_samples_factors_errors.append(
                 "SUBJECT_SAMPLE_FACTORS: Entry #{} missing Sample ID.".format(index + 1)
             )
+        else:
+            if subject_sample_factor["Sample ID"] in seen_samples:
+                subject_samples_factors_errors.append(
+                    "SUBJECT_SAMPLE_FACTORS: Entry #{} has a duplicate Sample ID.".format(index + 1)
+                )
+            seen_samples.add(subject_sample_factor["Sample ID"])
         if subject_sample_factor.get("Factors"):
             for factor_key in subject_sample_factor["Factors"]:
                 if not subject_sample_factor["Factors"][factor_key]:
                     subject_samples_factors_errors.append(
                         "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key)
                     )
+            
+            duplicate_keys = [key for key, value in subject_sample_factor["Factors"].items() 
+                              if isinstance(value, _duplicate_key_list)]
+            if duplicate_keys:
+                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                                                      " has the following duplicate keys in Factors:\n\t" + 
+                                                      "\n\t".join(duplicate_keys))
+        
         if subject_sample_factor.get("Additional sample data"):
             for additional_key in subject_sample_factor["Additional sample data"]:
                 if not subject_sample_factor["Additional sample data"][additional_key]:
@@ -128,9 +247,8 @@ def validate_subject_samples_factors(mwtabfile):
                               if isinstance(value, _duplicate_key_list)]
             if duplicate_keys:
                 subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
-                                                      " has the following duplicate keys:\n\t" + 
+                                                      " has the following duplicate keys in Additional sample data:\n\t" + 
                                                       "\n\t".join(duplicate_keys))
-
     return subject_samples_factors_errors
 
 
@@ -180,7 +298,7 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
         #         file=error_stream
         #     )
         
-        # Check whther the metabolite is in the Metabolites section.
+        # Check whether the metabolite is in the Metabolites section.
         if metabolites and "Metabolites" in mwtabfile[data_section_key]:
             metabolite = metabolite_dict["Metabolite"]
             if metabolite not in metabolites_in_metabolites_section:
@@ -255,6 +373,48 @@ def validate_extended(mwtabfile, data_section_key):
                 ))
 
     return extended_errors
+
+
+def validate_metabolite_names(mwtabfile, data_section_key):
+    """Validate that a header didn't get identified as a metabolite.
+
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
+    :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
+    :type data_section_key: :py:class:`str`
+    """
+    # Lowered versions of headers to look for, and common mispellings.
+    list_headers = ["samples", "factors", "bin range(ppm)", "metabolite_name", "metabolite name"]
+    
+    if "Metabolites" in mwtabfile[data_section_key]:
+        metabolites_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"] if data_dict["Metabolite"].lower() in list_headers]
+    else:
+        metabolites_section_bad_names
+    
+    if "Data" in mwtabfile[data_section_key]:
+        data_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"] if data_dict["Metabolite"].lower() in list_headers]
+    else:
+        data_section_bad_names
+    
+    if "Extended" in mwtabfile[data_section_key]:
+        extended_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Extended"] if data_dict["Metabolite"].lower() in list_headers]
+    else:
+        extended_section_bad_names
+    
+    errors = []
+    message = ("Warning: There is a metabolite name, "
+               "\"{}\", in the {} section that is probably wrong. "
+               "It is close to a header name and is likely due to a badly constructed Tab file.")
+    for name in metabolites_section_bad_names:
+        errors.append(message.format(name, "[\"" + data_section_key + "\"][\"Metabolites\"] \ METABOLITES"))
+    for name in data_section_bad_names:
+        errors.append(message.format(name, "[\"" + data_section_key + "\"][\"Data\"] \ METABOLITE_DATA"))
+    for name in extended_section_bad_names:
+        errors.append(message.format(name, "[\"" + data_section_key + "\"][\"Extended\"] \ EXTENDED_METABOLITE_DATA"))
+    
+    return errors
+    
 
 
 def validate_section_schema(section, schema, section_key, cleaning=False):
@@ -338,6 +498,7 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     # validate SUBJECT_SAMPLE_FACTORS
     # validate_subject_samples_factors(validated_mwtabfile, error_stout)
     errors.extend(validate_subject_samples_factors(validated_mwtabfile))
+    errors.extend(validate_factors(validated_mwtabfile))
 
     # validate ..._DATA sections
     data_section_key = list(set(validated_mwtabfile.keys()) &
@@ -356,6 +517,10 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
                     errors.append("DATA: Missing METABOLITES section.")
         if "Extended" in validated_mwtabfile[data_section_key].keys():
             errors.extend(validate_extended(validated_mwtabfile, data_section_key))
+        
+        errors.extend(validate_samples(validated_mwtabfile, data_section_key))
+        
+        errors.extend(validate_metabolite_names(validated_mwtabfile, data_section_key))
 
     else:
         if "MS" in validated_mwtabfile.keys():
@@ -364,6 +529,10 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         elif "NM" in validated_mwtabfile.keys():
             if not validated_mwtabfile['NM'].get('NMR_RESULTS_FILE'):
                 errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section or NMR_RESULTS_FILE item in NM secction.")
+    
+    errors.extend(validate_metabolite_headers(validated_mwtabfile))
+    errors.extend(validate_header_lengths(validated_mwtabfile))
+    errors.extend(validate_sub_section_uniqueness(validated_mwtabfile))
 
     # finish writing validation/error log
     if errors:
