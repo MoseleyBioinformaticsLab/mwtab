@@ -19,6 +19,8 @@ import io
 import sys
 import traceback
 
+import json_duplicate_keys as jdks
+
 from .mwschema import section_schema_mapping, base_schema, _duplicate_key_list
 
 import mwtab
@@ -134,8 +136,9 @@ def validate_factors(mwtabfile):
     """
     errors = []
     if mwtabfile._factors:
-        factors_dict = {i["Sample ID"]: i["Factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
-        if factors_dict != mwtabfile._factors:
+        factors_dict_1 = {i["Sample ID"]: i["Factors"].getObject() for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
+        factors_dict_2 = {sample: factors.getObject() for sample, factors in mwtabfile._factors.items()}
+        if factors_dict_1 != factors_dict_2:
             errors.append("SUBJECT_SAMPLE_FACTORS: The factors in the "
                           "METABOLITE_DATA section and SUBJECT_SAMPLE_FACTORS section "
                           "do not match.")
@@ -221,34 +224,46 @@ def validate_subject_samples_factors(mwtabfile):
                 )
             seen_samples.add(subject_sample_factor["Sample ID"])
         if subject_sample_factor.get("Factors"):
-            for factor_key in subject_sample_factor["Factors"]:
-                if not subject_sample_factor["Factors"][factor_key]:
+            ssf_factors = subject_sample_factor["Factors"].getObject()
+            for factor_key in ssf_factors:
+                if not ssf_factors[factor_key]:
                     subject_samples_factors_errors.append(
                         "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key)
                     )
             
-            duplicate_keys = [key for key, value in subject_sample_factor["Factors"].items() 
-                              if isinstance(value, _duplicate_key_list)]
-            if duplicate_keys:
-                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
-                                                      " has the following duplicate keys in Factors:\n\t" + 
-                                                      "\n\t".join(duplicate_keys))
+            if isinstance(subject_sample_factor["Factors"], jdks.JSON_DUPLICATE_KEYS):
+                duplicate_keys = [match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key).group(1) 
+                                  for key in subject_sample_factor["Factors"].getObject() 
+                                  if match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key)]
+            
+            # duplicate_keys = [key for key, value in subject_sample_factor["Factors"].items() 
+            #                   if isinstance(value, _duplicate_key_list)]
+                if duplicate_keys:
+                    subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                                                          " has the following duplicate keys in Factors:\n\t" + 
+                                                          "\n\t".join(duplicate_keys))
         
         if subject_sample_factor.get("Additional sample data"):
-            for additional_key in subject_sample_factor["Additional sample data"]:
-                if not subject_sample_factor["Additional sample data"][additional_key]:
+            ssf_asd = subject_sample_factor["Additional sample data"].getObject()
+            for additional_key in ssf_asd:
+                if not ssf_asd[additional_key]:
                     subject_samples_factors_errors.append(
                         "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Additional sample data {}.".format(
                             index + 1, additional_key
                         )
                     )
             
-            duplicate_keys = [key for key, value in subject_sample_factor["Additional sample data"].items() 
-                              if isinstance(value, _duplicate_key_list)]
-            if duplicate_keys:
-                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
-                                                      " has the following duplicate keys in Additional sample data:\n\t" + 
-                                                      "\n\t".join(duplicate_keys))
+            if isinstance(subject_sample_factor["Additional sample data"], jdks.JSON_DUPLICATE_KEYS):
+                duplicate_keys = [match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key).group(1) 
+                                  for key in subject_sample_factor["Additional sample data"].getObject() 
+                                  if match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key)]
+            
+            # duplicate_keys = [key for key, value in subject_sample_factor["Additional sample data"].items() 
+            #                   if isinstance(value, _duplicate_key_list)]
+                if duplicate_keys:
+                    subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                                                          " has the following duplicate keys in Additional sample data:\n\t" + 
+                                                          "\n\t".join(duplicate_keys))
     return subject_samples_factors_errors
 
 
@@ -267,12 +282,20 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
 
     subject_sample_factors_sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
     if mwtabfile[data_section_key]["Data"]:
-        data_keys = list(mwtabfile[data_section_key]["Data"][0].keys())
+        if mwtabfile._samples:
+            data_sample_id_set = set(mwtabfile._samples)
+        elif mwtabfile.compatability_mode:
+            data_keys = list(mwtabfile[data_section_key]["Data"][0].getObject().keys())
+        else:
+            data_keys = list(mwtabfile[data_section_key]["Data"][0].keys())
         data_sample_id_set = set(data_keys[1:])
     else:
         data_sample_id_set = set()
     if metabolites and "Metabolites" in mwtabfile[data_section_key]:
-        metabolites_in_metabolites_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
+        if mwtabfile.compatability_mode:
+            metabolites_in_metabolites_section = [data_dict.getObject()["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
+        else:
+            metabolites_in_metabolites_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
 
     # Removed for mwTab File Spec. 1.5
     # if subject_sample_factors_sample_id_set - data_sample_id_set:
@@ -297,6 +320,8 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
         #         ),
         #         file=error_stream
         #     )
+        if mwtabfile.compatability_mode:
+            metabolite_dict = metabolite_dict.getObject()
         
         # Check whether the metabolite is in the Metabolites section.
         if metabolites and "Metabolites" in mwtabfile[data_section_key]:
@@ -329,10 +354,16 @@ def validate_metabolites(mwtabfile, data_section_key):
     """
     metabolites_errors = list()
     
-    metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
+    if mwtabfile.compatability_mode:
+        metabolites_in_data_section = [data_dict.getObject()["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
+    else:
+        metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
 
     for index, metabolite_dict in enumerate(mwtabfile[data_section_key]["Metabolites"]):
         # Check whether the metabolite is in the Data section.
+        if mwtabfile.compatability_mode:
+            metabolite_dict = metabolite_dict.getObject()
+        
         metabolite = metabolite_dict["Metabolite"]
         if metabolite not in metabolites_in_data_section:
             metabolites_errors.append("METABOLITES: Data entry #{}, \"{}\", is not in the Data section.".format(index + 1, metabolite))
@@ -364,6 +395,9 @@ def validate_extended(mwtabfile, data_section_key):
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
 
     for index, extended_data in enumerate(mwtabfile[data_section_key]["Extended"]):
+        if mwtabfile.compatability_mode:
+            extended_data = extended_data.getObject()
+        
         if "sample_id" not in extended_data.keys():
             extended_errors.append("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1))
         elif not extended_data["sample_id"] in sample_id_set:
@@ -388,19 +422,22 @@ def validate_metabolite_names(mwtabfile, data_section_key):
     list_headers = ["samples", "factors", "bin range(ppm)", "metabolite_name", "metabolite name"]
     
     if "Metabolites" in mwtabfile[data_section_key]:
-        metabolites_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"] if data_dict["Metabolite"].lower() in list_headers]
+        if mwtabfile.compatability_mode:
+            metabolites_section_bad_names = [data_dict.getObject()["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"] if data_dict.getObject()["Metabolite"].lower() in list_headers]
+        else:
+            metabolites_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"] if data_dict["Metabolite"].lower() in list_headers]
     else:
-        metabolites_section_bad_names
+        metabolites_section_bad_names = []
     
     if "Data" in mwtabfile[data_section_key]:
         data_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"] if data_dict["Metabolite"].lower() in list_headers]
     else:
-        data_section_bad_names
+        data_section_bad_names = []
     
     if "Extended" in mwtabfile[data_section_key]:
         extended_section_bad_names = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Extended"] if data_dict["Metabolite"].lower() in list_headers]
     else:
-        extended_section_bad_names
+        extended_section_bad_names = []
     
     errors = []
     message = ("Warning: There is a metabolite name, "
@@ -462,6 +499,14 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     else:
         error_stout = sys.stdout
     validated_mwtabfile = deepcopy(OrderedDict(mwtabfile))
+    validated_mwtabfile.source = mwtabfile.source
+    validated_mwtabfile._factors = mwtabfile._factors
+    validated_mwtabfile._samples = mwtabfile._samples
+    validated_mwtabfile._metabolite_header = mwtabfile._metabolite_header
+    validated_mwtabfile._extended_metabolite_header = mwtabfile._extended_metabolite_header
+    validated_mwtabfile._binned_header = mwtabfile._binned_header
+    validated_mwtabfile._short_headers = mwtabfile._short_headers
+    validated_mwtabfile._duplicate_sub_sections = mwtabfile._duplicate_sub_sections
 
     # generate validation log header(s)
     file_format = mwtabfile.source.split("/")[-1] if "https://www.metabolomicsworkbench.org/" in mwtabfile.source else \

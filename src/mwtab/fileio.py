@@ -166,7 +166,7 @@ def read_files(*sources, return_exceptions=False, **kwds):
                                         return_exceptions=return_exceptions)
             continue
         try:
-            f = mwtab.MWTabFile(source)
+            f = mwtab.MWTabFile(source, compatability_mode=True)
             f.read(fh)
 
             if kwds.get('validate'):
@@ -217,6 +217,45 @@ def read_mwrest(*sources, return_exceptions=False, **kwds):
             if VERBOSE:
                 print("Error processing url: ", source, "\nReason:", e)
             yield _return_correct_yield(None, 
+                                        exception=e, 
+                                        return_exceptions=return_exceptions)
+
+def read_lines(*sources, return_exceptions=False, **kwds):
+    """Construct a generator that yields file instances.
+
+    :param sources: One or more strings representing path to file(s).
+    :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
+    """
+    try:
+        filenames = _generate_filenames(sources, True)
+        filehandles = _generate_handles(filenames, True)
+    except Exception as e:
+        yield _return_correct_yield(None, 
+                                    exception=e, 
+                                    return_exceptions=return_exceptions)
+    for fh, source, exc in filehandles:
+        try:
+            string = fh.read()
+            if isinstance(string, str):
+                lines = string.replace("\r", "\n").split("\n")
+            elif isinstance(string, bytes):
+                lines = string.decode("utf-8").replace("\r", "\n").split("\n")
+            else:
+                raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
+
+            lines = [line for line in lines if line]
+            
+            if VERBOSE:
+                print("Processed file: {}".format(os.path.abspath(source)))
+            
+            yield _return_correct_yield((lines, source), 
+                                        exception=None, 
+                                        return_exceptions=return_exceptions)
+        
+        except Exception as e:
+            if VERBOSE:
+                print("Error processing file: ", source, "\nReason:", e)
+            yield _return_correct_yield(source, 
                                         exception=e, 
                                         return_exceptions=return_exceptions)
 

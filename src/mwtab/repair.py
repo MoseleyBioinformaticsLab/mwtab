@@ -4,6 +4,8 @@ The repair command.
 """
 
 import re
+import traceback
+import sys
 
 from . import mwtab
 
@@ -77,6 +79,19 @@ def line_should_have_two_letter_code(line, index, data_low, data_high, extended_
                                          metab_low, metab_high,
                                          binned_low, binned_high))
 
+def line_is_numbers(line):
+    tokens = line.split('\t')[1:]
+    bool_list = []
+    for token in tokens:
+        try:
+            float(token)
+            bool_list.append(True)
+        except Exception:
+            if token == '':
+                bool_list.append(True)
+            else:
+                bool_list.append(False)
+    return all(bool_list)
 
 
 list_headers = {"Factors" : {"optional": True, 
@@ -96,13 +111,13 @@ list_headers = {"Factors" : {"optional": True,
 all_list_headers = [spelling for header_dict in list_headers.values() for spelling in header_dict['all_spellings']]
 
 
-def repair(path):
+def repair(lines, verbose):
     """
     """
-    with open(path, encoding="utf-8") as f:
-        file_text = f.read()
-    file_text = file_text.replace('\n\n', '\n')
-    lines = file_text.split('\n')
+    # with open(path, encoding="utf-8") as f:
+    #     file_text = f.read()
+    # file_text = file_text.replace('\n\n', '\n')
+    # lines = file_text.split('\n')
     
     
     # # Find METABOLITE_DATA start and end indexes
@@ -180,6 +195,7 @@ def repair(path):
     
     indexes_to_delete = []
     indexes_to_skip = []
+    lines_to_add = []
     current_section = None
     current_prefix = ""
     current_section_index = None
@@ -223,142 +239,172 @@ def repair(path):
         if line.startswith('SUBJECT_SAMPLE_FACTORS'):
             ssf_samples += 1
         
+        
         # Remove tabs from the workbench header.
         if line.startswith("#METABOLOMICS WORKBENCH") and '\t' in line:
             lines[i] = re.sub(r'\t+', ' ', line)
             continue
         
+        # Fix it when the header accidently is on 2 different lines.
+        if i > 0 and lines[i-1].startswith("#METABOLOMICS WORKBENCH") and '\t' not in line:
+                lines[i-1] = lines[i-1] + ' ' + line.lstrip()
+                indexes_to_delete.append(i)
+                continue
+        
         # If VERSION doesn't have a value then give it one.
-        if match_re := re.match(r"VERSION(.*)"):
+        if match_re := re.match(r"VERSION(.*)", line):
             version_value = match_re.group(1).strip()
             if version_value == '':
                 lines[i] = "VERSION             \t1"
                 continue
             else:
                 lines[i] = "VERSION             \t" + version_value
+                continue
             # if '\t' not in match_re.group(1):
             #     lines[i] = "VERSION             \t" + match_re.group(1).lstrip()
             #     continue
         
+        # Fix tabs in the sub_section names.
+        if (match_re := re.match(r'(\s*[A-Z_]+\s*[A-Z_]*:?\s*[A-Z_]+)( +\t.*)', line)) and '\t' in match_re.group(1):
+            lines[i] = "".join(match_re.group(1).split()) + match_re.group(2)
+            continue
+        
+        # Fix tabs in #SECTIONS.
+        if line.startswith('#') and '\t' in line:
+            lines[i] = "".join(line.split())
+            continue
+        
         # Fix names for list header lines.
-        if any(line.startswith(header) for header in all_list_headers):
-            if metabolite_data_start_index:
-                if metabolite_data_start_index - i == 1:
-                    # This can't be done for samples because they have to match up to the samples in SSF.
-                    # samples = line.split('\t')[1:]
-                    # while samples and not samples[-1]:
-                    #     samples.pop()
-                    
-                    # header_count = {}
-                    # for j, header in enumerate(samples):
-                    #     if header in header_count:
-                    #         samples[j] = f"{header}_{header_count[header]}"
-                    #         header_count[header] += 1
-                    #     else:
-                    #         header_count[header] = 1
-                    
-                    # lines[i] = '\t'.join(["Samples"] + samples)
-                    # continue
-                    
-                    # num_of_metabolite_data_headers = len(line.split('\t'))
-                    if not line.startswith("Samples"):
-                        lines[i] = re.sub(r"[^\t]*\t", "Samples\t", line, count=1)
-                        continue
+        if metabolite_data_start_index:
+            if i - metabolite_data_start_index == 1:
+                # This can't be done for samples because they have to match up to the samples in SSF.
+                # samples = line.split('\t')[1:]
+                # while samples and not samples[-1]:
+                #     samples.pop()
                 
-                elif metabolite_data_start_index - i == 2:
-                    # This can't be done for factors because they have to match up to the samples in SSF.
-                    # factors = line.split('\t')[1:]
-                    # while factors and not factors[-1]:
-                    #     factors.pop()
-                    
-                    # header_count = {}
-                    # for j, header in enumerate(factors):
-                    #     if header in header_count:
-                    #         factors[j] = f"{header}_{header_count[header]}"
-                    #         header_count[header] += 1
-                    #     else:
-                    #         header_count[header] = 1
-                    
-                    # lines[i] = '\t'.join(["Factors"] + factors)
-                    # continue
-                    
-                    if not line.startswith("Factors"):
-                        lines[i] = re.sub(r"[^\t]*\t", "Factors\t", line, count=1)
-                        continue
-            
-            if metabolites_start_index:
-                if metabolites_start_index - i == 1:
-                    metabolite_headers = line.split('\t')[1:]
-                    # num_of_metabolites_headers = len(metabolite_headers) + 1
-                    while metabolite_headers and not metabolite_headers[-1]:
-                        metabolite_headers.pop()
-                    
-                    if "Metabolite" in metabolite_headers:
-                        metabolite_headers = [header if header != "Metabolite" else "Metabolite Name" for header in metabolite_headers]
-                    
-                    header_count = {}
-                    for j, header in enumerate(metabolite_headers):
-                        if header in header_count:
-                            metabolite_headers[j] = f"{header}_{header_count[header]}"
-                            header_count[header] += 1
-                        else:
-                            header_count[header] = 1
-                    
-                    lines[i] = '\t'.join(["metabolite_name"] + metabolite_headers)
+                # header_count = {}
+                # for j, header in enumerate(samples):
+                #     if header in header_count:
+                #         samples[j] = f"{header}_{header_count[header]}"
+                #         header_count[header] += 1
+                #     else:
+                #         header_count[header] = 1
+                
+                # lines[i] = '\t'.join(["Samples"] + samples)
+                # continue
+                
+                # num_of_metabolite_data_headers = len(line.split('\t'))
+                if not line.startswith("Samples"):
+                    lines[i] = re.sub(r"[^\t]*\t", "Samples\t", line, count=1)
                     continue
-                    
-                    # if not line.startswith("metabolite_name"):
-                    #     lines[i] = re.sub(r"[^\t]*\t", "metabolite_name\t", line, count=1)
-                    #     continue
+                continue
             
-            if extended_metabolite_data_start_index:
-                if extended_metabolite_data_start_index - i == 1:
-                    extended_headers = line.split('\t')[1:]
-                    # num_of_extended_headers = len(extended_headers) + 1
-                    while extended_headers and not extended_headers[-1]:
-                        extended_headers.pop()
-                    
-                    if "Metabolite" in extended_headers:
-                        extended_headers = [header if header != "Metabolite" else "Metabolite Name" for header in extended_headers]
-                    
-                    header_count = {}
-                    for j, header in enumerate(extended_headers):
-                        if header in header_count:
-                            extended_headers[j] = f"{header}_{header_count[header]}"
-                            header_count[header] += 1
-                        else:
-                            header_count[header] = 1
-                    
-                    lines[i] = '\t'.join(["metabolite_name"] + extended_headers)
+            elif i - metabolite_data_start_index == 2:
+                # This can't be done for factors because they have to match up to the samples in SSF.
+                # factors = line.split('\t')[1:]
+                # while factors and not factors[-1]:
+                #     factors.pop()
+                
+                # header_count = {}
+                # for j, header in enumerate(factors):
+                #     if header in header_count:
+                #         factors[j] = f"{header}_{header_count[header]}"
+                #         header_count[header] += 1
+                #     else:
+                #         header_count[header] = 1
+                
+                # lines[i] = '\t'.join(["Factors"] + factors)
+                # continue
+                
+                if not line.startswith("Factors") and not line_is_numbers(line):
+                    lines[i] = re.sub(r"[^\t]*\t", "Factors\t", line, count=1)
                     continue
-                    
-                    # if not line.startswith("metabolite_name"):
-                    #     lines[i] = re.sub(r"[^\t]*\t", "metabolite_name\t", line, count=1)
-                    #     continue
-            
-            if binned_data_start_index:
-                if binned_data_start_index - i == 1:
-                    # This can't be done for binned_headers because they have to match up to the samples in SSF.
-                    # binned_headers = line.split('\t')[1:]
-                    # while binned_headers and not binned_headers[-1]:
-                    #     binned_headers.pop()
-                    
-                    # header_count = {}
-                    # for j, header in enumerate(binned_headers):
-                    #     if header in header_count:
-                    #         binned_headers[j] = f"{header}_{header_count[header]}"
-                    #         header_count[header] += 1
-                    #     else:
-                    #         header_count[header] = 1
-                    
-                    # lines[i] = '\t'.join(["Bin range(ppm)"] + binned_headers)
-                    # continue
-                    
-                    # num_of_binned_headers = len(line.split('\t'))
-                    if not line.startswith("Bin range(ppm)"):
-                        lines[i] = re.sub(r"[^\t]*\t", "Bin range(ppm)\t", line, count=1)
-                        continue
-            # We assume that if this line is not where we expect it to be then it shouldn't be there.                    
+                continue
+        
+        if metabolites_start_index:
+            if i - metabolites_start_index == 1:
+                metabolite_headers = line.split('\t')[1:]
+                # num_of_metabolites_headers = len(metabolite_headers) + 1
+                while metabolite_headers and not metabolite_headers[-1]:
+                    metabolite_headers.pop()
+                
+                if "Metabolite" in metabolite_headers:
+                    metabolite_headers = [header if header != "Metabolite" else "Metabolite Name" for header in metabolite_headers]
+                
+                header_count = {}
+                for j, header in enumerate(metabolite_headers):
+                    if header in header_count:
+                        metabolite_headers[j] = f"{header}_{header_count[header]}"
+                        header_count[header] += 1
+                    else:
+                        header_count[header] = 1
+                
+                lines[i] = '\t'.join(["metabolite_name"] + metabolite_headers)
+                continue
+                
+                # if not line.startswith("metabolite_name"):
+                #     lines[i] = re.sub(r"[^\t]*\t", "metabolite_name\t", line, count=1)
+                #     continue
+        
+        if extended_metabolite_data_start_index:
+            if i - extended_metabolite_data_start_index == 1:
+                extended_headers = line.split('\t')[1:]
+                # num_of_extended_headers = len(extended_headers) + 1
+                while extended_headers and not extended_headers[-1]:
+                    extended_headers.pop()
+                
+                if "Metabolite" in extended_headers:
+                    extended_headers = [header if header != "Metabolite" else "Metabolite Name" for header in extended_headers]
+                
+                header_count = {}
+                for j, header in enumerate(extended_headers):
+                    if header in header_count:
+                        extended_headers[j] = f"{header}_{header_count[header]}"
+                        header_count[header] += 1
+                    else:
+                        header_count[header] = 1
+                
+                lines[i] = '\t'.join(["metabolite_name"] + extended_headers)
+                continue
+                
+                # if not line.startswith("metabolite_name"):
+                #     lines[i] = re.sub(r"[^\t]*\t", "metabolite_name\t", line, count=1)
+                #     continue
+        
+        if binned_data_start_index:
+            if i - binned_data_start_index == 1:
+                # This can't be done for binned_headers because they have to match up to the samples in SSF.
+                # binned_headers = line.split('\t')[1:]
+                # while binned_headers and not binned_headers[-1]:
+                #     binned_headers.pop()
+                
+                # header_count = {}
+                # for j, header in enumerate(binned_headers):
+                #     if header in header_count:
+                #         binned_headers[j] = f"{header}_{header_count[header]}"
+                #         header_count[header] += 1
+                #     else:
+                #         header_count[header] = 1
+                
+                # lines[i] = '\t'.join(["Bin range(ppm)"] + binned_headers)
+                # continue
+                
+                # num_of_binned_headers = len(line.split('\t'))
+                if not line.startswith("Bin range(ppm)"):
+                    lines[i] = re.sub(r"[^\t]*\t", "Bin range(ppm)\t", line, count=1)
+                    continue
+                continue
+                
+        # Find header lines in the wrong place and delete them.
+        if any(line.startswith(header) for header in all_list_headers):
+            # If it's the wrong index it should have taken one of the if's above this.
+            # if i - metabolite_data_start_index == 1 or\
+            #    i - metabolite_data_start_index == 2 or\
+            #    i - metabolites_start_index == 1 or\
+            #    i - extended_metabolite_data_start_index == 1 or\
+            #    i - binned_data_start_index == 1:
+            #     continue
+            # We assume that if this line is not where we expect it to be then it shouldn't be there.
             indexes_to_delete.append(i)
         
         # Fix the issue where tabs inside of double quotes messes things up in data blocks.
@@ -371,15 +417,19 @@ def repair(path):
         if data_block_element_fix(binned_data_start_index, binned_data_end_index, line, i, lines):
             continue
         
-        # Fix back prefix.
+        # Fix bad prefix.
         if not line.startswith(current_prefix) and not line.startswith('#'):
             # The line could have a bad prefix or no prefix.
             # Assume that if a ':' is found close enough to the start of the line it is a bad prefix.
             # "_1 CH: ..." has been seen before, so using index 6 as the "close enough".
             if ':' in line and line.index(':') < 6:
-                lines[i] = re.sub(r"[^:]*:", current_prefix + ":", line, count=1)
+                lines[i] = re.sub(r"[^:]*:", current_prefix, line, count=1)
+            # Assume if there is no tab that the line should be added to the one above it.
+            elif '\t' not in line:
+                lines[i-1] = lines[i-1] + line.lstrip()
+                indexes_to_delete.append(i)
             else:
-                lines[i] = current_prefix + ':' + line
+                lines[i] = current_prefix + line
             continue
         
         # Remove #FACTORS lines.
@@ -395,18 +445,27 @@ def repair(path):
         # Fix various problems with RESULTS_FILE lines.
         if "RESULTS_FILE" in line:
             if line.startswith('#'):
-                lines[i] = line[1:]
-                continue
-            
-            if "NMR_RESULTS_FILE" in line and "NM:" not in line:
-                lines[i] = "NM:" + line
-                continue
-            if "MS_RESULTS_FILE" in line and "MS:" not in line:
-                lines[i] = "MS:" + line
-                continue
+                line = line[1:]
             
             if '\t\t' in line:
-                lines[i] = line.replace('\t\t', '\t')
+                line = line.replace('\t\t', '\t')
+            
+            if "NMR_RESULTS_FILE" in line:
+                if "NM:" not in line:
+                    line = "NM:" + line
+                if current_section != 'NM':
+                    lines_to_add.append([line, 'NM'])
+                    indexes_to_delete.append(i)
+            
+            if "MS_RESULTS_FILE" in line:
+                if "MS:" not in line:
+                    line = "MS:" + line
+                if current_section != 'MS':
+                    lines_to_add.append([line, 'MS'])
+                    indexes_to_delete.append(i)
+            
+            lines[i] = line
+            continue
         
         # Remove duplicate sub sections and other stuff.
         if match_re := re.match(r'((\w\w):([A-Z_]+))(.*)', line):
@@ -431,13 +490,30 @@ def repair(path):
             continue
     
     
+    for i, index in enumerate(sorted(indexes_to_delete)):
+        del lines[index - i]
     
-    for index in indexes_to_delete:
-        del lines[index]
+    for line, section_name in lines_to_add:
+        try:
+            section_index = [index for index, line2 in enumerate(lines) if line2 == "#" + section_name][0]
+        except Exception:
+            continue
+        lines.insert(section_index + 1, line)
 
 
     # Try to use the MWTabFile class to get an internal representation and save it out because this will standardize spacing issues.
     # Also fixes broken subsections.
     # If that can't be done then just save out the lines as is.
+    file_str = '\n'.join(lines)
+    
+    tabfile = mwtab.MWTabFile("", compatability_mode=True)
+    try:
+        tabfile._build_mwtabfile(file_str)
+        return tabfile.writestr('mwtab')
+    except Exception as e:
+        if verbose:
+            traceback.print_exception(e, file=sys.stdout)
+            print()
+        return file_str
 
 

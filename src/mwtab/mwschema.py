@@ -14,6 +14,7 @@ from copy import deepcopy
 from collections import OrderedDict
 
 from schema import Schema, Optional, Or, And
+import json_duplicate_keys as jdks
 
 
 class _duplicate_key_list(list):
@@ -126,11 +127,14 @@ subject_sample_factors_schema = Schema(
         {
             "Subject ID": str,
             "Sample ID": str,
-            "Factors": dict,
-            Optional("Additional sample data"): {
-                Optional("RAW_FILE_NAME"): str,
-                Optional(str): Or(str, _duplicate_key_list)
-            }
+            "Factors": Or(jdks.JSON_DUPLICATE_KEYS, dict),
+            # "Factors": dict,
+            Optional("Additional sample data"): Or(jdks.JSON_DUPLICATE_KEYS, dict)
+            # Optional("Additional sample data"): {
+            #     Optional("RAW_FILE_NAME"): str,
+            #     # Optional(str): Or(str, _duplicate_key_list)
+            #     Optional(str): str
+            # }
         }
     ]
 )
@@ -238,13 +242,13 @@ chromatography_schema = Schema(
         "CHROMATOGRAPHY_TYPE": str,
         "INSTRUMENT_NAME": str,
         "COLUMN_NAME": str,
-        Optional("FLOW_GRADIENT"): str,
-        Optional("FLOW_RATE"): str,
-        Optional("COLUMN_TEMPERATURE"): str,
+        "FLOW_GRADIENT": str,
+        "FLOW_RATE": str,
+        "COLUMN_TEMPERATURE": str,
         Optional("METHODS_FILENAME"): str,
         Optional("SAMPLE_INJECTION"): str,
-        Optional("SOLVENT_A"): str,
-        Optional("SOLVENT_B"): str,
+        "SOLVENT_A": str,
+        "SOLVENT_B": str,
         Optional("METHODS_ID"): str,
         Optional("COLUMN_PRESSURE"): str,
         Optional("INJECTION_TEMPERATURE"): str,
