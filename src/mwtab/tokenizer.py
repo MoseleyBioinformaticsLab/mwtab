@@ -21,21 +21,25 @@ import re
 
 import json_duplicate_keys as jdks
 
+from .duplicates_dict import DuplicatesDict
+
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 
-def tokenizer(text, compatability_mode=False):
+def tokenizer(text, dict_type = None):
     """A lexical analyzer for the `mwtab` formatted files.
 
     :param text: `mwTab` formatted text.
     :type text: py:class:`str`
-    :param compatability_mode: if true, replace some dictionaries with JSON_DUPLICATE_KEYS.
-    :type text: py:class:`bool`
+    :param dict_type: the type of dictionary to use, default is OrderedDict.
     :return: Tuples of data.
     :rtype: py:class:`~collections.namedtuple`
     """
+    if dict_type is None:
+        dict_type = OrderedDict
+        
     stream = deque(text.split("\n"))
 
     while len(stream) > 0:
@@ -65,18 +69,20 @@ def tokenizer(text, compatability_mode=False):
                 line_items = line.split("\t")
                 
                 factor_pairs = line_items[3].split(" | ")
-                if compatability_mode:
-                    factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
-                else:
-                    factor_dict = OrderedDict()
+                factor_dict = dict_type()
+                # if compatability_mode:
+                #     factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                # else:
+                #     factor_dict = OrderedDict()
                 for pair in factor_pairs:
                     factor_key, factor_value = pair.split(":")
                     factor_key = factor_key.strip()
                     factor_value = factor_value.strip()
-                    if compatability_mode:
-                        factor_dict.set(factor_key, factor_value, ordered_dict=True)
-                    else:
-                        factor_dict[factor_key] = factor_value
+                    # if compatability_mode:
+                    #     factor_dict.set(factor_key, factor_value, ordered_dict=True)
+                    # else:
+                    #     factor_dict[factor_key] = factor_value
+                    factor_dict[factor_key] = factor_value
                 
                 subject_sample_factors_dict = OrderedDict({
                     "Subject ID": line_items[1],
@@ -84,18 +90,20 @@ def tokenizer(text, compatability_mode=False):
                     "Factors": factor_dict
                 })
                 if line_items[4]:
-                    if compatability_mode:
-                        additional_data = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
-                    else:
-                        additional_data = OrderedDict()
+                    additional_data = dict_type()
+                    # if compatability_mode:
+                    #     additional_data = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                    # else:
+                    #     additional_data = OrderedDict()
                     for factor_item in line_items[4].split("; "):
                         key, value = factor_item.split("=")
                         key = key.strip()
                         value = value.strip()
-                        if compatability_mode:
-                            additional_data.set(key, value, ordered_dict=True)
-                        else:
-                            additional_data[key] = value
+                        # if compatability_mode:
+                        #     additional_data.set(key, value, ordered_dict=True)
+                        # else:
+                        #     additional_data[key] = value
+                        additional_data[key] = value
                     subject_sample_factors_dict["Additional sample data"] = additional_data
                 yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
 

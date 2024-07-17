@@ -40,7 +40,7 @@ DUPLICATE_KEY_REGEX = r'(.*)\{\{\{.*\}\}\}'
 # From https://stackoverflow.com/questions/14902299/json-loads-allows-duplicate-keys-in-a-dictionary-overwriting-the-first-value
 def _handle_duplicate_keys(ordered_pairs):
     """Use special type to store duplicate keys."""
-    d = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+    d = DuplicatesDict()
     for k, v in ordered_pairs:
         if k in d:
             d.set(k, v, ordered_dict = True)
@@ -181,6 +181,10 @@ class MWTabFile(OrderedDict):
         self._short_headers = set()
         self._duplicate_sub_sections = {}
         self.compatability_mode = compatability_mode
+        if compatability_mode:
+            self._default_dict_type = DuplicatesDict
+        else:
+            self._default_dict_type = OrderedDict
         # self._study_id = None
         # self._analysis_id = None
         # self._header = None
@@ -288,7 +292,7 @@ class MWTabFile(OrderedDict):
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
         mwtab_file = self
-        lexer = tokenizer(mwtab_str, self.compatability_mode)
+        lexer = tokenizer(mwtab_str, self._default_dict_type)
         token = next(lexer)
 
         while token.key != "!#ENDFILE":
@@ -369,16 +373,18 @@ class MWTabFile(OrderedDict):
                         self._factors = {}
                         for i, factor_string in enumerate(token_value[1:]):
                             factor_pairs = factor_string.split(" | ")
-                            if self.compatability_mode:
-                                factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
-                            else:
-                                factor_dict = OrderedDict()
+                            factor_dict = self._default_dict_type()
+                            # if self.compatability_mode:
+                            #     factor_dict = DuplicatesDict()
+                            # else:
+                            #     factor_dict = OrderedDict()
                             for pair in factor_pairs:
                                 factor_key, factor_value = pair.split(":")
-                                if self.compatability_mode:
-                                    factor_dict.set(factor_key.strip(), factor_value.strip())
-                                else:
-                                    factor_dict[factor_key.strip()] = factor_value.strip()
+                                # if self.compatability_mode:
+                                #     factor_dict.set(factor_key.strip(), factor_value.strip(), ordered_dict=True)
+                                # else:
+                                #     factor_dict[factor_key.strip()] = factor_value.strip()
+                                factor_dict[factor_key.strip()] = factor_value.strip()
                             self._factors[header[i+1]] = factor_dict
                     
                     elif token.key == "Samples" and "METABOLITE_DATA" in section_name and loop_count < 3:
@@ -391,19 +397,24 @@ class MWTabFile(OrderedDict):
                         self._extended_metabolite_header = token_value[1:]
                         
                     else:
-                        temp_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict()) if self.compatability_mode else OrderedDict()
+                        temp_dict = self._default_dict_type()
+                        # temp_dict = DuplicatesDict() if self.compatability_mode else OrderedDict()
                         token_len = len(token_value)
                         for i, header_name in enumerate(metabolite_header):
-                            if self.compatability_mode:
-                                if i < token_len:
-                                    temp_dict.set(header_name, token_value[i], ordered_dict=True)
-                                else:
-                                    temp_dict.set(header_name, '', ordered_dict=True)
+                            # if self.compatability_mode:
+                            #     if i < token_len:
+                            #         temp_dict.set(header_name, token_value[i], ordered_dict=True)
+                            #     else:
+                            #         temp_dict.set(header_name, '', ordered_dict=True)
+                            # else:
+                            #     if i < token_len:
+                            #         temp_dict[header_name] = token_value[i]
+                            #     else:
+                            #         temp_dict[header_name] = ""
+                            if i < token_len:
+                                temp_dict[header_name] = token_value[i]
                             else:
-                                if i < token_len:
-                                    temp_dict[header_name] = token_value[i]
-                                else:
-                                    temp_dict[header_name] = ""
+                                temp_dict[header_name] = ""
                         data.append(temp_dict)
                         
                         if token_len > len(metabolite_header):
@@ -501,14 +512,16 @@ class MWTabFile(OrderedDict):
                         formatted_items.append(str(item[k]))
                     elif k == "Factors":
                         factors = []
-                        if self.compatability_mode:
-                            factor_dict = item[k].getObject()
-                        else:
-                            factor_dict = item[k]
+                        # if self.compatability_mode:
+                        #     factor_dict = item[k].getObject()
+                        # else:
+                        #     factor_dict = item[k]
+                        factor_dict = item[k]
                         for k2, value in factor_dict.items():
-                            match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
-                            if match_re:
-                                k2 = match_re.group(1)
+                            # match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
+                            # if match_re:
+                            #     k2 = match_re.group(1)
+                            
                             # if isinstance(item[k][k2], _duplicate_key_list):
                             #     for value in item[k][k2]:
                             #         factors.append("{}:{}".format(k2, value))
@@ -518,14 +531,16 @@ class MWTabFile(OrderedDict):
                         formatted_items.append(" | ".join(factors))
                     elif k == "Additional sample data":
                         additional_sample_data = []
-                        if self.compatability_mode:
-                            add_dict = item[k].getObject()
-                        else:
-                            add_dict = item[k]
+                        # if self.compatability_mode:
+                        #     add_dict = item[k].getObject()
+                        # else:
+                        #     add_dict = item[k]
+                        add_dict = item[k]
                         for k2, value in add_dict.items():
-                            match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
-                            if match_re:
-                                k2 = match_re.group(1)
+                            # match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
+                            # if match_re:
+                            #     k2 = match_re.group(1)
+                            
                             # if isinstance(item[k][k2], _duplicate_key_list):
                             #     for value in item[k][k2]:
                             #         additional_sample_data.append("{}={}".format(k2, value))
@@ -603,10 +618,11 @@ class MWTabFile(OrderedDict):
                         if self._samples is not None:
                             sample_names = self._samples
                         elif self[section_key][key]:
-                            if self.compatability_mode:
-                                sample_names = [k for k in self[section_key][key][0].getObject().keys()][1:]
-                            else:
-                                sample_names = [k for k in self[section_key][key][0].keys()][1:]
+                            # if self.compatability_mode:
+                            #     sample_names = [k for k in self[section_key][key][0].getObject().keys()][1:]
+                            # else:
+                            #     sample_names = [k for k in self[section_key][key][0].keys()][1:]
+                            sample_names = [k for k in self[section_key][key][0].keys()][1:]
                         if sample_names:
                             print("\t".join(["Samples"] + sample_names), file=f)
                             # prints "Factors" line at head of data section
@@ -615,14 +631,15 @@ class MWTabFile(OrderedDict):
                                 factors_dict = {}
                                 for sample_name, sample_factors in self._factors.items():
                                     factors_for_sample = []
-                                    if self.compatability_mode:
-                                        factor_dict = sample_factors.getObject()
-                                    else:
-                                        factor_dict = sample_factors
+                                    # if self.compatability_mode:
+                                    #     factor_dict = sample_factors.getObject()
+                                    # else:
+                                    #     factor_dict = sample_factors
+                                    factor_dict = sample_factors
                                     for factor_key, factor_value in factor_dict.items():
-                                        match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
-                                        if match_re:
-                                            factor_key = match_re.group(1)
+                                        # match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
+                                        # if match_re:
+                                        #     factor_key = match_re.group(1)
                                         factors_for_sample.append(factor_key + ":" + factor_value)
                                     factors_dict[sample_name] = ' | '.join(factors_for_sample)
                             else:
@@ -630,14 +647,15 @@ class MWTabFile(OrderedDict):
                                 for i in self['SUBJECT_SAMPLE_FACTORS']:
                                     sample = i['Sample ID']
                                     factors_for_sample = []
-                                    if self.compatability_mode:
-                                        factor_dict = i['Factors'].getObject()
-                                    else:
-                                        factor_dict = i['Factors']
+                                    # if self.compatability_mode:
+                                    #     factor_dict = i['Factors'].getObject()
+                                    # else:
+                                    #     factor_dict = i['Factors']
+                                    factor_dict = i['Factors']
                                     for factor_key, factor_value in factor_dict.items():
-                                        match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
-                                        if match_re:
-                                            factor_key = match_re.group(1)
+                                        # match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
+                                        # if match_re:
+                                        #     factor_key = match_re.group(1)
                                         factors_for_sample.append(factor_key + ":" + factor_value)
                                     factors_dict[sample] = ' | '.join(factors_for_sample)
                                 
@@ -657,29 +675,34 @@ class MWTabFile(OrderedDict):
                         
                         for k, i in enumerate(self[section_key][key]):
                             # print("\t".join([i[k] for k in i.keys()]), file=f)
-                            if self.compatability_mode:
-                                print("\t".join(i.getObject().values()), file=f)
-                            else:
-                                print("\t".join(i.values()), file=f)
+                            
+                            # if self.compatability_mode:
+                            #     print("\t".join(i.getObject().values()), file=f)
+                            # else:
+                            #     print("\t".join(i.values()), file=f)
+                            print("\t".join(i.values()), file=f)
 
                     else:  # NMR_BINNED_DATA
                         # Only print if there is data to print.
                         if self._binned_header is not None:
                             binned_header = self._binned_header
                         elif self[section_key][key]:
-                            if self.compatability_mode:
-                                binned_header = [k for k in self[section_key][key][0].getObject().keys()][1:]
-                            else:
-                                binned_header = [k for k in self[section_key][key][0].keys()][1:]
+                            # if self.compatability_mode:
+                            #     binned_header = [k for k in self[section_key][key][0].getObject().keys()][1:]
+                            # else:
+                            #     binned_header = [k for k in self[section_key][key][0].keys()][1:]
+                            binned_header = [k for k in self[section_key][key][0].keys()][1:]
                         
                         print("\t".join(["Bin range(ppm)"] + binned_header), file=f)
                         
                         for i in self[section_key][key]:
                             # print("\t".join([i[k] for k in i.keys()]), file=f)
-                            if self.compatability_mode:
-                                print("\t".join(i.getObject().values()), file=f)
-                            else:
-                                print("\t".join(i.values()), file=f)
+                            
+                            # if self.compatability_mode:
+                            #     print("\t".join(i.getObject().values()), file=f)
+                            # else:
+                            #     print("\t".join(i.values()), file=f)
+                            print("\t".join(i.values()), file=f)
 
                     print("{}_END".format(section_key), file=f)
 
@@ -696,26 +719,29 @@ class MWTabFile(OrderedDict):
                     elif key == "Extended" and self._extended_metabolite_header is not None:
                         metabolite_header = self._extended_metabolite_header
                     elif self[section_key][key]:
-                        if self.compatability_mode:
-                            metabolite_header = []
-                            for header in self[section_key][key][0].getObject().keys():
-                                match_re =  re.match(DUPLICATE_KEY_REGEX, header)
-                                if match_re:
-                                    header = match_re.group(1)
-                                metabolite_header.append(header)
-                            metabolite_header = metabolite_header[1:]
-                        else:
-                            metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
+                        # if self.compatability_mode:
+                        #     metabolite_header = []
+                        #     for header in self[section_key][key][0].getObject().keys():
+                        #         match_re =  re.match(DUPLICATE_KEY_REGEX, header)
+                        #         if match_re:
+                        #             header = match_re.group(1)
+                        #         metabolite_header.append(header)
+                        #     metabolite_header = metabolite_header[1:]
+                        # else:
+                        #     metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
+                        metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
                     else:
                         metabolite_header = []
                     print("\t".join(["metabolite_name"] + metabolite_header), file=f)
                     
                     for i in self[section_key][key]:
                         # print("\t".join(i[k] for k in i.keys()), file=f)
-                        if self.compatability_mode:
-                            print("\t".join(i.getObject().values()), file=f)
-                        else:
-                            print("\t".join(i.values()), file=f)
+                        
+                        # if self.compatability_mode:
+                        #     print("\t".join(i.getObject().values()), file=f)
+                        # else:
+                        #     print("\t".join(i.values()), file=f)
+                        print("\t".join(i.values()), file=f)
 
                     if key == "Metabolites":
                         print("METABOLITES_END", file=f)
@@ -770,24 +796,24 @@ class MWTabFile(OrderedDict):
                 
             #     if "Factors" in ssf_dict:
             #         factor_dict = ssf_dict["Factors"]
-            #         new_factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+            #         new_factor_dict = DuplicatesDict()
             #         for key, value in factor_dict.items():
             #             if isinstance(value, _duplicate_key_list):
             #                 for item in value:
-            #                     new_factor_dict.set(key, item)
+            #                     new_factor_dict.set(key, item, ordered_dict=True)
             #             else:
-            #                 new_factor_dict.set(key, value)
+            #                 new_factor_dict.set(key, value, ordered_dict=True)
             #             ssf_dict["Factors"] = new_factor_dict
                 
             #     if "Additional sample data" in ssf_dict:
             #         additional_dict = ssf_dict["Additional sample data"]
-            #         new_additional_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+            #         new_additional_dict = DuplicatesDict()
             #         for key, value in additional_dict.items():
             #             if isinstance(value, _duplicate_key_list):
             #                 for item in value:
-            #                     new_additional_dict.set(key, item)
+            #                     new_additional_dict.set(key, item, ordered_dict=True)
             #             else:
-            #                 new_additional_dict.set(key, value)
+            #                 new_additional_dict.set(key, value, ordered_dict=True)
             #             ssf_dict["Additional sample data"] = new_additional_dict
             
             json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
@@ -838,7 +864,7 @@ class MWTabFile(OrderedDict):
 
         :param string: Input string.
         :type string: :py:class:`str` or :py:class:`bytes`
-        :param compatability_mode: if true, replace some dictionaries with JSON_DUPLICATE_KEYS.
+        :param compatability_mode: if true, replace some dictionaries with DuplicatesDict.
         :type text: py:class:`bool`
         :return: Input string if in JSON format or False otherwise.
         :rtype: :py:class:`str` or :py:obj:`False`
@@ -859,10 +885,10 @@ class MWTabFile(OrderedDict):
             
             if compatability_mode:
                 for i, ssf_dict in enumerate(json_str['SUBJECT_SAMPLE_FACTORS']):
-                    if not isinstance(ssf_dict['Factors'], jdks.JSON_DUPLICATE_KEYS):
-                        json_str['SUBJECT_SAMPLE_FACTORS'][i]['Factors'] = jdks.JSON_DUPLICATE_KEYS(ssf_dict['Factors'])
-                    if 'Additional sample data' in ssf_dict and not isinstance(ssf_dict['Additional sample data'], jdks.JSON_DUPLICATE_KEYS):
-                        json_str['SUBJECT_SAMPLE_FACTORS'][i]['Additional sample data'] = jdks.JSON_DUPLICATE_KEYS(ssf_dict['Additional sample data'])
+                    if not isinstance(ssf_dict['Factors'], DuplicatesDict):
+                        json_str['SUBJECT_SAMPLE_FACTORS'][i]['Factors'] = DuplicatesDict(ssf_dict['Factors'])
+                    if 'Additional sample data' in ssf_dict and not isinstance(ssf_dict['Additional sample data'], DuplicatesDict):
+                        json_str['SUBJECT_SAMPLE_FACTORS'][i]['Additional sample data'] = DuplicatesDict(ssf_dict['Additional sample data'])
                 
                 data_key = [n for n in json_str.keys() if "METABOLITE_DATA" in n or "BINNED_DATA" in n]
                 if data_key:
@@ -870,7 +896,7 @@ class MWTabFile(OrderedDict):
                     for section_key, section_value in json_str[data_key].items():
                         if section_key in ["Data", "Metabolites", "Extended"]:
                             for i, data_dict in enumerate(section_value):
-                                json_str[data_key][section_key][i] = jdks.JSON_DUPLICATE_KEYS(json_str[data_key][section_key][i])
+                                json_str[data_key][section_key][i] = DuplicatesDict(json_str[data_key][section_key][i])
                 
             
             return json_str
@@ -967,20 +993,20 @@ class MWTabFile(OrderedDict):
                             if isinstance(self[key][sub_key], list):
                                 temp_list = []
                                 for i, element in enumerate(self[key][sub_key]):
-                                    temp_list.append(OrderedDict())
+                                    temp_list.append(self._default_dict_type())
                                     for sub_sub_key in sub_sub_keys:
-                                        if self.compatability_mode:
-                                            element_dict = element.getObject()
-                                        else:
-                                            element_dict = element
-                                        if sub_sub_key in element_dict:
-                                            temp_list[i][sub_sub_key] = element_dict[sub_sub_key]
+                                        # if self.compatability_mode:
+                                        #     element_dict = element.getObject()
+                                        # else:
+                                        #     element_dict = element
+                                        if sub_sub_key in element:
+                                            temp_list[i][sub_sub_key] = element[sub_sub_key]
                                     # Add the elements that aren't in the key_order.
-                                    for unordered_key in element_dict:
+                                    for unordered_key in element:
                                         if unordered_key not in temp_list[i]:
-                                            temp_list[i][unordered_key] = element_dict[unordered_key]
-                                    if self.compatability_mode:
-                                        temp_list[i] = jdks.JSON_DUPLICATE_KEYS(temp_list[i])
+                                            temp_list[i][unordered_key] = element[unordered_key]
+                                    # if self.compatability_mode:
+                                    #     temp_list[i] = jdks.JSON_DUPLICATE_KEYS(temp_list[i])
                                 temp_dict[sub_key] = temp_list
                             else:
                                 temp_dict[sub_key] = self[key][sub_key]

@@ -14,7 +14,6 @@ from copy import deepcopy
 from collections import OrderedDict
 
 from schema import Schema, Optional, Or, And
-import json_duplicate_keys as jdks
 
 
 class _duplicate_key_list(list):
@@ -127,14 +126,11 @@ subject_sample_factors_schema = Schema(
         {
             "Subject ID": str,
             "Sample ID": str,
-            "Factors": Or(jdks.JSON_DUPLICATE_KEYS, dict),
-            # "Factors": dict,
-            Optional("Additional sample data"): Or(jdks.JSON_DUPLICATE_KEYS, dict)
-            # Optional("Additional sample data"): {
-            #     Optional("RAW_FILE_NAME"): str,
-            #     # Optional(str): Or(str, _duplicate_key_list)
-            #     Optional(str): str
-            # }
+            "Factors": dict,
+            Optional("Additional sample data"): {
+                Optional("RAW_FILE_NAME"): str,
+                Optional(str): str
+            }
         }
     ]
 )
