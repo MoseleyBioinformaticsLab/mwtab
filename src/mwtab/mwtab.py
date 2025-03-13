@@ -24,6 +24,7 @@ import sys
 import json
 import re
 import copy
+from itertools import zip_longest
 
 import json_duplicate_keys as jdks
 
@@ -355,6 +356,11 @@ class MWTabFile(OrderedDict):
                 while not header[-1]:
                     header.pop()
                 metabolite_header = ["Metabolite"] + header[1:]
+                if self.compatability_mode:
+                    temp_header_dict = DuplicatesDict()
+                    for temp_header in metabolite_header:
+                        temp_header_dict[temp_header] = ''
+                    metabolite_header = list(temp_header_dict.raw_keys())
                 
                 loop_count = 0
                 while not token.key.endswith("_END"):
@@ -366,6 +372,7 @@ class MWTabFile(OrderedDict):
                     
                     if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
                         self._binned_header = token_value[1:]
+                        self._samples = self._binned_header
                     # Have seen Factors section in incorrect sections such as METABOLITES, 
                     # and seen multiple Factors sections in a single METABOLITE_DATA section.
                     # So just grab the one near the top.
@@ -397,24 +404,30 @@ class MWTabFile(OrderedDict):
                         self._extended_metabolite_header = token_value[1:]
                         
                     else:
-                        temp_dict = self._default_dict_type()
-                        # temp_dict = DuplicatesDict() if self.compatability_mode else OrderedDict()
+                        # temp_dict = self._default_dict_type()
+                        # # temp_dict = DuplicatesDict() if self.compatability_mode else OrderedDict()
+                        # token_len = len(token_value)
+                        # for i, header_name in enumerate(metabolite_header):
+                        #     # if self.compatability_mode:
+                        #     #     if i < token_len:
+                        #     #         temp_dict.set(header_name, token_value[i], ordered_dict=True)
+                        #     #     else:
+                        #     #         temp_dict.set(header_name, '', ordered_dict=True)
+                        #     # else:
+                        #     #     if i < token_len:
+                        #     #         temp_dict[header_name] = token_value[i]
+                        #     #     else:
+                        #     #         temp_dict[header_name] = ""
+                        #     if i < token_len:
+                        #         temp_dict[header_name] = token_value[i]
+                        #     else:
+                        #         temp_dict[header_name] = ""
+                        
                         token_len = len(token_value)
-                        for i, header_name in enumerate(metabolite_header):
-                            # if self.compatability_mode:
-                            #     if i < token_len:
-                            #         temp_dict.set(header_name, token_value[i], ordered_dict=True)
-                            #     else:
-                            #         temp_dict.set(header_name, '', ordered_dict=True)
-                            # else:
-                            #     if i < token_len:
-                            #         temp_dict[header_name] = token_value[i]
-                            #     else:
-                            #         temp_dict[header_name] = ""
-                            if i < token_len:
-                                temp_dict[header_name] = token_value[i]
-                            else:
-                                temp_dict[header_name] = ""
+                        temp_dict = self._default_dict_type()
+                        for item in zip_longest(metabolite_header, token_value, fillvalue=''):
+                            temp_dict[item[0]] = item[1]
+                        # temp_dict = self._default_dict_type(zip_longest(metabolite_header, token_value, fillvalue=''))
                         data.append(temp_dict)
                         
                         if token_len > len(metabolite_header):
@@ -422,7 +435,9 @@ class MWTabFile(OrderedDict):
 
                     token = next(lexer)
                     loop_count += 1
-
+                
+                # if self.compatability_mode:
+                #     data = [DuplicatesDict(data_dict) for data_dict in data]
                 if token.key.startswith("METABOLITES"):
                     section["Metabolites"] = data
                 elif token.key.startswith("EXTENDED_"):
@@ -993,7 +1008,7 @@ class MWTabFile(OrderedDict):
                             if isinstance(self[key][sub_key], list):
                                 temp_list = []
                                 for i, element in enumerate(self[key][sub_key]):
-                                    temp_list.append(self._default_dict_type())
+                                    temp_list.append(OrderedDict())
                                     for sub_sub_key in sub_sub_keys:
                                         # if self.compatability_mode:
                                         #     element_dict = element.getObject()
@@ -1005,8 +1020,8 @@ class MWTabFile(OrderedDict):
                                     for unordered_key in element:
                                         if unordered_key not in temp_list[i]:
                                             temp_list[i][unordered_key] = element[unordered_key]
-                                    # if self.compatability_mode:
-                                    #     temp_list[i] = jdks.JSON_DUPLICATE_KEYS(temp_list[i])
+                                    if self.compatability_mode:
+                                        temp_list[i] = DuplicatesDict(temp_list[i])
                                 temp_dict[sub_key] = temp_list
                             else:
                                 temp_dict[sub_key] = self[key][sub_key]

@@ -10,7 +10,7 @@ Usage:
     mwtab --version
     mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
     mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
-    mwtab repair <from-path> [--to-path=<path>] [--prefix=<prefix>] [--suffix=<suffix>] [--mw-rest=<url>] [--verbose]
+    mwtab repair <from-path> [--to-path=<path>] [--standardize] [--last-split] [--add-replace=<add-replace>] [--factor-replace=<factor-replace>] [--prefix=<prefix>] [--suffix=<suffix>] [--mw-rest=<url>] [--verbose]
     mwtab download url <url> [--to-path=<path>] [--verbose]
     mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
     mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
@@ -21,27 +21,32 @@ Usage:
     mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
 
 Options:
-    -h, --help                      Show this screen.
-    --version                       Show version.
-    --verbose                       Print what files are processing.
-    --validate                      Validate the mwTab file.
-    --from-format=<format>          Input file format, available formats: mwtab, json [default: mwtab].
-    --to-format=<format>            Output file format [default: json].
-                                    Available formats for convert:
-                                        mwtab, json.
-                                    Available formats for extract:
-                                        json, csv.
-    --mw-rest=<url>                 URL to MW REST interface
-                                    [default: https://www.metabolomicsworkbench.org/rest/].
-    --to-path=<path>                Directory to save outputs into. Defaults to the current working directory.
-    --prefix=<prefix>               Prefix to add at the beginning of the output file name. Defaults to no prefix.
-    --suffix=<suffix>               Suffix to add at the end of the output file name. Defaults to no suffix.
-    --context=<context>             Type of resource to access from MW REST interface, available contexts: study,
-                                    compound, refmet, gene, protein, moverz, exactmass [default: study].
-    --input-item=<item>             Item to search Metabolomics Workbench with.
-    --output-item=<item>            Item to be retrieved from Metabolomics Workbench.
-    --output-format=<format>        Format for item to be retrieved in, available formats: mwtab, json.
-    --no-header                     Include header at the top of csv formatted files.
+    -h, --help                           Show this screen.
+    --version                            Show version.
+    --verbose                            Print what files are processing.
+    --validate                           Validate the mwTab file.
+    --from-format=<format>               Input file format, available formats: mwtab, json [default: mwtab].
+    --to-format=<format>                 Output file format [default: json].
+                                         Available formats for convert:
+                                             mwtab, json.
+                                         Available formats for extract:
+                                             json, csv.
+    --mw-rest=<url>                      URL to MW REST interface
+                                            [default: https://www.metabolomicsworkbench.org/rest/].
+    --to-path=<path>                     Directory to save outputs into. Defaults to the current working directory.
+    --standardize                        Change header names to standardized versions if a standard version is detected.
+    --last-split                         Change how additional sample data and factors split on their delimiters to determine key and value.
+                                         This option splits on the last delimiter, but the default splits on the first.
+    --add-replace=<add-replace>          What to replace extra '=' with in additional sample data, if there are extra '='. [default: =]
+    --factor-replace=<factor-replace>    What to replace extra ':' with in subject sample factors, if there are extra ':'. [default: :]
+    --prefix=<prefix>                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
+    --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
+    --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
+                                         compound, refmet, gene, protein, moverz, exactmass [default: study].
+    --input-item=<item>                  Item to search Metabolomics Workbench with.
+    --output-item=<item>                 Item to be retrieved from Metabolomics Workbench.
+    --output-format=<format>             Format for item to be retrieved in, available formats: mwtab, json.
+    --no-header                          Include header at the top of csv formatted files.
 
     For extraction <to-path> can take a "-" which will use stdout.
     All <from-path>'s can be single files, directories, or URLs.
@@ -51,10 +56,10 @@ GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
 # TODO add option to print duplicate keys. change code so it errors if try to print duplicate keys.
 
-from . import fileio, mwextract, mwrest
+from . import fileio, mwextract, mwrest, repair
 from .converter import Converter
 from .validator import validate_file
-from .repair import repair
+# from .repair import repair
 from .mwschema import section_schema_mapping
 
 from os import getcwd, makedirs, path
@@ -158,6 +163,7 @@ def cli(cmdargs):
 
     VERBOSE = cmdargs["--verbose"]
     fileio.VERBOSE = cmdargs["--verbose"]
+    repair.VERBOSE = cmdargs["--verbose"]
     fileio.MWREST_URL = cmdargs["--mw-rest"]
     mwrest.VERBOSE = cmdargs["--verbose"]
 
@@ -187,6 +193,7 @@ def cli(cmdargs):
     
     # mwtab repair ...
     elif cmdargs["repair"]:
+        print(datetime.datetime.now())
         for i, (lines, e) in enumerate(fileio.read_lines(cmdargs["<from-path>"], return_exceptions=True)):
             if e is not None:
                 file_source = lines if isinstance(lines, str) else cmdargs["<from-path>"]
@@ -198,12 +205,18 @@ def cli(cmdargs):
             source += pathlib.Path(lines[1]).stem
             source += cmdargs['--suffix'] if cmdargs['--suffix'] else ''
             lines = lines[0]
-            text_to_save = repair(lines, VERBOSE)
+            text_to_save = repair.repair(lines, 
+                                         VERBOSE, 
+                                         cmdargs["--standardize"], 
+                                         cmdargs["--last-split"], 
+                                         cmdargs["--add-replace"], 
+                                         cmdargs["--factor-replace"])
             dir_path = cmdargs["--to-path"] if cmdargs["--to-path"] else getcwd()
             path_to_save = join(dir_path, ".".join([source.replace(".", "_"), 'txt']))
             fileio._create_save_path(path_to_save)
             with open(path_to_save, "w", encoding="utf-8") as fh:
                 fh.write(text_to_save)
+        print(datetime.datetime.now())
 
     # mwtab download ...
     elif cmdargs["download"]:

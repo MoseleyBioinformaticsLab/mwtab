@@ -304,6 +304,16 @@ analysis_schema = Schema(
     }
 )
 
+results_file_schema = Schema(
+    {
+     'filename': str,
+     'UNITS': str,
+     Optional('Has m/z'): str,
+     Optional('Has RT'): str,
+     Optional('RT units'): str
+     }
+    )
+
 ms_schema = Schema(
     {
         "INSTRUMENT_NAME": str,
@@ -355,8 +365,8 @@ ms_schema = Schema(
         Optional("SCANNING_RANGE"): str,
         Optional("SKIMMER_VOLTAGE"): str,
         Optional("TUBE_LENS_VOLTAGE"): str,
-        Optional("MS_RESULTS_FILE"): Or(str, dict),
         Optional("MS_COMMENTS"): str,  # changed to optional mwTab File Format Spec. 1.5
+        Optional('MS_RESULTS_FILE'): results_file_schema
     }
 )
 
@@ -399,7 +409,7 @@ nmr_schema = Schema(
         Optional("BINNED_DATA_PROTOCOL_FILE"): str,
         Optional("BINNED_DATA_CHEMICAL_SHIFT_RANGE"): str,
         Optional("BINNED_DATA_EXCLUDED_RANGE"): str,
-        Optional("NMR_RESULTS_FILE"): Or(str, dict)  # add mwTab File Format Spec. 1.5
+        Optional("NMR_RESULTS_FILE"): results_file_schema
     }
 )
 
@@ -426,7 +436,7 @@ ms_metabolite_data_schema = Schema(
     {
         "Units": str,
         "Data": data_schema,
-        "Metabolites": data_schema,
+        Optional("Metabolites"): data_schema,
         Optional("Extended"): extended_schema
     }
 )
@@ -457,7 +467,7 @@ section_schema_mapping = {
 }
 
 
-_common_base = {
+base_schema = Schema({
  "METABOLOMICS WORKBENCH": Or(dict, OrderedDict),
  "PROJECT": Or(dict, OrderedDict),
  "STUDY": Or(dict, OrderedDict),
@@ -466,26 +476,31 @@ _common_base = {
  "COLLECTION": Or(dict, OrderedDict),
  "TREATMENT": Or(dict, OrderedDict),
  "SAMPLEPREP": Or(dict, OrderedDict),
- "CHROMATOGRAPHY": Or(dict, OrderedDict),
  "ANALYSIS": Or(dict, OrderedDict),
- }
+ Optional("CHROMATOGRAPHY"): Or(dict, OrderedDict),
+ Optional("MS_METABOLITE_DATA"): Or(dict, OrderedDict),
+ Optional("NMR_METABOLITE_DATA"): Or(dict, OrderedDict),
+ Optional("NMR_BINNED_DATA"): Or(dict, OrderedDict),
+ Or("MS", "NM", only_one=True): Or(dict, OrderedDict),
+ })
 
-_ms_base = deepcopy(_common_base)
-_ms_base["MS"] = Or(dict, OrderedDict)
-_ms_base["MS_METABOLITE_DATA"] = Or(dict, OrderedDict)
+# _ms_base = deepcopy(_common_base)
+# _ms_base["MS"] = Or(dict, OrderedDict)
+# _ms_base["MS_METABOLITE_DATA"] = Or(dict, OrderedDict)
+# _ms_base["CHROMATOGRAPHY"] = Or(dict, OrderedDict)
 
-_nmr_base = deepcopy(_common_base)
-_nmr_base["NM"] = Or(dict, OrderedDict)
-_nmr_base["NMR_METABOLITE_DATA"] = Or(dict, OrderedDict)
+# _nmr_base = deepcopy(_common_base)
+# _nmr_base["NM"] = Or(dict, OrderedDict)
+# _nmr_base["NMR_METABOLITE_DATA"] = Or(dict, OrderedDict)
 
-_nmr_binned_base = deepcopy(_common_base)
-_nmr_binned_base["NM"] = Or(dict, OrderedDict)
-_nmr_binned_base["NMR_BINNED_DATA"] = Or(dict, OrderedDict)
+# _nmr_binned_base = deepcopy(_common_base)
+# _nmr_binned_base["NM"] = Or(dict, OrderedDict)
+# _nmr_binned_base["NMR_BINNED_DATA"] = Or(dict, OrderedDict)
 
-base_schema = Or(
-    Schema(_ms_base),
-    Schema(_nmr_base),
-    Schema(_nmr_binned_base),
-    )
+# base_schema = Or(
+#     Schema(_ms_base),
+#     Schema(_nmr_base),
+#     Schema(_nmr_binned_base),
+#     )
 
 
