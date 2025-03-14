@@ -51,44 +51,6 @@ NA_VALUES = ['', '-', '−', '--', '---', '.', ',',
 # AN003295 has a KEGG and pubchem column, but they are mislabled. The KEGG column has pubchem values and vice versa.
 
     
-WRAP_STRING = r'[^a-zA-Z0-9]'
-def create_column_regex_any(match_strings):
-    """
-    """
-    regex = '|'.join(['(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$)' for match_string in match_strings])
-    return regex
-
-def create_column_regex_all(match_strings_list):
-    """
-    """
-    regex = '|'.join([''.join(['(?=.*(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$))' for match_string in match_strings]) for match_strings in match_strings_list])
-    return regex
-
-def column_name_matching(column_names, lowered_column_names, 
-                         regex_search_strings, not_regex_search_strings, regex_search_sets,
-                         in_strings, not_in_strings, in_string_sets, exact_strings):
-    """
-    """
-    search_regex = create_column_regex_any(regex_search_strings)
-    search_regex_sets = create_column_regex_all(regex_search_sets)
-    not_search_regex = create_column_regex_any(not_regex_search_strings)
-    has_regex_search_strings = len(regex_search_strings) > 0
-    has_regex_search_sets = len(regex_search_sets) > 0
-    has_in_string_sets = len(in_string_sets) > 0
-    has_no_not_regex_search_strings = len(not_regex_search_strings) == 0
-    has_no_not_in_strings = len(not_in_strings) == 0
-    columns_of_interest = [column_names[i] for i, column_name in enumerate(lowered_column_names) if \
-                            (
-                             (has_regex_search_strings and re.search(search_regex, column_name)) or \
-                             (has_regex_search_sets and re.search(search_regex_sets, column_name)) or \
-                             any([word in column_name for word in in_strings]) or \
-                             (has_in_string_sets and any([all([word in column_name for word in word_set]) for word_set in in_string_sets])) or \
-                             any([word == column_name for word in exact_strings])
-                            ) and \
-                            (has_no_not_regex_search_strings or not re.search(not_search_regex, column_name)) and \
-                            (has_no_not_in_strings or all([word not in column_name for word in not_in_strings]))]
-    return columns_of_interest
-
 
 {
  "Duplicate keys in SSF Additional sample data, and order matters." : [],
@@ -195,178 +157,7 @@ def is_column_numeric(column):
     new_NAs = column_to_numeric_NAs ^ old_NAs
     return column_to_numeric_nums.any() and len(stripped_column[new_NAs]) == 0
 
-def is_column_ID(column):
-    """
-    Want to find IDs. For example, C17456.
-    Patterns are, empty string, 0, a single letter followed by at least 4 numbers, and at least 4 numbers.
-    """
-    stripped_column = column.str.strip()
-    stripped_column = stripped_column.str.strip('\u200e')
-    return stripped_column.str.fullmatch(r'([a-zA-Z]\d{4,})|(\d{4,})|0|').all()
  
-def column_has_kegg_ID(column):
-    """
-    Want to find KEGG IDs. For example, C17456.
-    Pattern is a 'c' or 'C' followed by 5 numbers.
-    """
-    stripped_column = column.str.strip()
-    stripped_column = stripped_column.str.strip('\u200e')
-    return stripped_column.str.fullmatch(r'[cC]\d{5}').any()
-
-def column_has_inchi_key(column):
-    """
-    Want to find InChIKeys. For example, UWPWWENWLZPQGU-WRFRXMDISA-O.
-    """
-    stripped_column = column.str.strip()
-    stripped_column = stripped_column.str.strip('\u200e')
-    return stripped_column.str.fullmatch(r'[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]').any()
-
-def consolidate_values_to_column(data_df, table_name, match_words, element_regex):
-    """
-    """
-    stripped_columns = {column:data_df.loc[:, column].str.strip() for column in data_df.columns}
-    stripped_columns = {column:data.str.strip('\u200e') for column, data in stripped_columns.items()}
-    # Look for elementes that aren't in the matching column and move them.
-    matching_columns = [column for column in data_df.columns if all([word in column.lower() for word in match_words])]
-    if matching_columns:
-        matching_column = matching_columns[0]
-        boolean_columns = {column:data.str.fullmatch(element_regex) for column, data in stripped_columns.items() if data.str.fullmatch(element_regex).any()}
-        if len(boolean_columns) > 1:
-            boolean_df = pandas.DataFrame(boolean_columns)
-            rows_with_single_match = (boolean_df.sum(axis=1) == 1)
-            # Add elements to the matching_column and set them to the empty string in the other columns.
-            for column, data in boolean_columns.items():
-                if column != matching_column:
-                    relevant_rows = rows_with_single_match & data
-                    data_df.loc[relevant_rows, matching_column] = data_df.loc[relevant_rows, column]
-                    data_df.loc[relevant_rows, column] = ''
-            print("Elements moved in '" + table_name + " to column: " + matching_column)
-
-def string_to_list(value):
-    """
-    """
-    stripped_value = value.strip()
-    if stripped_value[0] == '[' and stripped_value[-1] == ']':
-        stripped_value = stripped_value[1:-1]
-    split_values = re.split(LIST_SPLIT_REGEX, stripped_value)
-    return [value.strip("'\"") for value in split_values]
-
-def are_list_values_nums(values):
-    """
-    """
-    values = [value for value in values if not value in NA_VALUES and not pandas.isna(value)]
-    return not any(pandas.isna(pandas.to_numeric(values, errors='coerce')))
-
-def fix_missing_tab_in_table(data_df, table_name):
-    """
-    """    
-    for i, column in enumerate([column for column in data_df.columns if column != 'Metabolite']):
-        temp_column = data_df.loc[:, column].astype(str)
-        value_counts = temp_column.value_counts(dropna=False)
-        
-        # If there is exactly 1 value that is different it is likely that 
-        # the tabs in the row were off, so try to determine that and fix.
-        condition = value_counts == 1
-        if any(condition) and not all(condition) and len(value_counts) == 2:
-            one_value = value_counts[condition].index[0]
-            fix_value = value_counts[~condition].index[0]
-            one_row_index = temp_column[temp_column == one_value].index[0]
-            # If the one value is in the value that is there we will assume a tab is missing.
-            if one_value != "" and fix_value != "" and one_value.startswith(fix_value):
-                print("Missing tab fixed in '" + table_name + "'. Column: " + column)
-                # Have to get the fix_value in it's natural data type.
-                value_counts = data_df.loc[:, column].value_counts(dropna=False)
-                new_fix_value = value_counts[value_counts != 1].index[0]
-                data_df.loc[one_row_index, column] = new_fix_value
-                # Need to pull out the value to fix the column to the right.
-                second_fix_value = one_value.replace(fix_value, '', 1)
-                # Fix all columns to the right.
-                values_to_replace = list(data_df.loc[one_row_index, :].values)
-                # We skipped the Metabolite column, so have to make the counts line up right.
-                if i + 2 < data_df.shape[1]:
-                    right_column = data_df.columns[i + 2]
-                    # Try to find the type of the column to the right by looking above and below the index.
-                    if one_row_index - 1 > 0:
-                        good_index = one_row_index - 1
-                    else:
-                        good_index = one_row_index + 1
-                    second_fix_value = type(data_df.loc[good_index, right_column])(second_fix_value)
-                    data_df.loc[one_row_index, right_column] = second_fix_value
-                    j = i + 3
-                    while j < data_df.shape[1]:
-                        right_column = data_df.columns[j]
-                        data_df.loc[one_row_index, right_column] = type(data_df.loc[good_index, right_column])(values_to_replace[j-1])
-                        j += 1
-        
-        # Look for bad spacing by looking for different types.
-        temp_column = data_df.loc[:, column].astype(str)
-        # Moved stripping into clean_columns
-        # stripped_column = temp_column.str.strip()
-        # stripped_column = stripped_column.str.strip('\u200e')
-        old_NAs = (temp_column.isna()) | (temp_column.isin(NA_VALUES))
-        column_to_numeric = pandas.to_numeric(temp_column, errors='coerce')
-        column_to_numeric_NAs = column_to_numeric.isna()
-        column_to_numeric_nums = ~column_to_numeric_NAs
-        new_NAs = column_to_numeric_NAs ^ old_NAs
-        NAs_removed = temp_column[~new_NAs]
-        number_of_new_NAs = len(temp_column[new_NAs])
-        # Must have at least 1 numeric value and there can only be 1 non-numeric value.
-        # if column_to_numeric_nums.any() and len(temp_column[new_NAs]) == 1:
-        if column_to_numeric_nums.sum() > number_of_new_NAs and number_of_new_NAs > 0:
-            for bad_index, bad_value in temp_column[new_NAs].items():
-                # If the bad_value is in the metabolite then ignore it.
-                if bad_value in data_df.loc[bad_index, 'Metabolite']:
-                    continue
-                # Find the longest substring that can be converted to numeric to aide in splitting the value.
-                # If the value is a split value, ex 16857/15700 and has a corresponding metabolite name, threonine/homoserine, then ignore.
-                # Also ignore if the column name ends in an 's'. The idea is that a plural could indicate multiple values.
-                list_check = string_to_list(bad_value)
-                # TODO maybe see if any value in the row can be split as well, not just metabolite. Example, AN001792 has a 'Species' column that lines up with m/z values.
-                metabolite_check = re.split(LIST_SPLIT_REGEX, data_df.loc[bad_index, 'Metabolite'])
-                list_values_are_nums = are_list_values_nums(list_check)
-                if (len(list_check) == len(metabolite_check) and list_values_are_nums) or\
-                   (list_values_are_nums and len(list_check) > 1 and column.lower().strip().endswith('s')):
-                    continue
-                # If the bad value is a range, i.e. separated by a hyphen or underscore then skip.
-                range_check = re.split(r'\s*-\s*|\s*_\s*', bad_value)
-                if len(range_check) == 2 and not any(pandas.isna(pandas.to_numeric(range_check, errors='coerce'))):
-                    continue
-                length = len(bad_value) + 1
-                all_substrings = pandas.Series([bad_value[x:y] for x, y in combinations(range(length), r=2)])
-                subs_to_numeric = pandas.to_numeric(all_substrings, errors='coerce')
-                convertable_subs = all_substrings[~subs_to_numeric.isna()]
-                if len(convertable_subs) == 0:
-                    continue
-                good_value = convertable_subs.loc[convertable_subs.str.len().idxmax()]
-                # If the good_value does not have the same numeric type as the column then remove the whole value instead.
-                if NAs_removed.str.contains('.', regex=False).all() and not '.' in good_value or \
-                   not NAs_removed.str.contains('.', regex=False).all() and '.' in good_value:
-                    data_df.iloc[bad_index, i+1] = numpy.nan
-                    print("Non-numeric value removed from column " + column + " in " + table_name)
-                    continue
-                # Determine which side has the extra characters.
-                re_match = re.match(r'(.*)' + good_value + r'(.*)', bad_value)
-                left_match = re_match.group(1)
-                right_match = re_match.group(2)
-                if left_match and right_match:
-                    continue
-                elif left_match:
-                    if i > 0 and not is_column_numeric(data_df.iloc[:, i]) and not is_column_ID(data_df.iloc[:, i]):
-                        data_df.iloc[bad_index, i] = data_df.iloc[bad_index, i] + left_match
-                        print("String moved to column '" + data_df.columns[i] + " in " + table_name)
-                    data_df.iloc[bad_index, i+1] = good_value.strip()
-                    print("Numeric type separated in '" + table_name + "'. Column: " + column)
-                elif right_match:
-                    # A question mark at the end of the value can indicate that the value is uncertain. Limit this to ID columns.
-                    if right_match.strip() == '?' and is_column_ID(temp_column[column_to_numeric_nums]):
-                        continue
-                    if i + 2 < data_df.shape[1] and not is_column_numeric(data_df.iloc[:, i+2]) and not is_column_ID(data_df.iloc[:, i+2]):
-                        data_df.iloc[bad_index, i+2] = right_match + data_df.iloc[bad_index, i+2]
-                        print("String moved to column '" + data_df.columns[i+2] + " in " + table_name)
-                    data_df.iloc[bad_index, i+1] = good_value.strip()
-                    print("Numeric type separated in '" + table_name + "'. Column: " + column)
-    
-    return data_df
 
 def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
     """
@@ -1202,18 +993,10 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                                 tabfile._metabolite_header = [column for column in data_df.columns if column != "Metabolite"]
                             elif table_name == 'Extended':
                                 tabfile._extended_metabolite_header = [column for column in data_df.columns if column != "Metabolite"]
-                                        
-                    # Consolidate values by column.
-                    if table_name == 'Metabolites':
-                        consolidate_values_to_column(data_df, 'Metabolites', ['kegg', 'id'], r'[cC]\d{5}')
-                        consolidate_values_to_column(data_df, 'Metabolites', ['inchi', 'key'], r'[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]')
-                    
+                                                            
                     # TODO look to see if the metabolites column is duplicated and 
                     # that there is a column name of empty string at the end and it has values, then move all columns left one.
                     # Example: AN004528
-                    # Fix missing tabs.
-                    if table_name in ['Extended', 'Metabolites']:
-                        fix_missing_tab_in_table(data_df, table_name)
                                         
                     # Fill any na values with the empty string.
                     data_df = data_df.fillna('')
@@ -1441,6 +1224,7 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
 def clean_columns(data_df):
     """
     """
+    columns_to_remove = []
     for i, column in enumerate([column for column in data_df.columns if column != 'Metabolite']):
         data_df.loc[:, column] = data_df.loc[:, column].str.strip()
         data_df.loc[:, column] = data_df.loc[:, column].str.strip('\u200e')
@@ -1456,27 +1240,28 @@ def clean_columns(data_df):
         # TODO look to see if 0's are being used as NA values and replace them.
         lowered_column = column.lower()
         if lowered_column.endswith(' id') or lowered_column.endswith('_id') or 'inchi' in lowered_column or \
-           'kegg' in lowered_column or 'hmdb' in lowered_column:
+           'kegg' in lowered_column or 'hmdb' in lowered_column or 'lmid' in lowered_column:
             condition = data_df.loc[:, column] == '0'
-            data_df.loc[condition, column] = ''
-        na_values = data_df.loc[:, column].isin(NA_VALUES)
-        data_df.loc[na_values, column] = ''
+            data_df.loc[condition, column] = pandas.NA
+        na_values_selector = (data_df.loc[:, column].isin(NA_VALUES)) | (data_df.loc[:, column].isna())
+        data_df.loc[na_values_selector, column] = pandas.NA
         # Looking for numeric columns that have commas instead of decimals and replacing the commas with decimals.
         temp_column = data_df.loc[:, column]
         comma_count = temp_column.str.count(',')
         single_commas = comma_count == 1
         no_spaces_or_periods = ~temp_column.str.contains('\.| ', regex=True, na=False)
-        replace_candidates = (single_commas & no_spaces_or_periods) | (temp_column == '')
+        replace_candidates = (single_commas & no_spaces_or_periods) | (temp_column.isna())
         if replace_candidates.all():
             temp_column = temp_column[replace_candidates].str.replace(',', '.')
             to_numeric = pandas.to_numeric(temp_column, errors='coerce')
-            commas_to_replace = replace_candidates & ~to_numeric.isna()
-            data_df.loc[:, column] = data_df.loc[commas_to_replace, column].str.replace(',', '.')
-    # If the last column has no name and is all NA, remove it.
-    last_column_name = data_df.columns[-1]
-    if "Unnamed" in last_column_name and ((data_df.loc[:, last_column_name].isna()) | (data_df.loc[:, last_column_name] == '')).all():
-        data_df = data_df.iloc[:, 0:-1]
-        
+            commas_to_replace = (replace_candidates) & (~to_numeric.isna())
+            data_df.loc[commas_to_replace, column] = data_df.loc[commas_to_replace, column].str.replace(',', '.')
+        # If the column has no name and is all NA, remove it.
+        if ("Unnamed" in column or column == '') and data_df.loc[:, column].isna().all():
+            columns_to_remove.append(column)
+            
+    for column_name in columns_to_remove:
+        data_df = data_df.drop(column_name, axis=1)
     return data_df
 
 

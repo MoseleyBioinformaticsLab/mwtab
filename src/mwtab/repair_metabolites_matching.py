@@ -1,66 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Dec  5 11:01:39 2024
-
-@author: Sparda
+Contains regular expressions specific to the repair command use case and the column_matching_attributes data structure.
 """
 
-import re
-import sys
-from collections.abc import Iterable
-from typing import Any
+from . import metabolites_regexes
 
-import pandas
-import jsonschema
-
-JSON = dict[str, Any]|list|str|int|float|None
-
-def make_list_regex(element_regex, delimiter, quoted_elements=False, empty_string=False):
-    """ Creates a regular expression that will match a list of element_regex delimited by delimiter.
-    
-    Note that delimiter can be a regular expression like (,|;) to match 2 different types of delimiters. 
-    If quoated_elements is True, then allow element_regex to surrounded by single or double quotes. 
-    If empty_string is True, then the list regex will match a single element_regex and the empty string.
-    """
-    if quoted_elements:
-        # The simplest regex to add quotes around the element, but allows elements like 'element" through.
-        # element_regex = r'(\'|"|)' + element_regex + r'(\'|"|)'
-        # Forces an element to be surrounded by the same thing on both sides, but still allows for mixed elements.
-        # element_regex = r"('" + element_regex + r"'" + r'|' + r'"' + element_regex + r'"' + r'|' + element_regex + r')'
-        
-        # All elements must have the same type of quotation marks.
-        return r'(' + make_list_regex(element_regex, delimiter, empty_string=empty_string) + r'|' + \
-               make_list_regex(f"'{element_regex}'", delimiter, empty_string=empty_string) + r'|' + \
-               make_list_regex(f'"{element_regex}"', delimiter, empty_string=empty_string) + r')'
-    
-    repetition_symbol = '*' if empty_string else '+'
-    
-    return r'((' + element_regex + r'\s*' + delimiter + r'\s*)' + repetition_symbol + r'(' + element_regex + r'\s*|\s*))'
-
-
-
-# # Testing make_list_regex
-# pass_values = ['a,', 'a,a', 'a,a,', 'a ,', 'a , a', 'a , a ,']
-# fail_values = ['a', '']
-
-# # pass should pass and fail should fail
-# regex = make_list_regex('a', ',')
-# # pass should pass, but fail should also pass now.
-# regex = make_list_regex('a', ',', False, True)
-
-# for value in pass_values:
-#     if not re.fullmatch(regex, value):
-#         print(value)
-
-# for i, value in enumerate(fail_values):
-#     if re.fullmatch(regex, value):
-#         print(i, value)
-
-
-# pass_values = ['["a",]', '["a","a"]', '["a","a",]', '["a" ,]', '["a" , "a"]', '["a" , "a" ,]', '["a"]', '[]']
-# fail_values = ['']
-
-# regex = r'\[' + make_list_regex('a', ',', True, True) + r'\]'
+make_list_regex = metabolites_regexes.make_list_regex
 
 
 
@@ -231,6 +176,10 @@ CAS = r'(CAS: ?)?\d+-\d\d-0?\d' + r'|' + DATE
 LIST_OF_CAS = make_list_regex(CAS, ',')
 LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 
+
+
+
+
 # schema_template = {
 #     'type': 'array', # Don't actually need this, just need items with varying key value pairs.
 #     'items': {'type': 'number', 'format': 'numeric', 'pattern': ''}
@@ -250,7 +199,7 @@ LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 # we have to do both. They require slightly different data structures, but a lof of the info is shared.
 # I think I need to make the one for the classification and then the standard set one will be a subset/collection of those.
 # For instance, the "identifier" column would not be a standard column, but could be used to fill in the "moverz" standard column.
-metabolite_column_validation_attributes = {
+column_matching_attributes = {
     
     # 'moverz_quant': {
     #     # Other checks, non-negative, not all zeros
@@ -1289,5 +1238,10 @@ for key, attributes in metabolite_column_validation_attributes.items():
     # As of 3-12-2025 this is required, but there is an open issue (https://github.com/pandas-dev/pandas/issues/61072) that might get resolved later.
     metabolite_column_validation_attributes[key]['values_regex'] = r'(' + attributes['regex'] + r')' if attributes['regex'] else None
     metabolite_column_validation_attributes[key]['values_inverse_regex'] = r'(' + attributes['inverse_regex'] + r')' if 'inverse_regex' in attributes else None
+
+
+
+
+
 
 

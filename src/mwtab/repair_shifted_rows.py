@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Code that repairs shifted rows in METABOLITEs tables.
+Code that repairs shifted rows in METABOLITES tables.
 """
 
 import re
+from typing import Tuple
 
 import pandas
 
@@ -147,7 +148,7 @@ def _determine_rows_to_shift(metabolites_df: pandas.DataFrame, indexes_to_propag
     be shifted, or because their neighbor is a NA value. The testing must be propagated until a NA value is 
     found in the row, or a value is found that cannot be shifted, meaning the tested subsection of row cannot 
     be shifted. The last_unnamed parameter indicates that the column_location is the last one on the right and 
-    has a name like "Unnamed:0". The assumption with columns like this are that all of their values need to be 
+    has a name like "Unnamed: 0" or "". The assumption with columns like this are that all of their values need to be 
     shifted, so extra logic and checking is warranted to allow the shift.
     
     Args:
@@ -158,7 +159,7 @@ def _determine_rows_to_shift(metabolites_df: pandas.DataFrame, indexes_to_propag
         cols_to_shift: column locations are keys and the values are a list of indexes that have already been determined need to be shifted.
         ros_to_shift: indexes are keys and the values are a list of column locations that have already been determined need to be shifted.
         right_shift: if True, evaluate whether the indexes_to_propagate can be shifted right, else left.
-        last_unnamed: if the column is in the last location and has a name like "Unnamed:0" then apply additional special case logic.
+        last_unnamed: if the column is in the last location and has a name like "Unnamed: 0" or "" then apply additional special case logic.
     
     Returns:
         A dicitonary where the keys are indexes and the values are a list of column locations where the indexes need to be shifted.
@@ -311,7 +312,7 @@ def _column_name_matching(column_names: list[str], lowered_column_names: list[st
     return columns_of_interest
 
 
-def _update_rows_and_cols_to_shift(rows_to_shift: dict, cols_to_shift: dict, temp_rows_to_shift: dict) -> tuple[dict,dict]:
+def _update_rows_and_cols_to_shift(rows_to_shift: dict, cols_to_shift: dict, temp_rows_to_shift: dict) -> Tuple[dict,dict]:
     """Update rows_to_shift and cols_to_shift with the values in temp_rows_to_shift.
     
     Just a simple utility to update the persistent structures from the intermediate 
@@ -339,7 +340,7 @@ def _update_rows_and_cols_to_shift(rows_to_shift: dict, cols_to_shift: dict, tem
     return rows_to_shift, cols_to_shift
 
 
-def _determine_rows_and_cols_to_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: dict, an_id: str) -> tuple[dict, dict, dict, dict]:
+def _determine_rows_and_cols_to_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: dict, an_id: str) -> Tuple[dict, dict, dict, dict]:
     """Go through each column of metabolites_df and look for values to shift within a row.
     
     The main work horse of fixing row shifted values in a METABOLITES data block. Uses 
@@ -405,7 +406,7 @@ def _determine_rows_and_cols_to_shift(metabolites_df: pandas.DataFrame, column_m
                                                                            right_shift = False, last_unnamed = False)
             # TODO make sure the Unnamed identification is going to work after incorporating into repair, and if so, make sure Unnamed is removed before saving.
             # Unnamed might not work because the data won't be read from a file.                    
-            elif "Unnamed" in column_name and column_location == metabolites_df.shape[1] - 1:
+            elif ("Unnamed" in column_name or column_name == "") and column_location == metabolites_df.shape[1] - 1:
                 trimmed_series = series[~series.isna()]
                 # Some unnamed are legit columns just missing the name, detect this by requiring most of the values to be NA.
                 if len(trimmed_series)/len(series) > .5:
@@ -493,7 +494,7 @@ def _find_dominoe_columns(columns_of_interest: list[int], all_columns: list[int]
 def _modify_shifted_df(metabolites_df: pandas.DataFrame, shifted_metabolites_df: pandas.DataFrame, 
                        rows_to_shift_right: dict, rows_to_shift_left: dict, 
                        cols_to_shift_right: dict, cols_to_shift_left: dict, 
-                       an_id: str, shift_right: bool = True) -> tuple(pandas.DataFrame, list[str]):
+                       an_id: str, shift_right: bool = True) -> Tuple[pandas.DataFrame, list[str]]:
     """Modify metabolites_df to do the necessary shifts according to the given shift parameters.
     
     metabolites_df should be the unchanged METABOLITES block DataFrame, and shifted_metabolites_df 
@@ -578,10 +579,10 @@ def _modify_shifted_df(metabolites_df: pandas.DataFrame, shifted_metabolites_df:
         if filtered_column_locs:
             messages.append(f"{message_string} shift done on row {index} for {an_id}.")
     
-    return messages, metabolites_df
+    return metabolites_df, messages
 
 
-def fix_row_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: dict, an_id: str) -> tuple(pandas.DataFrame, list[str]):
+def fix_row_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: dict, an_id: str) -> Tuple[pandas.DataFrame, list[str]]:
     """Find and fix and rows in metabolites_df that need shifting left or right.
     
     metabolites_df should be the METABOLITES block of an mwTab file in DataFrame form. 
@@ -617,15 +618,17 @@ def fix_row_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: 
     rows_and_columns_to_shift = _determine_rows_and_cols_to_shift(metabolites_df, column_matching_attributes, an_id)
     rows_to_shift_right, rows_to_shift_left, cols_to_shift_right, cols_to_shift_left = rows_and_columns_to_shift
     
+    messages = []
     if rows_to_shift_right or rows_to_shift_left:
         left_shift_metabolites_df = metabolites_df.shift(-1, axis=1).copy()
         right_shift_metabolites_df = metabolites_df.shift(1, axis=1).copy()
         
-        messages, metabolites_df = _modify_shifted_df(metabolites_df, right_shift_metabolites_df, 
-                                                      rows_to_shift_right, rows_to_shift_left, 
-                                                      cols_to_shift_right, cols_to_shift_left, 
-                                                      an_id, shift_right = True)
-        modify_messages, metabolites_df = _modify_shifted_df(metabolites_df, left_shift_metabolites_df, 
+        metabolites_df, modify_messages = _modify_shifted_df(metabolites_df, right_shift_metabolites_df, 
+                                                             rows_to_shift_right, rows_to_shift_left, 
+                                                             cols_to_shift_right, cols_to_shift_left, 
+                                                             an_id, shift_right = True)
+        messages += modify_messages
+        metabolites_df, modify_messages = _modify_shifted_df(metabolites_df, left_shift_metabolites_df, 
                                                              rows_to_shift_right, rows_to_shift_left, 
                                                              cols_to_shift_right, cols_to_shift_left, 
                                                              an_id, shift_right = False)
