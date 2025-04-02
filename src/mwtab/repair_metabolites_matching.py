@@ -180,11 +180,6 @@ LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 
 
 
-# schema_template = {
-#     'type': 'array', # Don't actually need this, just need items with varying key value pairs.
-#     'items': {'type': 'number', 'format': 'numeric', 'pattern': ''}
-#     }
-
 # TODO check with the Metabolomics Workbench and see if they have preferred harmonized names, not sure why Christian did 'moverz' and 'moverz_quant' separately.
 # There might need to be 2 sets of dicts. One that is tighter detection on the names for name harmonization, 
 # and another that is looser for validating values. For instance, not all column names currently detected for m/z should 
@@ -199,42 +194,7 @@ LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 # we have to do both. They require slightly different data structures, but a lof of the info is shared.
 # I think I need to make the one for the classification and then the standard set one will be a subset/collection of those.
 # For instance, the "identifier" column would not be a standard column, but could be used to fill in the "moverz" standard column.
-column_matching_attributes = {
-    
-    # 'moverz_quant': {
-    #     # Other checks, non-negative, not all zeros
-    #     # Need to look for the columns with values like mz_rt.
-    #     'identification':{
-    #         'regex_search_strings': ['m/z', 'mz', 'moverz',  'mx'],
-    #         'regex_search_sets': [],
-    #         'not_regex_search_strings': ['id'],
-    #         'in_strings': ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
-    #         'in_string_sets': [],
-    #         'not_in_strings': ['spec', 'pectrum', 'structure', 'regno'],
-    #         'exact_strings': [],
-    #         },
-    #     # This is just an example for now. I think we should only include the keywords that are actually needed and blindly pass them into 
-    #     # the 'items' dict for the schema.
-    #     'values_schema':{
-    #         'type': 'numeric',
-    #         'pattern': None,
-    #         'format': 'numeric',
-    #         'minimum': 0,
-    #         'maximum': 10000
-    #         },
-    #     'modification':{
-    #         # Not sure what all we need here. 'delete', 'split', 'normalize list values'
-    #         # 'normalize list values' can just be done on the entire thing, basically look for 
-    #         # any values with surrounding brackets and change to ['item1', 'item2', ...]
-    #         # 'harmonize'
-    #         'harmonize': {
-    #             'prepend': 'KEGG:'
-    #             }
-    #         }
-    #     },
-    
-    
-    
+column_matching_attributes = {    
     # 'MW structure' and 'MW regno' are IDs to the Metabolomics Workbench structure database.
     'moverz_quant': {
         # Other checks, non-negative, not all zeros
@@ -1233,11 +1193,11 @@ column_matching_attributes = {
     }
 
 
-for key, attributes in metabolite_column_validation_attributes.items():
+for key, attributes in column_matching_attributes.items():
     # The extra paranthese around the regular expressions are needed to use the PyArrow backend in pandas.
     # As of 3-12-2025 this is required, but there is an open issue (https://github.com/pandas-dev/pandas/issues/61072) that might get resolved later.
-    metabolite_column_validation_attributes[key]['values_regex'] = r'(' + attributes['regex'] + r')' if attributes['regex'] else None
-    metabolite_column_validation_attributes[key]['values_inverse_regex'] = r'(' + attributes['inverse_regex'] + r')' if 'inverse_regex' in attributes else None
+    column_matching_attributes[key]['values_regex'] = r'(' + attributes['regex'] + r')' if attributes['regex'] else None
+    column_matching_attributes[key]['values_inverse_regex'] = r'(' + attributes['inverse_regex'] + r')' if 'inverse_regex' in attributes else None
 
 
 

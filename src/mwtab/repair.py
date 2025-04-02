@@ -16,7 +16,7 @@ import numpy
 import fuzzywuzzy.fuzz
 
 
-from . import mwtab
+from . import mwtab, repair_shifted_rows, repair_metabolites_matching
 from .validator import METABOLITES_REGEXS
 from .duplicates_dict import DuplicatesDict
 
@@ -192,7 +192,7 @@ def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
                             replace_char2 = lowered_element2[i]
                             break
                     # Don't replace characters that are numbers or letters, only symbols.
-                    # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same.
+                    # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same. AN000063
                     if replace_char1 and \
                        not replace_char1.isalnum() and \
                        not replace_char2.isalnum() and \
@@ -202,10 +202,11 @@ def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
             
             ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, lowered_element2)
             if ratio >= inclusion_ratio:
-                match1 = re.match(r'(.*)_(\d+)', lowered_element1)
-                match2 = re.match(r'(.*)_(\d+)', lowered_element2)
+                match1 = re.fullmatch(r'(.*)_(\d+)', lowered_element1)
+                match2 = re.fullmatch(r'(.*)_(\d+)', lowered_element2)
                 if match1 and match2 and match1.group(2) != match2.group(2):
                     continue
+                # Don't want 'VITAMIN D3' fuzzy matching to 'VITAMIN D3_1'.
                 elif match1:
                     replacement1 = lowered_element2.replace('^', "'")
                     replacement1 = replacement1.replace('_', ',')
@@ -274,6 +275,120 @@ def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
         if temp_dict:
             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
     return fuzz_ratios
+
+# def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
+#     """
+#     """
+#     fuzz_ratios = {}
+#     for element1 in list1:
+#         temp_dict = {}
+#         lowered_element1 = element1.lower()
+#         for element2 in list2:
+            
+#             lowered_element2 = element2.lower()
+#             if len(element1) == len(element2):
+#                 replacement1 = lowered_element1.replace('^', "'")
+#                 replacement1 = replacement1.replace('_', ',')
+#                 replacement2 = lowered_element1.replace("'", "^")
+#                 replacement2 = replacement2.replace(',', '_')
+#                 replacement3 = lowered_element1.replace("'", "^")
+#                 replacement3 = replacement3.replace('_', ',')
+#                 replacement4 = lowered_element1.replace("^", "'")
+#                 replacement4 = replacement4.replace(',', '_')
+#                 if replacement1 == lowered_element2 or \
+#                    replacement2 == lowered_element2 or \
+#                    replacement3 == lowered_element2 or \
+#                    replacement4 == lowered_element2:
+#                     temp_dict[element2] = 100
+#                     continue
+#                 else:
+#                     for i in range(len(element1)):
+#                         replace_char1 = None
+#                         if lowered_element1[i] != lowered_element2[i]:
+#                             replace_char1 = lowered_element1[i]
+#                             replace_char2 = lowered_element2[i]
+#                             break
+#                     # Don't replace characters that are numbers or letters, only symbols.
+#                     # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same.
+#                     if replace_char1 and \
+#                        lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
+#                         temp_dict[element2] = 100
+#                         continue
+            
+#             ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, lowered_element2)
+#             if ratio >= inclusion_ratio:
+#                 # match1 = re.match(r'(.*)_(\d+)', lowered_element1)
+#                 # match2 = re.match(r'(.*)_(\d+)', lowered_element2)
+#                 # if match1 and match2 and match1.group(2) != match2.group(2):
+#                 #     continue
+#                 # elif match1:
+#                 #     replacement1 = lowered_element2.replace('^', "'")
+#                 #     replacement1 = replacement1.replace('_', ',')
+#                 #     replacement2 = lowered_element2.replace("'", "^")
+#                 #     replacement2 = replacement2.replace(',', '_')
+#                 #     replacement3 = lowered_element2.replace("'", "^")
+#                 #     replacement3 = replacement3.replace('_', ',')
+#                 #     replacement4 = lowered_element2.replace("^", "'")
+#                 #     replacement4 = replacement4.replace(',', '_')
+#                 #     if lowered_element2 in lowered_element1 or \
+#                 #        replacement1 in lowered_element1 or \
+#                 #        replacement2 in lowered_element1 or \
+#                 #        replacement3 in lowered_element1 or \
+#                 #        replacement4 in lowered_element1:
+#                 #         continue
+#                 # elif match2:
+#                 #     replacement1 = lowered_element1.replace('^', "'")
+#                 #     replacement1 = replacement1.replace('_', ',')
+#                 #     replacement2 = lowered_element1.replace("'", "^")
+#                 #     replacement2 = replacement2.replace(',', '_')
+#                 #     replacement3 = lowered_element1.replace("'", "^")
+#                 #     replacement3 = replacement3.replace('_', ',')
+#                 #     replacement4 = lowered_element1.replace("^", "'")
+#                 #     replacement4 = replacement4.replace(',', '_')
+#                 #     if lowered_element1 in lowered_element2 or \
+#                 #        replacement1 in lowered_element2 or \
+#                 #        replacement2 in lowered_element2 or \
+#                 #        replacement3 in lowered_element2 or \
+#                 #        replacement4 in lowered_element2:
+#                 #         continue
+                
+#                 temp_dict[element2] = ratio
+            
+            
+            
+#             # ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, element2.lower())
+#             # if ratio >= 90:
+#             #     temp_dict[element2] = ratio
+#             # elif ratio >= 80 and len(element1) == len(element2):
+#             #     lowered_element2 = element2.lower()
+#             #     for i in range(len(element1)):
+#             #         if lowered_element1[i] != lowered_element2[i]:
+#             #             replace_char1 = lowered_element1[i]
+#             #             replace_char2 = lowered_element2[i]
+#             #             break
+#             #     if lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
+#             #         temp_dict[element2] = 100
+#             #     # replace_chars = [(char,lowered_element2[i]) for i, char in enumerate(lowered_element1) if char not in lowered_element2][0]
+#             #     # if lowered_element1.replace(replace_chars[0], replace_chars[1]) == lowered_element2:
+#             #     #     temp_dict[element2] = 100
+#             #     else:
+#             #         replacement1 = lowered_element1.replace('^', "'")
+#             #         replacement1 = replacement1.replace('_', ',')
+#             #         replacement2 = lowered_element1.replace("'", "^")
+#             #         replacement2 = replacement2.replace(',', '_')
+#             #         replacement3 = lowered_element1.replace("'", "^")
+#             #         replacement3 = replacement3.replace('_', ',')
+#             #         replacement4 = lowered_element1.replace("^", "'")
+#             #         replacement4 = replacement4.replace(',', '_')
+#             #         if replacement1 == lowered_element2 or \
+#             #             replacement2 == lowered_element2 or \
+#             #             replacement3 == lowered_element2 or \
+#             #             replacement4 == lowered_element2:
+#             #             temp_dict[element2] = 100
+        
+#         if temp_dict:
+#             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
+#     return fuzz_ratios
 
 
 def fuzzy_match(fuzz_ratios):
@@ -696,6 +811,7 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                 header_count = {}
                 for j, header in enumerate(metabolite_headers):
                     if standardize:
+                        # TODO probably remove this. This is augmentation and probably shouldn't be here anymore.
                         # Check if headers are recognized variations and change it to the standardized name.
                         if not any(standardized_header == header for standardized_header in METABOLITES_REGEXS.keys()):
                             for standardized_header in METABOLITES_REGEXS.keys():
@@ -952,54 +1068,31 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                 if table_name in tabfile[data_section_key]:
                     temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in tabfile[data_section_key][table_name]]
                     data_df = pandas.DataFrame.from_records(temp_list).astype(str)
-                    # Fix any html characters.
-                    data_df = data_df.map(html.unescape)
                     
-                    data_df = clean_columns(data_df)
-                    
-                    # TODO after adding the code to shift bad values, look for "Unnamed" columns and remove them or at least rename them back to empty string.
-                    # Can repeat what is done in the clean_columns function.
-                    # The column names should not change after repair.
-                    
-                    # Look for completely null columns and remove if found.
-                    no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d{1,}_\}\}\}', column)]
-                    if no_name_columns:
-                        # Drop null columns, non-numeric columns, and columns that are the sum of the other columns.
-                        no_name_df = data_df.loc[:, no_name_columns]
-                        null_columns = no_name_df.isna().all() | (no_name_df == "").all()
-                        
-                        if table_name == 'Data':
-                            non_numeric_columns = ~(no_name_df.apply(is_column_numeric) | null_columns)
-                            # If a column is the sum of other columns then drop it.
-                            numeric_df = _create_numeric_df(data_df)
-                            sum_df = numeric_df.loc[:, [column for column in numeric_df.columns if column not in no_name_columns]].sum(axis=1)
-                            numeric_no_name_df = no_name_df.apply(pandas.to_numeric, errors='coerce')
-                            # Equal comparison doesn't work because of floating point math.
-                            # Calculate percent difference and if it is low enough say they are equal.
-                            percent_diff = numeric_no_name_df.sub(sum_df, axis='index').div(sum_df, axis='index').abs()
-                            columns_to_drop = null_columns | non_numeric_columns | (percent_diff < 1.0e-6).all()
-                        else:
-                            columns_to_drop = null_columns
-                        
-                        columns_to_drop = columns_to_drop[columns_to_drop].index
-                        
+                    previous_columns = data_df.columns
+                    data_df = clean_df(data_df, True if table_name == 'Data' else False)
+                    if len(previous_columns) != len(data_df.columns):
+                        print("Null column deleted in '" + table_name)
                         # TODO make sure all of these meet the criteria to be dropped.
-                        if len(columns_to_drop) > 0:
-                            print("Null column deleted in '" + table_name)
-                            data_df.drop(columns = columns_to_drop, inplace=True)
-                            if table_name == 'Data':
-                                tabfile._samples = [column for column in data_df.columns if column != "Metabolite"]
-                            elif table_name == 'Metabolites':
-                                tabfile._metabolite_header = [column for column in data_df.columns if column != "Metabolite"]
-                            elif table_name == 'Extended':
-                                tabfile._extended_metabolite_header = [column for column in data_df.columns if column != "Metabolite"]
-                                                            
+                                        
                     # TODO look to see if the metabolites column is duplicated and 
                     # that there is a column name of empty string at the end and it has values, then move all columns left one.
                     # Example: AN004528
+                    if data_df.shape[1] > 1 and data_df.iloc[:, 0].equals(data_df.iloc[:, 1]) and \
+                       (data_df.columns[-1] == '' or re.match(r'\{\{\{_\d+_\}\}\}', data_df.columns[-1])):
+                        data_df = data_df.shift(-1, axis=1).iloc[:, 0:-1]
+                        print(f"Duplicate 'Metabolites' column found in {table_name}. Values were realigned.")
+                    
+                    if table_name == 'Metabolites':
+                        data_df, messages = repair_shifted_rows.fix_row_shift(data_df.astype('string[pyarrow]'), 
+                                                                              repair_metabolites_matching.column_matching_attributes)
+                        if messages:
+                            print("Some row shifts were done on the Metabolites table.")
+                            for message in messages:
+                                print(message)
                                         
                     # Fill any na values with the empty string.
-                    data_df = data_df.fillna('')
+                    # data_df = data_df.fillna('')
                     
                     # Get lists of metabolites for later.
                     if table_name == 'Data' and "Metabolite" in data_df.columns:
@@ -1007,8 +1100,13 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                     if table_name == 'Metabolites' and "Metabolite" in data_df.columns:
                         metabolites_metabolites = list(data_df.loc[:, "Metabolite"])
                     
-                    # TODO fix this so the column names don't have the {{{_\d_}}} in them. I think you can just rename the columns.
-                    tabfile[data_section_key][table_name] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
+                    # tabfile[data_section_key][table_name] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
+                    if table_name == 'Data':
+                        tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
+                    elif table_name == 'Metabolites':
+                        tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
+                    elif table_name == 'Extended':
+                        tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                     tables[table_name] = data_df
             
             # Remove duplicate rows from Data.
@@ -1019,7 +1117,7 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
             # if len(data_df) > 0:
             #     data_df_init_len = len(data_df)
             #     # Have a slightly different criteria for removing some columns from determining duplicates.
-            #     no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d{1,}_\}\}\}', column)]
+            #     no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
             #     if no_name_columns:
             #         no_name_df = data_df.loc[:, no_name_columns]
             #         null_columns = no_name_df.isna().all() | (no_name_df == "").all() | (no_name_df.isna() | (no_name_df == '0')).all()
@@ -1087,8 +1185,10 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                 in_data_not_met = [metabolite for metabolite in data_metabolites if metabolite not in metabolites_metabolites]
                 in_met_not_data = [metabolite for metabolite in metabolites_metabolites if metabolite not in data_metabolites]
                 data_df = tables['Data']
+                met_df = tables['Metabolites']
                 
                 if in_data_not_met and in_met_not_data:
+                    # Try to match using fuzz ratios.
                     data_fuzz_ratios = compute_fuzz_ratios(in_data_not_met, in_met_not_data)
                     met_fuzz_ratios = compute_fuzz_ratios(in_met_not_data, in_data_not_met)
                     
@@ -1119,12 +1219,33 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                             definite_matches.add(met_pair)
                     
                     definite_matches = {pair[1]:pair[0] for pair in definite_matches}
+                    # Identify families of metabolites.
+                    # A family is something like 'VITAMIN B12' and 'VITAMIN B12_1'
+                    met_to_root, root_to_mets = find_metabolite_families(data_metabolites)
+                    met_to_root_met, root_to_mets_met = find_metabolite_families(metabolites_metabolites)
+                    # Look for familes like '6-Keto Prostaglandin F1', '6-Keto Prostaglandin F1_1', '6-Keto Prostaglandin F1_2' in 
+                    # DATA and try to find them in METABOLITES, but with shifted numbers at the end.
+                    root_to_sequence = find_family_sequences(root_to_mets)
+                    root_to_sequence_met = find_family_sequences(root_to_mets_met)
+                    family_pairs = {}
+                    for root, nums in root_to_sequence.items():
+                        root_met = definite_matches.get(root, root)
+                        if root_met in root_to_sequence_met:
+                            nums_plus_one = [num+1 for num in nums]
+                            nums_minus_one = [num-1 for num in nums]
+                            if nums_plus_one == root_to_sequence_met[root_met]:
+                                family_pairs.update({root + f'_{num}': root_met + f'_{num+1}' for num in nums})
+                            elif nums_minus_one == root_to_sequence_met[root_met]:
+                                family_pairs.update({root + f'_{num}': root_met + f'_{num-1}' for num in nums})
+                    
+                    # definite_matches = {pair[1]:pair[0] for pair in definite_matches}
+                    definite_matches.update(family_pairs)
                     if definite_matches:
                         # temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in tabfile[data_section_key]['Data']]
                         # data_df = pandas.DataFrame.from_records(temp_list)
                         ## data_df = pandas.DataFrame.from_records(tabfile[data_section_key]['Data'])
                         data_df.loc[:, "Metabolite"] = data_df.loc[:, "Metabolite"].replace(definite_matches)
-                        tabfile[data_section_key]['Data'] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
+                        tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                         print("The following metabolites in the 'DATA' section were changed "
                               "to the indicated metabolite name that was fuzzy matched from "
                               "the 'METABOLITES' section:")
@@ -1134,78 +1255,126 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                             print("\n".join([key + "   ->   " + value for key, value in definite_matches.items()]).encode('utf-8'))
                     
                     
-                    # For left over Data metabolties not in Metabolites see if they have a duplicate that is in Metabolites and delete if so.
-                    leftover_data_mets = [metabolite for metabolite in in_data_not_met if metabolite not in definite_matches]
-                    if leftover_data_mets:
-                        # dup_df = data_df[~data_df.loc[:, 'Metabolite'].isin(leftover_data_mets)]
+                    
+                    
+                    
+                # Remove duplicates from Data.
+                data_duplicates = get_duplicate_rows(data_df)
+                met_duplicates = get_duplicate_rows(met_df, False)
+                
+                # If there are duplicate measurements, we can remove from Data and 
+                # Metabolites if the row in Metabolites is all NA, or if the row 
+                # in Metabolites is duplicated.
+                data_duplicate_mets = data_df.loc[data_duplicates.index, 'Metabolite']
+                dup_data_rows = met_df[met_df.loc[:, 'Metabolite'].isin(data_duplicate_mets)]
+                groups = data_duplicates.groupby(data_duplicates.columns.tolist(), dropna=False)
+                names_to_remove = []
+                names_to_remove_from_data = []
+                for name, group in groups:
+                    names = list(data_df.loc[group.index, :].iloc[:, 0])
+                    temp_df = dup_data_rows[dup_data_rows.loc[:, 'Metabolite'].isin(names)]
+                    
+                    if len(temp_df.loc[:, 'Metabolite'].unique()) < len(set(names)):
+                        names_to_remove_from_data += [name for name in names if name not in temp_df.loc[:, "Metabolite"].values]
+                    
+                    if len(temp_df) < 2:
+                        continue
+                    # Find all NA rows in Metabolites.
+                    all_na_rows_selector = temp_df.iloc[:, 1:].isna().all(axis=1)
+                    names_to_remove += list(temp_df[all_na_rows_selector].loc[:, 'Metabolite'])
+                    
+                    # Find duplicate rows in Metabolites.
+                    met_group_duplicates_selector = met_duplicates.index.isin(temp_df.index)
+                    met_duplicate_indexes_to_remove = met_duplicates[met_group_duplicates_selector].index
+                    temp_dups_to_remove = met_df.loc[met_duplicate_indexes_to_remove, ['Metabolite']]
+                    temp_dups_to_remove.loc[:, 'str_len'] = temp_dups_to_remove.loc[:, 'Metabolite'].str.len()
+                    temp_dups_to_remove.sort_values(by=['str_len', 'Metabolite'])
+                    names_to_remove += list(temp_dups_to_remove.loc[:, 'Metabolite'].values[1:])
+                    
+                    # Remove from met_df, find names in data_df and remove there too.
+                    # met_df = met_df[~met_df.loc[:, 'Metabolite'].isin(names_to_remove)]
+                    # data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove)]
+                    # data_duplicates = data_duplicates[~data_duplicates.index.isin(all_na_rows_selector[all_na_rows_selector].index)]
+                if names_to_remove:
+                    met_df = met_df[~met_df.loc[:, 'Metabolite'].isin(names_to_remove)]
+                    tabfile.set_metabolites_from_pandas(met_df, data_section_key)
+                    data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove)]
+                    tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
+                    print("The following metabolites in the 'DATA' and 'METABOLITES' sections were removed "
+                          "because they are duplicates of other metabolites:")
+                    names_to_remove = sorted(names_to_remove)
+                    try:
+                        print("\n".join([name for name in names_to_remove]))
+                    except UnicodeEncodeError:
+                        print("\n".join([name for name in names_to_remove]).encode('utf-8'))
+                if names_to_remove_from_data:
+                    data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove_from_data)]
+                    tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
+                    print("The following metabolites in the 'DATA' section were removed "
+                          "because they are duplicates of other metabolites:")
+                    names_to_remove_from_data = sorted(names_to_remove_from_data)
+                    try:
+                        print("\n".join([name for name in names_to_remove_from_data]))
+                    except UnicodeEncodeError:
+                        print("\n".join([name for name in names_to_remove_from_data]).encode('utf-8'))
+                
+                            
+                # Remove data_duplicates that are family members.
+                # data_metabolites = list(data_df.loc[:, "Metabolite"])
+                # met_to_root, root_to_mets = find_metabolite_families(data_metabolites)
+                # data_duplicate_mets = data_df.loc[data_duplicates.index, 'Metabolite']
+                # dup_indexes_to_keep = []
+                # if len(data_duplicates) != 0:
+                #     groups = data_duplicates.groupby(data_duplicates.columns.tolist(), dropna=False)
+                #     for name, group in groups:
+                #         names = list(data_df.loc[group.index, :].iloc[:, 0])
+                #         roots_to_names = {}
+                #         for name2 in names:
+                #             root = met_to_root[name2]
+                #             if root in roots_to_names:
+                #                 roots_to_names[root].append(name2)
+                #             else:
+                #                 roots_to_names[root] = [name2]
+                #         names_to_keep = [names[0] for root, names in roots_to_names.items() if len(names) == 1]
+                #         dup_indexes_to_keep += list(data_df[data_df.loc[:, 'Metabolite'].isin(names_to_keep)].index)
+                # data_duplicate_mets = data_duplicate_mets.loc[dup_indexes_to_keep]
+                
+                # Remove leftover metabolites in the data section that aren't in the metabolites section and have a duplicate.
+                # leftover_mets_in_dups = [metabolite for metabolite in leftover_data_mets if metabolite in data_duplicate_mets.values]
+                # if leftover_mets_in_dups:
+                #     data_duplicates.insert(0, "Metabolites", data_df.loc[data_duplicates.index, 'Metabolite'])
+                #     data_duplicates_to_print = data_duplicates.sort_values("Metabolites")
+                #     print()
+                #     print(data_duplicates_to_print)
+                #     print()
+                #     print("Duplicates with family members removed.")
+                #     print(data_duplicate_mets)
+                #     print()
+                #     print("In Data, but not Metabolites")
+                #     print(in_data_not_met)
+                #     print()
+                #     print("In Metabolites, but not Data")
+                #     print(in_met_not_data)
+                #     print()
+                #     print("Data fuzz ratios")
+                #     print(data_fuzz_ratios)
+                #     print()
+                #     print("In Data, not fuzzy matched in Metabolites")
+                #     print(leftover_data_mets)
+                #     print()
+                #     print("In Data, not fuzzy matched, and has a duplicate in Data.")
+                #     print(leftover_mets_in_dups)
+                #     print()
+                #     print("In Data, not fuzzy matched, and does NOT have a duplicate in Data.")
+                #     print([metabolite for metabolite in leftover_data_mets if metabolite not in data_duplicate_mets.values])
+                #     print()
+                    
+                #     data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(leftover_mets_in_dups)]
+                #     print("Duplicate rows removed from DATA section.")
+                #     tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                         
-                        # Have a slightly different criteria for removing some columns from determining duplicates.
-                        no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d{1,}_\}\}\}', column)]
-                        if no_name_columns:
-                            no_name_df = data_df.loc[:, no_name_columns]
-                            null_columns = no_name_df.isna().all() | (no_name_df == "").all() | (no_name_df.isna() | (no_name_df == '0')).all()
-                            columns_to_drop = null_columns[null_columns].index
-                            if len(columns_to_drop) > 0:
-                                dup_df = data_df.drop(columns = columns_to_drop)
-                            else:
-                                dup_df = data_df
-                        else:
-                            dup_df = data_df
                         
-                        # Convert every column except the metabolite column to numbers.
-                        numeric_df = dup_df.iloc[:, 1:]
-                        numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
-                        # Add metabolites back and drop duplicates.
-                        numeric_df.loc[:, 'Metabolites'] = dup_df.loc[:, 'Metabolite']
-                        numeric_df = numeric_df.drop_duplicates()
-                        # Remove Metabolites and find duplicate rows.
-                        numeric_df = numeric_df.drop('Metabolites', axis=1)
-                        duplicates_bool = numeric_df.duplicated(keep=False)
-                        duplicates = numeric_df[duplicates_bool]
-                        # Remove rows that are mono value. For example, if a row has all nan's that should not be considered as a duplicate.
-                        duplicates = duplicates[~duplicates.nunique(axis = 1, dropna=False).eq(1)]
                         
-                        # Identify families of metabolites.
-                        # A family is something like 'VITAMIN B12' and 'VITAMIN B12_1'
-                        # data_metabolites could be changed due to renaming above, so rebuild it.
-                        data_metabolites = list(data_df.loc[:, "Metabolite"])
-                        roots = [met for met in data_metabolites if not re.match(r'.*_\d+$', met)]
-                        root_to_mets = {root:[root] for root in roots}
-                        met_to_root = {root:root for root in roots}
-                        for met in data_metabolites:
-                            if met in roots:
-                                continue
-                            for root in roots:
-                                if root in met:
-                                    met_to_root[met] = root
-                                    root_to_mets[root].append(met)
-                                    
-                        # Remove duplicates that are family members.
-                        duplicate_mets = data_df.loc[duplicates.index, 'Metabolite']
-                        dup_indexes_to_keep = []
-                        if len(duplicates) != 0:
-                            groups = duplicates.groupby(duplicates.columns.tolist(), dropna=False)
-                            for name, group in groups:
-                                names = list(data_df.loc[group.index, :].iloc[:, 0])
-                                roots_to_names = {}
-                                for name2 in names:
-                                    root = met_to_root[name2]
-                                    if root in roots_to_names:
-                                        roots_to_names[root].append(name2)
-                                    else:
-                                        roots_to_names[root] = [name2]
-                                names_to_keep = [names[0] for root, names in roots_to_names.items() if len(names) == 1]
-                                dup_indexes_to_keep += list(data_df[data_df.loc[:, 'Metabolite'].isin(names_to_keep)].index)
-                        duplicate_mets = duplicate_mets.loc[dup_indexes_to_keep]
-                        
-                        # Remove leftover metabolites in the data section that aren't in the metabolites section and have a duplicate.
-                        leftover_mets_in_dups = [metabolite for metabolite in leftover_data_mets if metabolite in duplicate_mets.values]
-                        if leftover_mets_in_dups:
-                            data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(leftover_mets_in_dups)]
-                            print("Duplicate rows removed from DATA section.")
-                            tabfile[data_section_key]['Data'] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
-                        
-                                
         return tabfile.writestr('mwtab')
     else:
         return file_str
@@ -1219,6 +1388,88 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
     #     return file_str
 
 
+
+
+
+
+def get_duplicate_rows(df, numeric=True):
+    """
+    """
+    no_name_columns = [column for column in df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
+    if no_name_columns:
+        print("No Name Columns When Removing Duplicates!")
+        no_name_df = df.loc[:, no_name_columns]
+        null_columns = no_name_df.isna().all() | (no_name_df == "").all() | (no_name_df.isna() | (no_name_df == '0')).all()
+        columns_to_drop = null_columns[null_columns].index
+        if len(columns_to_drop) > 0:
+            dup_df = df.drop(columns = columns_to_drop)
+        else:
+            dup_df = df
+    else:
+        dup_df = df
+    
+    # Convert every column except the metabolite column to numbers.
+    numeric_df = dup_df.iloc[:, 1:]
+    zero = '0'
+    if numeric:
+        numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
+        zero = 0
+    # 0 should be the same as nan for this, AN000027.
+    numeric_df[numeric_df.isna()] = zero
+    # Add metabolites back and drop duplicates.
+    numeric_df.loc[:, 'Metabolites'] = dup_df.loc[:, 'Metabolite']
+    before_len = len(numeric_df)
+    numeric_df = numeric_df.drop_duplicates()
+    if before_len != len(numeric_df):
+        print("Numeric Duplicates Dropped!")
+    # Remove Metabolites and find duplicate rows.
+    numeric_df = numeric_df.drop('Metabolites', axis=1)
+    duplicates_bool = numeric_df.duplicated(keep=False)
+    if duplicates_bool.empty:
+        return pandas.DataFrame()
+    duplicates = numeric_df[duplicates_bool]
+    # Remove rows that are mono value. For example, if a row has all nan's that should not be considered as a duplicate.
+    duplicates = duplicates[~duplicates.nunique(axis = 1, dropna=False).eq(1)]
+    
+    return duplicates
+
+
+def find_metabolite_families(metabolites):
+    """
+    """
+    roots = []
+    for met in metabolites:
+        if re_match := re.match(r'(.*)_\d+$', met):
+            roots.append(re_match.group(1))
+        else:
+            roots.append(met)
+    roots = list(set(roots))
+    root_to_mets = {root:[root] for root in roots}
+    met_to_root = {root:root for root in roots}
+    for met in metabolites:
+        if met in roots:
+            continue
+        for root in roots:
+            if re.match(re.escape(root) + r'_\d+$', met):
+                met_to_root[met] = root
+                root_to_mets[root].append(met)
+    
+    return met_to_root, root_to_mets
+
+def find_family_sequences(root_to_mets):
+    """
+    """
+    root_to_sequence = {}
+    for root, mets in root_to_mets.items():
+        if len(mets) == 1:
+            continue
+        sequence = []
+        for met in mets:
+            if re_match := re.match(r'.*_(\d+)$', met):
+                sequence.append(int(re_match.group(1)))
+        if sequence:
+            root_to_sequence[root] = sorted(sequence)
+    return root_to_sequence
 
 
 def clean_columns(data_df):
@@ -1257,11 +1508,38 @@ def clean_columns(data_df):
             commas_to_replace = (replace_candidates) & (~to_numeric.isna())
             data_df.loc[commas_to_replace, column] = data_df.loc[commas_to_replace, column].str.replace(',', '.')
         # If the column has no name and is all NA, remove it.
-        if ("Unnamed" in column or column == '') and data_df.loc[:, column].isna().all():
+        if ("Unnamed" in column or column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)) and data_df.loc[:, column].isna().all():
             columns_to_remove.append(column)
             
     for column_name in columns_to_remove:
         data_df = data_df.drop(column_name, axis=1)
+    return data_df
+
+def clean_df(data_df, drop_numeric=False):
+    """
+    """
+    # Fix any html characters.
+    data_df = data_df.map(html.unescape)
+    
+    data_df = clean_columns(data_df)
+    
+    # Drop some columns in Data if certain conditions are met.
+    no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
+    if no_name_columns and drop_numeric:
+        # Drop non-numeric columns and columns that are the sum of the other columns.
+        no_name_df = data_df.loc[:, no_name_columns]
+        non_numeric_columns = ~no_name_df.apply(is_column_numeric)
+        # If a column is the sum of other columns then drop it.
+        numeric_df = _create_numeric_df(data_df)
+        sum_df = numeric_df.loc[:, [column for column in numeric_df.columns if column not in no_name_columns]].sum(axis=1)
+        numeric_no_name_df = no_name_df.apply(pandas.to_numeric, errors='coerce')
+        # Equal comparison doesn't work because of floating point math.
+        # Calculate percent difference and if it is low enough say they are equal.
+        percent_diff = numeric_no_name_df.sub(sum_df, axis='index').div(sum_df, axis='index').abs()
+        columns_to_drop = non_numeric_columns | (percent_diff < 1.0e-6).all()
+        columns_to_drop = columns_to_drop[columns_to_drop].index
+        data_df.drop(columns = columns_to_drop, inplace=True)
+    
     return data_df
 
 

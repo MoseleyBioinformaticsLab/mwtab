@@ -75,7 +75,10 @@ def tokenizer(text, dict_type = None):
                 # else:
                 #     factor_dict = OrderedDict()
                 for pair in factor_pairs:
-                    factor_key, factor_value = pair.split(":")
+                    try:
+                        factor_key, factor_value = pair.split(":")
+                    except ValueError as e:
+                        raise ValueError("Expected exactly 1 ':' in the factor key value pair, '" + pair + "'") from e
                     factor_key = factor_key.strip()
                     factor_value = factor_value.strip()
                     # if compatability_mode:
@@ -96,7 +99,10 @@ def tokenizer(text, dict_type = None):
                     # else:
                     #     additional_data = OrderedDict()
                     for factor_item in line_items[4].split("; "):
-                        key, value = factor_item.split("=")
+                        try:
+                            key, value = factor_item.split("=")
+                        except ValueError as e:
+                            raise ValueError("Expected exactly 1 '=' in the additional data key value pair, '" + factor_item + "'") from e
                         key = key.strip()
                         value = value.strip()
                         # if compatability_mode:
@@ -127,7 +133,10 @@ def tokenizer(text, dict_type = None):
                     line_items = line.split("\t")
                     yield KeyValue(line_items[0].strip()[3:], line_items[1:])
                 else:
-                    key, value = line.split("\t", 1)
+                    try:
+                        key, value = line.split("\t", 1)
+                    except ValueError as e:
+                        raise ValueError("Expected a tab in the line.") from e
                     if ":" in key:
                         if ":UNITS" in key:
                             yield KeyValue("Units", value)
@@ -137,9 +146,9 @@ def tokenizer(text, dict_type = None):
                         yield KeyValue(key.strip(), value)
 
         except IndexError as e:
-            raise IndexError("LINE WITH ERROR:\n\t", repr(line), e)
+            raise IndexError("LINE WITH ERROR:\n\t" + repr(line)) from e
         except ValueError as e:
-            raise ValueError("LINE WITH ERROR:\n\t", repr(line), e)
+            raise ValueError("LINE WITH ERROR:\n\t" + repr(line)) from e
 
     # end of file
     yield KeyValue("#ENDSECTION", "\n")
