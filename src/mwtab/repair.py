@@ -6,7 +6,8 @@ The repair command.
 import re
 import traceback
 import sys
-from itertools import combinations
+import itertools
+# from itertools import combinations
 import html
 import warnings
 warnings.filterwarnings("ignore", module="fuzzywuzzy")
@@ -16,17 +17,21 @@ import numpy
 import fuzzywuzzy.fuzz
 
 
-from . import mwtab, repair_shifted_rows, repair_metabolites_matching
+from . import mwtab, repair_shifted_rows, repair_metabolites_matching, utility_functions
 from .validator import METABOLITES_REGEXS
 from .duplicates_dict import DuplicatesDict
+
+_create_numeric_df = utility_functions._create_numeric_df
+find_metabolite_families = utility_functions.find_metabolite_families
+_determine_row_subsets = utility_functions._determine_row_subsets
+find_family_sequences = utility_functions.find_family_sequences
+drop_duplicate_subsets = utility_functions.drop_duplicate_subsets
 
 
 
 VERBOSE = False
 LIST_SPLIT_REGEX = r'/\s*|\s*and\s*|;\s*|,\s*|//\s*|\s*\&\s*'
-# TODO replace these NA values with the empty string.
 # Sometimes 0 is also an NA value, but it can be hard tell unless you see it in an ID column like KEGG ID or something.
-# Consider looking for 0 in non-numeric rows and then replacing with the empty string.
 # Note the slightly different hyphen character. It is not a duplicate.
 NA_VALUES = ['', '-', '−', '--', '---', '.', ',',
              'NA', 'na', 'n.a.', 'N.A.', 'n/a', 'N/A', '#N/A', 'NaN', 'nan', 'N', 'null', 'Null', 'NULL', 'NF',
@@ -1069,11 +1074,15 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                     temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in tabfile[data_section_key][table_name]]
                     data_df = pandas.DataFrame.from_records(temp_list).astype(str)
                     
-                    previous_columns = data_df.columns
+                    previous_width = data_df.shape[1]
+                    previous_len = data_df.shape[0]
                     data_df = clean_df(data_df, True if table_name == 'Data' else False)
-                    if len(previous_columns) != len(data_df.columns):
-                        print("Null column deleted in '" + table_name)
+                        
+                    if previous_width != data_df.shape[1]:
+                        print("Null column deleted in '" + table_name + "'")
                         # TODO make sure all of these meet the criteria to be dropped.
+                    if previous_len != data_df.shape[0]:
+                        print("Duplicate rows deleted in '" + table_name + "'")
                                         
                     # TODO look to see if the metabolites column is duplicated and 
                     # that there is a column name of empty string at the end and it has values, then move all columns left one.
@@ -1090,17 +1099,18 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                             print("Some row shifts were done on the Metabolites table.")
                             for message in messages:
                                 print(message)
-                                        
-                    # Fill any na values with the empty string.
-                    # data_df = data_df.fillna('')
-                    
+                        
+                        previous_len = data_df.shape[0]
+                        data_df = drop_duplicate_subsets(data_df)
+                        if previous_len != data_df.shape[0]:
+                            print("Duplicate metabolites with non-unique columns were deleted in the Metabolites table.")
+                                                            
                     # Get lists of metabolites for later.
                     if table_name == 'Data' and "Metabolite" in data_df.columns:
                         data_metabolites = list(data_df.loc[:, "Metabolite"])
                     if table_name == 'Metabolites' and "Metabolite" in data_df.columns:
                         metabolites_metabolites = list(data_df.loc[:, "Metabolite"])
                     
-                    # tabfile[data_section_key][table_name] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
                     if table_name == 'Data':
                         tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                     elif table_name == 'Metabolites':
@@ -1109,75 +1119,6 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                         tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                     tables[table_name] = data_df
             
-            # Remove duplicate rows from Data.
-            # TODO change this so that we look for metabolites in Data that don't match in Metabolites first, then we see if they have a 
-            # duplicate and if they do we can drop it from Data. We can maybe drop the fuzzy ratio threshold as well since the numeric 
-            # matching gives a stronger chance that it is the same metabolite.
-            # data_df = tables['Data']
-            # if len(data_df) > 0:
-            #     data_df_init_len = len(data_df)
-            #     # Have a slightly different criteria for removing some columns from determining duplicates.
-            #     no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
-            #     if no_name_columns:
-            #         no_name_df = data_df.loc[:, no_name_columns]
-            #         null_columns = no_name_df.isna().all() | (no_name_df == "").all() | (no_name_df.isna() | (no_name_df == '0')).all()
-            #         columns_to_drop = null_columns[null_columns].index
-            #         if len(columns_to_drop) > 0:
-            #             dup_df = data_df.drop(columns = columns_to_drop)
-            #         else:
-            #             dup_df = data_df
-            #     else:
-            #         dup_df = data_df
-                
-            #     # Convert every column except the metabolite column to numbers.
-            #     numeric_df = dup_df.iloc[:, 1:]
-            #     numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
-            #     # Add metabolites back and drop duplicates.
-            #     numeric_df.loc[:, 'Metabolites'] = dup_df.loc[:, 'Metabolite']
-            #     numeric_df = numeric_df.drop_duplicates()
-            #     # Remove Metabolites and find duplicate rows.
-            #     numeric_df = numeric_df.drop('Metabolites', axis=1)
-            #     duplicates_bool = numeric_df.duplicated(keep=False)
-            #     duplicates = numeric_df[duplicates_bool]
-            #     # Remove rows that are mono value. For example, if a row has all nan's that should not be considered as a duplicate.
-            #     duplicates = duplicates[~duplicates.nunique(axis = 1, dropna=False).eq(1)]
-            #     if len(duplicates) != 0:
-            #         groups = duplicates.groupby(duplicates.columns.tolist(), dropna=False)
-            #         data_indexes_to_delete = []
-            #         met_indexes_to_delete = []
-            #         for name, group in groups:
-            #             names = list(data_df.loc[group.index, :].iloc[:, 0])
-            #             fuzz_ratios = compute_fuzz_ratios(names, names)
-            #             fuzz_ratios = {metabolite:series.drop(metabolite, errors='ignore') for metabolite, series in fuzz_ratios.items()}
-            #             met_to_index = {metabolite:group.iloc[i].name for i, (metabolite, series) in enumerate(fuzz_ratios.items()) if len(series) > 0}
-            #             # Add all indexes to list to delete except for 1.
-            #             if metabolites_metabolites:
-            #                 duplicates_in_metabolites = {metabolite:index for metabolite, index in met_to_index.items() if metabolite in metabolites_metabolites}
-            #                 duplicates_not_in_metabolites = {metabolite:index for metabolite, index in met_to_index.items() if metabolite not in metabolites_metabolites}
-            #                 # See if the duplicates in Data have duplicate metadata in Metabolites.
-            #                 met_dups = tables['Metabolites'][tables['Metabolites'].loc[:, 'Metabolite'].isin(duplicates_in_metabolites.keys())]
-            #                 met_dups_data = met_dups.drop('Metabolite', axis=1)
-            #                 met_dups = met_dups[met_dups_data.duplicated(keep=False)].loc[:, 'Metabolite']
-            #                 matching_dups = {metabolite:index for metabolite, index in duplicates_in_metabolites.items() if metabolite in met_dups}
-            #                 # non_matching_dups = {metabolite:index for metabolite, index in duplicates_in_metabolites if metabolite not in met_dups}
-            #                 # Only remove duplicates that are not in metabolites or are also duplicates in metabolites.
-            #                 duplicate_indexes = list(duplicates_not_in_metabolites.values()) + \
-            #                                     list(matching_dups.values())
-            #                 met_duplicate_indexes = [met_dups[metabolite].index[0] for metabolite, index in matching_dups.items() if metabolite in met_dups]
-            #                 if len(duplicate_indexes) == len(met_to_index):
-            #                     duplicate_indexes = duplicate_indexes[:-1]     
-            #                     met_duplicate_indexes = met_duplicate_indexes[:-1]
-            #             else:
-            #                 duplicate_indexes = list(met_to_index.values())[:-1]
-            #             data_indexes_to_delete += duplicate_indexes
-            #             met_indexes_to_delete += met_duplicate_indexes
-            #         numeric_df = numeric_df[~numeric_df.index.isin(data_indexes_to_delete)]
-            #         data_df = data_df.loc[numeric_df.index, :]
-            #         met_df = tables['Metabolites'].loc[[index for index in tables['Metabolites'].index if index not in met_indexes_to_delete], :]
-            #         if data_df_init_len > len(data_df):
-            #             print("Duplicate rows removed from DATA section.")
-            #             tabfile[data_section_key]['Data'] = [DuplicatesDict(data_dict) for data_dict in data_df.astype(str).to_dict(orient='records')]
-            #             tabfile[data_section_key]['Metabolites'] = [DuplicatesDict(data_dict) for data_dict in met_df.astype(str).to_dict(orient='records')]
             
             # Match up metabolites in DATA section and METABOLITES sections for metabolites with slightly different names.
             # For example, 2^,4^-compound and 2'_4'-compound are the same, but for some reason one name is in DATA and another in METABOLITES.
@@ -1185,7 +1126,6 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                 in_data_not_met = [metabolite for metabolite in data_metabolites if metabolite not in metabolites_metabolites]
                 in_met_not_data = [metabolite for metabolite in metabolites_metabolites if metabolite not in data_metabolites]
                 data_df = tables['Data']
-                met_df = tables['Metabolites']
                 
                 if in_data_not_met and in_met_not_data:
                     # Try to match using fuzz ratios.
@@ -1238,12 +1178,8 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                             elif nums_minus_one == root_to_sequence_met[root_met]:
                                 family_pairs.update({root + f'_{num}': root_met + f'_{num-1}' for num in nums})
                     
-                    # definite_matches = {pair[1]:pair[0] for pair in definite_matches}
                     definite_matches.update(family_pairs)
                     if definite_matches:
-                        # temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in tabfile[data_section_key]['Data']]
-                        # data_df = pandas.DataFrame.from_records(temp_list)
-                        ## data_df = pandas.DataFrame.from_records(tabfile[data_section_key]['Data'])
                         data_df.loc[:, "Metabolite"] = data_df.loc[:, "Metabolite"].replace(definite_matches)
                         tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
                         print("The following metabolites in the 'DATA' section were changed "
@@ -1253,127 +1189,6 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                             print("\n".join([key + "   ->   " + value for key, value in definite_matches.items()]))
                         except UnicodeEncodeError:
                             print("\n".join([key + "   ->   " + value for key, value in definite_matches.items()]).encode('utf-8'))
-                    
-                    
-                    
-                    
-                    
-                # Remove duplicates from Data.
-                data_duplicates = get_duplicate_rows(data_df)
-                met_duplicates = get_duplicate_rows(met_df, False)
-                
-                # If there are duplicate measurements, we can remove from Data and 
-                # Metabolites if the row in Metabolites is all NA, or if the row 
-                # in Metabolites is duplicated.
-                data_duplicate_mets = data_df.loc[data_duplicates.index, 'Metabolite']
-                dup_data_rows = met_df[met_df.loc[:, 'Metabolite'].isin(data_duplicate_mets)]
-                groups = data_duplicates.groupby(data_duplicates.columns.tolist(), dropna=False)
-                names_to_remove = []
-                names_to_remove_from_data = []
-                for name, group in groups:
-                    names = list(data_df.loc[group.index, :].iloc[:, 0])
-                    temp_df = dup_data_rows[dup_data_rows.loc[:, 'Metabolite'].isin(names)]
-                    
-                    if len(temp_df.loc[:, 'Metabolite'].unique()) < len(set(names)):
-                        names_to_remove_from_data += [name for name in names if name not in temp_df.loc[:, "Metabolite"].values]
-                    
-                    if len(temp_df) < 2:
-                        continue
-                    # Find all NA rows in Metabolites.
-                    all_na_rows_selector = temp_df.iloc[:, 1:].isna().all(axis=1)
-                    names_to_remove += list(temp_df[all_na_rows_selector].loc[:, 'Metabolite'])
-                    
-                    # Find duplicate rows in Metabolites.
-                    met_group_duplicates_selector = met_duplicates.index.isin(temp_df.index)
-                    met_duplicate_indexes_to_remove = met_duplicates[met_group_duplicates_selector].index
-                    temp_dups_to_remove = met_df.loc[met_duplicate_indexes_to_remove, ['Metabolite']]
-                    temp_dups_to_remove.loc[:, 'str_len'] = temp_dups_to_remove.loc[:, 'Metabolite'].str.len()
-                    temp_dups_to_remove.sort_values(by=['str_len', 'Metabolite'])
-                    names_to_remove += list(temp_dups_to_remove.loc[:, 'Metabolite'].values[1:])
-                    
-                    # Remove from met_df, find names in data_df and remove there too.
-                    # met_df = met_df[~met_df.loc[:, 'Metabolite'].isin(names_to_remove)]
-                    # data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove)]
-                    # data_duplicates = data_duplicates[~data_duplicates.index.isin(all_na_rows_selector[all_na_rows_selector].index)]
-                if names_to_remove:
-                    met_df = met_df[~met_df.loc[:, 'Metabolite'].isin(names_to_remove)]
-                    tabfile.set_metabolites_from_pandas(met_df, data_section_key)
-                    data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove)]
-                    tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
-                    print("The following metabolites in the 'DATA' and 'METABOLITES' sections were removed "
-                          "because they are duplicates of other metabolites:")
-                    names_to_remove = sorted(names_to_remove)
-                    try:
-                        print("\n".join([name for name in names_to_remove]))
-                    except UnicodeEncodeError:
-                        print("\n".join([name for name in names_to_remove]).encode('utf-8'))
-                if names_to_remove_from_data:
-                    data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(names_to_remove_from_data)]
-                    tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
-                    print("The following metabolites in the 'DATA' section were removed "
-                          "because they are duplicates of other metabolites:")
-                    names_to_remove_from_data = sorted(names_to_remove_from_data)
-                    try:
-                        print("\n".join([name for name in names_to_remove_from_data]))
-                    except UnicodeEncodeError:
-                        print("\n".join([name for name in names_to_remove_from_data]).encode('utf-8'))
-                
-                            
-                # Remove data_duplicates that are family members.
-                # data_metabolites = list(data_df.loc[:, "Metabolite"])
-                # met_to_root, root_to_mets = find_metabolite_families(data_metabolites)
-                # data_duplicate_mets = data_df.loc[data_duplicates.index, 'Metabolite']
-                # dup_indexes_to_keep = []
-                # if len(data_duplicates) != 0:
-                #     groups = data_duplicates.groupby(data_duplicates.columns.tolist(), dropna=False)
-                #     for name, group in groups:
-                #         names = list(data_df.loc[group.index, :].iloc[:, 0])
-                #         roots_to_names = {}
-                #         for name2 in names:
-                #             root = met_to_root[name2]
-                #             if root in roots_to_names:
-                #                 roots_to_names[root].append(name2)
-                #             else:
-                #                 roots_to_names[root] = [name2]
-                #         names_to_keep = [names[0] for root, names in roots_to_names.items() if len(names) == 1]
-                #         dup_indexes_to_keep += list(data_df[data_df.loc[:, 'Metabolite'].isin(names_to_keep)].index)
-                # data_duplicate_mets = data_duplicate_mets.loc[dup_indexes_to_keep]
-                
-                # Remove leftover metabolites in the data section that aren't in the metabolites section and have a duplicate.
-                # leftover_mets_in_dups = [metabolite for metabolite in leftover_data_mets if metabolite in data_duplicate_mets.values]
-                # if leftover_mets_in_dups:
-                #     data_duplicates.insert(0, "Metabolites", data_df.loc[data_duplicates.index, 'Metabolite'])
-                #     data_duplicates_to_print = data_duplicates.sort_values("Metabolites")
-                #     print()
-                #     print(data_duplicates_to_print)
-                #     print()
-                #     print("Duplicates with family members removed.")
-                #     print(data_duplicate_mets)
-                #     print()
-                #     print("In Data, but not Metabolites")
-                #     print(in_data_not_met)
-                #     print()
-                #     print("In Metabolites, but not Data")
-                #     print(in_met_not_data)
-                #     print()
-                #     print("Data fuzz ratios")
-                #     print(data_fuzz_ratios)
-                #     print()
-                #     print("In Data, not fuzzy matched in Metabolites")
-                #     print(leftover_data_mets)
-                #     print()
-                #     print("In Data, not fuzzy matched, and has a duplicate in Data.")
-                #     print(leftover_mets_in_dups)
-                #     print()
-                #     print("In Data, not fuzzy matched, and does NOT have a duplicate in Data.")
-                #     print([metabolite for metabolite in leftover_data_mets if metabolite not in data_duplicate_mets.values])
-                #     print()
-                    
-                #     data_df = data_df[~data_df.loc[:, 'Metabolite'].isin(leftover_mets_in_dups)]
-                #     print("Duplicate rows removed from DATA section.")
-                #     tabfile.set_metabolites_data_from_pandas(data_df, data_section_key)
-                        
-                        
                         
         return tabfile.writestr('mwtab')
     else:
@@ -1392,38 +1207,15 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
 
 
 
-def get_duplicate_rows(df, numeric=True):
+def get_duplicate_rows(df, section_name, numeric=True):
     """
-    """
-    no_name_columns = [column for column in df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
-    if no_name_columns:
-        print("No Name Columns When Removing Duplicates!")
-        no_name_df = df.loc[:, no_name_columns]
-        null_columns = no_name_df.isna().all() | (no_name_df == "").all() | (no_name_df.isna() | (no_name_df == '0')).all()
-        columns_to_drop = null_columns[null_columns].index
-        if len(columns_to_drop) > 0:
-            dup_df = df.drop(columns = columns_to_drop)
-        else:
-            dup_df = df
-    else:
-        dup_df = df
-    
+    """    
     # Convert every column except the metabolite column to numbers.
-    numeric_df = dup_df.iloc[:, 1:]
-    zero = '0'
     if numeric:
-        numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
-        zero = 0
-    # 0 should be the same as nan for this, AN000027.
-    numeric_df[numeric_df.isna()] = zero
-    # Add metabolites back and drop duplicates.
-    numeric_df.loc[:, 'Metabolites'] = dup_df.loc[:, 'Metabolite']
-    before_len = len(numeric_df)
-    numeric_df = numeric_df.drop_duplicates()
-    if before_len != len(numeric_df):
-        print("Numeric Duplicates Dropped!")
-    # Remove Metabolites and find duplicate rows.
-    numeric_df = numeric_df.drop('Metabolites', axis=1)
+        numeric_df = _create_numeric_df(df)
+    else:
+        numeric_df = df.iloc[:, 1:]
+    
     duplicates_bool = numeric_df.duplicated(keep=False)
     if duplicates_bool.empty:
         return pandas.DataFrame()
@@ -1434,45 +1226,17 @@ def get_duplicate_rows(df, numeric=True):
     return duplicates
 
 
-def find_metabolite_families(metabolites):
+def _are_zeros_na(df):
     """
     """
-    roots = []
-    for met in metabolites:
-        if re_match := re.match(r'(.*)_\d+$', met):
-            roots.append(re_match.group(1))
-        else:
-            roots.append(met)
-    roots = list(set(roots))
-    root_to_mets = {root:[root] for root in roots}
-    met_to_root = {root:root for root in roots}
-    for met in metabolites:
-        if met in roots:
-            continue
-        for root in roots:
-            if re.match(re.escape(root) + r'_\d+$', met):
-                met_to_root[met] = root
-                root_to_mets[root].append(met)
+    relevant_columns = [column for column in df.columns if column != 'Metabolite' and column != '' and re.match(r'\{\{\{_\d+_\}\}\}', column)]
+    filtered_df = df.loc[:, relevant_columns]
+    if filtered_df.isna().any().any():
+        return False
+    return True
     
-    return met_to_root, root_to_mets
 
-def find_family_sequences(root_to_mets):
-    """
-    """
-    root_to_sequence = {}
-    for root, mets in root_to_mets.items():
-        if len(mets) == 1:
-            continue
-        sequence = []
-        for met in mets:
-            if re_match := re.match(r'.*_(\d+)$', met):
-                sequence.append(int(re_match.group(1)))
-        if sequence:
-            root_to_sequence[root] = sorted(sequence)
-    return root_to_sequence
-
-
-def clean_columns(data_df):
+def clean_columns(data_df, na_values):
     """
     """
     columns_to_remove = []
@@ -1488,13 +1252,15 @@ def clean_columns(data_df):
         data_df.loc[:, column] = data_df.loc[:, column].str.replace('−', '-')
         data_df.loc[:, column] = data_df.loc[:, column].str.replace('–', '-')
         # Replace NA values.
-        # TODO look to see if 0's are being used as NA values and replace them.
+        # TODO look to see if 0's are being used as NA values and replace them. For now, I have settled 
+        # for specifically replacing 0 in a few ID columns, but more sophisticated logic could be added.
+        # I added the _are_zeros_na method, but this only works for DATA dataframes.
         lowered_column = column.lower()
         if lowered_column.endswith(' id') or lowered_column.endswith('_id') or 'inchi' in lowered_column or \
            'kegg' in lowered_column or 'hmdb' in lowered_column or 'lmid' in lowered_column:
             condition = data_df.loc[:, column] == '0'
             data_df.loc[condition, column] = pandas.NA
-        na_values_selector = (data_df.loc[:, column].isin(NA_VALUES)) | (data_df.loc[:, column].isna())
+        na_values_selector = (data_df.loc[:, column].isin(na_values)) | (data_df.loc[:, column].isna())
         data_df.loc[na_values_selector, column] = pandas.NA
         # Looking for numeric columns that have commas instead of decimals and replacing the commas with decimals.
         temp_column = data_df.loc[:, column]
@@ -1521,28 +1287,34 @@ def clean_df(data_df, drop_numeric=False):
     # Fix any html characters.
     data_df = data_df.map(html.unescape)
     
-    data_df = clean_columns(data_df)
+    data_df = clean_columns(data_df, na_values = NA_VALUES + ['0'] if drop_numeric and _are_zeros_na(data_df) else NA_VALUES)
     
-    # Drop some columns in Data if certain conditions are met.
-    no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
-    if no_name_columns and drop_numeric:
-        # Drop non-numeric columns and columns that are the sum of the other columns.
-        no_name_df = data_df.loc[:, no_name_columns]
-        non_numeric_columns = ~no_name_df.apply(is_column_numeric)
-        # If a column is the sum of other columns then drop it.
+    if drop_numeric:
         numeric_df = _create_numeric_df(data_df)
-        sum_df = numeric_df.loc[:, [column for column in numeric_df.columns if column not in no_name_columns]].sum(axis=1)
-        numeric_no_name_df = no_name_df.apply(pandas.to_numeric, errors='coerce')
-        # Equal comparison doesn't work because of floating point math.
-        # Calculate percent difference and if it is low enough say they are equal.
-        percent_diff = numeric_no_name_df.sub(sum_df, axis='index').div(sum_df, axis='index').abs()
-        columns_to_drop = non_numeric_columns | (percent_diff < 1.0e-6).all()
-        columns_to_drop = columns_to_drop[columns_to_drop].index
-        data_df.drop(columns = columns_to_drop, inplace=True)
+        # Drop some columns in Data if certain conditions are met.
+        no_name_columns = [column for column in data_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
+        if no_name_columns:
+            # Drop non-numeric columns and columns that are the sum of the other columns.
+            no_name_df = data_df.loc[:, no_name_columns]
+            non_numeric_columns = ~no_name_df.apply(is_column_numeric)
+            # If a column is the sum of other columns then drop it.
+            sum_df = numeric_df.loc[:, [column for column in numeric_df.columns if column not in no_name_columns]].sum(axis=1)
+            numeric_no_name_df = no_name_df.apply(pandas.to_numeric, errors='coerce')
+            # Equal comparison doesn't work because of floating point math.
+            # Calculate percent difference and if it is low enough say they are equal.
+            percent_diff = numeric_no_name_df.sub(sum_df, axis='index').div(sum_df, axis='index').abs()
+            columns_to_drop = non_numeric_columns | (percent_diff < 1.0e-6).all()
+            columns_to_drop = columns_to_drop[columns_to_drop].index
+            data_df.drop(columns = columns_to_drop, inplace=True)
+        
+        if 'Metabolite' in data_df.columns:
+            # Add metabolites back and drop duplicates.
+            numeric_df.loc[:, 'Metabolite'] = data_df.loc[:, 'Metabolite']
+            data_df = data_df.loc[numeric_df.drop_duplicates().index, :]
+    
+    data_df = data_df.drop_duplicates()
     
     return data_df
-
-
 
 
 def _find_duplicate_indexes_to_delete(groups, data_df):
@@ -1559,16 +1331,5 @@ def _find_duplicate_indexes_to_delete(groups, data_df):
     return indexes_to_delete
 
 
-def _create_numeric_df(data_df):
-    """
-    """
-    numeric_df = data_df.iloc[:, 1:]
-    numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
-    # Add metabolites back and drop duplicates.
-    numeric_df.loc[:, 'Metabolites'] = data_df.loc[:, 'Metabolite']
-    numeric_df = numeric_df.drop_duplicates()
-    # Remove Metabolites and find duplicate rows.
-    numeric_df = numeric_df.drop('Metabolites', axis=1)
-    return numeric_df
 
 

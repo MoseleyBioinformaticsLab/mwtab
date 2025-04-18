@@ -632,6 +632,15 @@ def fix_row_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: 
                                                              shift_right = False)
         messages += modify_messages
         
+        # After shifting, some columns on the end will now be all NA with no name, so remove them.
+        no_name_columns = [column for column in metabolites_df.columns if column == '' or re.match(r'\{\{\{_\d+_\}\}\}', column)]
+        if no_name_columns:
+            no_name_df = metabolites_df.loc[:, no_name_columns]
+            null_columns = no_name_df.isna().all()
+            columns_to_drop = null_columns[null_columns].index
+            if len(columns_to_drop) > 0:
+                metabolites_df = metabolites_df.drop(columns = columns_to_drop)
+        
         
     return metabolites_df, messages
 
