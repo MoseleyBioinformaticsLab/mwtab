@@ -26,7 +26,7 @@ find_metabolite_families = utility_functions.find_metabolite_families
 _determine_row_subsets = utility_functions._determine_row_subsets
 find_family_sequences = utility_functions.find_family_sequences
 drop_duplicate_subsets = utility_functions.drop_duplicate_subsets
-
+# TODO make sure all functions in utility_functions are removed from repair.py
 
 
 VERBOSE = False
@@ -244,157 +244,10 @@ def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
                         continue
                 
                 temp_dict[element2] = ratio
-            
-            
-            
-            # ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, element2.lower())
-            # if ratio >= 90:
-            #     temp_dict[element2] = ratio
-            # elif ratio >= 80 and len(element1) == len(element2):
-            #     lowered_element2 = element2.lower()
-            #     for i in range(len(element1)):
-            #         if lowered_element1[i] != lowered_element2[i]:
-            #             replace_char1 = lowered_element1[i]
-            #             replace_char2 = lowered_element2[i]
-            #             break
-            #     if lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
-            #         temp_dict[element2] = 100
-            #     # replace_chars = [(char,lowered_element2[i]) for i, char in enumerate(lowered_element1) if char not in lowered_element2][0]
-            #     # if lowered_element1.replace(replace_chars[0], replace_chars[1]) == lowered_element2:
-            #     #     temp_dict[element2] = 100
-            #     else:
-            #         replacement1 = lowered_element1.replace('^', "'")
-            #         replacement1 = replacement1.replace('_', ',')
-            #         replacement2 = lowered_element1.replace("'", "^")
-            #         replacement2 = replacement2.replace(',', '_')
-            #         replacement3 = lowered_element1.replace("'", "^")
-            #         replacement3 = replacement3.replace('_', ',')
-            #         replacement4 = lowered_element1.replace("^", "'")
-            #         replacement4 = replacement4.replace(',', '_')
-            #         if replacement1 == lowered_element2 or \
-            #             replacement2 == lowered_element2 or \
-            #             replacement3 == lowered_element2 or \
-            #             replacement4 == lowered_element2:
-            #             temp_dict[element2] = 100
         
         if temp_dict:
             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
     return fuzz_ratios
-
-# def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
-#     """
-#     """
-#     fuzz_ratios = {}
-#     for element1 in list1:
-#         temp_dict = {}
-#         lowered_element1 = element1.lower()
-#         for element2 in list2:
-            
-#             lowered_element2 = element2.lower()
-#             if len(element1) == len(element2):
-#                 replacement1 = lowered_element1.replace('^', "'")
-#                 replacement1 = replacement1.replace('_', ',')
-#                 replacement2 = lowered_element1.replace("'", "^")
-#                 replacement2 = replacement2.replace(',', '_')
-#                 replacement3 = lowered_element1.replace("'", "^")
-#                 replacement3 = replacement3.replace('_', ',')
-#                 replacement4 = lowered_element1.replace("^", "'")
-#                 replacement4 = replacement4.replace(',', '_')
-#                 if replacement1 == lowered_element2 or \
-#                    replacement2 == lowered_element2 or \
-#                    replacement3 == lowered_element2 or \
-#                    replacement4 == lowered_element2:
-#                     temp_dict[element2] = 100
-#                     continue
-#                 else:
-#                     for i in range(len(element1)):
-#                         replace_char1 = None
-#                         if lowered_element1[i] != lowered_element2[i]:
-#                             replace_char1 = lowered_element1[i]
-#                             replace_char2 = lowered_element2[i]
-#                             break
-#                     # Don't replace characters that are numbers or letters, only symbols.
-#                     # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same.
-#                     if replace_char1 and \
-#                        lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
-#                         temp_dict[element2] = 100
-#                         continue
-            
-#             ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, lowered_element2)
-#             if ratio >= inclusion_ratio:
-#                 # match1 = re.match(r'(.*)_(\d+)', lowered_element1)
-#                 # match2 = re.match(r'(.*)_(\d+)', lowered_element2)
-#                 # if match1 and match2 and match1.group(2) != match2.group(2):
-#                 #     continue
-#                 # elif match1:
-#                 #     replacement1 = lowered_element2.replace('^', "'")
-#                 #     replacement1 = replacement1.replace('_', ',')
-#                 #     replacement2 = lowered_element2.replace("'", "^")
-#                 #     replacement2 = replacement2.replace(',', '_')
-#                 #     replacement3 = lowered_element2.replace("'", "^")
-#                 #     replacement3 = replacement3.replace('_', ',')
-#                 #     replacement4 = lowered_element2.replace("^", "'")
-#                 #     replacement4 = replacement4.replace(',', '_')
-#                 #     if lowered_element2 in lowered_element1 or \
-#                 #        replacement1 in lowered_element1 or \
-#                 #        replacement2 in lowered_element1 or \
-#                 #        replacement3 in lowered_element1 or \
-#                 #        replacement4 in lowered_element1:
-#                 #         continue
-#                 # elif match2:
-#                 #     replacement1 = lowered_element1.replace('^', "'")
-#                 #     replacement1 = replacement1.replace('_', ',')
-#                 #     replacement2 = lowered_element1.replace("'", "^")
-#                 #     replacement2 = replacement2.replace(',', '_')
-#                 #     replacement3 = lowered_element1.replace("'", "^")
-#                 #     replacement3 = replacement3.replace('_', ',')
-#                 #     replacement4 = lowered_element1.replace("^", "'")
-#                 #     replacement4 = replacement4.replace(',', '_')
-#                 #     if lowered_element1 in lowered_element2 or \
-#                 #        replacement1 in lowered_element2 or \
-#                 #        replacement2 in lowered_element2 or \
-#                 #        replacement3 in lowered_element2 or \
-#                 #        replacement4 in lowered_element2:
-#                 #         continue
-                
-#                 temp_dict[element2] = ratio
-            
-            
-            
-#             # ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, element2.lower())
-#             # if ratio >= 90:
-#             #     temp_dict[element2] = ratio
-#             # elif ratio >= 80 and len(element1) == len(element2):
-#             #     lowered_element2 = element2.lower()
-#             #     for i in range(len(element1)):
-#             #         if lowered_element1[i] != lowered_element2[i]:
-#             #             replace_char1 = lowered_element1[i]
-#             #             replace_char2 = lowered_element2[i]
-#             #             break
-#             #     if lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
-#             #         temp_dict[element2] = 100
-#             #     # replace_chars = [(char,lowered_element2[i]) for i, char in enumerate(lowered_element1) if char not in lowered_element2][0]
-#             #     # if lowered_element1.replace(replace_chars[0], replace_chars[1]) == lowered_element2:
-#             #     #     temp_dict[element2] = 100
-#             #     else:
-#             #         replacement1 = lowered_element1.replace('^', "'")
-#             #         replacement1 = replacement1.replace('_', ',')
-#             #         replacement2 = lowered_element1.replace("'", "^")
-#             #         replacement2 = replacement2.replace(',', '_')
-#             #         replacement3 = lowered_element1.replace("'", "^")
-#             #         replacement3 = replacement3.replace('_', ',')
-#             #         replacement4 = lowered_element1.replace("^", "'")
-#             #         replacement4 = replacement4.replace(',', '_')
-#             #         if replacement1 == lowered_element2 or \
-#             #             replacement2 == lowered_element2 or \
-#             #             replacement3 == lowered_element2 or \
-#             #             replacement4 == lowered_element2:
-#             #             temp_dict[element2] = 100
-        
-#         if temp_dict:
-#             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
-#     return fuzz_ratios
-
 
 def fuzzy_match(fuzz_ratios):
     """
