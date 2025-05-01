@@ -342,6 +342,30 @@ def _update_rows_and_cols_to_shift(rows_to_shift: dict, cols_to_shift: dict, tem
     return rows_to_shift, cols_to_shift
 
 
+def _filter_columns_from_attributes(columns, lowered_columns, attributes):
+    """Simple wrapper around _column_name_matching to pull attributes from a dictionary.
+    
+    Args:
+        columns: collection of column names to filter.
+        lowered_columns: the same as columns but with all names lowered.
+        attributes: dictionary with keys for the appropriate attributes used in filtering.
+    
+    Returns:
+        A list of columns filtered to only the ones that match.
+    """
+    regex_search_strings = attributes['regex_search_strings']
+    regex_search_sets = attributes['regex_search_sets']
+    not_regex_search_strings = attributes['not_regex_search_strings']
+    in_strings = attributes['in_strings']
+    in_string_sets = attributes['in_string_sets']
+    not_in_strings = attributes['not_in_strings']
+    exact_strings = attributes['exact_strings']
+    columns_of_interest = _column_name_matching(columns, lowered_columns, 
+                                                regex_search_strings, not_regex_search_strings, regex_search_sets,
+                                                in_strings, not_in_strings, in_string_sets, exact_strings)
+    return columns_of_interest
+
+
 def _determine_rows_and_cols_to_shift(metabolites_df: pandas.DataFrame, column_matching_attributes: dict) -> Tuple[dict, dict, dict, dict]:
     """Go through each column of metabolites_df and look for values to shift within a row.
     
@@ -359,21 +383,22 @@ def _determine_rows_and_cols_to_shift(metabolites_df: pandas.DataFrame, column_m
         cols_to_shift are dicts with keys for each column location and a list of indexes as values.
         Both are the same information just in 2 different perspectives for easier searching downstream.
     """
-    ## TODO might need to switch to ordered dicts if we continue supporting lower python versions. Columns need to be in order.
     column_name_to_match_attributes = {column:[] for column in metabolites_df.columns}
     # column_name_to_identifier_name = {column:[] for column in metabolites_df.columns}
     lowered_metabolite_columns = [column.lower() for column in metabolites_df.columns]
     for identifier_name, identifier_attributes in column_matching_attributes.items():
-        regex_search_strings = identifier_attributes['regex_search_strings']
-        regex_search_sets = identifier_attributes['regex_search_sets']
-        not_regex_search_strings = identifier_attributes['not_regex_search_strings']
-        in_strings = identifier_attributes['in_strings']
-        in_string_sets = identifier_attributes['in_string_sets']
-        not_in_strings = identifier_attributes['not_in_strings']
-        exact_strings = identifier_attributes['exact_strings']
-        columns_of_interest = _column_name_matching(metabolites_df.columns, lowered_metabolite_columns, 
-                                                    regex_search_strings, not_regex_search_strings, regex_search_sets,
-                                                    in_strings, not_in_strings, in_string_sets, exact_strings)
+        # regex_search_strings = identifier_attributes['regex_search_strings']
+        # regex_search_sets = identifier_attributes['regex_search_sets']
+        # not_regex_search_strings = identifier_attributes['not_regex_search_strings']
+        # in_strings = identifier_attributes['in_strings']
+        # in_string_sets = identifier_attributes['in_string_sets']
+        # not_in_strings = identifier_attributes['not_in_strings']
+        # exact_strings = identifier_attributes['exact_strings']
+        # columns_of_interest = _column_name_matching(metabolites_df.columns, lowered_metabolite_columns, 
+        #                                             regex_search_strings, not_regex_search_strings, regex_search_sets,
+        #                                             in_strings, not_in_strings, in_string_sets, exact_strings)
+        columns_of_interest = _column_name_matching(metabolites_df.columns, lowered_metabolite_columns, **identifier_attributes)
+        # columns_of_interest = _filter_columns_from_attributes(metabolites_df.columns, lowered_metabolite_columns, identifier_attributes)
         for column in columns_of_interest:
             column_name_to_match_attributes[column].append(identifier_attributes)
             # column_name_to_identifier_name[column].append(identifier_name)

@@ -3,6 +3,8 @@
 Contains regular expressions specific to the repair command use case and the column_matching_attributes data structure.
 """
 
+import pandas
+
 from . import metabolites_regexes
 
 make_list_regex = metabolites_regexes.make_list_regex
@@ -177,7 +179,61 @@ LIST_OF_CAS = make_list_regex(CAS, ',')
 LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 
 
-
+class ColumnMatcher:
+    def __init__(self, regex_search_strings: None|list[str] = None, 
+                 not_regex_search_strings: None|list[str] = None, regex_search_sets: None|list[list[str]] = None,
+                 in_strings: None|list[str] = None, not_in_strings: None|list[str] = None, 
+                 in_string_sets: None|list[list[str]] = None, exact_strings: None|list[str] = None,
+                 values_type: None|str = None, values_regex: None|str = None, inverse_values_regex: None|str = None):
+        self.regex_search_strings = regex_search_strings if regex_search_strings else []
+        self.not_regex_search_strings = not_regex_search_strings if not_regex_search_strings else []
+        self.regex_search_sets = regex_search_sets if regex_search_sets else []
+        self.in_strings = in_strings if in_strings else []
+        self.not_in_strings = not_in_strings if not_in_strings else []
+        self.in_string_sets = in_string_sets if in_string_sets else []
+        self.exact_strings = exact_strings if exact_strings else []
+        
+        self.values_type = values_type if isinstance(values_type, str) else ''
+        self.values_regex = values_regex if isinstance(values_regex, str) else ''
+        self.inverse_values_regex = inverse_values_regex if isinstance(inverse_values_regex, str) else ''
+    
+    def series_values_match(self, series: pandas.Series) -> pandas.Series:
+        """Return a mask for the series based on type and regex matching.
+        
+        "values_regex" and "inverse_values_regex" are mutually exclusive and "values_regex" will take precedence if both are given. 
+        "values_type" and one of the regex parameters can both be used, the intermediate selectors are ANDed together.
+        
+        Args:
+            series: series to match values based on type and/or regex.
+        
+        Returns:
+            A pandas Series the same length as "series" with Boolean values that can be used to select the matching values in the series.
+        """
+        if self.values_regex:
+            regex_match = series.str.fullmatch(self.values_regex, na=False)
+        elif self.inverse_values_regex:
+            regex_match = ~series.str.fullmatch(self.inverse_values_regex, na=True)
+        else:
+            regex_match = pandas.Series([True]*len(series), index=series.index)
+        
+        old_NAs = series.isna()
+        column_to_numeric = pandas.to_numeric(series, errors='coerce')
+        column_to_numeric_NAs = column_to_numeric.isna()
+        new_NAs = column_to_numeric_NAs ^ old_NAs
+        
+        if self.values_type == "integer":
+            # The top line will return True for values like '1.0', but the bottom line won't.
+            # type_match = (column_to_numeric % 1 == 0) | ~new_NAs
+            type_match = ~series.str.contains('.', regex=False, na=False) | old_NAs
+        elif self.values_type == "numeric":
+            type_match = ~new_NAs
+        elif self.values_type == "non-numeric":
+            type_match = new_NAs | old_NAs
+        else:
+            type_match = pandas.Series([True]*len(series), index=series.index)
+        
+        return regex_match & type_match
+        
 
 
 # TODO check with the Metabolomics Workbench and see if they have preferred harmonized names, not sure why Christian did 'moverz' and 'moverz_quant' separately.
