@@ -947,7 +947,7 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                     
                     if table_name == 'Metabolites':
                         data_df, messages = repair_shifted_rows.fix_row_shift(data_df.astype('string[pyarrow]'), 
-                                                                              repair_metabolites_matching.column_matching_attributes)
+                                                                              repair_metabolites_matching.column_finders)
                         if messages:
                             print("Some row shifts were done on the Metabolites table.")
                             for message in messages:

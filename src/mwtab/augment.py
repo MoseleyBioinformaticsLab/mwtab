@@ -7,7 +7,6 @@ import re
 import pandas
 
 from . import utility_functions
-from . import repair_shifted_rows
 from . import repair_metabolites_matching
 
 _create_numeric_df = utility_functions._create_numeric_df
@@ -16,9 +15,7 @@ _determine_row_subsets = utility_functions._determine_row_subsets
 compute_fuzz_ratios = utility_functions.compute_fuzz_ratios
 _compute_fuzz_ratio = utility_functions._compute_fuzz_ratio
 
-column_matching_attributes = repair_metabolites_matching.column_matching_attributes
-
-_filter_columns_from_attributes = repair_shifted_rows._filter_columns_from_attributes
+column_finders = repair_metabolites_matching.column_finders
 
 
 def get_duplicate_rows(df, section_name, numeric=True):
@@ -357,9 +354,9 @@ for i, (name, group) in enumerate(groups):
     
     # Look for mz or retention time columns to see if groups are ambiguous or not.
     intermediate_df = pandas.DataFrame({'Metabolite':['name1', 'name2', 'name3', 'name4'], 'mz':[1,1, 2,2], 'final_group_num':[0,0, 1,1]})
-    lowered_columns = [column.lower() for column in intermediate_df.columns]
-    mz_column_names = _filter_columns_from_attributes(intermediate_df.columns, lowered_columns, **column_matching_attributes['moverz_quant'])
-    rt_column_names = _filter_columns_from_attributes(intermediate_df.columns, lowered_columns, **column_matching_attributes['retention_time'])
+    column_name_map = {column:column.lower() for column in intermediate_df.columns}
+    mz_column_names = column_finders['moverz_quant'].name_dict_match(column_name_map)
+    rt_column_names = column_finders['retention_time'].name_dict_match(column_name_map)
     intermediate_df.loc[:, 'same_mz'] = False
     intermediate_df.loc[:, 'same_rt'] = False
     intermediate_df.loc[:, 'duplicate_group_attributes'] = 'Unknown'
