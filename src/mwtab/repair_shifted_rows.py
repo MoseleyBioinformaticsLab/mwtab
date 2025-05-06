@@ -138,7 +138,8 @@ class ValueMatcher():
 class ColumnFinder:
     """Used to find columns in a DataFrame that match a NameMatcher and values in the column that match a ValueMatcher.
     """
-    def __init__(self, standard_name: str, name_matcher: NameMatcher, value_matcher: ValueMatcher):        
+    def __init__(self, standard_name: str, name_matcher: NameMatcher, value_matcher: ValueMatcher):
+        self.standard_name = standard_name
         self.name_matcher = name_matcher
         self.value_matcher = value_matcher
     
