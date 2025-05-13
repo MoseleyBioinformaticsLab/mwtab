@@ -12,36 +12,36 @@ import fuzzywuzzy.fuzz
 def _create_numeric_df(df):
     """
     """
-    numeric_df = df.iloc[:, 1:]
+    numeric_df = df.drop(['Metabolite'], axis=1)
     numeric_df = numeric_df.apply(pandas.to_numeric, errors='coerce')
     # 0 should be the same as nan for this, AN000027.
     numeric_df[numeric_df.isna()] = 0
     return numeric_df
 
 
-FAMILY_REGEX = r'(_(\d+)|-ALL|-13C(\d+)|-15N(\d+)|-[13C_15N](\d+))'
+FAMILY_REGEX = r'((_(\d+))+|-ALL|-13C(\d+)|-15N(\d+)|-[13C_15N](\d+))'
 def find_metabolite_families(metabolites):
     """
     """
-    roots = []
-    for met in metabolites:
-        if re_match := re.fullmatch(r'(.*)' + FAMILY_REGEX, met):
-            roots.append(re_match.group(1))
-        else:
-            roots.append(met)
-    roots = list(set(roots))
-    root_to_mets = {root:[root] for root in roots}
-    met_to_root = {root:root for root in roots}
-    for met in metabolites:
-        if met in roots:
-            continue
-        for root in roots:
-            if re.fullmatch(re.escape(root) + FAMILY_REGEX, met):
-                met_to_root[met] = root
-                root_to_mets[root].append(met)
-    
+    family_regex = r'^(.*?)' + FAMILY_REGEX + r'$'
+    met_series = pandas.Series(metabolites, dtype='string[pyarrow]')
+    roots = met_series.str.extract(family_regex).iloc[:, 0]
+    na_roots_mask = roots.isna()
+    roots.loc[na_roots_mask] = met_series[na_roots_mask]
+    roots_to_match = roots[~na_roots_mask]
+    root_groups = roots_to_match.groupby(roots_to_match)
+    root_to_mets = {met:[met] for met in roots[na_roots_mask]}
+    met_to_root = {met:met for met in metabolites}
+    for name, root_group in root_groups:
+        root = root_group.iloc[0]
+        mets = [root] + list(met_series.loc[root_group.index])
+        root_to_mets[root] = mets
+        met_to_root.update({met:root for met in mets})
     return met_to_root, root_to_mets
 
+# TODO modify this to handle groups like ['LPC', 'LPC_16_0', 'LPC_17_6', 'LPC_18_2', 'LPC_18_1', 'LPC_18_0', 'LPC_19_6'] from AN004198.
+# Currently, only the last integer will be used to sequence instead of the whole thing. Need to look for matches 
+# like _18_2 and transform to 182 for sequencing.
 def find_family_sequences(root_to_mets):
     """
     """
@@ -51,7 +51,7 @@ def find_family_sequences(root_to_mets):
             continue
         sequence = []
         for met in mets:
-            if re_match := re.fullmatch(r'.*' + FAMILY_REGEX, met):
+            if re_match := re.fullmatch(r'.*?' + FAMILY_REGEX, met):
                 sequence_num = [group for group in re_match.groups()[1:] if group and re.fullmatch(r'\d+', group)]
                 if sequence_num:
                     sequence.append(int(sequence_num[0]))
@@ -104,10 +104,14 @@ def _compute_fuzz_ratio(string1, string2, inclusion_ratio=90):
         replacement3 = replacement3.replace('_', ',')
         replacement4 = lowered_string1.replace("^", "'")
         replacement4 = replacement4.replace(',', '_')
+        replacement5 = lowered_string1.replace('+', '_')
+        replacement6 = lowered_string1.replace('_', '+')
         if replacement1 == lowered_string2 or \
            replacement2 == lowered_string2 or \
            replacement3 == lowered_string2 or \
-           replacement4 == lowered_string2:
+           replacement4 == lowered_string2 or \
+           replacement5 == lowered_string2 or \
+           replacement6 == lowered_string2:
             return 100
         else:
             for i in range(len(string1)):
@@ -140,11 +144,15 @@ def _compute_fuzz_ratio(string1, string2, inclusion_ratio=90):
             replacement3 = replacement3.replace('_', ',')
             replacement4 = lowered_string2.replace("^", "'")
             replacement4 = replacement4.replace(',', '_')
+            replacement5 = lowered_string2.replace('+', '_')
+            replacement6 = lowered_string2.replace('_', '+')
             if lowered_string2 in lowered_string1 or \
                replacement1 in lowered_string1 or \
                replacement2 in lowered_string1 or \
                replacement3 in lowered_string1 or \
-               replacement4 in lowered_string1:
+               replacement4 in lowered_string1 or \
+               replacement5 in lowered_string1 or \
+               replacement6 in lowered_string1:
                 return 0
         elif match2:
             replacement1 = lowered_string1.replace('^', "'")
@@ -155,11 +163,15 @@ def _compute_fuzz_ratio(string1, string2, inclusion_ratio=90):
             replacement3 = replacement3.replace('_', ',')
             replacement4 = lowered_string1.replace("^", "'")
             replacement4 = replacement4.replace(',', '_')
+            replacement5 = lowered_string1.replace('+', '_')
+            replacement6 = lowered_string1.replace('_', '+')
             if lowered_string1 in lowered_string2 or \
                replacement1 in lowered_string2 or \
                replacement2 in lowered_string2 or \
                replacement3 in lowered_string2 or \
-               replacement4 in lowered_string2:
+               replacement4 in lowered_string2 or \
+               replacement5 in lowered_string2 or \
+               replacement6 in lowered_string2:
                 return 0
         return ratio
 

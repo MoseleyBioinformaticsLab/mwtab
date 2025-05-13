@@ -1227,22 +1227,25 @@ LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
 # with open('C:/Users/Sparda/Desktop/Moseley Lab/Code/mwtab/scratch/_temp.txt', 'w') as tmp_file:
 #     tmp_file.write(temp)
 
-
+# Important NOTE! All of the regular expressions delivered to ValueMatchers are surrounded with an additional set of 
+# parenthesis. This is because they are later used with the pyarrow integration in pandas, and the behavior is 
+# slightly different between python's built in regular expressions and pyarrow's. TLDR, add wrapping parenthesis 
+# to avoid problems matching using pyarrow.
 column_finders = [
     ColumnFinder("moverz_quant",
                  NameMatcher(regex_search_strings = ['m/z', 'mz', 'moverz', 'mx'],
                              not_regex_search_strings = ['id'],
                              in_strings = ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
                              not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'retention'],),
-                 ValueMatcher(values_regex = NUMS + r'|' + \
-                                             LIST_OF_NUMS + r'|' + \
-                                             LIST_OF_NUMS_UNDERSCORE + r'|' + \
-                                             NUMS + r'\s*/\s*' + NUMS + r'|' + \
-                                             r'(' + NUMS + r'\s*\(' + NUMS + r'\)' + '\s*;\s*)+' + r'(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*|\s*)' + r'|' + \
-                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + r'|' + \
-                                             r'(' + NUMS + r'\s*)+' + r'|' + \
-                                             NUMS + r'\s*\(\s*' + NUMS + r'\s*\)' + r'|' + \
-                                             NUMS + r'\s*-\s*' + NUMS,)),
+                 ValueMatcher(values_regex = '(' + NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
+                                             LIST_OF_NUMS_UNDERSCORE + '|' + \
+                                             NUMS + r'\s*/\s*' + NUMS + '|' + \
+                                             '(' + NUMS + r'\s*\(' + NUMS + r'\)' + '\s*;\s*)+' + '(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*|\s*)' + '|' + \
+                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \
+                                             '(' + NUMS + r'\s*)+' + '|' + \
+                                             NUMS + r'\s*\(\s*' + NUMS + r'\s*\)' + '|' + \
+                                             NUMS + r'\s*-\s*' + NUMS + ')',)),
     
     ColumnFinder("mass",
                  NameMatcher(regex_search_strings = ['mass', 'quantmass', 'masses', 'mw', 'weight'],
@@ -1250,10 +1253,10 @@ column_finders = [
                              in_strings = ['exactmass', 'obsmass', 'calcmass', 'monoisotopicmass', 'molwt'],
                              not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'charge', 'over z', 'rsd', 'm/z'],
                              exact_strings = ['m meas.'],),
-                 ValueMatcher(values_regex = NUMS + r'|' + \
-                                             LIST_OF_NUMS + r'|' + \
+                 ValueMatcher(values_regex = '(' + NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
                                              NUMS + r'\s*/\s*' + NUMS + r'(\s*Da)?|' + \
-                                             NUMS + r'\s*-\s*' + NUMS,)),
+                                             NUMS + r'\s*-\s*' + NUMS + ')',)),
     
     ColumnFinder("parent_moverz_quant",
                  NameMatcher(exact_strings = ['parent'],),
@@ -1262,39 +1265,39 @@ column_finders = [
     ColumnFinder("mass_spectrum",
                  NameMatcher(in_strings = ['spec', 'pectrum'],
                              not_in_strings = ['species', 'composite'],),
-                 ValueMatcher(values_regex = r'(' + NUMS + ':' + NUMS + r'(_|\s+|$))+' + r'|' + \
-                                             NUMS + r'|' + \
-                                             LIST_OF_NUMS,)),
+                 ValueMatcher(values_regex = '(' + '(' + NUMS + ':' + NUMS + r'(_|\s+|$))+' + '|' + \
+                                             NUMS + '|' + \
+                                             LIST_OF_NUMS + ')',)),
     
     ColumnFinder("composite_mass_spectrum",
                  NameMatcher(in_string_sets = [['composite', 'spectrum']],
                              not_in_strings = ['species'],),
-                 ValueMatcher(values_regex = r'(' + PARENTHESIZED_LIST_OF_NUMS + r'\s*)+',)),
+                 ValueMatcher(values_regex = '(' + '(' + PARENTHESIZED_LIST_OF_NUMS + r'\s*)+' + ')',)),
     
     ColumnFinder("inchi_key",
                  NameMatcher(in_strings = ['inchikey', 'inchi-key', 'inchi_key', 'inchi key'],),
-                 ValueMatcher(values_regex = INCHIKEY + r'(\*?|\?*)' + r'|' +\
-                                             INCHIKEY_OR_NULL + r'(\s*or\s*|\s*;\s*|\s*_\s*|\s*&\s*)' + INCHIKEY_OR_NULL + r'|' +\
-                                             r'Sum\s*\(\s*' + INCHIKEY + r'(\s*\+\s*)' + INCHIKEY + r'\s*\)' + r'|' +\
-                                             LIST_OF_INCHIKEYS_SLASH,)),
+                 ValueMatcher(values_regex = '(' + INCHIKEY + r'(\*?|\?*)' + '|' +\
+                                             INCHIKEY_OR_NULL + r'(\s*or\s*|\s*;\s*|\s*_\s*|\s*&\s*)' + INCHIKEY_OR_NULL + '|' +\
+                                             r'Sum\s*\(\s*' + INCHIKEY + r'(\s*\+\s*)' + INCHIKEY + r'\s*\)' + '|' +\
+                                             LIST_OF_INCHIKEYS_SLASH + ')',)),
     
     ColumnFinder("inchi",
                  NameMatcher(in_strings = ['inchi'],
                              not_in_strings = ['key'],),
-                 ValueMatcher(values_regex = CHEAP_INCHI + r'|' + BRACKETED_LIST_OF_INCHI,)),
+                 ValueMatcher(values_regex = '(' + CHEAP_INCHI + '|' + BRACKETED_LIST_OF_INCHI + ')',)),
     
     ColumnFinder("smiles",
                  NameMatcher(in_strings = ['smile'],),
-                 ValueMatcher(values_regex = SMILES + r'|' + LIST_OF_SMILES_SEMICOLON,)),
+                 ValueMatcher(values_regex = '(' + SMILES + '|' + LIST_OF_SMILES_SEMICOLON + ')',)),
     
     ColumnFinder("formula",
                  NameMatcher(in_strings = ['formula'],),
                  ValueMatcher(values_type = 'non-numeric',
-                              values_regex = ISOTOPIC_FORMULA.replace('\d*', '\d*\s*') + r'|' + \
-                                             CHARGE_FORMULA + r'|' + \
-                                             GROUP_FORMULA + r'|' + \
-                                             BRACKETED_LIST_OF_FORMULAS + r'|' + \
-                                             BRACKETED_LIST_OF_ISOTOPIC_FORMULAS,)),
+                              values_regex = '(' + ISOTOPIC_FORMULA.replace('\d*', '\d*\s*') + '|' + \
+                                             CHARGE_FORMULA + '|' + \
+                                             GROUP_FORMULA + '|' + \
+                                             BRACKETED_LIST_OF_FORMULAS + '|' + \
+                                             BRACKETED_LIST_OF_ISOTOPIC_FORMULAS + ')',)),
     
     ColumnFinder("metabolite",
                  NameMatcher(exact_strings = ['metabolite'],),
@@ -1314,12 +1317,12 @@ column_finders = [
     ColumnFinder("refmet",
                  NameMatcher(in_strings = ['refmet'],
                              not_in_strings = ['name', 'in'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("class",
                  NameMatcher(in_strings = ['class']),
                  ValueMatcher(values_type = 'non-numeric',
-                              values_inverse_regex = ORGANIC_FORMULA,)),
+                              values_inverse_regex = '(' + ORGANIC_FORMULA + ')',)),
     
     ColumnFinder("pathway",
                  NameMatcher(in_strings = ['pathway'],
@@ -1333,136 +1336,136 @@ column_finders = [
     ColumnFinder("ion",
                  NameMatcher(regex_search_strings = ['ion', 'ions'],
                              not_in_strings = ['adduct', 'm/z', 'mass'],),
-                 ValueMatcher(values_regex = ION + r'|' + \
-                                             LIST_OF_IONS + r'|' + \
-                                             LIST_OF_IONS_SPACE + r'|' + \
-                                             NUMS + r'|' + \
-                                             LIST_OF_NUMS + r'|' + \
-                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + r'|' + \
-                                             LIST_OF_NUMS_SLASH,)),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_SPACE + '|' + \
+                                             NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
+                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \
+                                             LIST_OF_NUMS_SLASH + ')',)),
     
     ColumnFinder("adduct",
                  NameMatcher(in_strings = ['adduct'],
                              not_in_strings = ['formula'],),
-                 ValueMatcher(values_regex = ION + r'|' + \
-                                             LIST_OF_IONS + r'|' + \
-                                             LIST_OF_IONS_SPACE + r'|' + \
-                                             LIST_OF_IONS_UNDERSCORE + r'|' + \
-                                             LIST_OF_IONS_MIXED + r'|' + \
-                                             LIST_OF_IONS_NO_DELIMITER + r'|' + \
-                                             BRACKETED_LIST_OF_IONS,)),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_SPACE + '|' + \
+                                             LIST_OF_IONS_UNDERSCORE + '|' + \
+                                             LIST_OF_IONS_MIXED + '|' + \
+                                             LIST_OF_IONS_NO_DELIMITER + '|' + \
+                                             BRACKETED_LIST_OF_IONS + ')',)),
     
     ColumnFinder("species",
                  NameMatcher(in_strings = ['species'],
                              not_in_strings = ['is_species', 'ion'],),
-                 ValueMatcher(values_regex = ION + r'|' + \
-                                             LIST_OF_IONS + r'|' + \
-                                             LIST_OF_IONS_UNDERSCORE,)),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_UNDERSCORE + ')',)),
     
     ColumnFinder("pubchem",
                  NameMatcher(regex_search_strings = ['cid'],
                              in_strings = ['pubchem'],
                              not_in_strings = ['formula', 'kegg'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS + r'[&?]?' + r'|' + \
-                                             LIST_OF_POS_INTS + r'|' + \
-                                             LIST_OF_POS_INTS_OR + r'|' + \
-                                             LIST_OF_POS_INTS_SLASH + r'|' + \
-                                             LIST_OF_POS_INTS_SPACE + r'|' + \
-                                             LIST_OF_POS_INTS_SEMICOLON + r'|' + \
-                                             r'Sum \(\d+ \+ \d+\)' + r'|' + \
-                                             r'CID' + POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + r'[&?]?' + '|' + \
+                                             LIST_OF_POS_INTS + '|' + \
+                                             LIST_OF_POS_INTS_OR + '|' + \
+                                             LIST_OF_POS_INTS_SLASH + '|' + \
+                                             LIST_OF_POS_INTS_SPACE + '|' + \
+                                             LIST_OF_POS_INTS_SEMICOLON + '|' + \
+                                             r'Sum \(\d+ \+ \d+\)' + '|' + \
+                                             r'CID' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("kegg",
                  NameMatcher(in_strings = ['kegg'],
                              not_in_strings = ['name'],),
-                 ValueMatcher(values_regex = KEGG + r'|' + \
-                                             LIST_OF_KEGG + r'|' + \
-                                             LIST_OF_KEGG_SEMICOLON + r'|' + \
-                                             LIST_OF_KEGG_SLASH + r'|' + \
-                                             LIST_OF_KEGG_DOUBLE_SLASH + r'|' + \
-                                             LIST_OF_KEGG_UNDERSCORE + r'|' + \
-                                             LIST_OF_KEGG_HYPHEN + r'|' + \
-                                             LIST_OF_KEGG_MIXED + r'|' + \
-                                             LIST_OF_KEGG_SPACE + r'|' + \
-                                             LIST_OF_KEGG_BAR + r'|' + \
-                                             KEGG + r'-' + FORMULA  + r'|' + \
-                                             KEGG + r';\d+',)),
+                 ValueMatcher(values_regex = '(' + KEGG + '|' + \
+                                             LIST_OF_KEGG + '|' + \
+                                             LIST_OF_KEGG_SEMICOLON + '|' + \
+                                             LIST_OF_KEGG_SLASH + '|' + \
+                                             LIST_OF_KEGG_DOUBLE_SLASH + '|' + \
+                                             LIST_OF_KEGG_UNDERSCORE + '|' + \
+                                             LIST_OF_KEGG_HYPHEN + '|' + \
+                                             LIST_OF_KEGG_MIXED + '|' + \
+                                             LIST_OF_KEGG_SPACE + '|' + \
+                                             LIST_OF_KEGG_BAR + '|' + \
+                                             KEGG + r'-' + FORMULA  + '|' + \
+                                             KEGG + r';\d+' + ')',)),
     
     ColumnFinder("hmdb",
                  NameMatcher(in_strings = ['hmdb', 'human metabolome'],
                              in_string_sets = [['hmp', 'id']],
                              not_in_strings = ['class'],),
-                 ValueMatcher(values_regex = HMDB + r'|' + \
-                                             HMDB_INT + r'|' + \
-                                             LIST_OF_HMDB + r'|' + \
-                                             LIST_OF_HMDB_SLASH + r'|' + \
-                                             LIST_OF_HMDB_INTS + r'|' + \
-                                             LIST_OF_HMDB_INTS_SLASH + r'|' + \
-                                             r'Sum \(HMDB\d+ \+ HMDB\d+\)' + r'|' + \
-                                             LIST_OF_HMDB_AMPERSAND + r'|' + \
-                                             LIST_OF_HMDB_SEMICOLON + r'|' + \
-                                             LIST_OF_HMDB_SPACE + r'|' + \
-                                             r'METPA\d+' + r'|' + \
-                                             LIST_OF_HMDB_UNDERSCORE,)),
+                 ValueMatcher(values_regex = '(' + HMDB + '|' + \
+                                             HMDB_INT + '|' + \
+                                             LIST_OF_HMDB + '|' + \
+                                             LIST_OF_HMDB_SLASH + '|' + \
+                                             LIST_OF_HMDB_INTS + '|' + \
+                                             LIST_OF_HMDB_INTS_SLASH + '|' + \
+                                             r'Sum \(HMDB\d+ \+ HMDB\d+\)' + '|' + \
+                                             LIST_OF_HMDB_AMPERSAND + '|' + \
+                                             LIST_OF_HMDB_SEMICOLON + '|' + \
+                                             LIST_OF_HMDB_SPACE + '|' + \
+                                             r'METPA\d+' + '|' + \
+                                             LIST_OF_HMDB_UNDERSCORE + ')',)),
     
     ColumnFinder("lmp",
                  NameMatcher(in_strings = ['lipidmaps', 'lmid'],
                              in_string_sets = [['lmp', 'id'], ['lipid', 'map'], ['lm', 'id']],),
-                 ValueMatcher(values_regex = LIPID_MAPS + r'|' + \
-                                             LIST_OF_LMP_UNDERSCORE + r'|' + \
-                                             LIST_OF_LMP + r'|' + \
-                                             LIST_OF_LMP_SLASH + r'|' + \
-                                             POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + LIPID_MAPS + '|' + \
+                                             LIST_OF_LMP_UNDERSCORE + '|' + \
+                                             LIST_OF_LMP + '|' + \
+                                             LIST_OF_LMP_SLASH + '|' + \
+                                             POSITIVE_INTS + ')',)),
     
     ColumnFinder("chemspider",
                  NameMatcher(in_strings = ['chemspider'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS + r'[&?]?' + r'|' + \
-                                             LIST_OF_POS_INTS + r'|' + \
-                                             LIST_OF_POS_INTS_OR + r'|' + \
-                                             LIST_OF_POS_INTS_SLASH + r'|' + \
-                                             LIST_OF_POS_INTS_SPACE + r'|' + \
-                                             LIST_OF_POS_INTS_SEMICOLON + r'|' + \
-                                             r'Sum \(\d+ \+ \d+\)' + r'|' + \
-                                             r'CID' + POSITIVE_INTS + r'|' + \
-                                             r'CSID' + POSITIVE_INTS + r'|' + \
-                                             r'[CD]\d{5}' + r'|' + \
-                                             make_list_regex(r'[CD]\d{5}', r'\|'),)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + r'[&?]?' + '|' + \
+                                             LIST_OF_POS_INTS + '|' + \
+                                             LIST_OF_POS_INTS_OR + '|' + \
+                                             LIST_OF_POS_INTS_SLASH + '|' + \
+                                             LIST_OF_POS_INTS_SPACE + '|' + \
+                                             LIST_OF_POS_INTS_SEMICOLON + '|' + \
+                                             r'Sum \(\d+ \+ \d+\)' + '|' + \
+                                             'CID' + POSITIVE_INTS + '|' + \
+                                             'CSID' + POSITIVE_INTS + '|' + \
+                                             r'[CD]\d{5}' + '|' + \
+                                             make_list_regex(r'[CD]\d{5}', r'\|') + ')',)),
     
     ColumnFinder("metlin",
                  NameMatcher(in_strings = ['metlin'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS + r'|' + r'METLIN:' + POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + '|' + r'METLIN:' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("cas_number",
                  NameMatcher(regex_search_strings = ['cas'],),
-                 ValueMatcher(values_regex = CAS + r'|' + LIST_OF_CAS + r'|' + LIST_OF_CAS_SEMICOLON,)),
+                 ValueMatcher(values_regex = '(' + CAS + '|' + LIST_OF_CAS + '|' + LIST_OF_CAS_SEMICOLON + ')',)),
     
     ColumnFinder("binbase_id",
                  NameMatcher(regex_search_strings = ['bb'],
                              in_strings = ['binbase'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("chebi_id",
                  NameMatcher(in_strings = ['chebi'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("mw_regno",
                  NameMatcher(in_strings = ['regno'],
                              in_string_sets = [['mw', 'structure']],),
-                 ValueMatcher(values_regex = POSITIVE_INTS + r'|' + LIST_OF_POS_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + '|' + LIST_OF_POS_INTS + ')',)),
     
     ColumnFinder("mzcloud_id",
                  NameMatcher(in_string_sets = [['mz', 'cloud', 'id']],),
-                 ValueMatcher(values_regex = r'((Reference|Autoprocessed)-)?' + POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + r'((Reference|Autoprocessed)-)?' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("identifier",
                  NameMatcher(in_strings = ['identifier', 'retention time_m/z', 'feature@rt'],
                              not_in_strings = ['pubchem', 'study', 'database'],),
-                 ValueMatcher(values_regex = POS_FLOAT_PAIRS + r'(n|m/z)?' + r'|' + \
-                                             POS_INT_FLOAT_PAIR + r'|' + \
-                                             LIST_OF_POS_FLOAT_PAIRS_UNDERSCORE + r'|' + \
-                                             LIST_OF_POS_FLOAT_PAIRS_NO_SPACE + r'|' + \
-                                             LIST_OF_POS_FLOAT_PAIRS_MIXED + r'|' + \
-                                             r'CHEBI:\d+',)),
+                 ValueMatcher(values_regex = '(' + POS_FLOAT_PAIRS + r'(n|m/z)?' + '|' + \
+                                             POS_INT_FLOAT_PAIR + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_UNDERSCORE + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_NO_SPACE + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_MIXED + '|' + \
+                                             r'CHEBI:\d+' + ')',)),
     
     ColumnFinder("other_id",
                  NameMatcher(not_regex_search_strings = ['cas'],
@@ -1470,7 +1473,7 @@ column_finders = [
                              in_string_sets = [['database', 'identifier'], ['chemical', 'id'], ['cmpd', 'id'], ['database', 'id'], ['database', 'match'], ['local', 'id'], ['row', 'id'], ['comp', 'id'], ['chem', 'id'], ['chro', 'lib', 'id'], ['lib', 'id']],
                              not_in_strings = ['type', 'pubchem', 'chemspider', 'kegg'],
                              exact_strings = ['id'],),
-                 ValueMatcher(values_inverse_regex = FLOAT + r'|' + SCIENTIFIC_NOTATION,)),
+                 ValueMatcher(values_inverse_regex = '(' + FLOAT + '|' + SCIENTIFIC_NOTATION + ')',)),
     
     ColumnFinder("other_id_type",
                  NameMatcher(in_string_sets = [['other', 'type'], ['source', 'database']],),
@@ -1482,17 +1485,17 @@ column_finders = [
                              in_strings = ['rtimes', 'r.t.', 'medrt', 'rtsec', 'bestrt', 'compoundrt', 'rtmed'],
                              in_string_sets = [['retention', 'time'], ['rentetion', 'time'], ['retension', 'time']],
                              not_in_strings = ['type', 'error', 'index', 'delta', 'feature', 'm/z'],),
-                 ValueMatcher(values_regex = POSITIVE_FLOATS + r'|' + \
-                                             r'\d' + r'|' + \
-                                             POSITIVE_SCIENTIFIC_NOTATION + r'|' + \
-                                             POSITIVE_FLOAT_RANGE + r'|' + \
-                                             LIST_OF_POS_FLOATS_UNDERSCORE,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_FLOATS + '|' + \
+                                             r'\d' + '|' + \
+                                             POSITIVE_SCIENTIFIC_NOTATION + '|' + \
+                                             POSITIVE_FLOAT_RANGE + '|' + \
+                                             LIST_OF_POS_FLOATS_UNDERSCORE + ')',)),
     
     ColumnFinder("delta_rt",
                  NameMatcher(in_strings = ['deltart'],
                              in_string_sets = [['delta', 'rt']],
                              not_in_strings = ['type', 'error', 'index'],),
-                 ValueMatcher(values_regex = FLOAT + r'|' + r'0',)),
+                 ValueMatcher(values_regex = FLOAT + '|' + r'0',)),
     
     ColumnFinder("retention_index",
                  NameMatcher(regex_search_strings = ['ri'],
@@ -1500,11 +1503,11 @@ column_finders = [
                              in_strings = ['rindex'],
                              in_string_sets = [['retention', 'index'], ['rentetion', 'index'], ['reten', 'index']],
                              not_in_strings = ['type', 'error'],),
-                 ValueMatcher(values_regex = POSITIVE_FLOATS + r'|' + \
-                                             r'\d' + r'|' + \
-                                             POSITIVE_SCIENTIFIC_NOTATION + r'|' + \
-                                             POSITIVE_FLOAT_RANGE + r'|' + \
-                                             LIST_OF_POS_FLOATS_UNDERSCORE,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_FLOATS + '|' + \
+                                             r'\d' + '|' + \
+                                             POSITIVE_SCIENTIFIC_NOTATION + '|' + \
+                                             POSITIVE_FLOAT_RANGE + '|' + \
+                                             LIST_OF_POS_FLOATS_UNDERSCORE + ')',)),
     
     ColumnFinder("retention_index_type",
                  NameMatcher(in_string_sets = [['retention', 'index', 'type'], ['ri', 'type']],
@@ -1517,11 +1520,11 @@ column_finders = [
     
     ColumnFinder("assignment_certainty",
                  NameMatcher(in_string_sets = [['assignment', 'certainty']],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("comment",
                  NameMatcher(in_strings = ['comment'],),
-                 ValueMatcher(values_inverse_regex = FLOAT + r'|' + SCIENTIFIC_NOTATION + r'|' + r'\d{2,}',)),
+                 ValueMatcher(values_inverse_regex = '(' + FLOAT + '|' + SCIENTIFIC_NOTATION + '|' + r'\d{2,}' + ')',)),
     
     ColumnFinder("assignment%method",
                  NameMatcher(in_string_sets = [['assignment', 'method']],),
@@ -1549,7 +1552,7 @@ column_finders = [
     ColumnFinder("transient_peak",
                  NameMatcher(in_string_sets = [['transient', 'peak']],
                              not_in_strings = ['type'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
     ColumnFinder("transient_peak%type",
                  NameMatcher(in_string_sets = [['transient', 'peak', 'type']],),
@@ -1557,7 +1560,7 @@ column_finders = [
     
     ColumnFinder("FISh Coverage",
                  NameMatcher(in_string_sets = [['fish', 'coverage']],),
-                 ValueMatcher(values_regex = POSITIVE_NUMS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_NUMS + ')',)),
     
     ColumnFinder("MSI Category",
                  NameMatcher(in_strings = ['msicategory'],),
@@ -1585,22 +1588,22 @@ column_finders = [
     
     ColumnFinder("polarity",
                  NameMatcher(in_strings = ['polarity'],),
-                 ValueMatcher(values_regex = r'(?i)(neg|pos|1|-1|\+|positive|negative)' + r'|\[M\+H\]\+|\[M-H\]-|5MM\+|5MM-',)),
+                 ValueMatcher(values_regex = r'(?i)((neg|pos|1|-1|\+|positive|negative)' + r'|\[M\+H\]\+|\[M-H\]-|5MM\+|5MM-)',)),
     
     ColumnFinder("ESI mode",
                  NameMatcher(in_strings = ['esi'],),
-                 ValueMatcher(values_regex = r'(neg|pos|1|-1|(ESI )?\(\+\)( ESI)?|(ESI )?\(-\)( ESI| ES\))?|positive|negative)',)),
+                 ValueMatcher(values_regex = r'((neg|pos|1|-1|(ESI )?\(\+\)( ESI)?|(ESI )?\(-\)( ESI| ES\))?|positive|negative)',)),
     
     ColumnFinder("Ionization mode",
                  NameMatcher(regex_search_sets = [['pos', 'neg']],
                              in_strings = ['ionization', 'ionisation'],
                              not_in_strings = ['confirmed'],
                              exact_strings = ['mode', 'ms mode'],),
-                 ValueMatcher(values_regex = r'(?i)(neg|pos|1|-1|(ES)?\+|(ES)?-|positive|negative|TOF|Splitless|Split30)',)),
+                 ValueMatcher(values_regex = r'(?i)((neg|pos|1|-1|(ES)?\+|(ES)?-|positive|negative|TOF|Splitless|Split30))',)),
     
     ColumnFinder("frequency",
                  NameMatcher(in_strings = ['frequency'],),
-                 ValueMatcher(values_regex = POSITIVE_INTS,)),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
 ]
 
 column_finders = {finder.standard_name: finder for finder in column_finders}
