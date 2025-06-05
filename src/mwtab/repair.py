@@ -164,90 +164,182 @@ def is_column_numeric(column):
 
  
 
+
+
+
+
+
+def _determine_permutation_products_of_pairs(character_set_pairs: list[list[list[str]]]):
+    """
+    """
+    character_set_products = []
+    for character_set in character_set_pairs:
+        perms = [[perm for perm in itertools.permutations(character_pair, r=2)] for character_pair in character_set]
+        character_set_products.append([prod for prod in itertools.product(*perms)])
+    return character_set_products
+
+CHARACTER_SETS_FOR_REPLACEMENT = [[['^', "'"], ['_', ',']], [['+', '_']]]
+character_set_products = _determine_permutation_products_of_pairs(CHARACTER_SETS_FOR_REPLACEMENT)
+REPLACEMENT_SETS = [item for sublist in character_set_products for item in sublist]
+
+def _chain_replace(list_of_pairs, string):
+    """
+    """
+    for pair in list_of_pairs:
+        string = string.replace(pair[0], pair[1])
+    return string
+
+
+
+def _compute_fuzz_ratio(string1, string2, inclusion_ratio=90):
+    """
+    """
+    lowered_string1 = string1.lower()
+    lowered_string2 = string2.lower()
+    if len(string1) == len(string2):
+        replacements = [_chain_replace(replacement_set, lowered_string1) for replacement_set in REPLACEMENT_SETS]
+        if any([replacement == lowered_string2 for replacement in replacements]):
+            return 100
+        else:
+            for i in range(len(string1)):
+                replace_char1 = None
+                if lowered_string1[i] != lowered_string2[i]:
+                    replace_char1 = lowered_string1[i]
+                    replace_char2 = lowered_string2[i]
+                    break
+            # Don't replace characters that are numbers or letters, only symbols.
+            # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same. AN000063
+            if replace_char1 and \
+               not replace_char1.isalnum() and \
+               not replace_char2.isalnum() and \
+               lowered_string1.replace(replace_char1, replace_char2) == lowered_string2:
+                return 100
+    
+    ratio = fuzzywuzzy.fuzz.ratio(lowered_string1, lowered_string2)
+    if ratio >= inclusion_ratio:
+        match1 = re.fullmatch(r'(.*)_(\d+)', lowered_string1)
+        match2 = re.fullmatch(r'(.*)_(\d+)', lowered_string2)
+        if match1 and match2 and match1.group(2) != match2.group(2):
+            return 0
+        # Don't want 'VITAMIN D3' fuzzy matching to 'VITAMIN D3_1'.
+        elif match1:
+            replacements = [_chain_replace(replacement_set, lowered_string2) for replacement_set in REPLACEMENT_SETS]
+            if lowered_string2 in lowered_string1 or any([replacement in lowered_string1 for replacement in replacements]):
+                return 0
+        elif match2:
+            replacements = [_chain_replace(replacement_set, lowered_string1) for replacement_set in REPLACEMENT_SETS]
+            if lowered_string2 in lowered_string1 or any([replacement in lowered_string2 for replacement in replacements]):
+                return 0
+        return ratio
+
 def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
     """
     """
     fuzz_ratios = {}
     for element1 in list1:
         temp_dict = {}
-        lowered_element1 = element1.lower()
         for element2 in list2:
-            
-            lowered_element2 = element2.lower()
-            if len(element1) == len(element2):
-                replacement1 = lowered_element1.replace('^', "'")
-                replacement1 = replacement1.replace('_', ',')
-                replacement2 = lowered_element1.replace("'", "^")
-                replacement2 = replacement2.replace(',', '_')
-                replacement3 = lowered_element1.replace("'", "^")
-                replacement3 = replacement3.replace('_', ',')
-                replacement4 = lowered_element1.replace("^", "'")
-                replacement4 = replacement4.replace(',', '_')
-                if replacement1 == lowered_element2 or \
-                   replacement2 == lowered_element2 or \
-                   replacement3 == lowered_element2 or \
-                   replacement4 == lowered_element2:
-                    temp_dict[element2] = 100
-                    continue
-                else:
-                    for i in range(len(element1)):
-                        replace_char1 = None
-                        if lowered_element1[i] != lowered_element2[i]:
-                            replace_char1 = lowered_element1[i]
-                            replace_char2 = lowered_element2[i]
-                            break
-                    # Don't replace characters that are numbers or letters, only symbols.
-                    # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same. AN000063
-                    if replace_char1 and \
-                       not replace_char1.isalnum() and \
-                       not replace_char2.isalnum() and \
-                       lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
-                        temp_dict[element2] = 100
-                        continue
-            
-            ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, lowered_element2)
-            if ratio >= inclusion_ratio:
-                match1 = re.fullmatch(r'(.*)_(\d+)', lowered_element1)
-                match2 = re.fullmatch(r'(.*)_(\d+)', lowered_element2)
-                if match1 and match2 and match1.group(2) != match2.group(2):
-                    continue
-                # Don't want 'VITAMIN D3' fuzzy matching to 'VITAMIN D3_1'.
-                elif match1:
-                    replacement1 = lowered_element2.replace('^', "'")
-                    replacement1 = replacement1.replace('_', ',')
-                    replacement2 = lowered_element2.replace("'", "^")
-                    replacement2 = replacement2.replace(',', '_')
-                    replacement3 = lowered_element2.replace("'", "^")
-                    replacement3 = replacement3.replace('_', ',')
-                    replacement4 = lowered_element2.replace("^", "'")
-                    replacement4 = replacement4.replace(',', '_')
-                    if lowered_element2 in lowered_element1 or \
-                       replacement1 in lowered_element1 or \
-                       replacement2 in lowered_element1 or \
-                       replacement3 in lowered_element1 or \
-                       replacement4 in lowered_element1:
-                        continue
-                elif match2:
-                    replacement1 = lowered_element1.replace('^', "'")
-                    replacement1 = replacement1.replace('_', ',')
-                    replacement2 = lowered_element1.replace("'", "^")
-                    replacement2 = replacement2.replace(',', '_')
-                    replacement3 = lowered_element1.replace("'", "^")
-                    replacement3 = replacement3.replace('_', ',')
-                    replacement4 = lowered_element1.replace("^", "'")
-                    replacement4 = replacement4.replace(',', '_')
-                    if lowered_element1 in lowered_element2 or \
-                       replacement1 in lowered_element2 or \
-                       replacement2 in lowered_element2 or \
-                       replacement3 in lowered_element2 or \
-                       replacement4 in lowered_element2:
-                        continue
-                
+            ratio = _compute_fuzz_ratio(element1, element2, inclusion_ratio)
+            if ratio:
                 temp_dict[element2] = ratio
         
         if temp_dict:
             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
     return fuzz_ratios
+
+
+
+
+
+
+
+
+
+
+# def compute_fuzz_ratios(list1, list2, inclusion_ratio=90):
+#     """
+#     """
+#     fuzz_ratios = {}
+#     for element1 in list1:
+#         temp_dict = {}
+#         lowered_element1 = element1.lower()
+#         for element2 in list2:
+            
+#             lowered_element2 = element2.lower()
+#             if len(element1) == len(element2):
+#                 replacement1 = lowered_element1.replace('^', "'")
+#                 replacement1 = replacement1.replace('_', ',')
+#                 replacement2 = lowered_element1.replace("'", "^")
+#                 replacement2 = replacement2.replace(',', '_')
+#                 replacement3 = lowered_element1.replace("'", "^")
+#                 replacement3 = replacement3.replace('_', ',')
+#                 replacement4 = lowered_element1.replace("^", "'")
+#                 replacement4 = replacement4.replace(',', '_')
+#                 if replacement1 == lowered_element2 or \
+#                    replacement2 == lowered_element2 or \
+#                    replacement3 == lowered_element2 or \
+#                    replacement4 == lowered_element2:
+#                     temp_dict[element2] = 100
+#                     continue
+#                 else:
+#                     for i in range(len(element1)):
+#                         replace_char1 = None
+#                         if lowered_element1[i] != lowered_element2[i]:
+#                             replace_char1 = lowered_element1[i]
+#                             replace_char2 = lowered_element2[i]
+#                             break
+#                     # Don't replace characters that are numbers or letters, only symbols.
+#                     # Otherwise 'VITAMIN D3_1' and 'VITAMIN D3_2' get marked as the same. AN000063
+#                     if replace_char1 and \
+#                        not replace_char1.isalnum() and \
+#                        not replace_char2.isalnum() and \
+#                        lowered_element1.replace(replace_char1, replace_char2) == lowered_element2:
+#                         temp_dict[element2] = 100
+#                         continue
+            
+#             ratio = fuzzywuzzy.fuzz.ratio(lowered_element1, lowered_element2)
+#             if ratio >= inclusion_ratio:
+#                 match1 = re.fullmatch(r'(.*)_(\d+)', lowered_element1)
+#                 match2 = re.fullmatch(r'(.*)_(\d+)', lowered_element2)
+#                 if match1 and match2 and match1.group(2) != match2.group(2):
+#                     continue
+#                 # Don't want 'VITAMIN D3' fuzzy matching to 'VITAMIN D3_1'.
+#                 elif match1:
+#                     replacement1 = lowered_element2.replace('^', "'")
+#                     replacement1 = replacement1.replace('_', ',')
+#                     replacement2 = lowered_element2.replace("'", "^")
+#                     replacement2 = replacement2.replace(',', '_')
+#                     replacement3 = lowered_element2.replace("'", "^")
+#                     replacement3 = replacement3.replace('_', ',')
+#                     replacement4 = lowered_element2.replace("^", "'")
+#                     replacement4 = replacement4.replace(',', '_')
+#                     if lowered_element2 in lowered_element1 or \
+#                        replacement1 in lowered_element1 or \
+#                        replacement2 in lowered_element1 or \
+#                        replacement3 in lowered_element1 or \
+#                        replacement4 in lowered_element1:
+#                         continue
+#                 elif match2:
+#                     replacement1 = lowered_element1.replace('^', "'")
+#                     replacement1 = replacement1.replace('_', ',')
+#                     replacement2 = lowered_element1.replace("'", "^")
+#                     replacement2 = replacement2.replace(',', '_')
+#                     replacement3 = lowered_element1.replace("'", "^")
+#                     replacement3 = replacement3.replace('_', ',')
+#                     replacement4 = lowered_element1.replace("^", "'")
+#                     replacement4 = replacement4.replace(',', '_')
+#                     if lowered_element1 in lowered_element2 or \
+#                        replacement1 in lowered_element2 or \
+#                        replacement2 in lowered_element2 or \
+#                        replacement3 in lowered_element2 or \
+#                        replacement4 in lowered_element2:
+#                         continue
+                
+#                 temp_dict[element2] = ratio
+        
+#         if temp_dict:
+#             fuzz_ratios[element1] = pandas.Series(temp_dict).sort_values()
+#     return fuzz_ratios
 
 def fuzzy_match(fuzz_ratios):
     """
@@ -1014,12 +1106,13 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
                     definite_matches = {pair[1]:pair[0] for pair in definite_matches}
                     # Identify families of metabolites.
                     # A family is something like 'VITAMIN B12' and 'VITAMIN B12_1'
-                    met_to_root, root_to_mets = find_metabolite_families(data_metabolites)
-                    met_to_root_met, root_to_mets_met = find_metabolite_families(metabolites_metabolites)
+                    _, root_to_mets, root_to_sequence = find_metabolite_families(data_metabolites)
+                    _, root_to_mets_met, root_to_sequence_met = find_metabolite_families(metabolites_metabolites)
                     # Look for familes like '6-Keto Prostaglandin F1', '6-Keto Prostaglandin F1_1', '6-Keto Prostaglandin F1_2' in 
                     # DATA and try to find them in METABOLITES, but with shifted numbers at the end.
-                    root_to_sequence = find_family_sequences(root_to_mets)
-                    root_to_sequence_met = find_family_sequences(root_to_mets_met)
+                    # TODO Generating root_to_sequence was moved into find_metabolite_families, this should be tested.
+                    # root_to_sequence = find_family_sequences(root_to_mets)
+                    # root_to_sequence_met = find_family_sequences(root_to_mets_met)
                     family_pairs = {}
                     for root, nums in root_to_sequence.items():
                         root_met = definite_matches.get(root, root)
@@ -1057,26 +1150,6 @@ def repair(lines, verbose, standardize, last_split, add_data_replace='=', factor
 
 
 
-
-
-
-def get_duplicate_rows(df, section_name, numeric=True):
-    """
-    """    
-    # Convert every column except the metabolite column to numbers.
-    if numeric:
-        numeric_df = _create_numeric_df(df)
-    else:
-        numeric_df = df.iloc[:, 1:]
-    
-    duplicates_bool = numeric_df.duplicated(keep=False)
-    if duplicates_bool.empty:
-        return pandas.DataFrame()
-    duplicates = numeric_df[duplicates_bool]
-    # Remove rows that are mono value. For example, if a row has all nan's that should not be considered as a duplicate.
-    duplicates = duplicates[~duplicates.nunique(axis = 1, dropna=False).eq(1)]
-    
-    return duplicates
 
 
 def _are_zeros_na(df):
@@ -1169,19 +1242,6 @@ def clean_df(data_df, drop_numeric=False):
     
     return data_df
 
-
-def _find_duplicate_indexes_to_delete(groups, data_df):
-    """
-    """
-    indexes_to_delete = []
-    for name, group in groups:
-        names = list(data_df.loc[group.index, :].iloc[:, 0])
-        fuzz_ratios = compute_fuzz_ratios(names, names)
-        fuzz_ratios = {metabolite:series.drop(metabolite) for metabolite, series in fuzz_ratios.items()}
-        duplicate_indexes = [group.iloc[i].name for i, (metabolite, series) in enumerate(fuzz_ratios.items()) if len(series) > 0]
-        # Add all indexes to list to delete except for 1.
-        indexes_to_delete += duplicate_indexes[:-1]
-    return indexes_to_delete
 
 
 
