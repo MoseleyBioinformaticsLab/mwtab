@@ -191,21 +191,21 @@ class MWTabFile(OrderedDict):
         # self._header = None
         
     def set_metabolites_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Metabolites'] = [self._default_dict_type(data_dict) for data_dict in df.astype(str).to_dict(orient='records')]
+        self[section_key]['Metabolites'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
         if df.shape[1] > 0:
             self._metabolite_header = [k for k in self[section_key]['Metabolites'][0].keys()][1:]
         elif clear_header:
             self._metabolite_header = []
     
     def set_extended_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Extended'] = [self._default_dict_type(data_dict) for data_dict in df.astype(str).to_dict(orient='records')]
+        self[section_key]['Extended'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
         if df.shape[1] > 0:
             self._extended_metabolite_header = [k for k in self[section_key]['Extended'][0].keys()][1:]
         elif clear_header:
             self._extended_metabolite_header = []
     
     def set_metabolites_data_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Data'] = [self._default_dict_type(data_dict) for data_dict in df.astype(str).to_dict(orient='records')]
+        self[section_key]['Data'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
         if df.shape[1] > 0:
             self._samples = [k for k in self[section_key]['Data'][0].keys()][1:]
         elif clear_header:
