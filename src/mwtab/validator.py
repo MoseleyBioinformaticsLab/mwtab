@@ -478,6 +478,12 @@ def validate_table_values(mwtabfile, data_section_key):
                     message = ("Warning: The column, \"{}\", in the {} section may have incorrect values. "
                               "90% or more of the values are the same, but 10% or less are different.".format(column, message_strings[table_name]))
                     errors.append(message)
+            
+            # Look for duplicate rows.
+            #TODO test.
+            if data_df.duplicated().any():
+                message = "Warning: There are duplicate rows in the {} section.".format(message_strings[table_name])
+                errors.append(message)
     return errors
 
 
@@ -498,9 +504,6 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         error_stout = io.StringIO()
     else:
         error_stout = sys.stdout
-    # TODO get rid of this and just replace validated_mwtabfile with metabfile. This is left over from when this used to make a copy,
-    # because they thought they might modify the data, but it doens't do that, so just get rid of it.
-    validated_mwtabfile = mwtabfile
 
     # generate validation log header(s)
     file_format = mwtabfile.source.split("/")[-1] if "https://www.metabolomicsworkbench.org/" in mwtabfile.source else \
@@ -550,48 +553,48 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
             # section = validate_section_schema(section, schema, section_key, error_stout)
             section, schema_errors = validate_section_schema(section, schema, section_key)
             errors.extend(schema_errors)
-            # validated_mwtabfile[section_key] = section
+            # mwtabfile[section_key] = section
         except Exception as e:
             errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
 
     # validate SUBJECT_SAMPLE_FACTORS
-    # validate_subject_samples_factors(validated_mwtabfile, error_stout)
-    errors.extend(validate_subject_samples_factors(validated_mwtabfile))
-    errors.extend(validate_factors(validated_mwtabfile))
+    # validate_subject_samples_factors(mwtabfile, error_stout)
+    errors.extend(validate_subject_samples_factors(mwtabfile))
+    errors.extend(validate_factors(mwtabfile))
 
     # validate ..._DATA sections
-    data_section_key = list(set(validated_mwtabfile.keys()) &
+    data_section_key = list(set(mwtabfile.keys()) &
                             {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})
     if data_section_key:
         data_section_key = data_section_key[0]
-        # validate_data(validated_mwtabfile, data_section_key, error_stout, False)
-        errors.extend(validate_data(validated_mwtabfile, data_section_key, False, metabolites))
+        # validate_data(mwtabfile, data_section_key, error_stout, False)
+        errors.extend(validate_data(mwtabfile, data_section_key, False, metabolites))
 
         if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
             # temp for testing
             if metabolites:
-                if "Metabolites" in validated_mwtabfile[data_section_key].keys():
-                    errors.extend(validate_metabolites(validated_mwtabfile, data_section_key))
+                if "Metabolites" in mwtabfile[data_section_key].keys():
+                    errors.extend(validate_metabolites(mwtabfile, data_section_key))
                 else:
                     errors.append("DATA: Missing METABOLITES section.")
-        if "Extended" in validated_mwtabfile[data_section_key].keys():
-            errors.extend(validate_extended(validated_mwtabfile, data_section_key))
+        if "Extended" in mwtabfile[data_section_key].keys():
+            errors.extend(validate_extended(mwtabfile, data_section_key))
         
-        errors.extend(validate_samples(validated_mwtabfile, data_section_key))
-        errors.extend(validate_metabolite_names(validated_mwtabfile, data_section_key))
-        errors.extend(validate_table_values(validated_mwtabfile, data_section_key))
+        errors.extend(validate_samples(mwtabfile, data_section_key))
+        errors.extend(validate_metabolite_names(mwtabfile, data_section_key))
+        errors.extend(validate_table_values(mwtabfile, data_section_key))
 
     else:
-        if "MS" in validated_mwtabfile.keys():
-            if not validated_mwtabfile["MS"].get("MS_RESULTS_FILE"):
+        if "MS" in mwtabfile.keys():
+            if not mwtabfile["MS"].get("MS_RESULTS_FILE"):
                 errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
-        elif "NM" in validated_mwtabfile.keys():
-            if not validated_mwtabfile['NM'].get('NMR_RESULTS_FILE'):
+        elif "NM" in mwtabfile.keys():
+            if not mwtabfile['NM'].get('NMR_RESULTS_FILE'):
                 errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section or NMR_RESULTS_FILE item in NM section.")
     
-    errors.extend(validate_metabolite_headers(validated_mwtabfile))
-    errors.extend(validate_header_lengths(validated_mwtabfile))
-    errors.extend(validate_sub_section_uniqueness(validated_mwtabfile))
+    errors.extend(validate_metabolite_headers(mwtabfile))
+    errors.extend(validate_header_lengths(mwtabfile))
+    errors.extend(validate_sub_section_uniqueness(mwtabfile))
 
     # finish writing validation/error log
     if errors:
@@ -611,25 +614,28 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         print("Status: Passing", file=error_stout)
 
     if verbose:
-        return validated_mwtabfile, None
+        return mwtabfile, None
     else:
-        return validated_mwtabfile, error_stout.getvalue()
+        return mwtabfile, error_stout.getvalue()
 
-## TODO add a check for duplicate numeric rows in DATA section.
 # TODO add checks for METABOLITES columns and try to give warnings for bad values, for example 'kegg_id' column should all be C00000, formula, inchi key,
 # Change some error messages to only print once if the file is a tab file and not a JSON file. For example if a column name is off.
 # Make sure the check that produces the error: "It is close to a header name and is likely due to a badly constructed Tab file." uses the same regex to identify the columns by name.
-# Make sure there is a check for duplicate column names in METABOLITES.
+
 # When certain columns are found in METABOLITES, look for the implied pair and warn if it isn't there. For example, other_id and other_id_type  and retention_index and retention_index_type.
 # Also look at the values in each pair and make sure they match, for instance AN000645 has values in other_id_type, but none in other_id.
+
 # Look for ID values such as HMDB in the other_id column and suggest to make specific columns for them instead of putting them in other_id.
 # Warn if a column name matches 2 different regexes in METABOlITES. 'retention time_m/z' in AN002889   AN004492 Feature@RT
 # warn about columns that don't match any known name or have obvious values.
+# Add a warning that lists all of the METABOLITES columns that aren't recognized as a "standard" column.
 # Warn about multiple other_id columns in a single data set. AN003406 has CHEM_ID, LIB_ID, COMP_ID and CHRO_LIB_ENTRY_ID.
 #     Warn about any "ID" columns we don't know, create a matcher that just looks for ID or id.
-# Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area.
 # Maybe add a check for column names that have the same name, but with an "s" at the end. for example, Name and Names in the same dataset.
+
+# Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area.
+
 # Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg
-# Add a warning that lists all of the METABOLITES columns that aren't recognized as a "standard" column.
+
 
 # Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.

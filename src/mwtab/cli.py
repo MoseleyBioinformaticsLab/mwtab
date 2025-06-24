@@ -159,6 +159,7 @@ def cli(cmdargs):
     fileio.VERBOSE = cmdargs["--verbose"]
     fileio.MWREST_URL = cmdargs["--mw-rest"]
     mwrest.VERBOSE = cmdargs["--verbose"]
+    output_format = OUTPUT_FORMATS[cmdargs.get("--output-format")] if cmdargs.get("--output-format") else "txt"
 
     # mwtab convert ...
     if cmdargs["convert"]:
@@ -193,7 +194,7 @@ def cli(cmdargs):
             path_to_save = get_file_path(
                                         cmdargs["--to-path"],
                                         mwrestfile.source,
-                                        OUTPUT_FORMATS[cmdargs.get("--output-format")])
+                                        output_format)
             fileio._create_save_path(path_to_save)
             with open(path_to_save, "w", encoding="utf-8") as fh:
                 mwrestfile.write(fh)
@@ -290,7 +291,7 @@ def cli(cmdargs):
                         "input_item": input_item,
                         "input_value": input_value,
                         "output_item": cmdargs.get("--output-item") or "mwtab",
-                        "output_format": cmdargs["--output-format"],
+                        "output_format": output_format,
                     }, cmdargs["--mw-rest"]).url
                     mwrestfile = next(fileio.read_mwrest(mwresturl))
                     if cmdargs["--to-path"]:
@@ -298,7 +299,7 @@ def cli(cmdargs):
                     else:
                         to_path = join(getcwd(),
                                        quote_plus(mwrestfile.source).replace(".", "_") + 
-                                                  "." + cmdargs["--output-format"])
+                                                  "." + output_format)
                     with open(to_path, "w", encoding="utf-8") as fh:
                         mwrestfile.write(fh)
 
