@@ -23,7 +23,7 @@ from .mwschema import section_schema_mapping, base_schema
 
 import mwtab
 
-column_finders = repair_metabolites_matching.column_finders
+# column_finders = repair_metabolites_matching.column_finders
 
 VERBOSE = False
 LOG = None
