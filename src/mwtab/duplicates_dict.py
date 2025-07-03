@@ -15,11 +15,17 @@ import json_duplicate_keys as jdks
 
 DUPLICATE_KEY_REGEX = r'(.*)\{\{\{.*\}\}\}'
 
-class DuplicatesDict(jdks.JSON_DUPLICATE_KEYS, OrderedDict):
+class DuplicatesDict(jdks.JSON_DUPLICATE_KEYS):
     def __init__(self, Jobj=None):
         if Jobj is None:
             Jobj = OrderedDict()
         super(DuplicatesDict, self).__init__(Jobj)
+    
+    def __len__(self):
+        return len(self._JSON_DUPLICATE_KEYS__Jobj)
+    
+    def __bool__(self):
+        return len(self._JSON_DUPLICATE_KEYS__Jobj) > 0
     
     def __iter__(self):
         return self._JSON_DUPLICATE_KEYS__Jobj.__iter__()

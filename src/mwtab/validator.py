@@ -11,7 +11,6 @@ identifiers are consistent across the file, make sure that all
 required key-value pairs are present.
 """
 
-from copy import deepcopy
 from collections import OrderedDict
 from datetime import datetime
 from re import match
@@ -19,12 +18,12 @@ import io
 import sys
 import traceback
 
-import pandas
 
 from .mwschema import section_schema_mapping, base_schema
 
 import mwtab
 
+column_finders = repair_metabolites_matching.column_finders
 
 VERBOSE = False
 LOG = None
@@ -306,7 +305,7 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
                 if data_point_key != "Metabolite":
                     try:
                         float(metabolite_dict[data_point_key])
-                    except ValueError as e:
+                    except ValueError:
                         # metabolite_dict[data_point_key] = ""
                         data_errors.append(
                             "{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1))
@@ -341,6 +340,9 @@ def validate_metabolites(mwtabfile, data_section_key):
                         metabolites_errors.append("METABOLITES: Data entry #{} contains field name \"{}\" which matches a commonly used field name \"{}\".".format(index + 1, field_key, regex_key))
                         field_key = regex_key
                         break
+    # Check if fields/columns are recognized variations and report the standardized name to the user.
+    df = mwtabfile.get_metabolites_as_pandas()
+    
 
     return metabolites_errors
 
@@ -438,8 +440,7 @@ def validate_section_schema(section, schema, section_key, cleaning=False):
             del section[key]
 
     return schema.validate(section), schema_errors
-
-
+    
 def validate_table_values(mwtabfile, data_section_key):
     """Validate the values of all table sections.
 
@@ -457,8 +458,19 @@ def validate_table_values(mwtabfile, data_section_key):
     errors = []
     for table_name in ['Data', 'Extended', 'Metabolites']:
         if table_name in mwtabfile[data_section_key]:
-            temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in mwtabfile[data_section_key][table_name]]
-            data_df = pandas.DataFrame.from_records(temp_list)
+            records = mwtabfile[data_section_key][table_name]
+            if len(records) > 0:
+                headers = list(records[0].keys())
+                if not all([list(data_dict.keys()) == headers for data_dict in records]):
+                    # TODO test
+                    message = ('Error: The table in the \"{}\" section does not have the same columns for every row. '
+                               'The table, represented as a list of dictionaries, has dictionaries '
+                               'with different keys. All dictionaries in the list should have the same keys.'.format(message_strings[table_name]))
+                    errors.append(message)
+            
+            data_df = mwtabfile.get_table_as_pandas(table_name)
+            # temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in mwtabfile[data_section_key][table_name]]
+            # data_df = pandas.DataFrame.from_records(temp_list)
             # data_df = pandas.DataFrame.from_records(mwtabfile[data_section_key][table_name])
             
             # Look for completely null columns.

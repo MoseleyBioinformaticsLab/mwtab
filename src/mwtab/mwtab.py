@@ -27,6 +27,7 @@ import copy
 from itertools import zip_longest
 
 import json_duplicate_keys as jdks
+import pandas
 
 from .tokenizer import tokenizer
 from .validator import validate_file
@@ -89,6 +90,7 @@ def _parse_header_input(input_str):
 
 
 # Descriptor to handle the convenience properties for MWTabFile.
+# https://realpython.com/python-descriptors/
 class MWTabProperty:
     def __set_name__(self, owner, name):
         self._name = name
@@ -162,6 +164,7 @@ class MWTabFile(OrderedDict):
     }
     
     result_file_keys = ["UNITS", "Has m/z", "Has RT", "RT units"]
+    data_section_keys = {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"}
     
     study_id = MWTabProperty()
     analysis_id = MWTabProperty()
@@ -189,29 +192,175 @@ class MWTabFile(OrderedDict):
         # self._study_id = None
         # self._analysis_id = None
         # self._header = None
+    
+    @property
+    def data_section_key(self):
+        """Easily determine the data_section_key.
         
-    def set_metabolites_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Metabolites'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        if df.shape[1] > 0:
-            self._metabolite_header = [k for k in self[section_key]['Metabolites'][0].keys()][1:]
-        elif clear_header:
-            self._metabolite_header = []
+        The key will be one of "MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", or "NMR_BINNED_DATA", 
+        but will be None if none of those keys are found.
+        """
+        data_section_key = list(set(self.keys()) & self.data_section_keys)
+        if data_section_key:
+            return data_section_key[0]
+        return None
     
-    def set_extended_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Extended'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        if df.shape[1] > 0:
-            self._extended_metabolite_header = [k for k in self[section_key]['Extended'][0].keys()][1:]
-        elif clear_header:
-            self._extended_metabolite_header = []
+    def set_table_as_pandas(self, df, table_name, clear_header=False):
+        """Return the given table_name as a pandas.DataFrame.
+        
+        table_name must be one of "Metabolites", "Extended", or "Data".
+        
+        :param pandas.DataFrame df: pandas.DataFrame that will be used to update the object.
+        :param str table_name: the name of the table to set from df.
+        :param bool clear_header: if True, sets the appropriate header to None, otherwise sets it to the df columns.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        data_section_key = self.data_section_key
+        self[data_section_key][table_name] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
+        if clear_header:
+            if table_name == 'Metabolites':
+                self._metabolite_header = None
+            elif table_name == 'Extended':
+                self._extended_metabolite_header = None
+            elif table_name == 'Data':
+                self._samples = None
+                if "BINNED" in data_section_key:
+                    self._binned_header = self._samples
+        elif df.shape[1] > 0:
+            if table_name == 'Metabolites':
+                self._metabolite_header = [k for k in self[data_section_key][table_name][0].keys()][1:]
+            elif table_name == 'Extended':
+                self._extended_metabolite_header = [k for k in self[data_section_key][table_name][0].keys()][1:]
+            elif table_name == 'Data':
+                self._samples = [k for k in self[data_section_key][table_name][0].keys()][1:]
+                if "BINNED" in data_section_key:
+                    self._binned_header = self._samples
     
-    def set_metabolites_data_from_pandas(self, df, section_key, clear_header=False):
-        self[section_key]['Data'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        if df.shape[1] > 0:
-            self._samples = [k for k in self[section_key]['Data'][0].keys()][1:]
-        elif clear_header:
-            self._samples = []
-        if "BINNED" in section_key:
-            self._binned_header = self._samples
+    def set_metabolites_from_pandas(self, df, clear_header=False):
+        """Update MWTabFile based on provided pandas.DataFrame.
+        
+        Overwrite the current list of dicts in self[data_section_key]['Metabolites'] with the 
+        values in df. Also overwrites self._metabolite_header with the columns in df, excluding the 
+        first column. df is assumed to have the first column as the 'Metabolites' column.
+        
+        :param pandas.DataFrame df: pandas.DataFrame that will be used to update the object.
+        :param bool clear_header: if True, sets _metabolite_header to None, otherwise sets it to the df columns.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        self.set_table_as_pandas(df, 'Metabolites', clear_header)
+        # data_section_key = self.data_section_key
+        # self[data_section_key]['Metabolites'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
+        # if df.shape[1] > 0:
+        #     self._metabolite_header = [k for k in self[data_section_key]['Metabolites'][0].keys()][1:]
+        # elif clear_header:
+        #     self._metabolite_header = None
+    
+    def set_extended_from_pandas(self, df, clear_header=False):
+        """Update MWTabFile based on provided pandas.DataFrame.
+        
+        Overwrite the current list of dicts in self[data_section_key]['Extended'] with the 
+        values in df. Also overwrites self._extended_metabolite_header with the columns in df, excluding the 
+        first column. df is assumed to have the first column as the 'Metabolites' column.
+        
+        :param pandas.DataFrame df: pandas.DataFrame that will be used to update the object.
+        :param bool clear_header: if True, sets _extended_metabolite_header to None, otherwise sets it to the df columns.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        self.set_table_as_pandas(df, 'Extended', clear_header)
+        # data_section_key = self.data_section_key
+        # self[data_section_key]['Extended'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
+        # if df.shape[1] > 0:
+        #     self._extended_metabolite_header = [k for k in self[data_section_key]['Extended'][0].keys()][1:]
+        # elif clear_header:
+        #     self._extended_metabolite_header = None
+    
+    def set_metabolites_data_from_pandas(self, df, clear_header=False):
+        """Update MWTabFile based on provided pandas.DataFrame.
+        
+        Overwrite the current list of dicts in self[data_section_key]['Data'] with the 
+        values in df. Also overwrites self._samples with the columns in df, excluding the 
+        first column. df is assumed to have the first column as the 'Metabolites' column.
+        
+        :param pandas.DataFrame df: pandas.DataFrame that will be used to update the object.
+        :param bool clear_header: if True, sets _samples to None, otherwise sets it to the df columns.
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        self.set_table_as_pandas(df, 'Data', clear_header)
+        # data_section_key = self.data_section_key
+        # self[data_section_key]['Data'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
+        # if df.shape[1] > 0:
+        #     self._samples = [k for k in self[data_section_key]['Data'][0].keys()][1:]
+        # elif clear_header:
+        #     self._samples = None
+        # if "BINNED" in data_section_key:
+        #     self._binned_header = self._samples
+    
+    def get_table_as_pandas(self, table_name):
+        """Return the given table_name as a pandas.DataFrame.
+        
+        table_name must be one of "Metabolites", "Extended", or "Data". Note that 
+        if there are duplicate column names, they will have a string appended to the 
+        end of the name like {{{_\d+_}}}.
+        
+        :param str table_name: the name of the table to return as a pandas.DataFrame.
+        :return: The list of dicts for the given table_name as a pandas.DataFrame.
+        :rtype: pandas.DataFrame
+        """
+        data_section_key = self.data_section_key
+        if data_section_key:
+            if self.compatability_mode:
+                temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in self[data_section_key][table_name]]
+            else:
+                temp_list = self[data_section_key][table_name]
+            df = pandas.DataFrame.from_records(temp_list)
+            # if table_name == 'Metabolites' and self._metabolite_header:
+            #     df.columns = ['Metabolite'] + self._metabolite_header
+            # elif table_name == 'Extended' and self._extended_metabolite_header:
+            #     df.columns = ['Metabolite'] + self._extended_metabolite_header
+            # elif table_name == 'Data':
+            #     if 'BINNED' in data_section_key and self._binned_header:
+            #         df.columns = ['Bin range (ppm)'] + self._binned_header
+            #     elif self._samples:
+            #         df.columns = ['Metabolite'] + self._samples
+            return df
+        return pandas.DataFrame()
+    
+    def get_metabolites_as_pandas(self):
+        """Return the Metabolites table as a pandas.DataFrame.
+        
+        Note that if there are duplicate column names, they will have a string appended to the 
+        end of the name like {{{_\d+_}}}.
+        
+        :return: The list of dicts for the Metabolites table as a pandas.DataFrame.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_table_as_pandas('Metabolites')
+    
+    def get_extended_as_pandas(self):
+        """Return the Extended table as a pandas.DataFrame.
+        
+        Note that if there are duplicate column names, they will have a string appended to the 
+        end of the name like {{{_\d+_}}}.
+        
+        :return: The list of dicts for the Extended table as a pandas.DataFrame.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_table_as_pandas('Extended')
+    
+    def get_metabolites_data_as_pandas(self):
+        """Return the Data table as a pandas.DataFrame.
+        
+        Note that if there are duplicate column names, they will have a string appended to the 
+        end of the name like {{{_\d+_}}}.
+        
+        :return: The list of dicts for the Data table as a pandas.DataFrame.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_table_as_pandas('Data')
     
     def validate(self, section_schema_mapping=section_schema_mapping, verbose=True, metabolites=True):
         """Validate the instance.
@@ -240,18 +389,13 @@ class MWTabFile(OrderedDict):
         new_mwtabfile = cls("Internal dictionary. ID: " + str(id(input_dict)))
         new_mwtabfile.update(input_dict)
         return new_mwtabfile
-        
-    def read(self, filehandle):
-        """Read data into a :class:`~mwtab.mwtab.MWTabFile` instance.
+    
+    def read_from_str(self, input_str):
+        """Read input_str into a :class:`~mwtab.mwtab.MWTabFile` instance.
 
-        :param filehandle: file-like object.
-        :type filehandle: :py:class:`io.TextIOWrapper`, :py:class:`gzip.GzipFile`,
-                          :py:class:`bz2.BZ2File`, :py:class:`zipfile.ZipFile`
         :return: None
         :rtype: :py:obj:`None`
         """
-        input_str = filehandle.read()
-
         if not input_str:
             raise ValueError("Blank input string retrieved from source.")
 
@@ -266,6 +410,33 @@ class MWTabFile(OrderedDict):
             self._build_mwtabfile(mwtab_str)
         else:
             raise TypeError("Unknown file format")
+        
+    def read(self, filehandle):
+        """Read data into a :class:`~mwtab.mwtab.MWTabFile` instance.
+
+        :param filehandle: file-like object.
+        :type filehandle: :py:class:`io.TextIOWrapper`, :py:class:`gzip.GzipFile`,
+                          :py:class:`bz2.BZ2File`, :py:class:`zipfile.ZipFile`
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        input_str = filehandle.read()
+        self.read_from_str(input_str)
+
+        # if not input_str:
+        #     raise ValueError("Blank input string retrieved from source.")
+
+        # mwtab_str = self._is_mwtab(input_str)
+        # json_str = self._is_json(input_str)
+
+        # if not input_str:
+        #     pass
+        # elif json_str:
+        #     self.update(json_str)
+        # elif mwtab_str:
+        #     self._build_mwtabfile(mwtab_str)
+        # else:
+        #     raise TypeError("Unknown file format")
 
         filehandle.close()
 

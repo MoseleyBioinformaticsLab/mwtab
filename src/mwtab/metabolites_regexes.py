@@ -1,7 +1,161 @@
 # -*- coding: utf-8 -*-
 """
-Regular expressions to match values in METABOLITES blocks.
+Regular expressions, functions, and classes to match column names and values in mwtab METABOLITES blocks. 
+
+All regular expressions, functions, and classes can be reused to match column names and values 
+for any tabular data, but the column_finders dictionary 
 """
+
+import re
+
+import pandas
+
+
+
+
+
+WRAP_STRING = r'[^a-zA-Z0-9]'
+def _create_column_regex_any(match_strings: list[str]) -> str:
+    """Return a regular expression string that will match any of the strings in match_strings.
+    
+    Automatically adds a WRAP_STRING to either side of each string to help with some fuzzy matching. 
+    Intended to be used to match column names in METABOLITES data.
+    
+    Args:
+        match_strings: list of strings to create a regex for.
+    
+    Returns:
+        A regular expression string that will match any of the strings in match_strings.
+    """
+    regex = '|'.join(['(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$)' for match_string in match_strings])
+    return regex
+
+def _create_column_regex_all(match_strings_sets: list[list[str]]) -> str:
+    """Return a regular expression string that will match any of the string sets in match_strings_sets.
+    
+    Automatically adds a WRAP_STRING to either side of each string to help with some fuzzy matching. 
+    Intended to be used to match column names in METABOLITES data. The "all" refers to requiring each 
+    string within a set to be present to match, but if multiple sets are given, then any set will match. 
+    "set" does not mean the actual "set" data type, any iterable collection is fine.
+    
+    Args:
+        match_strings_sets: list of string sets to create a regex for.
+    
+    Returns:
+        A regular expression string that will match any of the string sets in match_strings_sets.
+    """
+    regex = '|'.join([''.join(['(?=.*(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$))' for match_string in match_strings]) for match_strings in match_strings_sets])
+    return regex
+
+
+class NameMatcher():
+    def __init__(self, regex_search_strings: None|list[str] = None, 
+                 not_regex_search_strings: None|list[str] = None, regex_search_sets: None|list[list[str]] = None,
+                 in_strings: None|list[str] = None, not_in_strings: None|list[str] = None, 
+                 in_string_sets: None|list[list[str]] = None, exact_strings: None|list[str] = None):
+        self.regex_search_strings = regex_search_strings if regex_search_strings else []
+        self.not_regex_search_strings = not_regex_search_strings if not_regex_search_strings else []
+        self.regex_search_sets = regex_search_sets if regex_search_sets else []
+        self.in_strings = in_strings if in_strings else []
+        self.not_in_strings = not_in_strings if not_in_strings else []
+        self.in_string_sets = in_string_sets if in_string_sets else []
+        self.exact_strings = exact_strings if exact_strings else []
+        
+    def dict_match(self, name_map: dict[str, str]) -> list[str]:
+        """Return a list of names that match based on the NameMatcher attributes.
+        
+        Find all names in name_map that match. name_map should be a dictionary of original names 
+        to modified names. The value is used for matching, but the key is what will be returned. 
+        Each of the name regex, in_string, and exact strings attributes are ORed together, 
+        meaning any of them can be used to match, except for the "not" parameters. If a column 
+        name is matched by a "not" parameter, then it overrides other matches and will be filtered out.
+        
+        Args:
+            name_map: a dictionary of original names to the modified version of that name to use for matching.
+        
+        Returns:
+            A list of names that match based on the NameMatcher attributes.
+        """
+        search_regex = _create_column_regex_any(self.regex_search_strings)
+        search_regex_sets = _create_column_regex_all(self.regex_search_sets)
+        not_search_regex = _create_column_regex_any(self.not_regex_search_strings)
+        has_regex_search_strings = len(self.regex_search_strings) > 0
+        has_regex_search_sets = len(self.regex_search_sets) > 0
+        has_in_string_sets = len(self.in_string_sets) > 0
+        has_no_not_regex_search_strings = len(self.not_regex_search_strings) == 0
+        has_no_not_in_strings = len(self.not_in_strings) == 0
+        columns_of_interest = [original_name for original_name, modified_name in name_map.items() if \
+                                (
+                                 (has_regex_search_strings and re.search(search_regex, modified_name)) or \
+                                 (has_regex_search_sets and re.search(search_regex_sets, modified_name)) or \
+                                 any([word in modified_name for word in self.in_strings]) or \
+                                 (has_in_string_sets and any([all([word in modified_name for word in word_set]) for word_set in self.in_string_sets])) or \
+                                 any([word == modified_name for word in self.exact_strings])
+                                ) and \
+                                (has_no_not_regex_search_strings or not re.search(not_search_regex, modified_name)) and \
+                                (has_no_not_in_strings or all([word not in modified_name for word in self.not_in_strings]))]
+        return columns_of_interest
+
+class ValueMatcher():
+    def __init__(self, values_type: None|str = None, values_regex: None|str = None, values_inverse_regex: None|str = None):
+        self.values_type = values_type if isinstance(values_type, str) else ''
+        self.values_regex = values_regex if isinstance(values_regex, str) else ''
+        self.values_inverse_regex = values_inverse_regex if isinstance(values_inverse_regex, str) else ''
+    
+    def series_match(self, series: pandas.Series) -> pandas.Series:
+        """Return a mask for the series based on type and regex matching.
+        
+        "values_regex" and "values_inverse_regex" are mutually exclusive and "values_regex" will take precedence if both are given. 
+        "values_type" and one of the regex parameters can both be used, the intermediate masks are ANDed together. 
+        "values_type" can only be "integer", "numeric", or "non-numeric" to match those types, respectively.
+        
+        Args:
+            series: series to match values based on type and/or regex.
+        
+        Returns:
+            A pandas Series the same length as "series" with Boolean values that can be used to select the matching values in the series.
+        """
+        if self.values_regex:
+            regex_match = series.str.fullmatch(self.values_regex, na=False)
+        elif self.values_inverse_regex:
+            regex_match = ~series.str.fullmatch(self.values_inverse_regex, na=True)
+        else:
+            regex_match = pandas.Series([True]*len(series), index=series.index)
+        
+        old_NAs = series.isna()
+        column_to_numeric = pandas.to_numeric(series, errors='coerce')
+        column_to_numeric_NAs = column_to_numeric.isna()
+        new_NAs = column_to_numeric_NAs ^ old_NAs
+        
+        if self.values_type == "integer":
+            # The top line will return True for values like '1.0', but the bottom line won't.
+            # type_match = (column_to_numeric % 1 == 0) | ~new_NAs
+            type_match = ~series.str.contains('.', regex=False, na=False) | old_NAs
+        elif self.values_type == "numeric":
+            type_match = ~new_NAs
+        elif self.values_type == "non-numeric":
+            type_match = new_NAs | old_NAs
+        else:
+            type_match = pandas.Series([True]*len(series), index=series.index)
+        
+        return regex_match & type_match
+
+class ColumnFinder:
+    """Used to find columns in a DataFrame that match a NameMatcher and values in the column that match a ValueMatcher.
+    """
+    def __init__(self, standard_name: str, name_matcher: NameMatcher, value_matcher: ValueMatcher):
+        self.standard_name = standard_name
+        self.name_matcher = name_matcher
+        self.value_matcher = value_matcher
+    
+    def name_dict_match(self, name_map):
+        return self.name_matcher.dict_match(name_map)
+    
+    def values_series_match(self, series):
+        return self.value_matcher.series_match(series)
+ 
+
+
 
 
 
@@ -220,5 +374,387 @@ DATE = r'\d{1,2}/\d{1,2}/(\d{4}|\d{2})'
 CAS = r'(CAS: ?)?\d+-\d\d-0?\d' + '|' + DATE
 LIST_OF_CAS = make_list_regex(CAS, ',')
 LIST_OF_CAS_SEMICOLON = make_list_regex(CAS, ';')
+
+
+# Important NOTE! All of the regular expressions delivered to ValueMatchers are surrounded with an additional set of 
+# parenthesis. This is because they are later used with the pyarrow integration in pandas, and the behavior is 
+# slightly different between python's built in regular expressions and pyarrow's. TLDR, add wrapping parenthesis 
+# to avoid problems matching using pyarrow.
+column_finders = [
+    ColumnFinder("moverz_quant",
+                 NameMatcher(regex_search_strings = ['m/z', 'mz', 'moverz', 'mx'],
+                             not_regex_search_strings = ['id'],
+                             in_strings = ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
+                             not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'retention'],),
+                 ValueMatcher(values_regex = '(' + NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
+                                             LIST_OF_NUMS_UNDERSCORE + '|' + \
+                                             NUMS + r'\s*/\s*' + NUMS + '|' + \
+                                             '(' + NUMS + r'\s*\(' + NUMS + r'\)' + '\s*;\s*)+' + '(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*|\s*)' + '|' + \
+                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \
+                                             '(' + NUMS + r'\s*)+' + '|' + \
+                                             NUMS + r'\s*\(\s*' + NUMS + r'\s*\)' + '|' + \
+                                             NUMS + r'\s*-\s*' + NUMS + ')',)),
+    
+    ColumnFinder("mass",
+                 NameMatcher(regex_search_strings = ['mass', 'quantmass', 'masses', 'mw', 'weight'],
+                             not_regex_search_strings = ['id'],
+                             in_strings = ['exactmass', 'obsmass', 'calcmass', 'monoisotopicmass', 'molwt'],
+                             not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'charge', 'over z', 'rsd', 'm/z'],
+                             exact_strings = ['m meas.'],),
+                 ValueMatcher(values_regex = '(' + NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
+                                             NUMS + r'\s*/\s*' + NUMS + r'(\s*Da)?|' + \
+                                             NUMS + r'\s*-\s*' + NUMS + ')',)),
+    
+    ColumnFinder("parent_moverz_quant",
+                 NameMatcher(exact_strings = ['parent'],),
+                 ValueMatcher(values_type = 'numeric',)),
+    
+    ColumnFinder("mass_spectrum",
+                 NameMatcher(in_strings = ['spec', 'pectrum'],
+                             not_in_strings = ['species', 'composite'],),
+                 ValueMatcher(values_regex = '(' + '(' + NUMS + ':' + NUMS + r'(_|\s+|$))+' + '|' + \
+                                             NUMS + '|' + \
+                                             LIST_OF_NUMS + ')',)),
+    
+    ColumnFinder("composite_mass_spectrum",
+                 NameMatcher(in_string_sets = [['composite', 'spectrum']],
+                             not_in_strings = ['species'],),
+                 ValueMatcher(values_regex = '(' + '(' + PARENTHESIZED_LIST_OF_NUMS + r'\s*)+' + ')',)),
+    
+    ColumnFinder("inchi_key",
+                 NameMatcher(in_strings = ['inchikey', 'inchi-key', 'inchi_key', 'inchi key'],),
+                 ValueMatcher(values_regex = '(' + INCHIKEY + r'(\*?|\?*)' + '|' +\
+                                             INCHIKEY_OR_NULL + r'(\s*or\s*|\s*;\s*|\s*_\s*|\s*&\s*)' + INCHIKEY_OR_NULL + '|' +\
+                                             r'Sum\s*\(\s*' + INCHIKEY + r'(\s*\+\s*)' + INCHIKEY + r'\s*\)' + '|' +\
+                                             LIST_OF_INCHIKEYS_SLASH + ')',)),
+    
+    ColumnFinder("inchi",
+                 NameMatcher(in_strings = ['inchi'],
+                             not_in_strings = ['key'],),
+                 ValueMatcher(values_regex = '(' + CHEAP_INCHI + '|' + BRACKETED_LIST_OF_INCHI + ')',)),
+    
+    ColumnFinder("smiles",
+                 NameMatcher(in_strings = ['smile'],),
+                 ValueMatcher(values_regex = '(' + SMILES + '|' + LIST_OF_SMILES_SEMICOLON + ')',)),
+    
+    ColumnFinder("formula",
+                 NameMatcher(in_strings = ['formula'],),
+                 ValueMatcher(values_type = 'non-numeric',
+                              values_regex = '(' + ISOTOPIC_FORMULA.replace('\d*', '\d*\s*') + '|' + \
+                                             CHARGE_FORMULA + '|' + \
+                                             GROUP_FORMULA + '|' + \
+                                             BRACKETED_LIST_OF_FORMULAS + '|' + \
+                                             BRACKETED_LIST_OF_ISOTOPIC_FORMULAS + ')',)),
+    
+    ColumnFinder("metabolite",
+                 NameMatcher(exact_strings = ['metabolite'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("compound",
+                 NameMatcher(in_strings = ['compound', 'compund'],
+                             not_in_strings = ['kegg', 'formula', 'pubchem', 'mass', 'rt', 'algo', 'id', 'name'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("name",
+                 NameMatcher(in_strings = ['name'],
+                             in_string_sets = [['name', 'refmet']],
+                             not_in_strings = ['adduct', 'named', 'internal', 'ion'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("refmet",
+                 NameMatcher(in_strings = ['refmet'],
+                             not_in_strings = ['name', 'in'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("class",
+                 NameMatcher(in_strings = ['class']),
+                 ValueMatcher(values_type = 'non-numeric',
+                              values_inverse_regex = '(' + ORGANIC_FORMULA + ')',)),
+    
+    ColumnFinder("pathway",
+                 NameMatcher(in_strings = ['pathway'],
+                             not_in_strings = ['sort'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("pathway_sortorder",
+                 NameMatcher(in_string_sets = [['pathway', 'sort']],),
+                 ValueMatcher(values_type = 'integer',)),
+    
+    ColumnFinder("ion",
+                 NameMatcher(regex_search_strings = ['ion', 'ions'],
+                             not_in_strings = ['adduct', 'm/z', 'mass'],),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_SPACE + '|' + \
+                                             NUMS + '|' + \
+                                             LIST_OF_NUMS + '|' + \
+                                             NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \
+                                             LIST_OF_NUMS_SLASH + ')',)),
+    
+    ColumnFinder("adduct",
+                 NameMatcher(in_strings = ['adduct'],
+                             not_in_strings = ['formula'],),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_SPACE + '|' + \
+                                             LIST_OF_IONS_UNDERSCORE + '|' + \
+                                             LIST_OF_IONS_MIXED + '|' + \
+                                             LIST_OF_IONS_NO_DELIMITER + '|' + \
+                                             BRACKETED_LIST_OF_IONS + ')',)),
+    
+    ColumnFinder("species",
+                 NameMatcher(in_strings = ['species'],
+                             not_in_strings = ['is_species', 'ion'],),
+                 ValueMatcher(values_regex = '(' + ION + '|' + \
+                                             LIST_OF_IONS + '|' + \
+                                             LIST_OF_IONS_UNDERSCORE + ')',)),
+    
+    ColumnFinder("pubchem",
+                 NameMatcher(regex_search_strings = ['cid'],
+                             in_strings = ['pubchem'],
+                             not_in_strings = ['formula', 'kegg'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + r'[&?]?' + '|' + \
+                                             LIST_OF_POS_INTS + '|' + \
+                                             LIST_OF_POS_INTS_OR + '|' + \
+                                             LIST_OF_POS_INTS_SLASH + '|' + \
+                                             LIST_OF_POS_INTS_SPACE + '|' + \
+                                             LIST_OF_POS_INTS_SEMICOLON + '|' + \
+                                             r'Sum \(\d+ \+ \d+\)' + '|' + \
+                                             r'CID' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("kegg",
+                 NameMatcher(in_strings = ['kegg'],
+                             not_in_strings = ['name'],),
+                 ValueMatcher(values_regex = '(' + KEGG + '|' + \
+                                             LIST_OF_KEGG + '|' + \
+                                             LIST_OF_KEGG_SEMICOLON + '|' + \
+                                             LIST_OF_KEGG_SLASH + '|' + \
+                                             LIST_OF_KEGG_DOUBLE_SLASH + '|' + \
+                                             LIST_OF_KEGG_UNDERSCORE + '|' + \
+                                             LIST_OF_KEGG_HYPHEN + '|' + \
+                                             LIST_OF_KEGG_MIXED + '|' + \
+                                             LIST_OF_KEGG_SPACE + '|' + \
+                                             LIST_OF_KEGG_BAR + '|' + \
+                                             KEGG + r'-' + FORMULA  + '|' + \
+                                             KEGG + r';\d+' + ')',)),
+    
+    ColumnFinder("hmdb",
+                 NameMatcher(in_strings = ['hmdb', 'human metabolome'],
+                             in_string_sets = [['hmp', 'id']],
+                             not_in_strings = ['class'],),
+                 ValueMatcher(values_regex = '(' + HMDB + '|' + \
+                                             HMDB_INT + '|' + \
+                                             LIST_OF_HMDB + '|' + \
+                                             LIST_OF_HMDB_SLASH + '|' + \
+                                             LIST_OF_HMDB_INTS + '|' + \
+                                             LIST_OF_HMDB_INTS_SLASH + '|' + \
+                                             r'Sum \(HMDB\d+ \+ HMDB\d+\)' + '|' + \
+                                             LIST_OF_HMDB_AMPERSAND + '|' + \
+                                             LIST_OF_HMDB_SEMICOLON + '|' + \
+                                             LIST_OF_HMDB_SPACE + '|' + \
+                                             r'METPA\d+' + '|' + \
+                                             LIST_OF_HMDB_UNDERSCORE + ')',)),
+    
+    ColumnFinder("lmp",
+                 NameMatcher(in_strings = ['lipidmaps', 'lmid'],
+                             in_string_sets = [['lmp', 'id'], ['lipid', 'map'], ['lm', 'id']],),
+                 ValueMatcher(values_regex = '(' + LIPID_MAPS + '|' + \
+                                             LIST_OF_LMP_UNDERSCORE + '|' + \
+                                             LIST_OF_LMP + '|' + \
+                                             LIST_OF_LMP_SLASH + '|' + \
+                                             POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("chemspider",
+                 NameMatcher(in_strings = ['chemspider'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + r'[&?]?' + '|' + \
+                                             LIST_OF_POS_INTS + '|' + \
+                                             LIST_OF_POS_INTS_OR + '|' + \
+                                             LIST_OF_POS_INTS_SLASH + '|' + \
+                                             LIST_OF_POS_INTS_SPACE + '|' + \
+                                             LIST_OF_POS_INTS_SEMICOLON + '|' + \
+                                             r'Sum \(\d+ \+ \d+\)' + '|' + \
+                                             'CID' + POSITIVE_INTS + '|' + \
+                                             'CSID' + POSITIVE_INTS + '|' + \
+                                             r'[CD]\d{5}' + '|' + \
+                                             make_list_regex(r'[CD]\d{5}', r'\|') + ')',)),
+    
+    ColumnFinder("metlin",
+                 NameMatcher(in_strings = ['metlin'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + '|' + r'METLIN:' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("cas_number",
+                 NameMatcher(regex_search_strings = ['cas'],),
+                 ValueMatcher(values_regex = '(' + CAS + '|' + LIST_OF_CAS + '|' + LIST_OF_CAS_SEMICOLON + ')',)),
+    
+    ColumnFinder("binbase_id",
+                 NameMatcher(regex_search_strings = ['bb'],
+                             in_strings = ['binbase'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("chebi_id",
+                 NameMatcher(in_strings = ['chebi'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("mw_regno",
+                 NameMatcher(in_strings = ['regno'],
+                             in_string_sets = [['mw', 'structure']],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + '|' + LIST_OF_POS_INTS + ')',)),
+    
+    ColumnFinder("mzcloud_id",
+                 NameMatcher(in_string_sets = [['mz', 'cloud', 'id']],),
+                 ValueMatcher(values_regex = '(' + r'((Reference|Autoprocessed)-)?' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("identifier",
+                 NameMatcher(in_strings = ['identifier', 'retention time_m/z', 'feature@rt'],
+                             not_in_strings = ['pubchem', 'study', 'database'],),
+                 ValueMatcher(values_regex = '(' + POS_FLOAT_PAIRS + r'(n|m/z)?' + '|' + \
+                                             POS_INT_FLOAT_PAIR + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_UNDERSCORE + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_NO_SPACE + '|' + \
+                                             LIST_OF_POS_FLOAT_PAIRS_MIXED + '|' + \
+                                             r'CHEBI:\d+' + ')',)),
+    
+    ColumnFinder("other_id",
+                 NameMatcher(not_regex_search_strings = ['cas'],
+                             in_strings = ['other'],
+                             in_string_sets = [['database', 'identifier'], ['chemical', 'id'], ['cmpd', 'id'], ['database', 'id'], ['database', 'match'], ['local', 'id'], ['row', 'id'], ['comp', 'id'], ['chem', 'id'], ['chro', 'lib', 'id'], ['lib', 'id']],
+                             not_in_strings = ['type', 'pubchem', 'chemspider', 'kegg'],
+                             exact_strings = ['id'],),
+                 ValueMatcher(values_inverse_regex = '(' + FLOAT + '|' + SCIENTIFIC_NOTATION + ')',)),
+    
+    ColumnFinder("other_id_type",
+                 NameMatcher(in_string_sets = [['other', 'type'], ['source', 'database']],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("retention_time",
+                 NameMatcher(regex_search_strings = ['rt'],
+                             regex_search_sets = [['ret', 'time']],
+                             in_strings = ['rtimes', 'r.t.', 'medrt', 'rtsec', 'bestrt', 'compoundrt', 'rtmed'],
+                             in_string_sets = [['retention', 'time'], ['rentetion', 'time'], ['retension', 'time']],
+                             not_in_strings = ['type', 'error', 'index', 'delta', 'feature', 'm/z'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_FLOATS + '|' + \
+                                             r'\d' + '|' + \
+                                             POSITIVE_SCIENTIFIC_NOTATION + '|' + \
+                                             POSITIVE_FLOAT_RANGE + '|' + \
+                                             LIST_OF_POS_FLOATS_UNDERSCORE + ')',)),
+    
+    ColumnFinder("delta_rt",
+                 NameMatcher(in_strings = ['deltart'],
+                             in_string_sets = [['delta', 'rt']],
+                             not_in_strings = ['type', 'error', 'index'],),
+                 ValueMatcher(values_regex = FLOAT + '|' + r'0',)),
+    
+    ColumnFinder("retention_index",
+                 NameMatcher(regex_search_strings = ['ri'],
+                             regex_search_sets = [['ret', 'ind'], ['ret', 'index']],
+                             in_strings = ['rindex'],
+                             in_string_sets = [['retention', 'index'], ['rentetion', 'index'], ['reten', 'index']],
+                             not_in_strings = ['type', 'error'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_FLOATS + '|' + \
+                                             r'\d' + '|' + \
+                                             POSITIVE_SCIENTIFIC_NOTATION + '|' + \
+                                             POSITIVE_FLOAT_RANGE + '|' + \
+                                             LIST_OF_POS_FLOATS_UNDERSCORE + ')',)),
+    
+    ColumnFinder("retention_index_type",
+                 NameMatcher(in_string_sets = [['retention', 'index', 'type'], ['ri', 'type']],
+                             not_in_strings = ['error'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("abbreviation",
+                 NameMatcher(in_strings = ['abbreviation'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("assignment_certainty",
+                 NameMatcher(in_string_sets = [['assignment', 'certainty']],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("comment",
+                 NameMatcher(in_strings = ['comment'],),
+                 ValueMatcher(values_inverse_regex = '(' + FLOAT + '|' + SCIENTIFIC_NOTATION + '|' + r'\d{2,}' + ')',)),
+    
+    ColumnFinder("assignment%method",
+                 NameMatcher(in_string_sets = [['assignment', 'method']],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("isotopologue",
+                 NameMatcher(in_strings = ['isotopologue'],
+                             in_string_sets = [['isotope', 'count']],
+                             not_in_strings = ['type'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("isotopologue%type",
+                 NameMatcher(in_strings = ['isotopologue%type', 'isotope'],
+                             not_in_strings = ['count'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("peak_description",
+                 NameMatcher(in_string_sets = [['peak', 'description']],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("peak_pattern",
+                 NameMatcher(in_string_sets = [['peak', 'pattern']],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("transient_peak",
+                 NameMatcher(in_string_sets = [['transient', 'peak']],
+                             not_in_strings = ['type'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+    
+    ColumnFinder("transient_peak%type",
+                 NameMatcher(in_string_sets = [['transient', 'peak', 'type']],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("FISh Coverage",
+                 NameMatcher(in_string_sets = [['fish', 'coverage']],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_NUMS + ')',)),
+    
+    ColumnFinder("MSI Category",
+                 NameMatcher(in_strings = ['msicategory'],),
+                 ValueMatcher(values_regex = r'1',)),
+    
+    ColumnFinder("annotations",
+                 NameMatcher(not_regex_search_strings = ['id'],
+                             in_strings = ['annotation'],
+                             not_in_strings = ['source', 'approach', 'confidence', 'level'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("ISTD",
+                 NameMatcher(in_strings = ['internal'],
+                             exact_strings = ['istd'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("platform",
+                 NameMatcher(in_strings = ['platform'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("MS Method",
+                 NameMatcher(in_strings = ['method'],
+                             not_in_strings = ['assignment'],),
+                 ValueMatcher(values_type = 'non-numeric',)),
+    
+    ColumnFinder("polarity",
+                 NameMatcher(in_strings = ['polarity'],),
+                 ValueMatcher(values_regex = r'(?i)((neg|pos|1|-1|\+|positive|negative)' + r'|\[M\+H\]\+|\[M-H\]-|5MM\+|5MM-)',)),
+    
+    ColumnFinder("ESI mode",
+                 NameMatcher(in_strings = ['esi'],),
+                 ValueMatcher(values_regex = r'(neg|pos|1|-1|(ESI )?\(\+\)( ESI)?|(ESI )?\(-\)( ESI| ES\))?|positive|negative)',)),
+    
+    ColumnFinder("Ionization mode",
+                 NameMatcher(regex_search_sets = [['pos', 'neg']],
+                             in_strings = ['ionization', 'ionisation'],
+                             not_in_strings = ['confirmed'],
+                             exact_strings = ['mode', 'ms mode'],),
+                 ValueMatcher(values_regex = r'(?i)((neg|pos|1|-1|(ES)?\+|(ES)?-|positive|negative|TOF|Splitless|Split30))',)),
+    
+    ColumnFinder("frequency",
+                 NameMatcher(in_strings = ['frequency'],),
+                 ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
+]
+
+column_finders = {finder.standard_name: finder for finder in column_finders}
 
 
