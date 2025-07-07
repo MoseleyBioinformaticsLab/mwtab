@@ -311,7 +311,7 @@ class MWTabFile(OrderedDict):
         :rtype: pandas.DataFrame
         """
         data_section_key = self.data_section_key
-        if data_section_key:
+        if data_section_key and table_name in self[data_section_key]:
             if self.compatability_mode:
                 temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in self[data_section_key][table_name]]
             else:
