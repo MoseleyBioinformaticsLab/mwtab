@@ -168,6 +168,7 @@ def read_files(*sources, return_exceptions=False, **kwds):
         try:
             f = mwtab.MWTabFile(source, compatability_mode=True)
             f.read(fh)
+            fh.close()
 
             if kwds.get('validate'):
                 validator.validate_file(mwtabfile=f,
@@ -181,6 +182,7 @@ def read_files(*sources, return_exceptions=False, **kwds):
                                         return_exceptions=return_exceptions)
 
         except Exception as e:
+            fh.close()
             if VERBOSE:
                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
             yield _return_correct_yield(source, 
@@ -205,6 +207,7 @@ def read_mwrest(*sources, return_exceptions=False, **kwds):
         try:
             f = mwrest.MWRESTFile(source)
             f.read(fh)
+            fh.close()
 
             if VERBOSE:
                 print("Processed url: {}".format(source))
@@ -214,6 +217,7 @@ def read_mwrest(*sources, return_exceptions=False, **kwds):
                                         return_exceptions=return_exceptions)
 
         except Exception as e:
+            fh.close()
             if VERBOSE:
                 print("Error processing url: ", source, "\nReason:", e)
             yield _return_correct_yield(None, 
@@ -236,6 +240,7 @@ def read_lines(*sources, return_exceptions=False, **kwds):
     for fh, source, exc in filehandles:
         try:
             string = fh.read()
+            fh.close()
             if isinstance(string, str):
                 lines = string.replace("\r", "\n").split("\n")
             elif isinstance(string, bytes):
@@ -253,6 +258,7 @@ def read_lines(*sources, return_exceptions=False, **kwds):
                                         return_exceptions=return_exceptions)
         
         except Exception as e:
+            fh.close()
             if VERBOSE:
                 print("Error processing file: ", source, "\nReason:", e)
             yield _return_correct_yield(source, 

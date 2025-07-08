@@ -47,8 +47,43 @@ def _create_column_regex_all(match_strings_sets: list[list[str]]) -> str:
     regex = '|'.join([''.join(['(?=.*(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$))' for match_string in match_strings]) for match_strings in match_strings_sets])
     return regex
 
-
+# TODO check that the :py:data:`WRAP_STRING` in the docstring references the constant correctly in the documentation.
 class NameMatcher():
+    """Used to filter names that match certain criteria.
+    
+    Mostly intended to be used through the ColumnFinder class. Created for the purpose 
+    of matching tabular column names based on regular expressions and "in" criteria.
+    
+    Attributes:
+        regex_search_strings: A collection of strings to deliver to re.search() to match a column name. 
+          If any string in the collection matches, then the name is matched. This does not simply 
+          look for any of the strings within a column name to match. Each string is wrapped with 
+          the :py:data:`WRAP_STRING` before searching, so the string 'bar' would not be found in 
+          the column name "foobarbaz", but would be found in the name "foo bar baz".
+        not_regex_search_strings: The same as regex_search_strings, except a match to a column name 
+          eliminates that name. Attributes that begin with "not" take precedence over the others. 
+          So if a column name matches a string in regex_search_strings and not_regex_search_strings, 
+          then it will be filtered OUT.
+        regex_search_sets: A collection of sets of strings. Each string in the set of strings must 
+          be found in the column name to match, but any set could be found. For example, [('foo', 'bar'), ('baz', 'asd')] 
+          will match the name "foo bar" or "bar foo", but not "foobar", due to the aforementioned 
+          :py:data:`WRAP_STRING`. The names "foo", "baz", or "asd" would not match either, but "var asd baz" would.
+        in_strings: Similar to regex_search_strings except instead of using re.search() the "in" operator 
+          is used. For example, ['foo'] would match the column name "a fool", since 'foo' is in "a fool".
+        not_in_strings: The same as in_strings, but matches to a column name eliminate or filter OUT that name.
+        in_string_sets: The same as regex_search_sets, but each string in a set is determined to match 
+          using the "in" operator instead of re.search(). For example, [('foo', 'bar'), ('baz', 'asd')] 
+          WILL match the column name "foobar" because both 'foo' and 'bar' are in the name.
+        exact_strings: A collection of strings that must exactly match the column name. For example, 
+          ['foo', 'bar'] would only the match the column names "foo" or "bar".
+    
+    Examples:
+        >>> NameMatcher(regex_search_strings = ['m/z', 'mz', 'moverz', 'mx'],
+        ...             not_regex_search_strings = ['id'],
+        ...             in_strings = ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
+        ...             not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'retention'])
+    """
+    
     def __init__(self, regex_search_strings: None|list[str] = None, 
                  not_regex_search_strings: None|list[str] = None, regex_search_sets: None|list[list[str]] = None,
                  in_strings: None|list[str] = None, not_in_strings: None|list[str] = None, 
