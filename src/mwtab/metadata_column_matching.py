@@ -78,10 +78,80 @@ class NameMatcher():
           ['foo', 'bar'] would only the match the column names "foo" or "bar".
     
     Examples:
+        Find a column for "moverz".
+        
         >>> NameMatcher(regex_search_strings = ['m/z', 'mz', 'moverz', 'mx'],
         ...             not_regex_search_strings = ['id'],
         ...             in_strings = ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
         ...             not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'retention'])
+        
+        This is a real example based on the datasets in the Metabolomics Workbench. We can examine 
+        some of the strings to illustrate the attributes' function. The "id" string needs to be in 
+        not_regex_search_strings, rather than not_in_strings, because "id" is a very small substring 
+        that could easily be in a longer word. Putting in not_regex_search_strings means it will 
+        most likely match "ID" fields, such as "PubChem ID". Note that it is recommend to lower 
+        all column names before filtering and thus use lower case strings, but in general NameMatcher 
+        is case sensitive. The "spec" string is in not_in_strings, rather than not_regex_search_strings 
+        because the risk of it being in a name that should not be filtered out is low. Also it 
+        catches both the full word "spectrum" and its common abbreviation "spec". Hopefully, 
+        these 2 explanations of "id" and "spec" have illustrated some of the tradeoffs and 
+        advantages of the "in" style attributes versus the "search" style ones.
+        
+        Find a column for "retention time".
+        
+        >>> NameMatcher(regex_search_strings = ['rt'],
+        ...             regex_search_sets = [['ret', 'time']],
+        ...             in_strings = ['rtimes', 'r.t.', 'medrt', 'rtsec', 'bestrt', 'compoundrt', 'rtmed'],
+        ...             in_string_sets = [['retention', 'time'], ['rentetion', 'time'], ['retension', 'time']],
+        ...             not_in_strings = ['type', 'error', 'index', 'delta', 'feature', 'm/z'])
+        
+        This is another real example based on the datasets in the Metabolomics Workbench. It 
+        illustrates the "set" style attributes quite well. For multi-word column names the 
+        "set" style attributes are usually what you want to use. It is possible to to give 
+        a string like "retention time", note the space character, to an attribute like "in_strings", 
+        but this is more fragile than it seems and won't match some common alternate spellings or 
+        mistakes, such as "retention_time" or "retention  time". Using "set" style attributes 
+        means you don't have to add as many strings to an attribute like "in_strings". You 
+        can still see some repetition in the in_string_sets attribute here though to cover the 
+        many mispellings of "retention". "set" style attributes would not be a good use case 
+        if the strings in the set must be in a certain order though. The set ['ret', 'time'] 
+        will match 'ret' and 'time' in any order. Generally, this will not be a problem because 
+        there aren't many instances where you will get a false positive match for a multi-word 
+        column due to the order of the words.
+        
+        Find a column for "other_id".
+        
+        >>> NameMatcher(not_regex_search_strings = ['cas'],
+        ...             in_strings = ['other'],
+        ...             in_string_sets = [['database', 'identifier'], ['chemical', 'id'], ['cmpd', 'id'], 
+        ...                               ['database', 'id'], ['database', 'match'], ['local', 'id'], 
+        ...                               ['row', 'id'], ['comp', 'id'], ['chem', 'id'], ['chro', 'lib', 'id'], 
+        ...                               ['lib', 'id']],
+        ...             not_in_strings = ['type', 'pubchem', 'chemspider', 'kegg'],
+        ...             exact_strings = ['id'],)
+        
+        This is another real example based on the datasets in the Metabolomics Workbench. It is shown 
+        to demonstrate the "exact_strings" attribute. There are many columns that contain the "id" 
+        string. There are specific database ID columns, such as those from PubChem or KEGG, but there 
+        are often lesser known or individual lab IDs. This example is trying to lump many of the lesser 
+        ones into a single "other_id" column. Trying to have "id" in an in_strings or regex_search_strings 
+        attribute would cause far too many false positive matches for reasons described in the first 
+        example, but there are columns simply labeled "ID", so the only recourse is to use the exact_strings 
+        attribute to match them exactly.
+        
+        Typical usage.
+        
+        >>> df = pandas.read_csv('some_file.csv')
+        >>> name_matcher = NameMatcher(exact_strings = ['foo'])
+        >>> modified_columns = {column_name: column_name.lower().strip() for column_name in df.columns}
+        >>> matching_columns = name_matcher.dict_match(modified_columns)
+        
+        NameMatcher is really meant to be used as part of a ColumnFinder, but this example uses it 
+        directly for simplicity. The instantiated NameMatcher is also very simple in this example 
+        because it is trying to show the usage of the dict_match method more than anything else. 
+        dict_match requires a dictionary as input, rather than a simple list so that column names 
+        can be modified if necessary for easier matching, but then still be linked back to the original 
+        name in the dataframe. 
     """
     
     def __init__(self, regex_search_strings: None|list[str] = None, 
@@ -132,6 +202,27 @@ class NameMatcher():
         return columns_of_interest
 
 class ValueMatcher():
+    """Used to find a mask for certain values in a column.
+    
+    Mostly intended to be used through the ColumnFinder class. Created for the purpose 
+    of matching tabular column data based on regular expressions and type criteria.
+    
+    Attributes:
+        values_type: A string whose only relevant values are 'integer', 'numeric', and 'non-numeric'.
+          'integer' will only match values in a column that are integer numbers. 'numeric' will only 
+          match values that are numbers, this includes integers. 'non-numeric' will only match values 
+          that are non-numeric. Numeric values can be in the value, but cannot be the whole value. 
+          For example, '123 id' is considered non-numeric.
+        values_regex: A regular expression to positively identify values in a column.
+        inverse_values_regex: A regular expression to negatively identify values in a column. This 
+          is mutually exclusive with values_regex. If both are given, values_regex takes precedence 
+          and inverse_values_regex is ignored. values_type can be combined with either regex and 
+          values must match both criteria to match overall.
+    
+    Examples:
+        
+    """
+    
     def __init__(self, values_type: None|str = None, values_regex: None|str = None, values_inverse_regex: None|str = None):
         self.values_type = values_type if isinstance(values_type, str) else ''
         self.values_regex = values_regex if isinstance(values_regex, str) else ''
