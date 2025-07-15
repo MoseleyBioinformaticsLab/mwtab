@@ -50,21 +50,14 @@ all are used in its only method, series_match. ColumnFinder takes both a NameMat
 and ValueMatcher, along with a standard_name attribute. The "standard_name" attribute 
 is not used by any method and is simply there to tie the instance of the class to a 
 name. The :doc:`api` page for metadata_column_matching.py contains more detailed information 
-on each class.
+and examples on each class.
 
-Examples
-++++++++
 
-NameMatcher to Match a  "moverz_quant" Column
-#############################################
-.. code-block:: python
+Regular Expressions
+-------------------
 
-    from mwtab.metadata_column_matching import NameMatcher
-    
-    NameMatcher(regex_search_strings = ['m/z', 'mz', 'moverz', 'mx'],
-                not_regex_search_strings = ['id'],
-                in_strings = ['m.z', 'calcmz', 'medmz', 'm_z', 'obsmz', 'mass to charge', 'mass over z'],
-                not_in_strings = ['spec', 'pectrum', 'structure', 'regno', 'retention'])
+
+
 
 
 

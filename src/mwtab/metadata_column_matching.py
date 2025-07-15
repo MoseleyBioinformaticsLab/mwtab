@@ -48,6 +48,7 @@ def _create_column_regex_all(match_strings_sets: list[list[str]]) -> str:
     return regex
 
 # TODO check that the :py:data:`WRAP_STRING` in the docstring references the constant correctly in the documentation.
+# TODO see how Sphinx pulls in Parameters in class docstring vs Args in init.
 class NameMatcher():
     """Used to filter names that match certain criteria.
     
@@ -55,27 +56,13 @@ class NameMatcher():
     of matching tabular column names based on regular expressions and "in" criteria.
     
     Attributes:
-        regex_search_strings: A collection of strings to deliver to re.search() to match a column name. 
-          If any string in the collection matches, then the name is matched. This does not simply 
-          look for any of the strings within a column name to match. Each string is wrapped with 
-          the :py:data:`WRAP_STRING` before searching, so the string 'bar' would not be found in 
-          the column name "foobarbaz", but would be found in the name "foo bar baz".
-        not_regex_search_strings: The same as regex_search_strings, except a match to a column name 
-          eliminates that name. Attributes that begin with "not" take precedence over the others. 
-          So if a column name matches a string in regex_search_strings and not_regex_search_strings, 
-          then it will be filtered OUT.
-        regex_search_sets: A collection of sets of strings. Each string in the set of strings must 
-          be found in the column name to match, but any set could be found. For example, [('foo', 'bar'), ('baz', 'asd')] 
-          will match the name "foo bar" or "bar foo", but not "foobar", due to the aforementioned 
-          :py:data:`WRAP_STRING`. The names "foo", "baz", or "asd" would not match either, but "var asd baz" would.
-        in_strings: Similar to regex_search_strings except instead of using re.search() the "in" operator 
-          is used. For example, ['foo'] would match the column name "a fool", since 'foo' is in "a fool".
-        not_in_strings: The same as in_strings, but matches to a column name eliminate or filter OUT that name.
-        in_string_sets: The same as regex_search_sets, but each string in a set is determined to match 
-          using the "in" operator instead of re.search(). For example, [('foo', 'bar'), ('baz', 'asd')] 
-          WILL match the column name "foobar" because both 'foo' and 'bar' are in the name.
-        exact_strings: A collection of strings that must exactly match the column name. For example, 
-          ['foo', 'bar'] would only the match the column names "foo" or "bar".
+        regex_search_strings (list(str)): The current list of strings used for regex searching.
+        not_regex_search_strings (list(str)): The current list of strings used for regex searching to exclude names.
+        regex_search_sets (list(list(str))): The current list of string sets used for regex searching.
+        in_strings (list(str)): The current list of strings used for "in" operator matching.
+        not_in_strings (list(str)): The current list of strings used for "in" operator matching to exclude names.
+        in_string_sets (list(list(str))): The current list of string sets used for "in" operator matching.
+        exact_strings (list(str)): The current collection of strings used for "==" operator matching.
     
     Examples:
         Find a column for "moverz".
@@ -158,6 +145,30 @@ class NameMatcher():
                  not_regex_search_strings: None|list[str] = None, regex_search_sets: None|list[list[str]] = None,
                  in_strings: None|list[str] = None, not_in_strings: None|list[str] = None, 
                  in_string_sets: None|list[list[str]] = None, exact_strings: None|list[str] = None):
+        # """
+        # Args:
+        #     regex_search_strings: A collection of strings to deliver to re.search() to match a column name. 
+        #       If any string in the collection matches, then the name is matched. This does not simply 
+        #       look for any of the strings within a column name to match. Each string is wrapped with 
+        #       the :py:data:`WRAP_STRING` before searching, so the string 'bar' would not be found in 
+        #       the column name "foobarbaz", but would be found in the name "foo bar baz".
+        #     not_regex_search_strings: The same as regex_search_strings, except a match to a column name 
+        #       eliminates that name. Attributes that begin with "not" take precedence over the others. 
+        #       So if a column name matches a string in regex_search_strings and not_regex_search_strings, 
+        #       then it will be filtered OUT.
+        #     regex_search_sets: A collection of sets of strings. Each string in the set of strings must 
+        #       be found in the column name to match, but any set could be found. For example, [('foo', 'bar'), ('baz', 'asd')] 
+        #       will match the name "foo bar" or "bar foo", but not "foobar", due to the aforementioned 
+        #       :py:data:`WRAP_STRING`. The names "foo", "baz", or "asd" would not match either, but "var asd baz" would.
+        #     in_strings: Similar to regex_search_strings except instead of using re.search() the "in" operator 
+        #       is used. For example, ['foo'] would match the column name "a fool", since 'foo' is in "a fool".
+        #     not_in_strings: The same as in_strings, but matches to a column name eliminate or filter OUT that name.
+        #     in_string_sets: The same as regex_search_sets, but each string in a set is determined to match 
+        #       using the "in" operator instead of re.search(). For example, [('foo', 'bar'), ('baz', 'asd')] 
+        #       WILL match the column name "foobar" because both 'foo' and 'bar' are in the name.
+        #     exact_strings: A collection of strings that must exactly match the column name. For example, 
+        #       ['foo', 'bar'] would only the match the column names "foo" or "bar".
+        # """
         self.regex_search_strings = regex_search_strings if regex_search_strings else []
         self.not_regex_search_strings = not_regex_search_strings if not_regex_search_strings else []
         self.regex_search_sets = regex_search_sets if regex_search_sets else []
@@ -208,6 +219,11 @@ class ValueMatcher():
     of matching tabular column data based on regular expressions and type criteria.
     
     Attributes:
+        values_type: The current type of the values being matched.
+        values_regex: The regular expression to positively identify values in a column.
+        inverse_values_regex: The regular expression to positively exclude values in a column.
+    
+    Parameters:
         values_type: A string whose only relevant values are 'integer', 'numeric', and 'non-numeric'.
           'integer' will only match values in a column that are integer numbers. 'numeric' will only 
           match values that are numbers, this includes integers. 'non-numeric' will only match values 
@@ -220,7 +236,47 @@ class ValueMatcher():
           values must match both criteria to match overall.
     
     Examples:
+        Simple type example.
         
+        >>> vm = ValueMatcher(values_type = 'numeric')
+        >>> test = pandas.Series([1, '1', 'foo'])
+        >>> vm.series_match(test)
+        0     True
+        1     True
+        2    False
+        dtype: bool
+        
+        This ValueMatcher is very simple and will only match numeric values. Note that numeric 
+        values in string form are also recognized as numeric. This is intentional.
+        
+        Simple regex example.
+        
+        >>> vm = ValueMatcher(values_regex = 'foo.*')
+        >>> test = pandas.Series(['foo', 'bar', 'foobar', 1])
+        >>> vm.series_match(test)
+        0     True
+        1    False
+        2     True
+        3    False
+        dtype: bool
+        
+        Simple inverse regex example.
+        >>> vm = ValueMatcher(values_inverse_regex = 'foo.*')
+        >>> test = pandas.Series(['foo', 'bar', 'foobar', 1])
+        >>> vm.series_match(test)
+        0    False
+        1     True
+        2    False
+        3    False
+        dtype: bool
+        
+        Note that 1 is False in both examples. In general this was designed with strings in mind, so it 
+        is recommended to convert all values to strings in any Series delivered to series_match. 
+        It is also HIGHLY recommended to use the 'string[pyarrow]' dtype when using the regex attributes. 
+        This dtype uses much faster regular expression algorithms and can make orders of magnitude speed 
+        differences over Python's built-in regular expressions. There are some features of regular 
+        expressions that cannot be used with the 'string[pyarrow]' dtype though. For example, lookahead 
+        assertions. More information can be found at https://pypi.org/project/re2/. 
     """
     
     def __init__(self, values_type: None|str = None, values_regex: None|str = None, values_inverse_regex: None|str = None):
@@ -268,6 +324,43 @@ class ValueMatcher():
 
 class ColumnFinder:
     """Used to find columns in a DataFrame that match a NameMatcher and values in the column that match a ValueMatcher.
+    
+    This is pretty much just a convenient way to keep the standard_name, NameMatcher, and ValueMatcher 
+    together in a single object. Convenience methods to utilize the NameMatcher and ValueMatcher are 
+    provided as name_dict_match and values_series_match, respectively.
+    
+    Attributes:
+        standard_name: The standard name of the column trying to be found.
+        name_matcher: The NameMatcher object used to match column names.
+        value_matcher: The ValueMatcher object used to match column values.
+    
+    Parameters:
+        standard_name: A string to give a standard name to the column you are trying to find. 
+          Not used by any methods.
+        name_matcher: The NameMatcher object used to match column names.
+        value_matcher: The ValueMatcher object used to match column values.
+        
+    Examples:
+        Basic usage.
+        
+        >>> df = pandas.DataFrame({'foo':[1, 2, 'asdf'], 'bar':[1, 2, 3]})
+        >>> df
+            foo  bar
+        0     1    1
+        1     2    2
+        2  asdf    3
+        >>> column_finder = ColumnFinder('FOO', NameMatcher(exact_strings = ['foo']), ValueMatcher(values_type = 'numeric'))
+        >>> modified_columns = {column_name: column_name.lower().strip() for column_name in df.columns}
+        >>> matching_columns = column_finder.name_dict_match(modified_columns)
+        >>> matched_column_name = matching_columns[0]
+        >>> matched_column_name
+        foo
+        >>> matching_values = column_finder.values_series_match(df.loc[:, matched_column_name])
+        >>> matching_values
+        0     True
+        1     True
+        2    False
+        dtype: bool
     """
     def __init__(self, standard_name: str, name_matcher: NameMatcher, value_matcher: ValueMatcher):
         self.standard_name = standard_name
@@ -275,9 +368,13 @@ class ColumnFinder:
         self.value_matcher = value_matcher
     
     def name_dict_match(self, name_map):
+        """Convenience method to use the dict_match method for name_matcher.
+        """
         return self.name_matcher.dict_match(name_map)
     
     def values_series_match(self, series):
+        """Convenience method to use the series_match method for value_matcher.
+        """
         return self.value_matcher.series_match(series)
  
 
@@ -285,12 +382,21 @@ class ColumnFinder:
 
 
 
-def make_list_regex(element_regex, delimiter, quoted_elements=False, empty_string=False):
-    """ Creates a regular expression that will match a list of element_regex delimited by delimiter.
+def make_list_regex(element_regex: str, delimiter: str , quoted_elements: bool = False, empty_string: bool = False) -> str:
+    """Creates a regular expression that will match a list of element_regex delimited by delimiter.
     
     Note that delimiter can be a regular expression like (,|;) to match 2 different types of delimiters. 
-    If quoated_elements is True, then allow element_regex to surrounded by single or double quotes. 
+    If quoted_elements is True, then allow element_regex to surrounded by single or double quotes. 
     If empty_string is True, then the list regex will match a single element_regex and the empty string.
+    
+    Args:
+        element_regex: A regular expression in the form of a string that matches the elements of the list to match.
+        delimiter: The character(s) that seperate list elements.
+        quoted_elements: If True, list elements can be surrounded by single or double quotes.
+        empty_string: If True, then allow the returned regular exression to match the empty string.
+    
+    Returns:
+        A regular expression in str form that will match a list of element_regexes delimited by delimiter.
     """
     if quoted_elements:
         # The simplest regex to add quotes around the element, but allows elements like 'element" through.
