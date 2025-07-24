@@ -13,3 +13,5 @@ data/*
 /src/mwtab.egg-info
 src/mwtab/_version.py
 /scratch
+docs/standard_column_names.json
+/docs/_contents

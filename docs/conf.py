@@ -19,10 +19,16 @@
 #
 import os
 import sys
+import json
 # sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('..'))
 
-from mwtab import __version__
+from mwtab import __version__, metadata_column_matching
+
+standard_column_names = [name for name in metadata_column_matching.column_finders]
+with open('standard_column_names.json','w') as jsonFile:
+    jsonFile.write(json.dumps(standard_column_names, indent=2))
+
 
 # -- General configuration ------------------------------------------------
 
@@ -33,16 +39,21 @@ from mwtab import __version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
+extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'nbsphinx',
-    'sphinx.ext.napoleon',]
+    'sphinx_design',
+    'sphinx.ext.napoleon',
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -91,12 +102,17 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
-autoclass_content = 'both'
+napoleon_custom_sections = [('attributes', 'params_style')]
+autoclass_content = 'class'
+autodoc_typehints = 'description'
+autodoc_typehints_description_target = 'documented_params'
+autodoc_member_order = 'bysource'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+# html_theme = "sphinx_rtd_theme"
+html_theme = "pydata_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -191,4 +207,14 @@ epub_exclude_files = ['search.html']
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/3': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+
+
+# -----------------------------------------------------------------------------
+# Autosummary
+# -----------------------------------------------------------------------------
+
+autosummary_generate = True
+
+# Autosection options
+autosectionlabel_prefix_document = True

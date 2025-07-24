@@ -49,15 +49,42 @@ are used in its only method, dict_match. All ValueMatcher attributes are strings
 all are used in its only method, series_match. ColumnFinder takes both a NameMatcher 
 and ValueMatcher, along with a standard_name attribute. The "standard_name" attribute 
 is not used by any method and is simply there to tie the instance of the class to a 
-name. The :doc:`api` page for metadata_column_matching.py contains more detailed information 
-and examples on each class.
+name. The :ref:`api:Metadata Column Matching` page for metadata_column_matching.py 
+contains more detailed information and examples on each class.
 
 
 Regular Expressions
 -------------------
+In order to create some of the complex regular expressions needed to validate column 
+names and values, a modular approach to constructing them was taken. This means the 
+smaller building block regular expressions could have use outside of this particular 
+one. There is also a function used heavily in creating these regular expressions, 
+make_list_regex. The :ref:`api:Metadata Column Matching` page for metadata_column_matching.py 
+contains more detailed information about using this function. There are too many 
+regular expressions to explain each one, so the source code for creating them is 
+included below. The names are largely self explanatory, and being able to see the 
+regular expression for each name can help clear up confusion.
+
+.. literalinclude:: ../src/mwtab/metadata_column_matching.py
+   :start-after: # Comment for Sphinx to pull in regular expressions.
+   :end-before: # Comment for Sphinx to find the end of regular expressions.
 
 
+column_finders Dictionary
+-------------------------
+The column_finders dictionary is the culmination of the ColumnFinder class and 
+regular expressions for the purpose of finding and evaluating/validating columns 
+in Metabolomics Workbench datasets. The keys are standardized column names, and the 
+values are a ColumnFinder class to find and validate that column. The entire library 
+of datasets in the Metbolomics Workbench was used to determine the most relevant and 
+most abundant columns that should go into the column_finders dictionary. The column_finders 
+dictionary is likely to be useful for other similar metabolomics data, but may vary 
+outside of that usecase. Some columns, such as database ID columns, like PubChem or 
+KEGG, are likely to be more widely useable, but any user would have to test and 
+make that determination for themselves. The list of standardized column names available 
+in the dictionary is given below.
 
+.. literalinclude:: standard_column_names.json
 
 
 

@@ -22,8 +22,9 @@ import traceback
 from .mwschema import section_schema_mapping, base_schema
 
 import mwtab
+from mwtab import metadata_column_matching
 
-# column_finders = repair_metabolites_matching.column_finders
+column_finders = metadata_column_matching.column_finders
 
 VERBOSE = False
 LOG = None
@@ -327,11 +328,13 @@ def validate_metabolites(mwtabfile, data_section_key):
     metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
 
     for index, metabolite_dict in enumerate(mwtabfile[data_section_key]["Metabolites"]):
+        # TODO make this check work from dataframes.
         # Check whether the metabolite is in the Data section.
         metabolite = metabolite_dict["Metabolite"]
         if metabolite not in metabolites_in_data_section:
             metabolites_errors.append("METABOLITES: Data entry #{}, \"{}\", is not in the Data section.".format(index + 1, metabolite))
         
+        # TODO remove this check since the one below it should replace it.
         # Check if fields are recognized variations and report the standardized name to the user.
         for field_key in list(metabolite_dict.keys())[1:]:
             if not any(k == field_key for k in METABOLITES_REGEXS.keys()):
@@ -342,7 +345,22 @@ def validate_metabolites(mwtabfile, data_section_key):
                         break
     # Check if fields/columns are recognized variations and report the standardized name to the user.
     df = mwtabfile.get_metabolites_as_pandas()
-    
+    columns = {column:column.lower().strip() for column in df.columns}
+    for name, finder in column_finders.items():
+        if column_matches := finder.name_dict_match(columns):
+            if name not in df.columns:
+                for column_name in column_matches:
+                    metabolites_errors.append(f'Warning: The column, "{column_name}", matches a standard column name, "{name}". '
+                                              'If this match was not in error, the column should be renamed to '
+                                              'the standard name or a name that doesn\'t resemble the standard name.')
+            for column_name in column_matches:
+                value_mask = finder.value_series_match(df.loc[:, column_name].astype('string[pyarrow]'))
+                if not value_mask.all():
+                    error_message = (f'Warning: The column, "{column_name}", matches a standard column name, "{name}", '
+                                    'and some of the values in the column do not match the expected type or format for that column. '
+                                    'The non-matching values are:\n')
+                    error_message += str(df.loc[~value_mask, column_name])
+                    metabolites_errors.append(error_message)
 
     return metabolites_errors
 
