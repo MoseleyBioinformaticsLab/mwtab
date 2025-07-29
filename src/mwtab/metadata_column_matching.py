@@ -946,7 +946,7 @@ column_finders = [
                  NameMatcher(in_strings = ['comment'],),
                  ValueMatcher(values_inverse_regex = '(' + FLOAT + '|' + SCIENTIFIC_NOTATION + '|' + r'\d{2,}' + ')',)),
     
-    ColumnFinder("assignment%method",
+    ColumnFinder("assignment_method",
                  NameMatcher(in_string_sets = [['assignment', 'method']],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
@@ -956,7 +956,7 @@ column_finders = [
                              not_in_strings = ['type'],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
-    ColumnFinder("isotopologue%type",
+    ColumnFinder("isotopologue_type",
                  NameMatcher(in_strings = ['isotopologue%type', 'isotope'],
                              not_in_strings = ['count'],),
                  ValueMatcher(values_type = 'non-numeric',)),
@@ -974,15 +974,15 @@ column_finders = [
                              not_in_strings = ['type'],),
                  ValueMatcher(values_regex = '(' + POSITIVE_INTS + ')',)),
     
-    ColumnFinder("transient_peak%type",
+    ColumnFinder("transient_peak_type",
                  NameMatcher(in_string_sets = [['transient', 'peak', 'type']],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
-    ColumnFinder("FISh Coverage",
+    ColumnFinder("fish_coverage",
                  NameMatcher(in_string_sets = [['fish', 'coverage']],),
                  ValueMatcher(values_regex = '(' + POSITIVE_NUMS + ')',)),
     
-    ColumnFinder("MSI Category",
+    ColumnFinder("msi_category",
                  NameMatcher(in_strings = ['msicategory'],),
                  ValueMatcher(values_regex = r'1',)),
     
@@ -992,7 +992,7 @@ column_finders = [
                              not_in_strings = ['source', 'approach', 'confidence', 'level'],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
-    ColumnFinder("ISTD",
+    ColumnFinder("istd",
                  NameMatcher(in_strings = ['internal'],
                              exact_strings = ['istd'],),
                  ValueMatcher(values_type = 'non-numeric',)),
@@ -1001,7 +1001,7 @@ column_finders = [
                  NameMatcher(in_strings = ['platform'],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
-    ColumnFinder("MS Method",
+    ColumnFinder("ms_method",
                  NameMatcher(in_strings = ['method'],
                              not_in_strings = ['assignment'],),
                  ValueMatcher(values_type = 'non-numeric',)),
@@ -1010,11 +1010,11 @@ column_finders = [
                  NameMatcher(in_strings = ['polarity'],),
                  ValueMatcher(values_regex = r'(?i)((neg|pos|1|-1|\+|positive|negative)' + r'|\[M\+H\]\+|\[M-H\]-|5MM\+|5MM-)',)),
     
-    ColumnFinder("ESI mode",
+    ColumnFinder("esi_mode",
                  NameMatcher(in_strings = ['esi'],),
                  ValueMatcher(values_regex = r'(neg|pos|1|-1|(ESI )?\(\+\)( ESI)?|(ESI )?\(-\)( ESI| ES\))?|positive|negative)',)),
     
-    ColumnFinder("Ionization mode",
+    ColumnFinder("ionization_mode",
                  NameMatcher(regex_search_sets = [['pos', 'neg']],
                              in_strings = ['ionization', 'ionisation'],
                              not_in_strings = ['confirmed'],
@@ -1029,5 +1029,6 @@ column_finders = [
 column_finders = {finder.standard_name: finder for finder in column_finders}
 
 
+implied_pairs = {'other_id': ['other_id_type'], 'retention_index': ['retention_index_type']}
 
 

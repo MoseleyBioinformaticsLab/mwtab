@@ -323,6 +323,8 @@ def validate_metabolites(mwtabfile, data_section_key):
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
     """
+    implied_pairs = metadata_column_matching.implied_pairs
+    
     metabolites_errors = list()
     
     metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
@@ -346,14 +348,22 @@ def validate_metabolites(mwtabfile, data_section_key):
     # Check if fields/columns are recognized variations and report the standardized name to the user.
     df = mwtabfile.get_metabolites_as_pandas()
     columns = {column:column.lower().strip() for column in df.columns}
+    found_columns = {}
+    columns_to_standard_columns = {}
     for name, finder in column_finders.items():
         if column_matches := finder.name_dict_match(columns):
+            found_columns[name] = column_matches
             if name not in df.columns:
                 for column_name in column_matches:
                     metabolites_errors.append(f'Warning: The column, "{column_name}", matches a standard column name, "{name}". '
                                               'If this match was not in error, the column should be renamed to '
                                               'the standard name or a name that doesn\'t resemble the standard name.')
             for column_name in column_matches:
+                if column_name in columns_to_standard_columns:
+                    columns_to_standard_columns[column_name].append(name)
+                else:
+                    columns_to_standard_columns[column_name] = [name]
+                
                 value_mask = finder.value_series_match(df.loc[:, column_name].astype('string[pyarrow]'))
                 if not value_mask.all():
                     error_message = (f'Warning: The column, "{column_name}", matches a standard column name, "{name}", '
@@ -361,6 +371,45 @@ def validate_metabolites(mwtabfile, data_section_key):
                                     'The non-matching values are:\n')
                     error_message += str(df.loc[~value_mask, column_name])
                     metabolites_errors.append(error_message)
+    
+    # When certain columns are found in METABOLITES, look for the implied pair and warn if it isn't there. 
+    # For example, other_id and other_id_type and retention_index and retention_index_type.
+    # Also check that they both have data in the same rows.
+    for name, matches in found_columns.items():
+        if name in implied_pairs:
+            implied_pairs_not_found = [column for column in implied_pairs[name] if column not in found_columns]
+            for column in implied_pairs_not_found:
+                metabolites_errors.append(f'Warning: The column "{matches[0]}" was found in the METABOLITES table, '
+                                          'but this column implies that another column, "{column}", '
+                                          'should also exist, and that column was not found.')
+            
+            implied_pairs_found = [column for column in implied_pairs[name] if column in found_columns]
+            for column in implied_pairs_found:
+                parent_mask = df.loc[:, name].isna()
+                child_mask = df.loc[:, columns].isna()
+                if (parent_mask != child_mask).any():
+                    metabolites_errors.append(f'Warning: The column pair, "{matches[0]}" and "{found_columns[column][0]}", '
+                                              'in the METABOLITES table should have data in the '
+                                              'same rows, but at least one row has data in one '
+                                              'column and nothing in the other.')
+    
+    # If the other_id column is found, print message about making individual database ID columns.
+    # I thought about checking to see if there were database IDs in the column first, but I'm not sure if it's worth the effort.
+    if 'other_id' in found_columns:
+        metabolites_errors.append('Warning: The standard column, "other_id", was '
+                                  f'found in the METABOLITES table as "{found_columns["other_id"][0]}". '
+                                  'If this column contains database IDs for standard databases such '
+                                  'as KEGG, PubChem, HMDB, etc., it is recommended to make individual '
+                                  'columns for these and not lump them together into a less descriptive '
+                                  '"other_id" column.')
+    
+    # If a column in df matches multiple standard names, print a warning to prefer separating them.
+    for column_name, standard_names in columns_to_standard_columns.items():
+        if len(standard_names) > 1:
+            metabolites_errors.append(f'Warning: The column, "{column_name}", in the METABOLTIES table '
+                                      'was matched to multiple standard names. This is a good indication '
+                                      'that the values in that column should be split into the appropriate '
+                                      'individual columns.')
 
     return metabolites_errors
 
@@ -378,15 +427,26 @@ def validate_extended(mwtabfile, data_section_key):
 
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
+    
+    df = mwtabfile.get_table_as_pandas('Extended')
+    if "sample_id" not in df.columns:
+        extended_errors.append("Error: The EXTENDED data table does not have a column for \"sample_id\".")
+    else:
+        extended_id_set = set(df.loc[:, 'sample_id'])
+        not_in_ssf = sample_id_set - extended_id_set
+        if not_in_ssf:
+            extended_errors.append("Error: The EXTENDED data table has Sample IDs that were not found in the "
+                                   "SUBJECT_SAMPLE_FACTORS section. Those IDs are:\n" + '\n'.join(not_in_ssf))
 
-    for index, extended_data in enumerate(mwtabfile[data_section_key]["Extended"]):
-        if "sample_id" not in extended_data.keys():
-            extended_errors.append("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1))
-        elif not extended_data["sample_id"] in sample_id_set:
-            extended_errors.append(
-                "EXTENDED_{}: Data entry #{} contains Sample ID \"{}\" not found in SUBJECT_SAMPLE_FACTORS section.".format(
-                    data_section_key, index + 1, extended_data["sample_id"]
-                ))
+    # TODO confirm the new way identifies the same missing sample IDs.
+    # for index, extended_data in enumerate(mwtabfile[data_section_key]["Extended"]):
+    #     if "sample_id" not in extended_data.keys():
+    #         extended_errors.append("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1))
+    #     elif not extended_data["sample_id"] in sample_id_set:
+    #         extended_errors.append(
+    #             "EXTENDED_{}: Data entry #{} contains Sample ID \"{}\" not found in SUBJECT_SAMPLE_FACTORS section.".format(
+    #                 data_section_key, index + 1, extended_data["sample_id"]
+    #             ))
 
     return extended_errors
 
@@ -514,6 +574,35 @@ def validate_table_values(mwtabfile, data_section_key):
             if data_df.duplicated().any():
                 message = "Warning: There are duplicate rows in the {} section.".format(message_strings[table_name])
                 errors.append(message)
+    return errors
+
+
+# TODO check the values of ion_mode and talk to hunter about restricting this to only pos or neg.
+# Not sure there won't be MS that could have other modes.
+def validate_polarity(mwtabfile):
+    """
+    """
+    common_message = ('A single mwTab file is supposed to be restricted to a single analysis. '
+                      'This means multiple MS runs under different settings should each be '
+                      'in their own file.')
+    errors = []
+    if 'MS' in mwtabfile and 'ION_MODE' in mwtabfile['MS']:
+        ion_mode = mwtabfile['MS']['ION_MODE']
+        if ion_mode not in ['pos', 'neg', 'positive', 'negative']:
+            errors.append('Error: The indicated ION_MODE should be either POSITIVE or NEGATIVE. ' + common_message)
+    
+    df = mwtabfile.get_metabolites_as_pandas()
+    column_finder = column_finders['polarity']
+    columns = {column:column.lower().strip() for column in df.columns}
+    if column_matches := column_finder.name_dict_match(columns):
+        for column_match in column_matches:
+            pos_values = df.loc[:, column_match].apply(lambda x: 'pos' in x or '+' in x)
+            neg_values = df.loc[:, column_match].apply(lambda x: 'neg' in x or '-' in x)
+            if pos_values.any() and neg_values.any():
+                errors.append(f'Error: The "{column_match}" column in the METABOLITES table '
+                              'indicates multiple polarities in a single analysis, and '
+                              'this should not be. ' + common_message)
+                break
     return errors
 
 
@@ -650,22 +739,18 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
 
 # TODO add checks for METABOLITES columns and try to give warnings for bad values, for example 'kegg_id' column should all be C00000, formula, inchi key,
 # Change some error messages to only print once if the file is a tab file and not a JSON file. For example if a column name is off.
-# Make sure the check that produces the error: "It is close to a header name and is likely due to a badly constructed Tab file." uses the same regex to identify the columns by name.
 
 # When certain columns are found in METABOLITES, look for the implied pair and warn if it isn't there. For example, other_id and other_id_type  and retention_index and retention_index_type.
 # Also look at the values in each pair and make sure they match, for instance AN000645 has values in other_id_type, but none in other_id.
+# I put these in validate_metabolites.
 
-# Look for ID values such as HMDB in the other_id column and suggest to make specific columns for them instead of putting them in other_id.
-# Warn if a column name matches 2 different regexes in METABOlITES. 'retention time_m/z' in AN002889   AN004492 Feature@RT
-# warn about columns that don't match any known name or have obvious values.
-# Add a warning that lists all of the METABOLITES columns that aren't recognized as a "standard" column.
-# Warn about multiple other_id columns in a single data set. AN003406 has CHEM_ID, LIB_ID, COMP_ID and CHRO_LIB_ENTRY_ID.
-#     Warn about any "ID" columns we don't know, create a matcher that just looks for ID or id.
-# Maybe add a check for column names that have the same name, but with an "s" at the end. for example, Name and Names in the same dataset.
+# Look for ID values such as HMDB in the other_id column and suggest to make specific columns for them instead of putting them in other_id. Done
+# Warn if a column name matches 2 different regexes in METABOLITES. 'retention time_m/z' in AN002889   AN004492 Feature@RT  Done
 
 # Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area.
 
 # Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg
 
+# Generate all of the tables to check once and then replace the calls to mwtabfile.get_metabolites_as_pandas() with a dict parameter that contains the tables.
 
 # Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.

@@ -69,6 +69,7 @@ def _JSON_serializer_for_dupe_class(o):
 def _match_process(matchobj):
     temp_string = matchobj.group(2)
     temp_string = temp_string.replace('\\"', '"')
+    temp_string = temp_string.replace('\\"', '"')
     temp_string = temp_string.replace('\\n',  '\n' + ' '*(3*INDENT))
     return matchobj.group(1) + ': {' + temp_string + '}'
 
