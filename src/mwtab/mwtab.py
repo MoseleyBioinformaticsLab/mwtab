@@ -166,6 +166,7 @@ class MWTabFile(OrderedDict):
     
     result_file_keys = ["UNITS", "Has m/z", "Has RT", "RT units"]
     data_section_keys = {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"}
+    table_names = ['Data', 'Extended', 'Metabolites']
     
     study_id = MWTabProperty()
     analysis_id = MWTabProperty()

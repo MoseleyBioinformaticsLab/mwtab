@@ -314,7 +314,7 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
     return data_errors
 
 
-def validate_metabolites(mwtabfile, data_section_key):
+def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
     """Validate ``METABOLITES`` section.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -322,6 +322,8 @@ def validate_metabolites(mwtabfile, data_section_key):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
     implied_pairs = metadata_column_matching.implied_pairs
     
@@ -346,7 +348,7 @@ def validate_metabolites(mwtabfile, data_section_key):
                         field_key = regex_key
                         break
     # Check if fields/columns are recognized variations and report the standardized name to the user.
-    df = mwtabfile.get_metabolites_as_pandas()
+    df = mwtabfile_tables['Metabolites']
     columns = {column:column.lower().strip() for column in df.columns}
     found_columns = {}
     columns_to_standard_columns = {}
@@ -414,7 +416,7 @@ def validate_metabolites(mwtabfile, data_section_key):
     return metabolites_errors
 
 
-def validate_extended(mwtabfile, data_section_key):
+def validate_extended(mwtabfile, data_section_key, mwtabfile_tables):
     """Validate ``EXTENDED_MS_METABOLITE_DATA``, ``EXTENDED_NMR_METABOLITE_DATA``, and ``EXTENDED_NMR_BINNED_DATA`` sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -422,13 +424,15 @@ def validate_extended(mwtabfile, data_section_key):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
     extended_errors = list()
 
     sample_id_set = {subject_sample_factor["Sample ID"] for subject_sample_factor in
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
     
-    df = mwtabfile.get_table_as_pandas('Extended')
+    df = mwtabfile_tables['Extended']
     if "sample_id" not in df.columns:
         extended_errors.append("Error: The EXTENDED data table does not have a column for \"sample_id\".")
     else:
@@ -519,7 +523,7 @@ def validate_section_schema(section, schema, section_key, cleaning=False):
 
     return schema.validate(section), schema_errors
     
-def validate_table_values(mwtabfile, data_section_key):
+def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables):
     """Validate the values of all table sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -527,6 +531,8 @@ def validate_table_values(mwtabfile, data_section_key):
                      :py:class:`collections.OrderedDict`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
     message_strings = {
         'Data': "[\"" + data_section_key + "\"][\"Data\"] \ METABOLITE_DATA" if not 'BINNED' in data_section_key else "[\"" + data_section_key + "\"][\"Data\"] \ BINNED_DATA",
@@ -534,7 +540,7 @@ def validate_table_values(mwtabfile, data_section_key):
         'Extended': "[\"" + data_section_key + "\"][\"Extended\"] \ EXTENDED_METABOLITE_DATA"
         }
     errors = []
-    for table_name in ['Data', 'Extended', 'Metabolites']:
+    for table_name in mwtabfile.table_names:
         if table_name in mwtabfile[data_section_key]:
             records = mwtabfile[data_section_key][table_name]
             if len(records) > 0:
@@ -546,7 +552,7 @@ def validate_table_values(mwtabfile, data_section_key):
                                'with different keys. All dictionaries in the list should have the same keys.'.format(message_strings[table_name]))
                     errors.append(message)
             
-            data_df = mwtabfile.get_table_as_pandas(table_name)
+            data_df = mwtabfile_tables[table_name]
             # temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in mwtabfile[data_section_key][table_name]]
             # data_df = pandas.DataFrame.from_records(temp_list)
             # data_df = pandas.DataFrame.from_records(mwtabfile[data_section_key][table_name])
@@ -578,9 +584,13 @@ def validate_table_values(mwtabfile, data_section_key):
 
 
 # TODO check the values of ion_mode and talk to hunter about restricting this to only pos or neg.
+# Add docstring.
 # Not sure there won't be MS that could have other modes.
-def validate_polarity(mwtabfile):
+def validate_polarity(mwtabfile, mwtabfile_tables):
     """
+    
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
     common_message = ('A single mwTab file is supposed to be restricted to a single analysis. '
                       'This means multiple MS runs under different settings should each be '
@@ -591,7 +601,7 @@ def validate_polarity(mwtabfile):
         if ion_mode not in ['pos', 'neg', 'positive', 'negative']:
             errors.append('Error: The indicated ION_MODE should be either POSITIVE or NEGATIVE. ' + common_message)
     
-    df = mwtabfile.get_metabolites_as_pandas()
+    df = mwtabfile_tables['Metabolites']
     column_finder = column_finders['polarity']
     columns = {column:column.lower().strip() for column in df.columns}
     if column_matches := column_finder.name_dict_match(columns):
@@ -638,6 +648,11 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
 
     # create list to collect validation errors
     errors = list()
+    
+    # Get tables as dataframes.
+    mwtabfile_tables = {}
+    for table_name in mwtabfile.table_names:
+        mwtabfile_tables[table_name] = mwtabfile.get_table_as_pandas(table_name)
     
     dict_for_Schema = OrderedDict()
     for section_key, section in mwtabfile.items():
@@ -751,6 +766,5 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
 
 # Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg
 
-# Generate all of the tables to check once and then replace the calls to mwtabfile.get_metabolites_as_pandas() with a dict parameter that contains the tables.
-
 # Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.
+
