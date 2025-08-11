@@ -13,9 +13,11 @@ import sys
 import re
 from copy import deepcopy
 from collections import OrderedDict
-from functools import partial
+from functools import partial, partialmethod
+from collections.abc import Callable
 
 from schema import Schema, Optional, Or, And, SchemaError
+import jsonschema
 
 from . import metadata_column_matching
 
@@ -28,6 +30,88 @@ class _duplicate_key_list(list):
 
 if sys.version_info.major == 2:
     str = unicode
+
+
+def create_units_regex(units: list[str], can_be_range: bool = False) -> str:
+    """Create a regular expression to match something like '5 V' or '5-6 V'.
+    
+    Regular expression will match something like '5 V'. The space is required, '5V' 
+    will not match. If can_be_range is True, then the expression will also match 
+    something like '5-7 V' (hyphen), '5−7 V' (em dash), and '5 to 7 V' as well. 
+    The spacing must match.
+    
+    Args:
+        units: The list of unit strings that could follow the number.
+        can_be_range: If True, allow a pattern like '5-7 V' with a range.
+    
+    Returns:
+        A regular expression to match a number and units based on the arguments.
+    """
+    if can_be_range:
+        regex = '^(' + metadata_column_matching.NUM_RANGE + '|' + metadata_column_matching.NUMS + ')' + f' ({"|".join(units)})$'
+    else:
+        regex = '^' + metadata_column_matching.NUMS + f' ({"|".join(units)})$'
+    return regex
+
+def create_unit_error_message(validation_error: jsonschema.exceptions.ValidationError, can_be_range: bool = False, no_units: bool = False, units: list[str]|None = None) -> str:
+    """Generate the error message for mwTab subsections that fail the unit regex.
+    
+    The idea for this function is that you include it in the jsonschema under a keyword that 
+    is not reserved by jsonschema, and then your custom error handler will look for that 
+    keyword and execute whatever function it finds there, passing the error object in as 
+    the first parameter. You can combine this with the "partial" function from functools 
+    to set the other parameters of this function as needed.
+    
+    Args:
+        validation_error: The ValidationError created by jsonschema. Used to fill in some text in the message.
+        can_be_range: If True, the regular expression used to validate could have matched a number range, so the message is modified to note that.
+        no_units: If True, the regular expression did not require units to be present, so the message is modified to note that.
+        units: If the regular expression required units, pass them in with this parameter so the message will indicate the allowed units.
+    
+    Returns:
+        A completed string error message.
+    """
+    section = validation_error.relative_path[-2]
+    subsection = validation_error.relative_path[-1]
+    
+    if can_be_range:
+        range_string = ' or range (ex. 5-6) '
+    else:
+        range_string = ''
+    
+    if no_units:
+        unit_string = '.'
+    else:
+        unit_string = f'followed by a space with a unit from the following list: {units}.'
+    
+    message = (f'The value, "{validation_error.instance}", for the subsection, "{subsection}", in the "{section}" section '
+               f'should be a number{range_string}{unit_string}')
+    return message
+
+def _create_unit_regex_and_message_func(units: list[str], can_be_range: bool = False) -> str:
+    """Simple wrapper for DRY purposes.
+    
+    Creating the regular expression and validation error message in 1 function mixes too many 
+    concerns into 1 function, so they are split into 2 and this function serves as a convenience 
+    to pass them into a jsonschema easily. To this end the return is in dictionary form with the 
+    intention for it to be unpacked into the jsonschema. For example, 
+    {**_create_unit_regex_and_message_func(['V'], True)}
+    
+    Args:
+        units: A list of strings used to create the regex and error message.
+        can_be_range: If true, the regex will match a number range and the message will be slightly different.
+    
+    Returns:
+        A dicitonary {'pattern': regex, 'message_func': message_function}.
+    """
+    regex = create_units_regex(units, can_be_range)
+    message_function = partial(create_unit_error_message, can_be_range = can_be_range, no_units = False, units = units)
+    return {'pattern': regex, 'message_func': message_function}
+
+
+
+
+
 
 
 
@@ -53,27 +137,30 @@ class UnitChecker(object):
     
     Parameters:
         units: The list of unit strings that could follow the number.
-        can_be_range: If True, allow a pattern like '5 - 7 V' with a range.
+        can_be_range: If True, allow a pattern like '5-7 V' with a range.
         error_message: A custom error message to use instead of the default one. 
           This string will have the format method called on it with locals(), so variables such as 
           'self.units' and 'data' can be used in the message.
     
     Attributes:
         units (list[str]): The current list of unit strings that must follow the number.
-        can_be_range (bool): Whether the checker allows a range (ex. '5 - 7 V') or not.
+        can_be_range (bool): Whether the checker allows a range (ex. '5-7 V') or not.
         error_message (str|None): The current custom error message to use instead of the default one.
     """
-    def __init__(self, units: list[str], can_be_range: bool = False, error_message: str|None = None):
+    def __init__(self, units: list[str], can_be_range: bool = False, 
+                 error_message: str|None = None, error_message_builder: Callable|None = None, **kwargs):
         self.units = units
         self.can_be_range = can_be_range
         self.error_message = error_message
+        self.error_message_builder = error_message_builder
+        self.kwargs = kwargs
 
     def validate(self, data: str) -> bool:
         """Test if data is a number followed by a unit.
         
         data must be something like '5 V' to return True. The space is required, '5V' 
         will raise a SchemaError. If the can_be_range attribute is True, then data 
-        can look like '5 - 7 V' as well.
+        can look like '5-7 V' as well.
         
         Args:
             data: the value to test, should be a string.
@@ -88,7 +175,9 @@ class UnitChecker(object):
                 regex = metadata_column_matching.NUMS + f' ({"|".join(self.units)})'
             if re.fullmatch(regex, data.strip()):
                 return True
-        if self.error_message:
+        if self.error_message_builder is not None:
+            error_message = self.error_message_builder(self, data)
+        elif self.error_message:
             error_message = self.error_message
         else:
             error_message = f'"{data}" should be a number followed by a space with a unit from the following list: {self.units}.'
@@ -157,10 +246,13 @@ class SetChecker(object):
         na_values (list[str]): The current set of NA values to disallow.
         error_message (str|None): The current custom error message to use instead of the default one.
     """
-    def __init__(self, in_values: list[str], na_values: list[str]|None = None, error_message: str|None = None):
+    def __init__(self, in_values: list[str], na_values: list[str]|None = None, 
+                 error_message: str|None = None, error_message_builder: Callable|None = None, **kwargs):
         self.in_values = in_values
-        self.error_message = error_message
         self.na_values = NA_VALUES if na_values is None else na_values
+        self.error_message = error_message
+        self.error_message_builder = error_message_builder
+        self.kwargs = kwargs
 
     def validate(self, data: str) -> bool:
         """Test if data is in in_values.
@@ -175,12 +267,24 @@ class SetChecker(object):
             stripped_data = data.strip()
             if stripped_data in self.in_values:
                 return True
+        # if self.error_message:
+        #     error_message = self.error_message
+        # else:
+        #     error_message = f'"{data}" should be one of the following values: {self.in_values}.'
+        if self.error_message_builder is not None:
+            error_message = self.error_message_builder(self, data)
+        else:
+            error_message = self._build_error_message(data)
+        raise SchemaError(error_message.format(**locals()))
+    
+    def _build_error_message(self, data):
+        """
+        """
         if self.error_message:
             error_message = self.error_message
         else:
             error_message = f'"{data}" should be one of the following values: {self.in_values}.'
-        raise SchemaError(error_message.format(**locals()))
-    
+        return error_message
 
 # def is_unit(value: str, unit: str):
 #     """Test if value is a number followed by a unit.
@@ -204,7 +308,29 @@ def create_error_message(section: str, subsection: str, can_be_range: bool = Fal
     """
     """
     if can_be_range:
-        range_string = ' or range (ex. 5 - 6) '
+        range_string = ' or range (ex. 5-6)'
+    else:
+        range_string = ''
+    
+    if no_units:
+        unit_string = '.'
+    else:
+        unit_string = ' followed by a space with a unit from the following list: {self.units}.'
+    
+    message = ('The value, "{data}", for the subsection, ' + f'"{subsection}", in the "{section}" section '
+               f'should be a number{range_string}{unit_string}')
+    return message
+
+def create_error_message2(self, data) -> str:
+    """
+    """
+    can_be_range = self.can_be_range
+    no_units = self.kwargs['no_units'] if 'no_units' in self.kwargs else False
+    section = self.kwargs['section']
+    subsection = self.kwargs['subsection']
+    
+    if can_be_range:
+        range_string = ' or range (ex. 5-6) '
     else:
         range_string = ''
     
@@ -213,9 +339,590 @@ def create_error_message(section: str, subsection: str, can_be_range: bool = Fal
     else:
         unit_string = 'followed by a space with a unit from the following list: {self.units}.'
     
-    message = ('The value, "{data}", for the subsection, ' + f'"{subsection}", in the "{section}" section '
+    message = (f'The value, "{data}", for the subsection, "{subsection}", in the "{section}" section '
                f'should be a number{range_string}{unit_string}')
     return message
+
+def partialclass(cls, *args, **kwargs):
+
+    class NewCls(cls):
+        __init__ = partialmethod(cls.__init__, *args, **kwargs)
+        
+        # def _build_error_message(self, data, **kwargs):
+        #     return create_error_message2(self, data)
+            
+            
+        #     can_be_range = self.can_be_range
+        #     no_units = kwargs['no_units'] if 'no_units' in kwargs else False
+        #     section = kwargs['section']
+        #     subsection = kwargs['subsection']
+            
+        #     if can_be_range:
+        #         range_string = ' or range (ex. 5 - 6) '
+        #     else:
+        #         range_string = ''
+            
+        #     if no_units:
+        #         unit_string = '.'
+        #     else:
+        #         unit_string = 'followed by a space with a unit from the following list: {self.units}.'
+            
+        #     message = (f'The value, "{data}", for the subsection, "{subsection}", in the "{section}" section '
+        #                f'should be a number{range_string}{unit_string}')
+        #     return message
+            
+        #     return create_error_message(self.kwargs['section'], 
+        #                                 self.kwargs['subsection'], 
+        #                                 self.can_be_range, 
+        #                                 self.kwargs['no_units'] if 'no_units' in self.kwargs else False)
+
+    return NewCls
+
+
+
+SubjectUnitChecker = partialclass(UnitChecker, error_message_builder = create_error_message2,  section = 'SUBJECT')
+test = SubjectUnitChecker(['g'], True, subsection = 'SUBSECTION')
+test.validate('5 - 6 g')
+
+
+def test_message_builder(self, **kwargs):
+    print(self)
+    print(kwargs)
+
+class TestClass(object):
+    def __init__(self, message_builder, **kwargs):
+        self.message_builder = message_builder
+        self.kwargs = kwargs
+    
+    def _build_message(self):
+        return self.message_builder(self)
+
+test = TestClass(test_message_builder)
+test._build_message()
+
+
+
+
+
+
+metabolomics_workbench_schema = \
+{'type': 'object',
+ 'properties': {'STUDY_ID': {'type': 'string'},
+                'ANALYSIS_ID': {'type': 'string'},
+                'VERSION': {'type': 'string'},
+                'CREATED_ON': {'type': 'string'},
+                'PROJECT_ID': {'type': 'string'},
+                'HEADER': {'type': 'string'},
+                'DATATRACK_ID': {'type': 'string'},
+                'filename': {'type': 'string'}},
+ 'required': ['VERSION', 'CREATED_ON'],
+ 'additionalProperties': False}
+
+project_schema = \
+{'type': 'object',
+ 'properties': {'PROJECT_TITLE': {'type': 'string'},
+                'PROJECT_TYPE': {'type': 'string'},
+                'PROJECT_SUMMARY': {'type': 'string'},
+                'INSTITUTE': {'type': 'string'},
+                'DEPARTMENT': {'type': 'string'},
+                'LABORATORY': {'type': 'string'},
+                'LAST_NAME': {'type': 'string'},
+                'FIRST_NAME': {'type': 'string'},
+                'ADDRESS': {'type': 'string'},
+                'EMAIL': {'type': 'string'},
+                'PHONE': {'type': 'string'},
+                'FUNDING_SOURCE': {'type': 'string'},
+                'PROJECT_COMMENTS': {'type': 'string'},
+                'PUBLICATIONS': {'type': 'string'},
+                'CONTRIBUTORS': {'type': 'string'},
+                'DOI': {'type': 'string'}},
+ 'required': ['PROJECT_TITLE',
+              'PROJECT_SUMMARY',
+              'INSTITUTE',
+              'LAST_NAME',
+              'FIRST_NAME',
+              'ADDRESS',
+              'EMAIL',
+              'PHONE'],
+ 'additionalProperties': False}
+
+study_schema = \
+{'type': 'object',
+ 'properties': {'STUDY_TITLE': {'type': 'string'},
+                'STUDY_TYPE': {'type': 'string'},
+                'STUDY_SUMMARY': {'type': 'string'},
+                'INSTITUTE': {'type': 'string'},
+                'DEPARTMENT': {'type': 'string'},
+                'LABORATORY': {'type': 'string'},
+                'LAST_NAME': {'type': 'string'},
+                'FIRST_NAME': {'type': 'string'},
+                'ADDRESS': {'type': 'string'},
+                'EMAIL': {'type': 'string'},
+                'PHONE': {'type': 'string'},
+                'SUBMIT_DATE': {'type': 'string'},
+                'NUM_GROUPS': {'type': 'string'},
+                'TOTAL_SUBJECTS': {'type': 'string'},
+                'NUM_MALES': {'type': 'string'},
+                'NUM_FEMALES': {'type': 'string'},
+                'STUDY_COMMENTS': {'type': 'string'},
+                'PUBLICATIONS': {'type': 'string'}},
+ 'required': ['STUDY_TITLE',
+              'STUDY_SUMMARY',
+              'INSTITUTE',
+              'LAST_NAME',
+              'FIRST_NAME',
+              'ADDRESS',
+              'EMAIL',
+              'PHONE'],
+ 'additionalProperties': False}
+
+subject_schema = \
+{'type': 'object',
+ 'properties': {'SUBJECT_TYPE': {'type': 'string'},
+                'SUBJECT_SPECIES': {'type': 'string'},
+                'TAXONOMY_ID': {'type': 'string'},
+                'GENOTYPE_STRAIN': {'type': 'string'},
+                'AGE_OR_AGE_RANGE': {'type': 'string', 'pattern': create_units_regex(['weeks', 'days', 'months', 'years'], True)},
+                'WEIGHT_OR_WEIGHT_RANGE': {'type': 'string', 'pattern': create_units_regex(['g', 'mg', 'kg', 'lbs'], True)},
+                'HEIGHT_OR_HEIGHT_RANGE': {'type': 'string', 'pattern': create_units_regex(['cm', 'in'], True)},
+                'GENDER': {'type': 'string'},
+                'HUMAN_RACE': {'type': 'string'},
+                'HUMAN_ETHNICITY': {'type': 'string'},
+                'HUMAN_TRIAL_TYPE': {'type': 'string'},
+                'HUMAN_LIFESTYLE_FACTORS': {'type': 'string'},
+                'HUMAN_MEDICATIONS': {'type': 'string'},
+                'HUMAN_PRESCRIPTION_OTC': {'type': 'string'},
+                'HUMAN_SMOKING_STATUS': {'type': 'string'},
+                'HUMAN_ALCOHOL_DRUG_USE': {'type': 'string'},
+                'HUMAN_NUTRITION': {'type': 'string'},
+                'HUMAN_INCLUSION_CRITERIA': {'type': 'string'},
+                'HUMAN_EXCLUSION_CRITERIA': {'type': 'string'},
+                'ANIMAL_ANIMAL_SUPPLIER': {'type': 'string'},
+                'ANIMAL_HOUSING': {'type': 'string'},
+                'ANIMAL_LIGHT_CYCLE': {'type': 'string'},
+                'ANIMAL_FEED': {'type': 'string'},
+                'ANIMAL_WATER': {'type': 'string'},
+                'ANIMAL_INCLUSION_CRITERIA': {'type': 'string'},
+                'CELL_BIOSOURCE_OR_SUPPLIER': {'type': 'string'},
+                'CELL_STRAIN_DETAILS': {'type': 'string'},
+                'SUBJECT_COMMENTS': {'type': 'string'},
+                'CELL_PRIMARY_IMMORTALIZED': {'type': 'string'},
+                'CELL_PASSAGE_NUMBER': {'type': 'string'},
+                'CELL_COUNTS': {'type': 'string'},
+                'SPECIES_GROUP': {'type': 'string'}},
+ 'required': ['SUBJECT_TYPE', 'SUBJECT_SPECIES'],
+ 'additionalProperties': False}
+
+subject_sample_factors_schema = \
+{'type': 'array',
+ 'items': {'type': 'object',
+           'properties': {'Subject ID': {'type': 'string'},
+                          'Sample ID': {'type': 'string'},
+                          'Factors': {'type': 'object'},
+                          'Additional sample data': {'type': 'object',
+                                                     'properties': {'RAW_FILE_NAME': {'type': 'string'}},
+                                                     'additionalProperties': True}},
+           'required': ['Subject ID', 'Sample ID', 'Factors'],
+           'additionalProperties': False}}    
+
+collection_schema = \
+{'type': 'object',
+ 'properties': {'COLLECTION_SUMMARY': {'type': 'string'},
+                'COLLECTION_PROTOCOL_ID': {'type': 'string'},
+                'COLLECTION_PROTOCOL_FILENAME': {'type': 'string'},
+                'COLLECTION_PROTOCOL_COMMENTS': {'type': 'string'},
+                'SAMPLE_TYPE': {'type': 'string'},
+                'COLLECTION_METHOD': {'type': 'string'},
+                'COLLECTION_LOCATION': {'type': 'string'},
+                'COLLECTION_FREQUENCY': {'type': 'string'},
+                'COLLECTION_DURATION': {'type': 'string'},
+                'COLLECTION_TIME': {'type': 'string'},
+                'VOLUMEORAMOUNT_COLLECTED': {'type': 'string'},
+                'STORAGE_CONDITIONS': {'type': 'string'},
+                'COLLECTION_VIALS': {'type': 'string'},
+                'STORAGE_VIALS': {'type': 'string'},
+                'COLLECTION_TUBE_TEMP': {'type': 'string'},
+                'ADDITIVES': {'type': 'string'},
+                'BLOOD_SERUM_OR_PLASMA': {'type': 'string', 'enum':['Blood', 'Serum', 'Plasma']},
+                'TISSUE_CELL_IDENTIFICATION': {'type': 'string'},
+                'TISSUE_CELL_QUANTITY_TAKEN': {'type': 'string'}},
+ 'required': ['COLLECTION_SUMMARY'],
+ 'additionalProperties': False}
+
+treatment_schema = \
+{'type': 'object',
+ 'properties': {'TREATMENT_SUMMARY': {'type': 'string'},
+                'TREATMENT_PROTOCOL_ID': {'type': 'string'},
+                'TREATMENT_PROTOCOL_FILENAME': {'type': 'string'},
+                'TREATMENT_PROTOCOL_COMMENTS': {'type': 'string'},
+                'TREATMENT': {'type': 'string'},
+                'TREATMENT_COMPOUND': {'type': 'string'},
+                'TREATMENT_ROUTE': {'type': 'string'},
+                'TREATMENT_DOSE': {'type': 'string'},
+                'TREATMENT_DOSEVOLUME': {'type': 'string'},
+                'TREATMENT_DOSEDURATION': {'type': 'string', 'pattern': create_units_regex(['h', 'weeks', 'days'], True)},
+                'TREATMENT_VEHICLE': {'type': 'string'},
+                'ANIMAL_VET_TREATMENTS': {'type': 'string'},
+                'ANIMAL_ANESTHESIA': {'type': 'string'},
+                'ANIMAL_ACCLIMATION_DURATION': {'type': 'string'},
+                'ANIMAL_FASTING': {'type': 'string'},
+                'ANIMAL_ENDP_EUTHANASIA': {'type': 'string'},
+                'ANIMAL_ENDP_TISSUE_COLL_LIST': {'type': 'string'},
+                'ANIMAL_ENDP_TISSUE_PROC_METHOD': {'type': 'string'},
+                'ANIMAL_ENDP_CLINICAL_SIGNS': {'type': 'string'},
+                'HUMAN_FASTING': {'type': 'string'},
+                'HUMAN_ENDP_CLINICAL_SIGNS': {'type': 'string'},
+                'CELL_STORAGE': {'type': 'string'},
+                'CELL_GROWTH_CONTAINER': {'type': 'string'},
+                'CELL_GROWTH_CONFIG': {'type': 'string'},
+                'CELL_GROWTH_RATE': {'type': 'string'},
+                'CELL_INOC_PROC': {'type': 'string'},
+                'CELL_MEDIA': {'type': 'string'},
+                'CELL_ENVIR_COND': {'type': 'string'},
+                'CELL_HARVESTING': {'type': 'string'},
+                'PLANT_GROWTH_SUPPORT': {'type': 'string'},
+                'PLANT_GROWTH_LOCATION': {'type': 'string'},
+                'PLANT_PLOT_DESIGN': {'type': 'string'},
+                'PLANT_LIGHT_PERIOD': {'type': 'string'},
+                'PLANT_HUMIDITY': {'type': 'string'},
+                'PLANT_TEMP': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'], True)},
+                'PLANT_WATERING_REGIME': {'type': 'string'},
+                'PLANT_NUTRITIONAL_REGIME': {'type': 'string'},
+                'PLANT_ESTAB_DATE': {'type': 'string'},
+                'PLANT_HARVEST_DATE': {'type': 'string'},
+                'PLANT_GROWTH_STAGE': {'type': 'string'},
+                'PLANT_METAB_QUENCH_METHOD': {'type': 'string'},
+                'PLANT_HARVEST_METHOD': {'type': 'string'},
+                'PLANT_STORAGE': {'type': 'string'},
+                'CELL_PCT_CONFLUENCE': {'type': 'string'},
+                'CELL_MEDIA_LASTCHANGED': {'type': 'string'}},
+ 'required': ['TREATMENT_SUMMARY'],
+ 'additionalProperties': False}
+
+sampleprep_schema = \
+{'type': 'object',
+ 'properties': {'SAMPLEPREP_SUMMARY': {'type': 'string'},
+                'SAMPLEPREP_PROTOCOL_ID': {'type': 'string'},
+                'SAMPLEPREP_PROTOCOL_FILENAME': {'type': 'string'},
+                'SAMPLEPREP_PROTOCOL_COMMENTS': {'type': 'string'},
+                'PROCESSING_METHOD': {'type': 'string'},
+                'PROCESSING_STORAGE_CONDITIONS': {'type': 'string'},
+                'EXTRACTION_METHOD': {'type': 'string'},
+                'EXTRACT_CONCENTRATION_DILUTION': {'type': 'string'},
+                'EXTRACT_ENRICHMENT': {'type': 'string'},
+                'EXTRACT_CLEANUP': {'type': 'string'},
+                'EXTRACT_STORAGE': {'type': 'string'},
+                'SAMPLE_RESUSPENSION': {'type': 'string'},
+                'SAMPLE_DERIVATIZATION': {'type': 'string'},
+                'SAMPLE_SPIKING': {'type': 'string'},
+                'ORGAN': {'type': 'string'},
+                'ORGAN_SPECIFICATION': {'type': 'string'},
+                'CELL_TYPE': {'type': 'string'},
+                'SUBCELLULAR_LOCATION': {'type': 'string'}},
+ 'required': ['SAMPLEPREP_SUMMARY'],
+ 'additionalProperties': False}
+
+chromatography_schema = \
+{'type': 'object',
+ 'properties': {'CHROMATOGRAPHY_SUMMARY': {'type': 'string'},
+                'CHROMATOGRAPHY_TYPE': {'type': 'string'},
+                'INSTRUMENT_NAME': {'type': 'string'},
+                'COLUMN_NAME': {'type': 'string'},
+                'FLOW_GRADIENT': {'type': 'string'},
+                'FLOW_RATE': {'type': 'string', 'pattern': create_units_regex(['mL/min', 'uL/min', 'μL/min'], True)},
+                'COLUMN_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'], True)},
+                'METHODS_FILENAME': {'type': 'string'},
+                'SAMPLE_INJECTION': {'type': 'string', 'pattern': create_units_regex(['μL', 'uL'])},
+                'SOLVENT_A': {'type': 'string'},
+                'SOLVENT_B': {'type': 'string'},
+                'METHODS_ID': {'type': 'string'},
+                'COLUMN_PRESSURE': {'type': 'string', 'pattern': create_units_regex(['psi', 'bar'], True)},
+                'INJECTION_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'], True)},
+                'INTERNAL_STANDARD': {'type': 'string'},
+                'INTERNAL_STANDARD_MT': {'type': 'string'},
+                'RETENTION_INDEX': {'type': 'string'},
+                'RETENTION_TIME': {'type': 'string'},
+                'SAMPLING_CONE': {'type': 'string'},
+                'ANALYTICAL_TIME': {'type': 'string', 'pattern': create_units_regex(['min'], True)},
+                'CAPILLARY_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V', 'kV'])},
+                'MIGRATION_TIME': {'type': 'string'},
+                'OVEN_TEMPERATURE': {'type': 'string'},
+                'PRECONDITIONING': {'type': 'string'},
+                'RUNNING_BUFFER': {'type': 'string'},
+                'RUNNING_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V', 'kV'])},
+                'SHEATH_LIQUID': {'type': 'string'},
+                'TIME_PROGRAM': {'type': 'string'},
+                'TRANSFERLINE_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'WASHING_BUFFER': {'type': 'string'},
+                'WEAK_WASH_SOLVENT_NAME': {'type': 'string'},
+                'WEAK_WASH_VOLUME': {'type': 'string', 'pattern': create_units_regex(['μL', 'uL'])},
+                'STRONG_WASH_SOLVENT_NAME': {'type': 'string'},
+                'STRONG_WASH_VOLUME': {'type': 'string', 'pattern': create_units_regex(['μL', 'uL'])},
+                'TARGET_SAMPLE_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'SAMPLE_LOOP_SIZE': {'type': 'string', 'pattern': create_units_regex(['μL', 'uL'])},
+                'SAMPLE_SYRINGE_SIZE': {'type': 'string', 'pattern': create_units_regex(['μL', 'uL'])},
+                'RANDOMIZATION_ORDER': {'type': 'string'},
+                'CHROMATOGRAPHY_COMMENTS': {'type': 'string'}},
+ 'required': ['CHROMATOGRAPHY_TYPE',
+              'INSTRUMENT_NAME',
+              'COLUMN_NAME',
+              'FLOW_GRADIENT',
+              'FLOW_RATE',
+              'COLUMN_TEMPERATURE',
+              'SOLVENT_A',
+              'SOLVENT_B'],
+ 'additionalProperties': False}
+
+analysis_schema = \
+{'type': 'object',
+ 'properties': {'ANALYSIS_TYPE': {'type': 'string', 'enum': ['MS', 'NMR']},
+                'LABORATORY_NAME': {'type': 'string'},
+                'ACQUISITION_DATE': {'type': 'string'},
+                'SOFTWARE_VERSION': {'type': 'string'},
+                'OPERATOR_NAME': {'type': 'string'},
+                'DETECTOR_TYPE': {'type': 'string'},
+                'ANALYSIS_PROTOCOL_FILE': {'type': 'string'},
+                'ACQUISITION_PARAMETERS_FILE': {'type': 'string'},
+                'PROCESSING_PARAMETERS_FILE': {'type': 'string'},
+                'DATA_FORMAT': {'type': 'string'},
+                'ACQUISITION_ID': {'type': 'string'},
+                'ACQUISITION_TIME': {'type': 'string'},
+                'ANALYSIS_COMMENTS': {'type': 'string'},
+                'ANALYSIS_DISPLAY': {'type': 'string'},
+                'INSTRUMENT_NAME': {'type': 'string'},
+                'INSTRUMENT_PARAMETERS_FILE': {'type': 'string'},
+                'NUM_FACTORS': {'type': 'string'},
+                'NUM_METABOLITES': {'type': 'string'},
+                'PROCESSED_FILE': {'type': 'string'},
+                'RANDOMIZATION_ORDER': {'type': 'string'},
+                'RAW_FILE': {'type': 'string'}},
+ 'required': ['ANALYSIS_TYPE'],
+ 'additionalProperties': False}
+
+results_file_schema = \
+{'type': 'object',
+ 'properties': {'filename': {'type': 'string'},
+  'UNITS': {'type': 'string'},
+  'Has m/z': {'type': 'string'},
+  'Has RT': {'type': 'string'},
+  'RT units': {'type': 'string'}},
+ 'required': ['filename', 'UNITS'],
+ 'additionalProperties': False}
+
+ms_schema = \
+{'type': 'object',
+ 'properties': {'INSTRUMENT_NAME': {'type': 'string'},
+                'INSTRUMENT_TYPE': {'type': 'string'},
+                'MS_TYPE': {'type': 'string'},
+                'ION_MODE': {'type': 'string'},
+                'CAPILLARY_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'], True)},
+                'CAPILLARY_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V', 'kV'])},
+                'COLLISION_ENERGY': {'type': 'string'},
+                'COLLISION_GAS': {'type': 'string', 'enum': ['Nitrogen', 'Argon']},
+                'DRY_GAS_FLOW': {'type': 'string', 'pattern': create_units_regex(['L/hr', 'L/min'])},
+                'DRY_GAS_TEMP': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'FRAGMENT_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V'])},
+                'FRAGMENTATION_METHOD': {'type': 'string'},
+                'GAS_PRESSURE': {'type': 'string', 'pattern': create_units_regex(['psi', 'psig', 'bar', 'kPa'])},
+                'HELIUM_FLOW': {'type': 'string', 'pattern': create_units_regex(['mL/min'])},
+                'ION_SOURCE_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'ION_SPRAY_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V', 'kV'])},
+                'IONIZATION': {'type': 'string'},
+                'IONIZATION_ENERGY': {'type': 'string', 'pattern': create_units_regex(['eV'])},
+                'IONIZATION_POTENTIAL': {'type': 'string'},
+                'MASS_ACCURACY': {'type': 'string'},
+                'PRECURSOR_TYPE': {'type': 'string'},
+                'REAGENT_GAS': {'type': 'string'},
+                'SOURCE_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'SPRAY_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['kV'])},
+                'ACTIVATION_PARAMETER': {'type': 'string'},
+                'ACTIVATION_TIME': {'type': 'string', 'pattern': create_units_regex(['ms'])},
+                'ATOM_GUN_CURRENT': {'type': 'string'},
+                'AUTOMATIC_GAIN_CONTROL': {'type': 'string'},
+                'BOMBARDMENT': {'type': 'string'},
+                'CDL_SIDE_OCTOPOLES_BIAS_VOLTAGE': {'type': 'string'},
+                'CDL_TEMPERATURE': {'type': 'string'},
+                'DATAFORMAT': {'type': 'string'},
+                'DESOLVATION_GAS_FLOW': {'type': 'string', 'pattern': create_units_regex(['L/hr', 'L/min'])},
+                'DESOLVATION_TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C'])},
+                'INTERFACE_VOLTAGE': {'type': 'string'},
+                'IT_SIDE_OCTOPOLES_BIAS_VOLTAGE': {'type': 'string'},
+                'LASER': {'type': 'string'},
+                'MATRIX': {'type': 'string'},
+                'NEBULIZER': {'type': 'string'},
+                'OCTPOLE_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V'])},
+                'PROBE_TIP': {'type': 'string'},
+                'RESOLUTION_SETTING': {'type': 'string'},
+                'SAMPLE_DRIPPING': {'type': 'string'},
+                'SCAN_RANGE_MOVERZ': {'type': 'string'},
+                'SCANNING': {'type': 'string'},
+                'SCANNING_CYCLE': {'type': 'string'},
+                'SCANNING_RANGE': {'type': 'string'},
+                'SKIMMER_VOLTAGE': {'type': 'string', 'pattern': create_units_regex(['V'])},
+                'TUBE_LENS_VOLTAGE': {'type': 'string'},
+                'MS_COMMENTS': {'type': 'string'},
+                'MS_RESULTS_FILE': results_file_schema},
+ 'required': ['INSTRUMENT_NAME', 'INSTRUMENT_TYPE', 'MS_TYPE', 'ION_MODE'],
+ 'additionalProperties': False}
+
+nmr_schema = \
+{'type': 'object',
+ 'properties': {'INSTRUMENT_NAME': {'type': 'string'},
+                'INSTRUMENT_TYPE': {'type': 'string'},
+                'NMR_EXPERIMENT_TYPE': {'type': 'string'},
+                'NMR_COMMENTS': {'type': 'string'},
+                'FIELD_FREQUENCY_LOCK': {'type': 'string'},
+                'STANDARD_CONCENTRATION': {'type': 'string', 'pattern': create_units_regex(['mM'])},
+                'SPECTROMETER_FREQUENCY': {'type': 'string', 'pattern': create_units_regex(['MHz'])},
+                'NMR_PROBE': {'type': 'string'},
+                'NMR_SOLVENT': {'type': 'string'},
+                'NMR_TUBE_SIZE': {'type': 'string'},
+                'SHIMMING_METHOD': {'type': 'string'},
+                'PULSE_SEQUENCE': {'type': 'string'},
+                'WATER_SUPPRESSION': {'type': 'string'},
+                'PULSE_WIDTH': {'type': 'string'},
+                'POWER_LEVEL': {'type': 'string', 'pattern': create_units_regex(['W'])},
+                'RECEIVER_GAIN': {'type': 'string', 'pattern': '^\d+$'},
+                'OFFSET_FREQUENCY': {'type': 'string', 'pattern': create_units_regex(['ppm', 'Hz'])},
+                'PRESATURATION_POWER_LEVEL': {'type': 'string', 'pattern': create_units_regex(['W'])},
+                'CHEMICAL_SHIFT_REF_CPD': {'type': 'string'},
+                'TEMPERATURE': {'type': 'string', 'pattern': create_units_regex(['°C', 'C', 'K'])},
+                'NUMBER_OF_SCANS': {'type': 'string', 'pattern': '^\d+$'},
+                'DUMMY_SCANS': {'type': 'string'},
+                'ACQUISITION_TIME': {'type': 'string', 'pattern': create_units_regex(['s'])},
+                'RELAXATION_DELAY': {'type': 'string', 'pattern': create_units_regex(['s', 'ms', 'us', 'μs'])},
+                'SPECTRAL_WIDTH': {'type': 'string', 'pattern': create_units_regex(['ppm', 'Hz'])},
+                'NUM_DATA_POINTS_ACQUIRED': {'type': 'string', 'pattern': '^\d+$'},
+                'REAL_DATA_POINTS': {'type': 'string'},
+                'LINE_BROADENING': {'type': 'string', 'pattern': create_units_regex(['Hz'])},
+                'ZERO_FILLING': {'type': 'string'},
+                'APODIZATION': {'type': 'string'},
+                'BASELINE_CORRECTION_METHOD': {'type': 'string'},
+                'CHEMICAL_SHIFT_REF_STD': {'type': 'string'},
+                'BINNED_INCREMENT': {'type': 'string', 'pattern': create_units_regex(['ppm'])},
+                'BINNED_DATA_NORMALIZATION_METHOD': {'type': 'string'},
+                'BINNED_DATA_PROTOCOL_FILE': {'type': 'string'},
+                'BINNED_DATA_CHEMICAL_SHIFT_RANGE': {'type': 'string'},
+                'BINNED_DATA_EXCLUDED_RANGE': {'type': 'string'},
+                'NMR_RESULTS_FILE': results_file_schema},
+ 'required': ['INSTRUMENT_NAME',
+              'INSTRUMENT_TYPE',
+              'NMR_EXPERIMENT_TYPE',
+              'SPECTROMETER_FREQUENCY'],
+ 'additionalProperties': False}
+
+data_schema = \
+{'type': 'array',
+ 'items': {'type': 'object',
+           'properties': {'Metabolite': {'type': 'string'},
+                          'Bin range(ppm)': {'type': 'string'}},
+           'required': [],
+           'additionalProperties': True}}
+
+extended_schema = \
+{'type': 'array',
+ 'items': {'type': 'object',
+           'properties': {'Metabolite': {'type': 'string'},
+                          'sample_id': {'type': 'string'}},
+           'required': ['Metabolite', 'sample_id'],
+           'additionalProperties': True}}
+
+ms_metabolite_data_schema = \
+{'type': 'object',
+ 'properties': {'Units': {'type': 'string'},
+                'Data': data_schema,
+                'Metabolites': data_schema,
+                'Extended': extended_schema},
+ 'required': ['Units', 'Data'],
+ 'additionalProperties': False}
+
+nmr_binned_data_schema = \
+{'type': 'object',
+ 'properties': {'Units': {'type': 'string'},
+                'Data': data_schema},
+ 'required': ['Units', 'Data'],
+ 'additionalProperties': False}
+
+base_required_schema = \
+{'properties': {'METABOLOMICS WORKBENCH': metabolomics_workbench_schema,
+               'PROJECT': project_schema,
+               'STUDY': study_schema,
+               'SUBJECT': subject_schema,
+               'SUBJECT_SAMPLE_FACTORS': subject_sample_factors_schema,
+               'COLLECTION': collection_schema,
+               'TREATMENT': treatment_schema,
+               'SAMPLEPREP': sampleprep_schema,
+               'ANALYSIS': analysis_schema},
+ 'required': ['METABOLOMICS WORKBENCH',
+              'PROJECT',
+              'STUDY',
+              'SUBJECT',
+              'SUBJECT_SAMPLE_FACTORS',
+              'COLLECTION',
+              'TREATMENT',
+              'SAMPLEPREP',
+              'ANALYSIS'],
+ 'additionalProperties': False}
+
+ms_required_schema = deepcopy(base_required_schema)
+ms_required_schema['properties']['MS'] = ms_schema
+ms_required_schema['properties']['MS_METABOLITE_DATA'] = ms_metabolite_data_schema
+ms_required_schema['properties']['CHROMATOGRAPHY'] = chromatography_schema
+ms_required_schema['required'].extend(['MS'])
+ms_required_schema['if'] = {'properties': {'MS_METABOLITE_DATA':{'not':{}}}}
+ms_required_schema['then'] = {'properties': {'MS':{'required':['MS_RESULTS_FILE']}}}
+# TODO catch the "'MS_RESULTS_FILE' is a required property" error and say that either a data section or results file is required.
+
+nmr_required_schema = deepcopy(base_required_schema)
+nmr_required_schema['properties']['NM'] = nmr_schema
+nmr_required_schema['properties']['NMR_METABOLITE_DATA'] = ms_metabolite_data_schema
+nmr_required_schema['properties']['NMR_BINNED_DATA'] = nmr_binned_data_schema
+nmr_required_schema['required'].extend(['NM'])
+nmr_required_schema['if'] = {'allOf':[{'properties': {'NMR_METABOLITE_DATA':{'not':{}}}}, {'properties': {'NMR_BINNED_DATA':{'not':{}}}}]}
+nmr_required_schema['then'] = {'properties': {'NM':{'required':['NMR_RESULTS_FILE']}}}
+# TODO catch the "'NMR_RESULTS_FILE' is a required property" error and say that either a data section or results file is required.
+
+
+compiled_schema = \
+{'type': 'object',
+ 'oneOf':[ms_required_schema,
+          nmr_required_schema]}
+    
+    
+# {'type': 'object',
+#  'properties': {'METABOLOMICS WORKBENCH': metabolomics_workbench_schema,
+#                 'PROJECT': project_schema,
+#                 'STUDY': study_schema,
+#                 'SUBJECT': subject_schema,
+#                 'SUBJECT_SAMPLE_FACTORS': subject_sample_factors_schema,
+#                 'COLLECTION': collection_schema,
+#                 'TREATMENT': treatment_schema,
+#                 'SAMPLEPREP': sampleprep_schema,
+#                 'ANALYSIS': analysis_schema,
+#                 'CHROMATOGRAPHY': chromatography_schema,
+#                 'MS_METABOLITE_DATA': ms_metabolite_data_schema,
+#                 'NMR_METABOLITE_DATA': ms_metabolite_data_schema,
+#                 'NMR_BINNED_DATA': nmr_binned_data_schema,
+#                 'MS': ms_schema,
+#                 'NM': nmr_schema},
+#  'required': ['METABOLOMICS WORKBENCH',
+#               'PROJECT',
+#               'STUDY',
+#               'SUBJECT',
+#               'SUBJECT_SAMPLE_FACTORS',
+#               'COLLECTION',
+#               'TREATMENT',
+#               'SAMPLEPREP',
+#               'ANALYSIS'],
+#  'dependentRequired': {},
+#  'additionalProperties': False}
+
+
+
+
+
+
+
 
 
 

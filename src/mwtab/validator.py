@@ -17,7 +17,9 @@ from re import match
 import io
 import sys
 import traceback
+from collections.abc import Iterable
 
+import jsonschema
 
 from .mwschema import section_schema_mapping, base_schema
 
@@ -497,9 +499,95 @@ def validate_metabolite_names(mwtabfile, data_section_key):
     
 
 
-def validate_section_schema(section, schema, section_key, cleaning=False):
+
+def print_better_error_messages(errors_generator: Iterable[jsonschema.exceptions.ValidationError], pattern_messages: dict|None = None) -> bool:
+    """Print better error messages for jsonschema validation errors.
+    
+    Args:
+        errors_generator: the generator returned from validator.iter_errors().
+        pattern_messages: if an error is the pattern type, then look up the section and subsection
+          of the mwTab that failed the pattern in this dict and see if there is a custom message.
+    
+    Returns:
+        A list of the errors encountered.
+    """
+    if not pattern_messages:
+        pattern_messages = {}
+        
+    errors = []
+    for error in errors_generator:
+        
+        message = ""
+        custom_message = ""
+        
+        if error.validator == "minProperties":
+            custom_message = " cannot be empty."
+        elif error.validator == "required":
+            required_property = match(r"(\'.*\')", error.message).group(1)
+            if len(error.relative_path) == 0:
+                message += "The required property " + required_property + " is missing."
+            else:
+                message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing the required property " + required_property + "."
+        elif error.validator == "dependencies":
+            message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing a dependent property.\n"
+            message += error.message
+        elif error.validator == "dependentRequired":
+            message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing a dependent property.\n"
+            message += error.message
+        elif error.validator == "minLength":
+            if error.validator_value == 1 and isinstance(error.instance, str):
+                custom_message = " cannot be an empty string."
+            else:
+                custom_message = " is too short."
+        elif error.validator == "maxLength":
+            custom_message = " is too long."
+        elif error.validator == "minItems":
+            if error.validator_value == 1:
+                custom_message = " cannot be empty."
+            else:
+                custom_message = " must have at least " + str(error.validator_value) + " items."
+        elif error.validator == "type":
+            if type(error.validator_value) == list:
+                custom_message = " is not any of the allowed types: ["
+                for allowed_type in error.validator_value:
+                    custom_message += "\'" + allowed_type + "\', "
+                custom_message = custom_message[:-2]
+                custom_message += "]."
+            else:
+                custom_message = " is not of type \"" + error.validator_value + "\"."
+        elif error.validator == "enum":
+            custom_message = " is not one of [" + "%s" % ", ".join(repr(index) for index in error.validator_value) + "]."
+        elif error.validator == "format":
+            custom_message = " is not a valid " + error.validator_value + "."
+        elif error.validator == "pattern":
+            if (section := error.relative_path[-2]) in pattern_messages and (subsection := error.relative_path[-1]) in pattern_messages[section]:
+                custom_message = pattern_messages[section][subsection]
+            else:
+                custom_message = " does not match the regular expression pattern " + str(error.validator_value)
+        elif error.validator == "minimum":
+            custom_message = " must be greater than or equal to " + str(error.validator_value) + "."
+        elif error.validator == "maximum":
+            custom_message = " must be less than or equal to " + str(error.validator_value) + "."
+        elif error.validator == "uniqueItems":
+            custom_message = " has non-unique elements."
+        else:
+            errors.append(error)
+            # print(error, file=sys.stderr)
+        
+        
+        if custom_message:
+            message = message + "The value for " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + custom_message
+        errors.append(message)
+        # print("Error:  " + message, file=sys.stderr)
+    return errors
+
+
+def validate_section_schema(mwtabfile, section, schema, section_key):
     """Validate section of ``mwTab`` formatted file.
     
+    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
+    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile` or
+                     :py:class:`collections.OrderedDict`
     :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
     :type section: :py:class:`collections.OrderedDict`
     :param schema: Schema definition.
@@ -508,6 +596,68 @@ def validate_section_schema(section, schema, section_key, cleaning=False):
     :return: Validated section.
     :rtype: :py:class:`collections.OrderedDict`
     """
+    validator = jsonschema.validators.validator_for(schema)
+    format_checker = jsonschema.FormatChecker()
+    validator = validator(schema=schema, format_checker=format_checker)
+    print_better_error_messages(validator.iter_errors(mwtabfile))
+    
+    
+    
+    
+    
+    mwtabfile = {'PROJECT': {}}
+    dict_for_Schema = OrderedDict()
+    for section_key, section in mwtabfile.items():
+        dict_for_Schema[section_key] = section
+    errors = []
+    try:
+        base_schema.validate(dict_for_Schema)
+    except Exception as e:
+        messages = []
+        for auto in e.autos:
+            print(auto)
+            if auto:
+                if auto.startswith("Wrong keys"):
+                    bad_key = match(r"Wrong keys ('.*') in .*", auto).group(1)
+                    auto = "Unknown or malformed keys " + bad_key + "."
+                elif auto.startswith("Wrong key"):
+                    bad_key = match(r"Wrong key ('.*') .*", auto).group(1)
+                    auto = "Unknown or malformed key " + bad_key + "."
+                messages.append(auto)
+        errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
+                      "\n".join(messages))
+        # errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
+        #               "\n".join([message for message in e.autos[1:] if message]))
+    # Need to manually check this because Schema can't do conditional checks.
+    if 'MS' in mwtabfile and 'CHROMATOGRAPHY' not in mwtabfile:
+        if errors[-1].startswith("SCHEMA: There is an issue with the top level of the data."):
+            errors[-1] = errors[-1] + "\nMissing key: 'CHROMATOGRAPHY'"
+        else:
+            errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
+
+    # validate PROJECT, STUDY, ANALYSIS... and Schemas
+    # TODO see if this catches multiple errors in a single section. For example, bad SUBJECT_TYPE and bad SUBJECT_SPECIES in the SUBJECT section.
+    mwtabfile = {'MS': {'Data':2, 'Units':3}}
+    errors = []
+    for section_key, section in mwtabfile.items():
+        try:
+            schema = section_schema_mapping[section_key]
+            # section = validate_section_schema(section, schema, section_key, error_stout)
+            section, schema_errors = validate_section_schema(section, schema, section_key)
+            errors.extend(schema_errors)
+            # mwtabfile[section_key] = section
+        except Exception as e:
+            errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     schema_errors = list()
 
     keys_to_delete = []
@@ -516,10 +666,6 @@ def validate_section_schema(section, schema, section_key, cleaning=False):
             if not section[key]:
                 schema_errors.append("{}: Contains item \"{}\" with null value.".format(section_key, key))
                 keys_to_delete.append(key)
-
-    if cleaning:
-        for key in keys_to_delete:
-            del section[key]
 
     return schema.validate(section), schema_errors
     
@@ -654,6 +800,12 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
     for table_name in mwtabfile.table_names:
         mwtabfile_tables[table_name] = mwtabfile.get_table_as_pandas(table_name)
     
+    
+    
+    
+    
+    
+    
     dict_for_Schema = OrderedDict()
     for section_key, section in mwtabfile.items():
         dict_for_Schema[section_key] = section
@@ -681,6 +833,9 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
             errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
 
     # validate PROJECT, STUDY, ANALYSIS... and Schemas
+    # TODO see if this catches multiple errors in a single section. For example, bad SUBJECT_TYPE and bad SUBJECT_SPECIES in the SUBJECT section.
+    mwtabfile = {'MS': {'Data':2, 'Units':3}}
+    errors = []
     for section_key, section in mwtabfile.items():
         try:
             schema = section_schema_mapping[section_key]
@@ -691,14 +846,18 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
         except Exception as e:
             errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
 
+
+
+
+
+
     # validate SUBJECT_SAMPLE_FACTORS
     # validate_subject_samples_factors(mwtabfile, error_stout)
     errors.extend(validate_subject_samples_factors(mwtabfile))
     errors.extend(validate_factors(mwtabfile))
 
     # validate ..._DATA sections
-    data_section_key = list(set(mwtabfile.keys()) &
-                            {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})
+    data_section_key = mwtabfile.data_section_key
     if data_section_key:
         data_section_key = data_section_key[0]
         # validate_data(mwtabfile, data_section_key, error_stout, False)
