@@ -186,6 +186,7 @@ class MWTabFile(OrderedDict):
         self._binned_header = None
         self._short_headers = set()
         self._duplicate_sub_sections = {}
+        self._input_format = 'json'
         self.compatability_mode = compatability_mode
         if compatability_mode:
             self._default_dict_type = DuplicatesDict
@@ -402,11 +403,10 @@ class MWTabFile(OrderedDict):
             raise ValueError("Blank input string retrieved from source.")
 
         mwtab_str = self._is_mwtab(input_str)
+        self._input_format = 'mwtab' if mwtab_str else 'json'
         json_str = self._is_json(input_str)
 
-        if not input_str:
-            pass
-        elif json_str:
+        if json_str:
             self.update(json_str)
         elif mwtab_str:
             self._build_mwtabfile(mwtab_str)

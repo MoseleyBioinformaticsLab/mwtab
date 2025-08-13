@@ -500,26 +500,61 @@ def validate_metabolite_names(mwtabfile, data_section_key):
 
 
 
-def print_better_error_messages(errors_generator: Iterable[jsonschema.exceptions.ValidationError], pattern_messages: dict|None = None) -> bool:
-    """Print better error messages for jsonschema validation errors.
-    
+def create_better_error_messages(errors_generator: Iterable[jsonschema.exceptions.ValidationError], 
+                                 mwtabfile: mwtab.mwtab.MWTabFile) -> list[str]:
+    """Create better error messages for jsonschema validation errors.
+        
     Args:
-        errors_generator: the generator returned from validator.iter_errors().
-        pattern_messages: if an error is the pattern type, then look up the section and subsection
-          of the mwTab that failed the pattern in this dict and see if there is a custom message.
+        errors_generator: The generator returned from validator.iter_errors().
+        mwtabfile: The mwtabfile that was validated against.
     
     Returns:
         A list of the errors encountered.
     """
-    if not pattern_messages:
-        pattern_messages = {}
-        
+    
+    # try:
+    #     jsonschema.validate(instance=instance, schema=schema)
+    # except jsonschema.ValidationError as e:
+    #     ## code to easily see the contents of the error for building a better message.
+    #     for key, value in e._contents().items():
+    #         print(key, value)
+    #         print()
+    
+    # TODO add message for null type and not enum NA_VALUES to say these are not allowed and the subsection should not present instead of empty.
     errors = []
     for error in errors_generator:
         
-        message = ""
+        message = "Error: "
         custom_message = ""
         
+        # MS_RESULTS_FILE or NMR_RESULTS_FILE is the only thing that can be 3 levels deep.
+        if len(error.relative_path) == 3:
+            section = error.relative_path[-3]
+            subsection = error.relative_path[-2]
+            result_key = error.relative_path[-1]
+            
+            if mwtabfile._input_format == 'mwtab':
+                format_string = f'for the subsection, "{subsection}", in the "{section}" section, the "{result_key}" attribute'
+            else:
+                format_string = f'in ["{section}"]["{subsection}"]["{result_key}"]'
+        else:
+            section = error.relative_path[-2]
+            subsection = error.relative_path[-1]
+            
+            if mwtabfile._input_format == 'mwtab':
+                if section == 'METABOLOMICS WORKBENCH':
+                    format_String = f'for "{subsection}" in the file header'
+                else:
+                    format_string = f'for the subsection, "{subsection}", in the "{section}" section'
+            else:
+                format_string = f'in ["{section}"]["{subsection}"]'
+            
+            
+        
+        # if message_attr := error.schema.get('error_message'):
+        #     message = message + message_attr
+        # elif message_func := error.schema.get('message_func'):
+        #     message = message + message_func(error)
         if error.validator == "minProperties":
             custom_message = " cannot be empty."
         elif error.validator == "required":
@@ -560,8 +595,8 @@ def print_better_error_messages(errors_generator: Iterable[jsonschema.exceptions
         elif error.validator == "format":
             custom_message = " is not a valid " + error.validator_value + "."
         elif error.validator == "pattern":
-            if (section := error.relative_path[-2]) in pattern_messages and (subsection := error.relative_path[-1]) in pattern_messages[section]:
-                custom_message = pattern_messages[section][subsection]
+            if message_func := error.schema.get('message_func'):
+                message = message + message_func(error, mwtabfile._input_format)
             else:
                 custom_message = " does not match the regular expression pattern " + str(error.validator_value)
         elif error.validator == "minimum":
@@ -572,13 +607,11 @@ def print_better_error_messages(errors_generator: Iterable[jsonschema.exceptions
             custom_message = " has non-unique elements."
         else:
             errors.append(error)
-            # print(error, file=sys.stderr)
         
         
         if custom_message:
             message = message + "The value for " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + custom_message
         errors.append(message)
-        # print("Error:  " + message, file=sys.stderr)
     return errors
 
 
@@ -599,13 +632,12 @@ def validate_section_schema(mwtabfile, section, schema, section_key):
     validator = jsonschema.validators.validator_for(schema)
     format_checker = jsonschema.FormatChecker()
     validator = validator(schema=schema, format_checker=format_checker)
-    print_better_error_messages(validator.iter_errors(mwtabfile))
+    create_better_error_messages(validator.iter_errors(mwtabfile), mwtabfile)
     
     
     
     
     
-    mwtabfile = {'PROJECT': {}}
     dict_for_Schema = OrderedDict()
     for section_key, section in mwtabfile.items():
         dict_for_Schema[section_key] = section
@@ -636,8 +668,6 @@ def validate_section_schema(mwtabfile, section, schema, section_key):
             errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
 
     # validate PROJECT, STUDY, ANALYSIS... and Schemas
-    # TODO see if this catches multiple errors in a single section. For example, bad SUBJECT_TYPE and bad SUBJECT_SPECIES in the SUBJECT section.
-    mwtabfile = {'MS': {'Data':2, 'Units':3}}
     errors = []
     for section_key, section in mwtabfile.items():
         try:
@@ -833,8 +863,6 @@ def validate_file(mwtabfile, section_schema_mapping=section_schema_mapping, verb
             errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
 
     # validate PROJECT, STUDY, ANALYSIS... and Schemas
-    # TODO see if this catches multiple errors in a single section. For example, bad SUBJECT_TYPE and bad SUBJECT_SPECIES in the SUBJECT section.
-    mwtabfile = {'MS': {'Data':2, 'Units':3}}
     errors = []
     for section_key, section in mwtabfile.items():
         try:
