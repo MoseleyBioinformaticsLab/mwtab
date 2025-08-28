@@ -16,7 +16,7 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 """
 
 from __future__ import print_function, division, unicode_literals
-from collections import deque, namedtuple, OrderedDict
+from collections import deque, namedtuple
 import re
 
 import json_duplicate_keys as jdks
@@ -27,18 +27,53 @@ from .duplicates_dict import DuplicatesDict
 KeyValue = namedtuple("KeyValue", ["key", "value"])
 KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
+def _results_file_line_to_dict(line: str):
+    """Parse a RESULTS_FILE line into a dictionary.
+    
+    Args:
+        line: The line to parse. Expected to just be the value without "RESULTS_FILE" in it.
+    
+    Returns:
+        A dictionary of the values found in the line, won't always have every key.
+    """
+    filename_regex = '(.*?)([^\s]+?\s*?)((\s(UNITS|Has m/z|Has RT|RT units))|$)'
+    units_regex = '(.*)UNITS:(.*?)((\s(Has m/z|Has RT|RT units))|$)'
+    has_mz_regex = '(.*)Has m/z:(.*?)((\s(UNITS|Has RT|RT units))|$)'
+    has_rt_regex = '(.*)Has RT:(.*?)((\s(Has m/z|UNITS|RT units))|$)'
+    rt_units_regex = '(.*)RT units:(.*?)((\s(Has m/z|Has RT|UNITS))|$)'
+    
+    filename_value = None if not (match := re.match(filename_regex, line)) else match.group(2).rstrip()
+    units_value = None if not (match := re.match(units_regex, line)) else match.group(2).strip()
+    has_mz_value = None if not (match := re.match(has_mz_regex, line)) else match.group(2).strip()
+    has_rt_value = None if not (match := re.match(has_rt_regex, line)) else match.group(2).strip()
+    rt_units_value = None if not (match := re.match(rt_units_regex, line)) else match.group(2).strip()
+    
+    results_file_dict = {}
+    if filename_value:
+        results_file_dict['filename'] = filename_value
+    if units_value:
+        results_file_dict['UNITS'] = units_value
+    if has_mz_value:
+        results_file_dict['Has m/z'] = has_mz_value
+    if has_rt_value:
+        results_file_dict['Has RT'] = has_rt_value
+    if rt_units_value:
+        results_file_dict['RT units'] = rt_units_value
+    
+    return results_file_dict
+
 
 def tokenizer(text, dict_type = None):
     """A lexical analyzer for the `mwtab` formatted files.
 
     :param text: `mwTab` formatted text.
     :type text: py:class:`str`
-    :param dict_type: the type of dictionary to use, default is OrderedDict.
+    :param dict_type: the type of dictionary to use, default is dict.
     :return: Tuples of data.
     :rtype: py:class:`~collections.namedtuple`
     """
     if dict_type is None:
-        dict_type = OrderedDict
+        dict_type = dict
         
     stream = deque(text.split("\n"))
 
@@ -71,9 +106,9 @@ def tokenizer(text, dict_type = None):
                 factor_pairs = line_items[3].split(" | ")
                 factor_dict = dict_type()
                 # if compatability_mode:
-                #     factor_dict = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                #     factor_dict = jdks.JSON_DUPLICATE_KEYS({})
                 # else:
-                #     factor_dict = OrderedDict()
+                #     factor_dict = {}
                 for pair in factor_pairs:
                     try:
                         factor_key, factor_value = pair.split(":")
@@ -87,17 +122,17 @@ def tokenizer(text, dict_type = None):
                     #     factor_dict[factor_key] = factor_value
                     factor_dict[factor_key] = factor_value
                 
-                subject_sample_factors_dict = OrderedDict({
+                subject_sample_factors_dict = {
                     "Subject ID": line_items[1],
                     "Sample ID": line_items[2],
                     "Factors": factor_dict
-                })
+                }
                 if line_items[4]:
                     additional_data = dict_type()
                     # if compatability_mode:
-                    #     additional_data = jdks.JSON_DUPLICATE_KEYS(OrderedDict())
+                    #     additional_data = jdks.JSON_DUPLICATE_KEYS({})
                     # else:
-                    #     additional_data = OrderedDict()
+                    #     additional_data = {}
                     for factor_item in line_items[4].split("; "):
                         try:
                             key, value = factor_item.split("=")
@@ -131,7 +166,8 @@ def tokenizer(text, dict_type = None):
             elif line:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
-                    yield KeyValue(line_items[0].strip()[3:], line_items[1:])
+                    # yield KeyValue(line_items[0].strip()[3:], line_items[1:])
+                    yield KeyValue(line_items[0].strip()[3:], _results_file_line_to_dict('\t'.join(line_items[1:])))
                 else:
                     try:
                         key, value = line.split("\t", 1)

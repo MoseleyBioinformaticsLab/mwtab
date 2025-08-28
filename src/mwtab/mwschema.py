@@ -10,9 +10,6 @@ This module provides schema definitions for different sections of the
 """
 
 from copy import deepcopy
-from functools import partial
-
-import jsonschema
 
 from . import metadata_column_matching
 
@@ -45,22 +42,12 @@ def create_units_regex(units: list[str], can_be_range: bool = False) -> str:
         regex = '^' + metadata_column_matching.NUMS + f' ({"|".join(units)})$'
     return regex
 
-def create_unit_error_message(validation_error: jsonschema.exceptions.ValidationError, 
-                              mwtab_format: str = 'json',
-                              can_be_range: bool = False, 
+def create_unit_error_message(can_be_range: bool = False, 
                               no_units: bool = False, 
                               units: list[str]|None = None) -> str:
     """Generate the error message for mwTab subsections that fail the unit regex.
     
-    The idea for this function is that you include it in the jsonschema under a keyword that 
-    is not reserved by jsonschema, and then your custom error handler will look for that 
-    keyword and execute whatever function it finds there, passing the error object in as 
-    the first parameter. You can combine this with the "partial" function from functools 
-    to set the other parameters of this function as needed.
-    
     Args:
-        validation_error: The ValidationError created by jsonschema. Used to fill in some text in the message.
-        mwtab_format: A string that must be either "mwtab" or "json". Customizes the error message for the format.
         can_be_range: If True, the regular expression used to validate could have matched a number range, so the message is modified to note that.
         no_units: If True, the regular expression did not require units to be present, so the message is modified to note that.
         units: If the regular expression required units, pass them in with this parameter so the message will indicate the allowed units.
@@ -68,14 +55,6 @@ def create_unit_error_message(validation_error: jsonschema.exceptions.Validation
     Returns:
         A completed string error message.
     """
-    section = validation_error.relative_path[-2]
-    subsection = validation_error.relative_path[-1]
-    
-    if mwtab_format == 'mwtab':
-        format_string = f'for the subsection, "{subsection}", in the "{section}" section'
-    else:
-        format_string = f'in ["{section}"]["{subsection}"]'
-    
     if can_be_range:
         range_string = ' or range (ex. "5-6") '
     else:
@@ -86,18 +65,17 @@ def create_unit_error_message(validation_error: jsonschema.exceptions.Validation
     else:
         unit_string = f'followed by a space with a unit (ex. "5 V") from the following list: {units}.'
     
-    message = (f'The value, "{validation_error.instance}", {format_string} '
-               f'should be a {"unitless " if no_units else ""}number{range_string}{unit_string}')
+    message = f' should be a {"unitless " if no_units else ""}number{range_string}{unit_string}'
     return message
 
-def _create_unit_regex_and_message_func(units: list[str], can_be_range: bool = False) -> str:
+def _create_unit_regex_and_message(units: list[str], can_be_range: bool = False) -> str:
     """Simple wrapper for DRY purposes.
     
     Creating the regular expression and validation error message in 1 function mixes too many 
     concerns into 1 function, so they are split into 2 and this function serves as a convenience 
     to pass them into a jsonschema easily. To this end the return is in dictionary form with the 
     intention for it to be unpacked into the jsonschema. For example, 
-    {**_create_unit_regex_and_message_func(['V'], True)}
+    {**_create_unit_regex_and_message(['V'], True)}
     
     Args:
         units: A list of strings used to create the regex and error message.
@@ -107,17 +85,17 @@ def _create_unit_regex_and_message_func(units: list[str], can_be_range: bool = F
         A dicitonary {'pattern': regex, 'message_func': message_function}.
     """
     regex = create_units_regex(units, can_be_range)
-    message_function = partial(create_unit_error_message, can_be_range = can_be_range, no_units = False, units = units)
-    return {'pattern': regex, 'message_func': message_function}
+    message = create_unit_error_message(can_be_range = can_be_range, no_units = False, units = units)
+    return {'pattern': regex, 'pattern_custom_message': message}
 
-def _create_num_regex_and_message_func(can_be_range: bool = False) -> str:
+def _create_num_regex_and_message(can_be_range: bool = False) -> str:
     """Simple wrapper for DRY purposes.
     
     Creating the regular expression and validation error message in 1 function mixes too many 
     concerns into 1 function, so they are split into 2 and this function serves as a convenience 
     to pass them into a jsonschema easily. To this end the return is in dictionary form with the 
     intention for it to be unpacked into the jsonschema. For example, 
-    {**_create_num_regex_and_message_func(True)}
+    {**_create_num_regex_and_message(True)}
     
     Args:
         can_be_range: If true, the regex will match a number range and the message will be slightly different.
@@ -126,84 +104,23 @@ def _create_num_regex_and_message_func(can_be_range: bool = False) -> str:
         A dicitonary {'pattern': regex, 'message_func': message_function}.
     """
     regex = '^\d+$'
-    message_function = partial(create_unit_error_message, can_be_range = can_be_range, no_units = True, units = None)
-    return {'pattern': regex, 'message_func': message_function}
-
-
-def create_ID_error_message(validation_error: jsonschema.exceptions.ValidationError, 
-                            mwtab_format: str = 'json') -> str:
-    """Generate the error message for IDs in the mwtab header.
-    
-    Similar to create_unit_error_message.
-    
-    Args:
-        validation_error: The ValidationError created by jsonschema. Used to fill in some text in the message.
-        mwtab_format: A string that must be either "mwtab" or "json". Customizes the error message for the format.
-    
-    Returns:
-        A completed string error message.
-    """
-    section = validation_error.relative_path[-2]
-    subsection = validation_error.relative_path[-1]
-    
-    if subsection == 'STUDY_ID':
-        abbrev = 'ST'
-    elif subsection == 'PROJECT_ID':
-        abbrev = 'PR'
-    elif subsection == 'ANALYSIS_ID':
-        abbrev = 'AN'
-    else:
-        raise ValueError('Unknown subsection.')
-    
-    if mwtab_format == 'mwtab':
-        format_string = f'for "{subsection}" in the file header'
-    else:
-        format_string = f'in ["{section}"]["{subsection}"]'
-    
-    message = (f'The value, "{validation_error.instance}", {format_string} '
-               f'must be the letters "{abbrev}" followed by 6 numbers. Ex. "{abbrev}001405".')
-    return message
-
-def create_numeric_error_message(validation_error: jsonschema.exceptions.ValidationError, 
-                                 mwtab_format: str = 'json') -> str:
-    """Generate the error message for numbers in the mwtab header.
-    
-    Similar to create_unit_error_message.
-    
-    Args:
-        validation_error: The ValidationError created by jsonschema. Used to fill in some text in the message.
-        mwtab_format: A string that must be either "mwtab" or "json". Customizes the error message for the format.
-    
-    Returns:
-        A completed string error message.
-    """
-    section = validation_error.relative_path[-2]
-    subsection = validation_error.relative_path[-1]
-    
-    if mwtab_format == 'mwtab':
-        format_string = f'for "{subsection}" in the file header'
-    else:
-        format_string = f'in ["{section}"]["{subsection}"]'
-    
-    message = (f'The value, "{validation_error.instance}", {format_string} '
-               'must be a positive integer. Ex. "1" or "2051".')
-    return message
+    message = create_unit_error_message(can_be_range = can_be_range, no_units = True, units = None)
+    return {'pattern': regex, 'pattern_custom_message': message}
 
 
 
 
-
-
-
+ID_error_template = ' must be the letters "{abbrev}" followed by 6 numbers. Ex. "{abbrev}001405".'
+numeric_error_template = ' must be a positive integer. Ex. "1" or "2051".'
 metabolomics_workbench_schema = \
 {'type': 'object',
- 'properties': {'STUDY_ID': {'type': 'string', 'pattern': r'^ST\d{6}$', 'message_func': create_ID_error_message},
-                'ANALYSIS_ID': {'type': 'string', 'pattern': r'^AN\d{6}$', 'message_func': create_ID_error_message},
-                'VERSION': {'type': 'string', 'pattern': r'^\d+$', 'message_func': create_numeric_error_message},
+ 'properties': {'STUDY_ID': {'type': 'string', 'pattern': r'^ST\d{6}$', 'pattern_custom_message': ID_error_template.format(abbrev = 'ST')},
+                'ANALYSIS_ID': {'type': 'string', 'pattern': r'^AN\d{6}$', 'pattern_custom_message': ID_error_template.format(abbrev = 'AN')},
+                'VERSION': {'type': 'string', 'pattern': r'^\d+$', 'pattern_custom_message': numeric_error_template},
                 'CREATED_ON': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'PROJECT_ID': {'type': 'string', 'pattern': r'^PR\d{6}$', 'message_func': create_ID_error_message},
+                'PROJECT_ID': {'type': 'string', 'pattern': r'^PR\d{6}$', 'pattern_custom_message': ID_error_template.format(abbrev = 'PR')},
                 'HEADER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'DATATRACK_ID': {'type': 'string', 'pattern': r'^\d+$', 'message_func': create_numeric_error_message},
+                'DATATRACK_ID': {'type': 'string', 'pattern': r'^\d+$', 'pattern_custom_message': numeric_error_template},
                 'filename': {'type': 'string'}},
  'required': ['VERSION', 'CREATED_ON'],
  'additionalProperties': False}
@@ -226,7 +143,7 @@ project_schema = \
                 'PUBLICATIONS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'CONTRIBUTORS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 # TODO test this across the files. I think some are going to have "doi.org" in front.
-                'DOI': {'type': 'string', 'pattern': r'10\.\d{4,9}/[-._;()/:a-z0-9A-Z]+', 'error_message': 'The "DOI" in the "PROJECT" section does not appear to be valid.'}},
+                'DOI': {'type': 'string', 'pattern': r'10\.\d{4,9}/[-._;()/:a-z0-9A-Z]+', 'pattern_custom_message': ' does not appear to be a valid DOI.'}},
  'required': ['PROJECT_TITLE',
               'PROJECT_SUMMARY',
               'INSTITUTE',
@@ -271,12 +188,13 @@ subject_schema = \
 {'type': 'object',
  'properties': {'SUBJECT_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SUBJECT_SPECIES': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'TAXONOMY_ID': {'type': 'string', 'pattern': metadata_column_matching.make_list_regex(r'\d+', r'(,|;|\||/)'), 'error_message': '"TAXONOMY_ID" in the "SUBJECT" section must be a number or list of numbers.'},
+                'TAXONOMY_ID': {'type': 'string', 'pattern': metadata_column_matching.make_list_regex(r'\d+', r'(,|;|\||/)'), 'pattern_custom_message': ' must be a number or list of numbers.'},
                 'GENOTYPE_STRAIN': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'AGE_OR_AGE_RANGE': {'type': 'string', **_create_unit_regex_and_message_func(['weeks', 'days', 'months', 'years'], True)},
-                'WEIGHT_OR_WEIGHT_RANGE': {'type': 'string', **_create_unit_regex_and_message_func(['g', 'mg', 'kg', 'lbs'], True)},
-                'HEIGHT_OR_HEIGHT_RANGE': {'type': 'string', **_create_unit_regex_and_message_func(['cm', 'in'], True)},
-                'GENDER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
+                'AGE_OR_AGE_RANGE': {'type': 'string', **_create_unit_regex_and_message(['weeks', 'days', 'months', 'years'], True)},
+                'WEIGHT_OR_WEIGHT_RANGE': {'type': 'string', **_create_unit_regex_and_message(['g', 'mg', 'kg', 'lbs'], True)},
+                'HEIGHT_OR_HEIGHT_RANGE': {'type': 'string', **_create_unit_regex_and_message(['cm', 'in'], True)},
+                # TODO ask Hunter about capitalization and if these are enough values.
+                'GENDER': {'type': 'string', 'enum': ['Male', 'Female', 'Male, Female', 'Hermaphrodite', 'N/A']},
                 'HUMAN_RACE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'HUMAN_ETHNICITY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'HUMAN_TRIAL_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -352,7 +270,7 @@ treatment_schema = \
                 'TREATMENT_ROUTE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'TREATMENT_DOSE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'TREATMENT_DOSEVOLUME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'TREATMENT_DOSEDURATION': {'type': 'string', **_create_unit_regex_and_message_func(['h', 'weeks', 'days'], True)},
+                'TREATMENT_DOSEDURATION': {'type': 'string', **_create_unit_regex_and_message(['h', 'weeks', 'days'], True)},
                 'TREATMENT_VEHICLE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'ANIMAL_VET_TREATMENTS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'ANIMAL_ANESTHESIA': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -377,7 +295,7 @@ treatment_schema = \
                 'PLANT_PLOT_DESIGN': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PLANT_LIGHT_PERIOD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PLANT_HUMIDITY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'PLANT_TEMP': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'], True)},
+                'PLANT_TEMP': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
                 'PLANT_WATERING_REGIME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PLANT_NUTRITIONAL_REGIME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PLANT_ESTAB_DATE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -421,39 +339,39 @@ chromatography_schema = \
                 'INSTRUMENT_NAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'COLUMN_NAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'FLOW_GRADIENT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'FLOW_RATE': {'type': 'string', **_create_unit_regex_and_message_func(['mL/min', 'uL/min', 'μL/min'], True)},
-                'COLUMN_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'], True)},
+                'FLOW_RATE': {'type': 'string', **_create_unit_regex_and_message(['mL/min', 'uL/min', 'μL/min'], True)},
+                'COLUMN_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
                 'METHODS_FILENAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'SAMPLE_INJECTION': {'type': 'string', **_create_unit_regex_and_message_func(['μL', 'uL'])},
+                'SAMPLE_INJECTION': {'type': 'string', **_create_unit_regex_and_message(['μL', 'uL'])},
                 'SOLVENT_A': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SOLVENT_B': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'METHODS_ID': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'COLUMN_PRESSURE': {'type': 'string', **_create_unit_regex_and_message_func(['psi', 'bar'], True)},
+                'COLUMN_PRESSURE': {'type': 'string', **_create_unit_regex_and_message(['psi', 'bar'], True)},
                 # TODO ask Hunter about a special case for "room temperature".
-                'INJECTION_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'], True)},
+                'INJECTION_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
                 'INTERNAL_STANDARD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'INTERNAL_STANDARD_MT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'RETENTION_INDEX': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'RETENTION_TIME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SAMPLING_CONE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'ANALYTICAL_TIME': {'type': 'string', **_create_unit_regex_and_message_func(['min'], True)},
-                'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V', 'kV'])},
+                'ANALYTICAL_TIME': {'type': 'string', **_create_unit_regex_and_message(['min'], True)},
+                'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
                 'MIGRATION_TIME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'OVEN_TEMPERATURE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PRECONDITIONING': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'RUNNING_BUFFER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'RUNNING_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V', 'kV'])},
+                'RUNNING_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
                 'SHEATH_LIQUID': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'TIME_PROGRAM': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'TRANSFERLINE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
+                'TRANSFERLINE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
                 'WASHING_BUFFER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'WEAK_WASH_SOLVENT_NAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'WEAK_WASH_VOLUME': {'type': 'string', **_create_unit_regex_and_message_func(['μL', 'uL'])},
+                'WEAK_WASH_VOLUME': {'type': 'string', **_create_unit_regex_and_message(['μL', 'uL'])},
                 'STRONG_WASH_SOLVENT_NAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'STRONG_WASH_VOLUME': {'type': 'string', **_create_unit_regex_and_message_func(['μL', 'uL'])},
-                'TARGET_SAMPLE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
-                'SAMPLE_LOOP_SIZE': {'type': 'string', **_create_unit_regex_and_message_func(['μL', 'uL'])},
-                'SAMPLE_SYRINGE_SIZE': {'type': 'string', **_create_unit_regex_and_message_func(['μL', 'uL'])},
+                'STRONG_WASH_VOLUME': {'type': 'string', **_create_unit_regex_and_message(['μL', 'uL'])},
+                'TARGET_SAMPLE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
+                'SAMPLE_LOOP_SIZE': {'type': 'string', **_create_unit_regex_and_message(['μL', 'uL'])},
+                'SAMPLE_SYRINGE_SIZE': {'type': 'string', **_create_unit_regex_and_message(['μL', 'uL'])},
                 'RANDOMIZATION_ORDER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'CHROMATOGRAPHY_COMMENTS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}}},
  'required': ['CHROMATOGRAPHY_TYPE',
@@ -507,43 +425,47 @@ ms_schema = \
  'properties': {'INSTRUMENT_NAME': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'INSTRUMENT_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MS_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'ION_MODE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'CAPILLARY_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'], True)},
-                'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V', 'kV'])},
+                # TODO ask Hunter about capitalization.
+                'ION_MODE': {'type': 'string', 'enum': ['POSITIVE', 'NEGATIVE', 'UNSPECIFIED', 'POSITIVE, NEGATIVE']},
+                'CAPILLARY_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
+                'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
                 'COLLISION_ENERGY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
+                # TODO ask Hunter about capitalization for nitrogen and argon.
                 'COLLISION_GAS': {'type': 'string', 'enum': ['Nitrogen', 'Argon']},
-                'DRY_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message_func(['L/hr', 'L/min'])},
-                'DRY_GAS_TEMP': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
-                'FRAGMENT_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V'])},
+                'DRY_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message(['L/hr', 'L/min'])},
+                'DRY_GAS_TEMP': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
+                'FRAGMENT_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V'])},
                 'FRAGMENTATION_METHOD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'GAS_PRESSURE': {'type': 'string', **_create_unit_regex_and_message_func(['psi', 'psig', 'bar', 'kPa'])},
-                'HELIUM_FLOW': {'type': 'string', **_create_unit_regex_and_message_func(['mL/min'])},
-                'ION_SOURCE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
-                'ION_SPRAY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V', 'kV'])},
-                'IONIZATION': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'IONIZATION_ENERGY': {'type': 'string', **_create_unit_regex_and_message_func(['eV'])},
+                'GAS_PRESSURE': {'type': 'string', **_create_unit_regex_and_message(['psi', 'psig', 'bar', 'kPa'])},
+                'HELIUM_FLOW': {'type': 'string', **_create_unit_regex_and_message(['mL/min'])},
+                'ION_SOURCE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
+                'ION_SPRAY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
+                'IONIZATION': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}, 
+                               'pattern': '(?i)^(pos|neg|positive|negative|postive|both)$',
+                               'pattern_custom_message': ' should not be "positive" or "negative". "ION_MODE" is where that should be indicated.'},
+                'IONIZATION_ENERGY': {'type': 'string', **_create_unit_regex_and_message(['eV'])},
                 'IONIZATION_POTENTIAL': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MASS_ACCURACY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PRECURSOR_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'REAGENT_GAS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'SOURCE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
-                'SPRAY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['kV'])},
+                'SOURCE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
+                'SPRAY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['kV'])},
                 'ACTIVATION_PARAMETER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'ACTIVATION_TIME': {'type': 'string', **_create_unit_regex_and_message_func(['ms'])},
+                'ACTIVATION_TIME': {'type': 'string', **_create_unit_regex_and_message(['ms'])},
                 'ATOM_GUN_CURRENT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'AUTOMATIC_GAIN_CONTROL': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'BOMBARDMENT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'CDL_SIDE_OCTOPOLES_BIAS_VOLTAGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'CDL_TEMPERATURE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'DATAFORMAT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'DESOLVATION_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message_func(['L/hr', 'L/min'])},
-                'DESOLVATION_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C'])},
+                'DESOLVATION_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message(['L/hr', 'L/min'])},
+                'DESOLVATION_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
                 'INTERFACE_VOLTAGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'IT_SIDE_OCTOPOLES_BIAS_VOLTAGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'LASER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MATRIX': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'NEBULIZER': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'OCTPOLE_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V'])},
+                'OCTPOLE_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V'])},
                 'PROBE_TIP': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'RESOLUTION_SETTING': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SAMPLE_DRIPPING': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -551,7 +473,7 @@ ms_schema = \
                 'SCANNING': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SCANNING_CYCLE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SCANNING_RANGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'SKIMMER_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message_func(['V'])},
+                'SKIMMER_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V'])},
                 'TUBE_LENS_VOLTAGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MS_COMMENTS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MS_RESULTS_FILE': results_file_schema},
@@ -565,36 +487,38 @@ nmr_schema = \
                 'NMR_EXPERIMENT_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'NMR_COMMENTS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'FIELD_FREQUENCY_LOCK': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'STANDARD_CONCENTRATION': {'type': 'string', **_create_unit_regex_and_message_func(['mM'])},
-                'SPECTROMETER_FREQUENCY': {'type': 'string', **_create_unit_regex_and_message_func(['MHz'])},
+                'STANDARD_CONCENTRATION': {'type': 'string', **_create_unit_regex_and_message(['mM'])},
+                'SPECTROMETER_FREQUENCY': {'type': 'string', **_create_unit_regex_and_message(['MHz'])},
                 'NMR_PROBE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'NMR_SOLVENT': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'NMR_TUBE_SIZE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
+                # TODO ask Hunter if something like 'topshim', gradient shim', and 'auto shim' is enough for this.
                 'SHIMMING_METHOD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PULSE_SEQUENCE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
+                # TODO ask Hunter if 'presaturation' and 'yes' are enough for this.
                 'WATER_SUPPRESSION': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'PULSE_WIDTH': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 # TODO ask Hunter if dB is okay unit here.
-                'POWER_LEVEL': {'type': 'string', **_create_unit_regex_and_message_func(['W'])},
-                'RECEIVER_GAIN': {'type': 'string', **_create_num_regex_and_message_func(False)},
-                'OFFSET_FREQUENCY': {'type': 'string', **_create_unit_regex_and_message_func(['ppm', 'Hz'])},
+                'POWER_LEVEL': {'type': 'string', **_create_unit_regex_and_message(['W'])},
+                'RECEIVER_GAIN': {'type': 'string', **_create_num_regex_and_message(False)},
+                'OFFSET_FREQUENCY': {'type': 'string', **_create_unit_regex_and_message(['ppm', 'Hz'])},
                 # TODO ask about dB.
-                'PRESATURATION_POWER_LEVEL': {'type': 'string', **_create_unit_regex_and_message_func(['W'])},
+                'PRESATURATION_POWER_LEVEL': {'type': 'string', **_create_unit_regex_and_message(['W'])},
                 'CHEMICAL_SHIFT_REF_CPD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message_func(['°C', 'C', 'K'])},
-                'NUMBER_OF_SCANS': {'type': 'string', **_create_num_regex_and_message_func(False)},
+                'TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C', 'K'])},
+                'NUMBER_OF_SCANS': {'type': 'string', **_create_num_regex_and_message(False)},
                 'DUMMY_SCANS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'ACQUISITION_TIME': {'type': 'string', **_create_unit_regex_and_message_func(['s'])},
-                'RELAXATION_DELAY': {'type': 'string', **_create_unit_regex_and_message_func(['s', 'ms', 'us', 'μs'])},
-                'SPECTRAL_WIDTH': {'type': 'string', **_create_unit_regex_and_message_func(['ppm', 'Hz'])},
-                'NUM_DATA_POINTS_ACQUIRED': {'type': 'string', **_create_num_regex_and_message_func(False)},
+                'ACQUISITION_TIME': {'type': 'string', **_create_unit_regex_and_message(['s'])},
+                'RELAXATION_DELAY': {'type': 'string', **_create_unit_regex_and_message(['s', 'ms', 'us', 'μs'])},
+                'SPECTRAL_WIDTH': {'type': 'string', **_create_unit_regex_and_message(['ppm', 'Hz'])},
+                'NUM_DATA_POINTS_ACQUIRED': {'type': 'string', **_create_num_regex_and_message(False)},
                 'REAL_DATA_POINTS': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'LINE_BROADENING': {'type': 'string', **_create_unit_regex_and_message_func(['Hz'])},
+                'LINE_BROADENING': {'type': 'string', **_create_unit_regex_and_message(['Hz'])},
                 'ZERO_FILLING': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'APODIZATION': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'BASELINE_CORRECTION_METHOD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'CHEMICAL_SHIFT_REF_STD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'BINNED_INCREMENT': {'type': 'string', **_create_unit_regex_and_message_func(['ppm'])},
+                'BINNED_INCREMENT': {'type': 'string', **_create_unit_regex_and_message(['ppm'])},
                 'BINNED_DATA_NORMALIZATION_METHOD': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'BINNED_DATA_PROTOCOL_FILE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'BINNED_DATA_CHEMICAL_SHIFT_RANGE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -667,8 +591,12 @@ ms_required_schema['properties']['MS_METABOLITE_DATA'] = ms_metabolite_data_sche
 ms_required_schema['properties']['CHROMATOGRAPHY'] = chromatography_schema
 ms_required_schema['required'].extend(['MS'])
 ms_required_schema['if'] = {'properties': {'MS_METABOLITE_DATA':{'not':{}}}}
-ms_required_schema['then'] = {'properties': {'MS':{'required':['MS_RESULTS_FILE']}}}
+ms_required_schema['then'] = {'properties': {'MS':{'required':['MS_RESULTS_FILE'], 
+                                                   'required_message': ('Error: There must be either a "MS_METABOLITE_DATA" '
+                                                                        'section or a "MS_RESULTS_FILE" subsection in the '
+                                                                        '"MS" section. Neither were found.')}}}
 # TODO catch the "'MS_RESULTS_FILE' is a required property" error and say that either a data section or results file is required.
+# Look in validation output file after validating everything again and see if this error shows up.
 
 nmr_required_schema = deepcopy(base_required_schema)
 nmr_required_schema['properties']['NM'] = nmr_schema
@@ -676,8 +604,13 @@ nmr_required_schema['properties']['NMR_METABOLITE_DATA'] = ms_metabolite_data_sc
 nmr_required_schema['properties']['NMR_BINNED_DATA'] = nmr_binned_data_schema
 nmr_required_schema['required'].extend(['NM'])
 nmr_required_schema['if'] = {'allOf':[{'properties': {'NMR_METABOLITE_DATA':{'not':{}}}}, {'properties': {'NMR_BINNED_DATA':{'not':{}}}}]}
-nmr_required_schema['then'] = {'properties': {'NM':{'required':['NMR_RESULTS_FILE']}}}
+nmr_required_schema['then'] = {'properties': {'NM':{'required':['NMR_RESULTS_FILE'],
+                                                    'required_message': ('Error: There must be either a "NMR_METABOLITE_DATA" '
+                                                                         'section, a "NMR_BINNED_DATA" section or a '
+                                                                         '"NMR_RESULTS_FILE" subsection in the '
+                                                                         '"NM" section. Neither were found.')}}}
 # TODO catch the "'NMR_RESULTS_FILE' is a required property" error and say that either a data section or results file is required.
+# Look in validation output file after validating everything again and see if this error shows up.
 
 
 compiled_schema = \

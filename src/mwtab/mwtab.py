@@ -7,7 +7,7 @@ mwtab.mwtab
 
 This module provides the :class:`~mwtab.mwtab.MWTabFile` class
 that stores the data from a single ``mwTab`` formatted file in the
-form of an :py:class:`~collections.OrderedDict`. Data can be accessed
+form of an :py:class:`dict`. Data can be accessed
 directly from the :class:`~mwtab.mwtab.MWTabFile` instance using
 bracket accessors.
 
@@ -18,7 +18,6 @@ formatted ``SUBJECT_SAMPLE_FACTOR`` block and blocks of data between
 """
 
 from __future__ import print_function, division, unicode_literals
-from collections import OrderedDict
 import io
 import sys
 import json
@@ -29,9 +28,9 @@ from itertools import zip_longest
 import json_duplicate_keys as jdks
 import pandas
 
-from .tokenizer import tokenizer
+from .tokenizer import tokenizer, _results_file_line_to_dict
 from .validator import validate_file
-from .mwschema import section_schema_mapping
+from .mwschema import compiled_schema
 from .duplicates_dict import DuplicatesDict
 
 DUPLICATE_KEY_REGEX = r'(.*)\{\{\{.*\}\}\}'
@@ -43,20 +42,24 @@ DUPLICATE_KEY_REGEX = r'(.*)\{\{\{.*\}\}\}'
 def _handle_duplicate_keys(ordered_pairs):
     """Use special type to store duplicate keys."""
     d = DuplicatesDict()
+    s = set()
     for k, v in ordered_pairs:
-        if k in d:
-            d.set(k, v, ordered_dict = True)
-        #     if isinstance(d[k], _duplicate_key_list):
-        #         d[k].append(v)
-        #     else:
-        #         d[k] = _duplicate_key_list([d[k],v])
+        d[k] = v
+        s.add(k)
+        # if k in d:
+        #     d.set(k, v, ordered_dict = True)
+        # #     if isinstance(d[k], _duplicate_key_list):
+        # #         d[k].append(v)
+        # #     else:
+        # #         d[k] = _duplicate_key_list([d[k],v])
         # else:
-        #    d[k] = v
+        #     d[k] = v
     
-    if len({k for k, v in ordered_pairs}) == len(ordered_pairs):
-        return d.getObject()
+    if len(s) == len(ordered_pairs):
+        return d.data
     else:
         return d
+
 
 
 SORT_KEYS = False
@@ -90,6 +93,7 @@ def _parse_header_input(input_str):
         raise ValueError("header cannot be set because it is not of the form \"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*\"")
 
 
+
 # Descriptor to handle the convenience properties for MWTabFile.
 # https://realpython.com/python-descriptors/
 class MWTabProperty:
@@ -119,7 +123,7 @@ class MWTabProperty:
         
         if "METABOLOMICS WORKBENCH" in obj:
             if self._name == "study_id" or self._name == "analysis_id":
-                if isinstance(obj["METABOLOMICS WORKBENCH"], (dict, OrderedDict)):
+                if isinstance(obj["METABOLOMICS WORKBENCH"], dict):
                     obj["METABOLOMICS WORKBENCH"][self._name.upper()] = value
                 else:
                     raise TypeError("The \"METABOLOMICS WORKBENCH\" key is not a dictionary, so " + self._name + " cannot be set.")
@@ -139,9 +143,9 @@ class MWTabProperty:
         del obj.__dict__[self._name]
 
 
-class MWTabFile(OrderedDict):
+class MWTabFile(dict):
     """MWTabFile class that stores data from a single ``mwTab`` formatted file in
-    the form of :py:class:`collections.OrderedDict`.
+    the form of a dictionary.
     """
 
     prefixes = {
@@ -191,7 +195,7 @@ class MWTabFile(OrderedDict):
         if compatability_mode:
             self._default_dict_type = DuplicatesDict
         else:
-            self._default_dict_type = OrderedDict
+            self._default_dict_type = dict
         # self._study_id = None
         # self._analysis_id = None
         # self._header = None
@@ -316,7 +320,7 @@ class MWTabFile(OrderedDict):
         data_section_key = self.data_section_key
         if data_section_key and table_name in self[data_section_key]:
             if self.compatability_mode:
-                temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in self[data_section_key][table_name]]
+                temp_list = [duplicates_dict.data for duplicates_dict in self[data_section_key][table_name]]
             else:
                 temp_list = self[data_section_key][table_name]
             df = pandas.DataFrame.from_records(temp_list)
@@ -365,18 +369,18 @@ class MWTabFile(OrderedDict):
         """
         return self.get_table_as_pandas('Data')
     
-    def validate(self, section_schema_mapping=section_schema_mapping, verbose=True, metabolites=True):
+    def validate(self, validation_schema=compiled_schema, verbose=True, metabolites=True):
         """Validate the instance.
         
         :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
         :param bool verbose: whether to be verbose or not.
         :param bool metabolites: whether to validate metabolites section.
         :return: Validated file and errors if verbose is False.
-        :rtype: :py:class:`collections.OrderedDict`, _io.StringIO
+        :rtype: :py:class:`~mwtab.mwtab.MWTabFile`, _io.StringIO
         """
         return validate_file(
                     mwtabfile=self,
-                    section_schema_mapping=section_schema_mapping,
+                    validation_schema=compiled_schema,
                     verbose=verbose,
                     metabolites=metabolites
                 )
@@ -404,7 +408,7 @@ class MWTabFile(OrderedDict):
 
         mwtab_str = self._is_mwtab(input_str)
         self._input_format = 'mwtab' if mwtab_str else 'json'
-        json_str = self._is_json(input_str)
+        json_str = self._is_json(input_str, self.compatability_mode)
 
         if json_str:
             self.update(json_str)
@@ -509,6 +513,26 @@ class MWTabFile(OrderedDict):
                 else:
                     mwtab_file[name] = section
             token = next(lexer)
+        
+        # Sometimes the results file line is in the wrong spot, look for it in DATA and move it if so.
+        # Looked at changing the tokenizer to use the two letter code on the line, 'MS:RESULTS_FILE', 
+        # so we could put it in the correct spot when building, but there are other examples of two 
+        # letter codes that are in the right spot, but have the wrong 2 letter code (AN000012).
+        if self.data_section_key:
+            results_file_key = None
+            for key in self[self.data_section_key]:
+                if key.endswith('_RESULTS_FILE'):
+                    results_file_key = key
+                    if 'MS' in self:
+                        section_key = 'MS'
+                    elif 'NM' in self:
+                        section_key = 'NM'
+                    
+                    temp = self[self.data_section_key][key]
+                    self[section_key][key] = temp
+            if results_file_key:
+                del self[self.data_section_key][results_file_key]
+                
         return mwtab_file
 
     def _build_block(self, name, lexer):
@@ -519,9 +543,9 @@ class MWTabFile(OrderedDict):
         :param lexer: instance of the mwtab tokenizer.
         :type lexer: :func:`~mwtab.tokenizer.tokenizer`
         :return: Section dictionary.
-        :rtype: :py:class:`collections.OrderedDict`
+        :rtype: :py:class:`dict`
         """
-        section = OrderedDict()
+        section = {}
         token = next(lexer)
         # alias = {
         #     "subject_type": "Subject ID",
@@ -536,7 +560,7 @@ class MWTabFile(OrderedDict):
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
                 if type(section) != list:
                     section = list()
-                # sample_dict = OrderedDict({alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))})
+                # sample_dict = {alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))}
                 # if not sample_dict.get("Additional sample data"):
                 #     del sample_dict["Additional sample data"]
                 section.append(token.value)
@@ -552,11 +576,11 @@ class MWTabFile(OrderedDict):
                 while not header[-1]:
                     header.pop()
                 metabolite_header = ["Metabolite"] + header[1:]
-                if self.compatability_mode:
-                    temp_header_dict = DuplicatesDict()
-                    for temp_header in metabolite_header:
-                        temp_header_dict[temp_header] = ''
-                    metabolite_header = list(temp_header_dict.raw_keys())
+                # if self.compatability_mode:
+                #     temp_header_dict = DuplicatesDict()
+                #     for temp_header in metabolite_header:
+                #         temp_header_dict[temp_header] = ''
+                #     metabolite_header = list(temp_header_dict.raw_keys())
                 
                 loop_count = 0
                 while not token.key.endswith("_END"):
@@ -580,7 +604,7 @@ class MWTabFile(OrderedDict):
                             # if self.compatability_mode:
                             #     factor_dict = DuplicatesDict()
                             # else:
-                            #     factor_dict = OrderedDict()
+                            #     factor_dict = {}
                             for pair in factor_pairs:
                                 factor_key, factor_value = pair.split(":")
                                 # if self.compatability_mode:
@@ -601,7 +625,7 @@ class MWTabFile(OrderedDict):
                         
                     else:
                         # temp_dict = self._default_dict_type()
-                        # # temp_dict = DuplicatesDict() if self.compatability_mode else OrderedDict()
+                        # # temp_dict = DuplicatesDict() if self.compatability_mode else {}
                         # token_len = len(token_value)
                         # for i, header_name in enumerate(metabolite_header):
                         #     # if self.compatability_mode:
@@ -642,23 +666,26 @@ class MWTabFile(OrderedDict):
                     section["Data"] = data
 
             elif token.key.endswith("_RESULTS_FILE"):
-                key, values = token
-                results_file_dict = {}
-                for i, value in enumerate(values):
-                    if not value:
-                        continue
-                    if i == 0 and ':' not in value:
-                        results_file_dict["filename"] = value
-                    else:
-                        split_value = value.split(':')
-                        if len(split_value) == 2:
-                            results_file_dict[split_value[0]] = split_value[1]
-                        else:
-                            results_file_dict[split_value[0]] = ":".join(split_value[1:])
+                key, results_file_dict = token
                 section[key] = results_file_dict
+                
+                # key, values = token
+                # results_file_dict = {}
+                # for i, value in enumerate(values):
+                #     if not value:
+                #         continue
+                #     if i == 0 and ':' not in value:
+                #         results_file_dict["filename"] = value
+                #     else:
+                #         split_value = value.split(':')
+                #         if len(split_value) == 2:
+                #             results_file_dict[split_value[0]] = split_value[1]
+                #         else:
+                #             results_file_dict[split_value[0]] = ":".join(split_value[1:])
+                # section[key] = results_file_dict
 
             else:
-                key, value, = token
+                key, value = token
                 if key in section:
                     if section[key] == value:
                         if name in self._duplicate_sub_sections:
@@ -981,7 +1008,9 @@ class MWTabFile(OrderedDict):
                               file=f)
                     else:
                         print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
-
+        
+        # Note that indent cannot be None or json will use a version of the 
+        # encoder written in C and DuplicatesDict will not be printed correctly.
         elif file_format == "json":
             print(json.dumps(self[section_key], sort_keys=SORT_KEYS, indent=INDENT), file=f)
 
@@ -992,14 +1021,19 @@ class MWTabFile(OrderedDict):
         :rtype: :py:class:`str`
         """
         self._set_key_order()
-        temp = copy.deepcopy(OrderedDict(self))
+        temp = copy.deepcopy(self)
+        # print(temp['SUBJECT_SAMPLE_FACTORS'][0])
         # Result files ends up being a dictionary, but needs to printed as a string.
         for section_key, section_value in temp.items():
-            if isinstance(section_value, (dict, OrderedDict)):
+            if isinstance(section_value, dict):
                 for key in section_value:
                     if key.endswith("_RESULTS_FILE"):
                         temp[section_key][key] = self._create_result_file_string(section_key, key, "json")
         
+        # Note that indent cannot be None or json will use a version of the 
+        # encoder written in C and DuplicatesDict will not be printed correctly.
+        return json.dumps(temp, sort_keys=SORT_KEYS, indent=INDENT)
+    # TODO delete below if not needed.
         if self.compatability_mode:
             # Handle duplicate keys in SSF.
             temp = jdks.JSON_DUPLICATE_KEYS(temp)
@@ -1027,9 +1061,10 @@ class MWTabFile(OrderedDict):
             #                 new_additional_dict.set(key, value, ordered_dict=True)
             #             ssf_dict["Additional sample data"] = new_additional_dict
             
-            json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
-            json_string = re.sub(r'("Additional sample data"): "\{(.*)\}"', _match_process, json_string)
-            json_string = re.sub(r'("Factors"): "\{(.*)\}"', _match_process, json_string)
+            json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT)
+            # json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
+            # json_string = re.sub(r'("Additional sample data"): "\{(.*)\}"', _match_process, json_string)
+            # json_string = re.sub(r'("Factors"): "\{(.*)\}"', _match_process, json_string)
             return json_string
         else:
             return json.dumps(temp, sort_keys=SORT_KEYS, indent=INDENT)
@@ -1107,9 +1142,21 @@ class MWTabFile(OrderedDict):
                     for section_key, section_value in json_str[data_key].items():
                         if section_key in ["Data", "Metabolites", "Extended"]:
                             for i, data_dict in enumerate(section_value):
-                                json_str[data_key][section_key][i] = DuplicatesDict(json_str[data_key][section_key][i])
-                
+                                if not isinstance(data_dict, DuplicatesDict):
+                                    json_str[data_key][section_key][i] = DuplicatesDict(json_str[data_key][section_key][i])
             
+            # Have to tokenize the results file.
+            # "ST000071_AN000111_Results.txt UNITS:Peak area Has m/z:Yes Has RT:Yes RT units:Minutes"
+            for section_key, section_value in json_str.items():
+                if isinstance(section_value, dict):
+                    results_file_keys = [key for key in section_value if key.endswith('_RESULTS_FILE')]
+                    if results_file_keys:
+                        results_file_key = results_file_keys[0]
+                        results_file_value = json_str[section_key][results_file_key]
+                        results_file_dict = _results_file_line_to_dict(results_file_value)
+                        
+                        json_str[section_key][results_file_key] = results_file_dict
+                
             return json_str
         except ValueError:
             return False
@@ -1190,21 +1237,21 @@ class MWTabFile(OrderedDict):
                 if isinstance(self[key], list):
                     temp_list = []
                     for i, element in enumerate(self[key]):
-                        temp_list.append(OrderedDict())
+                        temp_list.append({})
                         for sub_key in sub_keys:
                             if sub_key in element:
                                 temp_list[i][sub_key] = element[sub_key]
                     del self[key]
                     self[key] = temp_list
                 else:
-                    temp_dict = OrderedDict()
+                    temp_dict = {}
                     for sub_key, sub_sub_keys in sub_keys.items():
                         if sub_key in self[key]:
                             # For the Data, Metabolites, and Extended sections.
                             if isinstance(self[key][sub_key], list):
                                 temp_list = []
                                 for i, element in enumerate(self[key][sub_key]):
-                                    temp_list.append(OrderedDict())
+                                    temp_list.append({})
                                     for sub_sub_key in sub_sub_keys:
                                         # if self.compatability_mode:
                                         #     element_dict = element.getObject()
@@ -1240,6 +1287,18 @@ class MWTabFile(OrderedDict):
             del self[key]
             self[key] = temp
     
+    def __deepcopy__(self, memo):
+        new_tabfile = MWTabFile(self.source, self.compatability_mode)
+        memo[id(new_tabfile)] = new_tabfile
+        for key, value in self.items():
+            new_tabfile[key] = copy.deepcopy(value, memo)
+        return new_tabfile
+    
+    def __copy__(self):
+        new_tabfile = MWTabFile(self.source, self.compatability_mode)
+        for key, value in self.items():
+            new_tabfile[key] = copy.copy(value)
+        return new_tabfile
     
     
     

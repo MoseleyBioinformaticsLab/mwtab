@@ -42,12 +42,10 @@ This package includes the following modules:
     is used to validate query parameters and to generate a URL path which can be
     used to request data from Metabolomics Workbench through their REST API.
 """
-
 from logging import getLogger, NullHandler
 from .fileio import read_files, read_mwrest
 from .validator import validate_file
 from .mwrest import GenericMWURL
-
 
 # __version__ = "1.2.5.post1"
 

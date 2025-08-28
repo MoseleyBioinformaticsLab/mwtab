@@ -57,7 +57,7 @@ GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 from . import fileio, mwextract, mwrest
 from .converter import Converter
 from .validator import validate_file
-from .mwschema import section_schema_mapping
+from .mwschema import compiled_schema
 
 from os import getcwd, makedirs, path
 from os.path import join, isfile
@@ -181,7 +181,7 @@ def cli(cmdargs):
                 continue
             validate_file(
                 mwtabfile=mwfile,
-                section_schema_mapping=section_schema_mapping,
+                validation_schema=compiled_schema,
                 verbose=cmdargs.get("--verbose")
             )
     
