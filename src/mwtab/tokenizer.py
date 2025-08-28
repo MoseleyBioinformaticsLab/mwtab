@@ -19,13 +19,8 @@ from __future__ import print_function, division, unicode_literals
 from collections import deque, namedtuple
 import re
 
-import json_duplicate_keys as jdks
-
-from .duplicates_dict import DuplicatesDict
-
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
-KeyValueExtra = namedtuple("KeyValueExtra", ["key", "value", "extra"])
 
 def _results_file_line_to_dict(line: str):
     """Parse a RESULTS_FILE line into a dictionary.
@@ -105,10 +100,6 @@ def tokenizer(text, dict_type = None):
                 
                 factor_pairs = line_items[3].split(" | ")
                 factor_dict = dict_type()
-                # if compatability_mode:
-                #     factor_dict = jdks.JSON_DUPLICATE_KEYS({})
-                # else:
-                #     factor_dict = {}
                 for pair in factor_pairs:
                     try:
                         factor_key, factor_value = pair.split(":")
@@ -116,10 +107,6 @@ def tokenizer(text, dict_type = None):
                         raise ValueError("Expected exactly 1 ':' in the factor key value pair, '" + pair + "'") from e
                     factor_key = factor_key.strip()
                     factor_value = factor_value.strip()
-                    # if compatability_mode:
-                    #     factor_dict.set(factor_key, factor_value, ordered_dict=True)
-                    # else:
-                    #     factor_dict[factor_key] = factor_value
                     factor_dict[factor_key] = factor_value
                 
                 subject_sample_factors_dict = {
@@ -129,10 +116,6 @@ def tokenizer(text, dict_type = None):
                 }
                 if line_items[4]:
                     additional_data = dict_type()
-                    # if compatability_mode:
-                    #     additional_data = jdks.JSON_DUPLICATE_KEYS({})
-                    # else:
-                    #     additional_data = {}
                     for factor_item in line_items[4].split("; "):
                         try:
                             key, value = factor_item.split("=")
@@ -140,10 +123,6 @@ def tokenizer(text, dict_type = None):
                             raise ValueError("Expected exactly 1 '=' in the additional data key value pair, '" + factor_item + "'") from e
                         key = key.strip()
                         value = value.strip()
-                        # if compatability_mode:
-                        #     additional_data.set(key, value, ordered_dict=True)
-                        # else:
-                        #     additional_data[key] = value
                         additional_data[key] = value
                     subject_sample_factors_dict["Additional sample data"] = additional_data
                 yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
@@ -166,7 +145,6 @@ def tokenizer(text, dict_type = None):
             elif line:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
-                    # yield KeyValue(line_items[0].strip()[3:], line_items[1:])
                     yield KeyValue(line_items[0].strip()[3:], _results_file_line_to_dict('\t'.join(line_items[1:])))
                 else:
                     try:

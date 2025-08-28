@@ -25,7 +25,6 @@ import re
 import copy
 from itertools import zip_longest
 
-import json_duplicate_keys as jdks
 import pandas
 
 from .tokenizer import tokenizer, _results_file_line_to_dict
@@ -33,7 +32,6 @@ from .validator import validate_file
 from .mwschema import compiled_schema
 from .duplicates_dict import DuplicatesDict
 
-DUPLICATE_KEY_REGEX = r'(.*)\{\{\{.*\}\}\}'
 
 # The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
 # Python's parser can't do it and you have to do some workarounds for it.
@@ -46,14 +44,6 @@ def _handle_duplicate_keys(ordered_pairs):
     for k, v in ordered_pairs:
         d[k] = v
         s.add(k)
-        # if k in d:
-        #     d.set(k, v, ordered_dict = True)
-        # #     if isinstance(d[k], _duplicate_key_list):
-        # #         d[k].append(v)
-        # #     else:
-        # #         d[k] = _duplicate_key_list([d[k],v])
-        # else:
-        #     d[k] = v
     
     if len(s) == len(ordered_pairs):
         return d.data
@@ -196,9 +186,6 @@ class MWTabFile(dict):
             self._default_dict_type = DuplicatesDict
         else:
             self._default_dict_type = dict
-        # self._study_id = None
-        # self._analysis_id = None
-        # self._header = None
     
     @property
     def data_section_key(self):
@@ -257,12 +244,6 @@ class MWTabFile(dict):
         :rtype: :py:obj:`None`
         """
         self.set_table_as_pandas(df, 'Metabolites', clear_header)
-        # data_section_key = self.data_section_key
-        # self[data_section_key]['Metabolites'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        # if df.shape[1] > 0:
-        #     self._metabolite_header = [k for k in self[data_section_key]['Metabolites'][0].keys()][1:]
-        # elif clear_header:
-        #     self._metabolite_header = None
     
     def set_extended_from_pandas(self, df, clear_header=False):
         """Update MWTabFile based on provided pandas.DataFrame.
@@ -277,12 +258,6 @@ class MWTabFile(dict):
         :rtype: :py:obj:`None`
         """
         self.set_table_as_pandas(df, 'Extended', clear_header)
-        # data_section_key = self.data_section_key
-        # self[data_section_key]['Extended'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        # if df.shape[1] > 0:
-        #     self._extended_metabolite_header = [k for k in self[data_section_key]['Extended'][0].keys()][1:]
-        # elif clear_header:
-        #     self._extended_metabolite_header = None
     
     def set_metabolites_data_from_pandas(self, df, clear_header=False):
         """Update MWTabFile based on provided pandas.DataFrame.
@@ -297,14 +272,6 @@ class MWTabFile(dict):
         :rtype: :py:obj:`None`
         """
         self.set_table_as_pandas(df, 'Data', clear_header)
-        # data_section_key = self.data_section_key
-        # self[data_section_key]['Data'] = [self._default_dict_type(data_dict) for data_dict in df.fillna('').astype(str).to_dict(orient='records')]
-        # if df.shape[1] > 0:
-        #     self._samples = [k for k in self[data_section_key]['Data'][0].keys()][1:]
-        # elif clear_header:
-        #     self._samples = None
-        # if "BINNED" in data_section_key:
-        #     self._binned_header = self._samples
     
     def get_table_as_pandas(self, table_name):
         """Return the given table_name as a pandas.DataFrame.
@@ -324,15 +291,6 @@ class MWTabFile(dict):
             else:
                 temp_list = self[data_section_key][table_name]
             df = pandas.DataFrame.from_records(temp_list)
-            # if table_name == 'Metabolites' and self._metabolite_header:
-            #     df.columns = ['Metabolite'] + self._metabolite_header
-            # elif table_name == 'Extended' and self._extended_metabolite_header:
-            #     df.columns = ['Metabolite'] + self._extended_metabolite_header
-            # elif table_name == 'Data':
-            #     if 'BINNED' in data_section_key and self._binned_header:
-            #         df.columns = ['Bin range (ppm)'] + self._binned_header
-            #     elif self._samples:
-            #         df.columns = ['Metabolite'] + self._samples
             return df
         return pandas.DataFrame()
     
@@ -428,22 +386,6 @@ class MWTabFile(dict):
         """
         input_str = filehandle.read()
         self.read_from_str(input_str)
-
-        # if not input_str:
-        #     raise ValueError("Blank input string retrieved from source.")
-
-        # mwtab_str = self._is_mwtab(input_str)
-        # json_str = self._is_json(input_str)
-
-        # if not input_str:
-        #     pass
-        # elif json_str:
-        #     self.update(json_str)
-        # elif mwtab_str:
-        #     self._build_mwtabfile(mwtab_str)
-        # else:
-        #     raise TypeError("Unknown file format")
-
         filehandle.close()
 
     def write(self, filehandle, file_format):
@@ -547,22 +489,12 @@ class MWTabFile(dict):
         """
         section = {}
         token = next(lexer)
-        # alias = {
-        #     "subject_type": "Subject ID",
-        #     "local_sample_id": "Sample ID",
-        #     "factors": "Factors",
-        #     "additional_sample_data": "Additional sample data",
-        # }
 
         while not token.key.startswith("#ENDSECTION"):
 
-            # TODO: Move to separate method (no longer works the same way as the other possibilities in _build_block())
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
                 if type(section) != list:
                     section = list()
-                # sample_dict = {alias[token._fields[x]]: token[x] for x in range(1, len(token._fields))}
-                # if not sample_dict.get("Additional sample data"):
-                #     del sample_dict["Additional sample data"]
                 section.append(token.value)
 
             elif token.key.endswith("_START"):
@@ -576,11 +508,6 @@ class MWTabFile(dict):
                 while not header[-1]:
                     header.pop()
                 metabolite_header = ["Metabolite"] + header[1:]
-                # if self.compatability_mode:
-                #     temp_header_dict = DuplicatesDict()
-                #     for temp_header in metabolite_header:
-                #         temp_header_dict[temp_header] = ''
-                #     metabolite_header = list(temp_header_dict.raw_keys())
                 
                 loop_count = 0
                 while not token.key.endswith("_END"):
@@ -601,16 +528,8 @@ class MWTabFile(dict):
                         for i, factor_string in enumerate(token_value[1:]):
                             factor_pairs = factor_string.split(" | ")
                             factor_dict = self._default_dict_type()
-                            # if self.compatability_mode:
-                            #     factor_dict = DuplicatesDict()
-                            # else:
-                            #     factor_dict = {}
                             for pair in factor_pairs:
                                 factor_key, factor_value = pair.split(":")
-                                # if self.compatability_mode:
-                                #     factor_dict.set(factor_key.strip(), factor_value.strip(), ordered_dict=True)
-                                # else:
-                                #     factor_dict[factor_key.strip()] = factor_value.strip()
                                 factor_dict[factor_key.strip()] = factor_value.strip()
                             self._factors[header[i+1]] = factor_dict
                     
@@ -623,31 +542,11 @@ class MWTabFile(dict):
                     elif token.key.lower() == "metabolite_name" and "EXTENDED" in section_name and loop_count < 2:
                         self._extended_metabolite_header = token_value[1:]
                         
-                    else:
-                        # temp_dict = self._default_dict_type()
-                        # # temp_dict = DuplicatesDict() if self.compatability_mode else {}
-                        # token_len = len(token_value)
-                        # for i, header_name in enumerate(metabolite_header):
-                        #     # if self.compatability_mode:
-                        #     #     if i < token_len:
-                        #     #         temp_dict.set(header_name, token_value[i], ordered_dict=True)
-                        #     #     else:
-                        #     #         temp_dict.set(header_name, '', ordered_dict=True)
-                        #     # else:
-                        #     #     if i < token_len:
-                        #     #         temp_dict[header_name] = token_value[i]
-                        #     #     else:
-                        #     #         temp_dict[header_name] = ""
-                        #     if i < token_len:
-                        #         temp_dict[header_name] = token_value[i]
-                        #     else:
-                        #         temp_dict[header_name] = ""
-                        
+                    else:                        
                         token_len = len(token_value)
                         temp_dict = self._default_dict_type()
                         for item in zip_longest(metabolite_header, token_value, fillvalue=''):
                             temp_dict[item[0]] = item[1]
-                        # temp_dict = self._default_dict_type(zip_longest(metabolite_header, token_value, fillvalue=''))
                         data.append(temp_dict)
                         
                         if token_len > len(metabolite_header):
@@ -656,8 +555,6 @@ class MWTabFile(dict):
                     token = next(lexer)
                     loop_count += 1
                 
-                # if self.compatability_mode:
-                #     data = [DuplicatesDict(data_dict) for data_dict in data]
                 if token.key.startswith("METABOLITES"):
                     section["Metabolites"] = data
                 elif token.key.startswith("EXTENDED_"):
@@ -668,21 +565,6 @@ class MWTabFile(dict):
             elif token.key.endswith("_RESULTS_FILE"):
                 key, results_file_dict = token
                 section[key] = results_file_dict
-                
-                # key, values = token
-                # results_file_dict = {}
-                # for i, value in enumerate(values):
-                #     if not value:
-                #         continue
-                #     if i == 0 and ':' not in value:
-                #         results_file_dict["filename"] = value
-                #     else:
-                #         split_value = value.split(':')
-                #         if len(split_value) == 2:
-                #             results_file_dict[split_value[0]] = split_value[1]
-                #         else:
-                #             results_file_dict[split_value[0]] = ":".join(split_value[1:])
-                # section[key] = results_file_dict
 
             else:
                 key, value = token
@@ -750,40 +632,14 @@ class MWTabFile(dict):
                         formatted_items.append(str(item[k]))
                     elif k == "Factors":
                         factors = []
-                        # if self.compatability_mode:
-                        #     factor_dict = item[k].getObject()
-                        # else:
-                        #     factor_dict = item[k]
                         factor_dict = item[k]
                         for k2, value in factor_dict.items():
-                            # match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
-                            # if match_re:
-                            #     k2 = match_re.group(1)
-                            
-                            # if isinstance(item[k][k2], _duplicate_key_list):
-                            #     for value in item[k][k2]:
-                            #         factors.append("{}:{}".format(k2, value))
-                            # else:
-                            #     factors.append("{}:{}".format(k2, item[k][k2]))
                             factors.append("{}:{}".format(k2, value))
                         formatted_items.append(" | ".join(factors))
                     elif k == "Additional sample data":
                         additional_sample_data = []
-                        # if self.compatability_mode:
-                        #     add_dict = item[k].getObject()
-                        # else:
-                        #     add_dict = item[k]
                         add_dict = item[k]
                         for k2, value in add_dict.items():
-                            # match_re =  re.match(DUPLICATE_KEY_REGEX, k2)
-                            # if match_re:
-                            #     k2 = match_re.group(1)
-                            
-                            # if isinstance(item[k][k2], _duplicate_key_list):
-                            #     for value in item[k][k2]:
-                            #         additional_sample_data.append("{}={}".format(k2, value))
-                            # else:
-                            #     additional_sample_data.append("{}={}".format(k2, item[k][k2]))
                             additional_sample_data.append("{}={}".format(k2, value))
                         formatted_items.append("; ".join(additional_sample_data))
                 line = "{}{}\t{}".format(section_key, 11 * " ", "\t".join(formatted_items))
@@ -815,33 +671,9 @@ class MWTabFile(dict):
                     cw = 30 - len(key)
 
                 if key.endswith("_RESULTS_FILE"):
-                    # if isinstance(value, dict):
-                    #     print("{}{}               \t{}\t{}:{}".format(self.prefixes.get(section_key, ""),
-                    #                                                   *[i for pair in value.items() for i in pair]), file=f)
-                    # else:
-                    #     print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
                     
                     results_string = self.prefixes.get(section_key, "") + key + cw * " " + "\t"
                     results_string += self._create_result_file_string(section_key, key, "mwtab")
-                    
-                    # split_value = value.split(':')
-                    # result_value = value.split(' ')[0]
-                    # for i, piece in enumerate(split_value):
-                    #     for result_key in self.result_file_keys:
-                    #         if piece.endswith(result_key):
-                    #             if i == 0:
-                    #                 result_value += "\t"
-                    #             result_value += result_key + ":"
-                    #             if i+2 < len(split_value):
-                    #                 next_piece = split_value[i+1]
-                    #                 for result_key_2 in self.result_file_keys:
-                    #                     if next_piece.endswith(result_key_2):
-                    #                         result_value += next_piece.replace(result_key_2, '').strip() + '\t'
-                    #                         break
-                    #             else:
-                    #                 result_value += split_value[-1]
-                    #             break
-                    # results_string += result_value
                     print(results_string, file=f)
 
                 # prints #MS_METABOLITE_DATA, #NMR_METABOLITE_DATA, or #NMR_BINNED_DATA sections
@@ -856,28 +688,16 @@ class MWTabFile(dict):
                         if self._samples is not None:
                             sample_names = self._samples
                         elif self[section_key][key]:
-                            # if self.compatability_mode:
-                            #     sample_names = [k for k in self[section_key][key][0].getObject().keys()][1:]
-                            # else:
-                            #     sample_names = [k for k in self[section_key][key][0].keys()][1:]
                             sample_names = [k for k in self[section_key][key][0].keys()][1:]
                         if sample_names:
                             print("\t".join(["Samples"] + sample_names), file=f)
                             # prints "Factors" line at head of data section
                             if self._factors is not None:
-                                # factors_dict = self._factors
                                 factors_dict = {}
                                 for sample_name, sample_factors in self._factors.items():
                                     factors_for_sample = []
-                                    # if self.compatability_mode:
-                                    #     factor_dict = sample_factors.getObject()
-                                    # else:
-                                    #     factor_dict = sample_factors
                                     factor_dict = sample_factors
                                     for factor_key, factor_value in factor_dict.items():
-                                        # match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
-                                        # if match_re:
-                                        #     factor_key = match_re.group(1)
                                         factors_for_sample.append(factor_key + ":" + factor_value)
                                     factors_dict[sample_name] = ' | '.join(factors_for_sample)
                             else:
@@ -885,19 +705,10 @@ class MWTabFile(dict):
                                 for i in self['SUBJECT_SAMPLE_FACTORS']:
                                     sample = i['Sample ID']
                                     factors_for_sample = []
-                                    # if self.compatability_mode:
-                                    #     factor_dict = i['Factors'].getObject()
-                                    # else:
-                                    #     factor_dict = i['Factors']
                                     factor_dict = i['Factors']
                                     for factor_key, factor_value in factor_dict.items():
-                                        # match_re =  re.match(DUPLICATE_KEY_REGEX, factor_key)
-                                        # if match_re:
-                                        #     factor_key = match_re.group(1)
                                         factors_for_sample.append(factor_key + ":" + factor_value)
                                     factors_dict[sample] = ' | '.join(factors_for_sample)
-                                
-                                # factors_dict = {i["Sample ID"]: i["Factors"] for i in self["SUBJECT_SAMPLE_FACTORS"]}
                             
                             factors_list = []
                             for k in sample_names:
@@ -905,19 +716,11 @@ class MWTabFile(dict):
                                 if k not in factors_dict:
                                     factors_list = []
                                     break
-                                # factors = [fk + ":" + factors_dict[k][fk] for fk in factors_dict[k].keys()]
-                                # factors_list.append(" | ".join(factors))
                                 factors_list.append(factors_dict[k])
                             if factors_list:
                                 print("\t".join(["Factors"] + factors_list), file=f)
                         
                         for k, i in enumerate(self[section_key][key]):
-                            # print("\t".join([i[k] for k in i.keys()]), file=f)
-                            
-                            # if self.compatability_mode:
-                            #     print("\t".join(i.getObject().values()), file=f)
-                            # else:
-                            #     print("\t".join(i.values()), file=f)
                             print("\t".join(i.values()), file=f)
 
                     else:  # NMR_BINNED_DATA
@@ -925,21 +728,11 @@ class MWTabFile(dict):
                         if self._binned_header is not None:
                             binned_header = self._binned_header
                         elif self[section_key][key]:
-                            # if self.compatability_mode:
-                            #     binned_header = [k for k in self[section_key][key][0].getObject().keys()][1:]
-                            # else:
-                            #     binned_header = [k for k in self[section_key][key][0].keys()][1:]
                             binned_header = [k for k in self[section_key][key][0].keys()][1:]
                         
                         print("\t".join(["Bin range(ppm)"] + binned_header), file=f)
                         
                         for i in self[section_key][key]:
-                            # print("\t".join([i[k] for k in i.keys()]), file=f)
-                            
-                            # if self.compatability_mode:
-                            #     print("\t".join(i.getObject().values()), file=f)
-                            # else:
-                            #     print("\t".join(i.values()), file=f)
                             print("\t".join(i.values()), file=f)
 
                     print("{}_END".format(section_key), file=f)
@@ -957,28 +750,12 @@ class MWTabFile(dict):
                     elif key == "Extended" and self._extended_metabolite_header is not None:
                         metabolite_header = self._extended_metabolite_header
                     elif self[section_key][key]:
-                        # if self.compatability_mode:
-                        #     metabolite_header = []
-                        #     for header in self[section_key][key][0].getObject().keys():
-                        #         match_re =  re.match(DUPLICATE_KEY_REGEX, header)
-                        #         if match_re:
-                        #             header = match_re.group(1)
-                        #         metabolite_header.append(header)
-                        #     metabolite_header = metabolite_header[1:]
-                        # else:
-                        #     metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
                         metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
                     else:
                         metabolite_header = []
                     print("\t".join(["metabolite_name"] + metabolite_header), file=f)
                     
                     for i in self[section_key][key]:
-                        # print("\t".join(i[k] for k in i.keys()), file=f)
-                        
-                        # if self.compatability_mode:
-                        #     print("\t".join(i.getObject().values()), file=f)
-                        # else:
-                        #     print("\t".join(i.values()), file=f)
                         print("\t".join(i.values()), file=f)
 
                     if key == "Metabolites":
@@ -1022,7 +799,6 @@ class MWTabFile(dict):
         """
         self._set_key_order()
         temp = copy.deepcopy(self)
-        # print(temp['SUBJECT_SAMPLE_FACTORS'][0])
         # Result files ends up being a dictionary, but needs to printed as a string.
         for section_key, section_value in temp.items():
             if isinstance(section_value, dict):
@@ -1033,41 +809,6 @@ class MWTabFile(dict):
         # Note that indent cannot be None or json will use a version of the 
         # encoder written in C and DuplicatesDict will not be printed correctly.
         return json.dumps(temp, sort_keys=SORT_KEYS, indent=INDENT)
-    # TODO delete below if not needed.
-        if self.compatability_mode:
-            # Handle duplicate keys in SSF.
-            temp = jdks.JSON_DUPLICATE_KEYS(temp)
-            # for ssf_dict in temp.getObject()["SUBJECT_SAMPLE_FACTORS"]:
-                
-            #     if "Factors" in ssf_dict:
-            #         factor_dict = ssf_dict["Factors"]
-            #         new_factor_dict = DuplicatesDict()
-            #         for key, value in factor_dict.items():
-            #             if isinstance(value, _duplicate_key_list):
-            #                 for item in value:
-            #                     new_factor_dict.set(key, item, ordered_dict=True)
-            #             else:
-            #                 new_factor_dict.set(key, value, ordered_dict=True)
-            #             ssf_dict["Factors"] = new_factor_dict
-                
-            #     if "Additional sample data" in ssf_dict:
-            #         additional_dict = ssf_dict["Additional sample data"]
-            #         new_additional_dict = DuplicatesDict()
-            #         for key, value in additional_dict.items():
-            #             if isinstance(value, _duplicate_key_list):
-            #                 for item in value:
-            #                     new_additional_dict.set(key, item, ordered_dict=True)
-            #             else:
-            #                 new_additional_dict.set(key, value, ordered_dict=True)
-            #             ssf_dict["Additional sample data"] = new_additional_dict
-            
-            json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT)
-            # json_string = temp.dumps(sort_keys=SORT_KEYS, indent=INDENT, default=_JSON_serializer_for_dupe_class)
-            # json_string = re.sub(r'("Additional sample data"): "\{(.*)\}"', _match_process, json_string)
-            # json_string = re.sub(r'("Factors"): "\{(.*)\}"', _match_process, json_string)
-            return json_string
-        else:
-            return json.dumps(temp, sort_keys=SORT_KEYS, indent=INDENT)
     
 
     def _to_mwtab(self):
@@ -1188,6 +929,7 @@ class MWTabFile(dict):
     def _set_key_order(self):
         """
         """
+        # TODO see if we can use this code below, or the new schema in mwschema. Below code was created before change to jsonschema
         # This is a way to build the key_order diction from the schema, but it can't be used 
         # until we only support Python > 3.6 because we have to be able to rely on ordered 
         # dict behavior.
@@ -1253,10 +995,6 @@ class MWTabFile(dict):
                                 for i, element in enumerate(self[key][sub_key]):
                                     temp_list.append({})
                                     for sub_sub_key in sub_sub_keys:
-                                        # if self.compatability_mode:
-                                        #     element_dict = element.getObject()
-                                        # else:
-                                        #     element_dict = element
                                         if sub_sub_key in element:
                                             temp_list[i][sub_sub_key] = element[sub_sub_key]
                                     # Add the elements that aren't in the key_order.
