@@ -56,6 +56,9 @@ The ``mwtab`` package can be used in several ways:
    * As a command-line tool to convert between ``mwTab`` format and its equivalent
      ``JSON`` representation.
 
+Recent News
+~~~~~~~~~~~
+The travis branch represents our recent improvements, which we hope to merge into the production branch soon.
 
 Citation
 ~~~~~~~~
