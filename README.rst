@@ -58,7 +58,7 @@ The ``mwtab`` package can be used in several ways:
 
 Recent News
 ~~~~~~~~~~~
-The travis branch represents our recent improvements, which we hope to merge into the production branch soon.
+The "Travis" branch represents our recent improvements, which we hope to merge into the production branch soon.
 
 Citation
 ~~~~~~~~
