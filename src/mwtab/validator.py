@@ -21,29 +21,16 @@ from collections.abc import Iterable
 import jsonschema
 import pandas
 
-from .mwschema import compiled_schema
+from .mwschema import ms_required_schema, nmr_required_schema
 
 import mwtab
 from mwtab import metadata_column_matching
 
 column_finders = metadata_column_matching.column_finders
+NA_VALUES = metadata_column_matching.NA_VALUES
 
 VERBOSE = False
 LOG = None
-
-ITEM_SECTIONS = {
-    "METABOLOMICS WORKBENCH",
-    "PROJECT",
-    "STUDY",
-    "ANALYSIS",
-    "SUBJECT",
-    "COLLECTION",
-    "TREATMENT",
-    "SAMPLEPREP",
-    "CHROMATOGRAPHY",
-    "MS",
-    "NM",
-}
 
 VALIDATION_LOG_HEADER = \
 """Validation Log
@@ -98,28 +85,39 @@ def validate_factors(mwtabfile):
         factors_dict_1 = {sample: factors for sample, factors in mwtabfile._factors.items()}
         factors_dict_2 = {i["Sample ID"]: i["Factors"] for i in mwtabfile["SUBJECT_SAMPLE_FACTORS"] if i["Sample ID"] in factors_dict_1}
         if factors_dict_1 != factors_dict_2:
-            errors.append("SUBJECT_SAMPLE_FACTORS: The factors in the "
+            errors.append("Error: The factors in the "
                           "METABOLITE_DATA section and SUBJECT_SAMPLE_FACTORS section "
                           "do not match.")
     return errors
 
 
-def validate_metabolite_headers(mwtabfile):
+def validate_metabolite_headers(mwtabfile, data_section_key):
     """Validate that the headers in the METABOLITES, EXTENDED_METABOLITES, and BINNED_DATA section are unique.
     
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
+    :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
+    :type data_section_key: :py:class:`str`
     """
+    if mwtabfile._input_format == 'mwtab':
+        metabolites_location = 'METABOLITES'
+        extended_location = 'EXTENDED_METABOLITES'
+        binned_location = 'BINNED_DATA'
+    else:
+        metabolites_location = f'["{data_section_key}"]["Metabolites"]'
+        extended_location = f'["{data_section_key}"]["Extended"]'
+        binned_location = f'["{data_section_key}"]["Data"]'
+    
     errors = []
     if mwtabfile._metabolite_header and (len(mwtabfile._metabolite_header) > len(set(mwtabfile._metabolite_header))):
-        errors.append("METABOLITES: There are duplicate metabolite headers in the "
-                      "METABOLITES section. (metabolite_name line)")
+        errors.append("Warning: There are duplicate metabolite headers in the "
+                      f"{metabolites_location} section. (metabolite_name line)")
     if mwtabfile._extended_metabolite_header and (len(mwtabfile._extended_metabolite_header) > len(set(mwtabfile._extended_metabolite_header))):
-        errors.append("EXTENDED_METABOLITES: There are duplicate metabolite headers in the "
-                      "EXTENDED_METABOLITES section. (metabolite_name line)")
+        errors.append("Warning: There are duplicate metabolite headers in the "
+                      f"{extended_location} section. (metabolite_name line)")
     if mwtabfile._binned_header and (len(mwtabfile._binned_header) > len(set(mwtabfile._binned_header))):
-        errors.append("BINNED_DATA: There are duplicate headers in the "
-                      "BINNED_DATA section. (Bin range(ppm) line)")
+        errors.append("Warning: There are duplicate headers in the "
+                      f"{binned_location} section. (Bin range(ppm) line)")
     return errors
 
 
@@ -131,11 +129,18 @@ def validate_samples(mwtabfile, data_section_key):
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
     """
-    errors = []
+    if mwtabfile._input_format == 'mwtab':
+        if 'BINNED' in data_section_key:
+            sample_location = 'BINNED_DATA'
+        else:
+            sample_location = 'METABOLITE_DATA'
+    else:
+        sample_location = f'["{data_section_key}"]["Data"]'
         
+    errors = []
     if mwtabfile._samples and (len(mwtabfile._samples) > len(set(mwtabfile._samples))):
-        errors.append("METABOLITE_DATA: There are duplicate Samples in the "
-                      "METABOLITE_DATA section. (Samples line)")
+        errors.append("Warning: There are duplicate Samples in the "
+                      f"{sample_location} section. (Samples line)")
     return errors
 
 
@@ -151,16 +156,16 @@ def validate_subject_samples_factors(mwtabfile):
     for index, subject_sample_factor in enumerate(mwtabfile["SUBJECT_SAMPLE_FACTORS"]):
         if not subject_sample_factor["Subject ID"]:
             subject_samples_factors_errors.append(
-                "SUBJECT_SAMPLE_FACTORS: Entry #{} missing Subject ID.".format(index+1)
+                "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing Subject ID.".format(index+1)
             )
         if not subject_sample_factor["Sample ID"]:
             subject_samples_factors_errors.append(
-                "SUBJECT_SAMPLE_FACTORS: Entry #{} missing Sample ID.".format(index + 1)
+                "Error: SUBJECT_SAMPLE_FACTORS entry #{} missing Sample ID.".format(index + 1)
             )
         else:
             if subject_sample_factor["Sample ID"] in seen_samples:
                 subject_samples_factors_errors.append(
-                    "SUBJECT_SAMPLE_FACTORS: Entry #{} has a duplicate Sample ID.".format(index + 1)
+                    "Warning: SUBJECT_SAMPLE_FACTORS entry #{} has a duplicate Sample ID.".format(index + 1)
                 )
             seen_samples.add(subject_sample_factor["Sample ID"])
         if subject_sample_factor.get("Factors"):
@@ -168,48 +173,48 @@ def validate_subject_samples_factors(mwtabfile):
             for factor_key in ssf_factors:
                 if not ssf_factors[factor_key]:
                     subject_samples_factors_errors.append(
-                        "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Factor {}.".format(index + 1, factor_key)
+                        "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing value for Factor {}.".format(index + 1, factor_key)
                     )
             
-            duplicate_keys = [match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key).group(1) 
+            duplicate_keys = [match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key).group(1) 
                               for key in subject_sample_factor["Factors"]
-                              if match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key)]
+                              if match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key)]
         
             if duplicate_keys:
-                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                subject_samples_factors_errors.append("Warning: SUBJECT_SAMPLE_FACTORS entry #" + str(index + 1) + 
                                                       " has the following duplicate keys in Factors:\n\t" + 
-                                                      "\n\t".join(duplicate_keys))
+                                                      "\n\t".join(f'"{value}"' for value in duplicate_keys))
         
         if subject_sample_factor.get("Additional sample data"):
             ssf_asd = subject_sample_factor["Additional sample data"]
             for additional_key in ssf_asd:
                 if not ssf_asd[additional_key]:
                     subject_samples_factors_errors.append(
-                        "SUBJECT_SAMPLE_FACTORS: Entry #{} missing value for Additional sample data {}.".format(
+                        "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing value for Additional sample data {}.".format(
                             index + 1, additional_key
                         )
                     )
             
-            duplicate_keys = [match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key).group(1) 
+            duplicate_keys = [match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key).group(1) 
                               for key in subject_sample_factor["Additional sample data"]
-                              if match(mwtab.mwtab.DUPLICATE_KEY_REGEX, key)]
+                              if match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key)]
         
             if duplicate_keys:
-                subject_samples_factors_errors.append("SUBJECT_SAMPLE_FACTORS: Entry #" + str(index + 1) + 
+                subject_samples_factors_errors.append("Warning: SUBJECT_SAMPLE_FACTORS entry #" + str(index + 1) + 
                                                       " has the following duplicate keys in Additional sample data:\n\t" + 
-                                                      "\n\t".join(duplicate_keys))
+                                                      "\n\t".join(f'"{value}"' for value in duplicate_keys))
     return subject_samples_factors_errors
 
 
-def validate_data(mwtabfile, data_section_key, null_values, metabolites):
+def validate_data(mwtabfile, data_section_key, mwtabfile_tables):
     """Validates ``MS_METABOLITE_DATA``, ``NMR_METABOLITE_DATA``, and ``NMR_BINNED_DATA`` sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
     :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
     :type data_section_key: :py:class:`str`
-    :param bool null_values: whether null values are present.
-    :param bool metabolites: whether to check that metabolites in the Data section are in the Metabolites section.
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
     data_errors = list()
 
@@ -221,50 +226,53 @@ def validate_data(mwtabfile, data_section_key, null_values, metabolites):
         data_sample_id_set = set(data_keys[1:])
     else:
         data_sample_id_set = set()
-    if metabolites and "Metabolites" in mwtabfile[data_section_key]:
-        metabolites_in_metabolites_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Metabolites"]]
 
-    # Removed for mwTab File Spec. 1.5
-    # if subject_sample_factors_sample_id_set - data_sample_id_set:
-    #     data_errors.append("{}: Section missing data entry for sample(s): {}.".format(
-    #         data_section_key,
-    #         subject_sample_factors_sample_id_set - data_sample_id_set
-    #     ))
+    if mwtabfile._input_format == 'mwtab':
+        location = data_section_key
+    else:
+        location = f'["{data_section_key}"]["Data"]'
+    
     if data_sample_id_set - subject_sample_factors_sample_id_set:
-        data_errors.append("SUBJECT_SAMPLE_FACTORS: Section missing sample ID(s). The following IDs were found in the {} section but not in the SUBJECT_SAMPLE_FACTORS: {}".format(
-            data_section_key,
-            sorted(list(data_sample_id_set - subject_sample_factors_sample_id_set)),
+        data_errors.append('Error: SUBJECT_SAMPLE_FACTORS section missing sample ID(s). '
+                           'The following IDs were found in the {} section but not in the SUBJECT_SAMPLE_FACTORS:\n\t {}'.format(
+            location,
+            "\n\t".join(f'"{value}"' for value in sorted(list(data_sample_id_set - subject_sample_factors_sample_id_set))),
         ))
-
-    for index, metabolite_dict in enumerate(mwtabfile[data_section_key]["Data"]):
-        # if set(list(metabolite.keys())[1:]) != subject_sample_factors_sample_id_set:
-        #     print(len(subject_sample_factors_sample_id_set), len(metabolite) - 1)
-        #     print(
-        #         "{}: Metabolite \"{}\" missing data entry for {} samples".format(
-        #             data_section_key,
-        #             metabolite[list(metabolite.keys())[0]],
-        #             len(subject_sample_factors_sample_id_set - set(list(metabolite.keys())[1:]))
-        #         ),
-        #         file=error_stream
-        #     )
-        
-        # Check whether the metabolite is in the Metabolites section.
-        if metabolites and "Metabolites" in mwtabfile[data_section_key]:
-            metabolite = metabolite_dict["Metabolite"]
-            if metabolite not in metabolites_in_metabolites_section:
-                data_errors.append("DATA: Data entry #{}, \"{}\", is not in the Metabolites section.".format(index + 1, metabolite))
-        
-        # Check if there are null values.
-        # I think there are issues with this code. This function is never called with null_values = True, so I'm just going to leave it.
-        if null_values:
-            for data_point_key in metabolite_dict.keys():
-                if data_point_key != "Metabolite":
-                    try:
-                        float(metabolite_dict[data_point_key])
-                    except ValueError:
-                        # metabolite_dict[data_point_key] = ""
-                        data_errors.append(
-                            "{}: Data entry #{} contains non-numeric value converted to \"\".".format(data_section_key, index + 1))
+    
+    # Check whether mwtabolites in Data are in the Metabolites section.
+    if mwtabfile._input_format == 'mwtab':
+        metabolites_location = 'METABOLITES'
+        data_location = data_section_key
+    else:
+        metabolites_location = f'["{data_section_key}"]["Metabolites"]'
+        data_location = f'["{data_section_key}"]["Data"]'
+    
+    if mwtabfile_tables['Data'] is not None and not mwtabfile_tables['Data'].empty:
+        metabolites_in_data_section = mwtabfile_tables['Data'].loc[:, 'Metabolite'].str.strip()
+    else:
+        metabolites_in_data_section = pandas.Series()
+    if mwtabfile_tables['Metabolites'] is not None and not mwtabfile_tables['Metabolites'].empty:
+        metabolites_in_metabolites = mwtabfile_tables['Metabolites'].loc[:, 'Metabolite'].str.strip()
+    else:
+        metabolites_in_metabolites = pandas.Series()
+    data_not_in_met_mask = ~metabolites_in_data_section.isin(metabolites_in_metabolites)
+    data_not_in_met = metabolites_in_data_section[data_not_in_met_mask]
+    if len(data_not_in_met) > 0:
+        message = (f'Warning: The following metabolites in the, {data_location} table '
+                  f'were not found in the {metabolites_location} table:\n\t')
+        message = message + '\n\t'.join(f'"{value}"' for value in data_not_in_met.values)
+        data_errors.append(message)
+    
+    if '' in metabolites_in_data_section:
+        message = f'Warning: A metabolite without a name was found in the {data_location} table.'
+        data_errors.append(message)
+    
+    duplicate_metabolites_mask = metabolites_in_data_section.duplicated()
+    if duplicate_metabolites_mask.any():
+        duplicate_metabolites = metabolites_in_data_section[duplicate_metabolites_mask]
+        message = f'Warning: The following metabolites in the {data_location} table appear more than once in the table:\n\t'
+        message = message + '\n\t'.join(f'"{value}"' for value in duplicate_metabolites.values)
+        data_errors.append(message)
 
     return data_errors
 
@@ -283,28 +291,39 @@ def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
     
     metabolites_errors = list()
     
-    # metabolites_in_data_section = [data_dict["Metabolite"] for data_dict in mwtabfile[data_section_key]["Data"]]
-    if mwtabfile._input_string == 'mwtab':
-        json_metabolites_location = ''
-        json_data_location = ''
+    if mwtabfile._input_format == 'mwtab':
+        metabolites_location = 'METABOLITES'
+        data_location = data_section_key
     else:
-        json_metabolites_location = f', ["{data_section_key}"]["Metabolites"],'
-        json_data_location = f', ["{data_section_key}"]["Data"]'
+        metabolites_location = f'["{data_section_key}"]["Metabolites"]'
+        data_location = f'["{data_section_key}"]["Data"]'
     
     if mwtabfile_tables['Data'] is not None and not mwtabfile_tables['Data'].empty:
-        metabolites_in_data_section = mwtabfile_tables['Data'].loc[:, 'Metabolite']
+        metabolites_in_data_section = mwtabfile_tables['Data'].loc[:, 'Metabolite'].str.strip()
     else:
         metabolites_in_data_section = pandas.Series()
     if mwtabfile_tables['Metabolites'] is not None and not mwtabfile_tables['Metabolites'].empty:
-        metabolites_in_metabolites = mwtabfile_tables['Metabolites'].loc[:, 'Metabolite']
+        metabolites_in_metabolites = mwtabfile_tables['Metabolites'].loc[:, 'Metabolite'].str.strip()
     else:
         metabolites_in_metabolites = pandas.Series()
     met_not_in_data_mask = ~metabolites_in_metabolites.isin(metabolites_in_data_section)
     met_not_in_data = metabolites_in_metabolites[met_not_in_data_mask]
-    message = ('Warning: The following metabolites in the METABOLITES table'
-              f'{json_metabolites_location} were not found in the DATA table{json_data_location}\n')
-    message = message + met_not_in_data.to_string
-    metabolites_errors.append(message)
+    if len(met_not_in_data) > 0:
+        message = (f'Warning: The following metabolites in the {metabolites_location} table '
+                  f'were not found in the {data_location} table:\n\t')
+        message = message + '\n\t'.join(f'"{value}"' for value in met_not_in_data.values)
+        metabolites_errors.append(message)
+    
+    if metabolites_in_metabolites.isin(['']).any():
+        message = f'Warning: A metabolite without a name was found in the {metabolites_location} table.'
+        metabolites_errors.append(message)
+    
+    duplicate_metabolites_mask = metabolites_in_metabolites.duplicated()
+    if duplicate_metabolites_mask.any():
+        duplicate_metabolites = metabolites_in_metabolites[duplicate_metabolites_mask]
+        message = f'Warning: The following metabolites in the {metabolites_location} table appear more than once in the table:\n\t'
+        message = message + '\n\t'.join(f'"{value}"' for value in duplicate_metabolites.values)
+        metabolites_errors.append(message)
 
     # Check if fields/columns are recognized variations and report the standardized name to the user.
     df = mwtabfile_tables['Metabolites']
@@ -316,21 +335,24 @@ def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
             found_columns[name] = column_matches
             if name not in df.columns:
                 for column_name in column_matches:
-                    metabolites_errors.append(f'Warning: The column, "{column_name}", matches a standard column name, "{name}". '
-                                              'If this match was not in error, the column should be renamed to '
-                                              'the standard name or a name that doesn\'t resemble the standard name.')
+                    if column_name.lower() != name:
+                        metabolites_errors.append(f'Warning: The column, "{column_name}", in the {metabolites_location} table, '
+                                                  f'matches a standard column name, "{name}". '
+                                                  'If this match was not in error, the column should be renamed to '
+                                                  'the standard name or a name that doesn\'t resemble the standard name.')
             for column_name in column_matches:
                 if column_name in columns_to_standard_columns:
                     columns_to_standard_columns[column_name].append(name)
                 else:
                     columns_to_standard_columns[column_name] = [name]
                 
-                value_mask = finder.values_series_match(df.loc[:, column_name].astype('string[pyarrow]'))
+                value_mask = finder.values_series_match(df.loc[:, column_name].astype('string[pyarrow]'), na_values = NA_VALUES)
                 if not value_mask.all():
-                    error_message = (f'Warning: The column, "{column_name}", matches a standard column name, "{name}", '
-                                    'and some of the values in the column do not match the expected type or format for that column. '
-                                    'The non-matching values are:\n')
-                    error_message += str(df.loc[~value_mask, column_name])
+                    error_message = (f'Warning: The column, "{column_name}", in the {metabolites_location} table, '
+                                     f'matches a standard column name, "{name}", '
+                                     'and some of the values in the column do not match the expected type or format for that column. '
+                                     'The non-matching values are:\n')
+                    error_message += df.loc[~value_mask, column_name].to_string()
                     metabolites_errors.append(error_message)
     
     # When certain columns are found in METABOLITES, look for the implied pair and warn if it isn't there. 
@@ -340,14 +362,14 @@ def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
         if name in implied_pairs:
             implied_pairs_not_found = [column for column in implied_pairs[name] if column not in found_columns]
             for column in implied_pairs_not_found:
-                metabolites_errors.append(f'Warning: The column "{matches[0]}" was found in the METABOLITES table, '
-                                          'but this column implies that another column, "{column}", '
+                metabolites_errors.append(f'Warning: The column "{matches[0]}" was found in the {metabolites_location} table, '
+                                          f'but this column implies that another column, "{column}", '
                                           'should also exist, and that column was not found.')
             
             implied_pairs_found = [column for column in implied_pairs[name] if column in found_columns]
             for column in implied_pairs_found:
-                parent_mask = df.loc[:, name].isna()
-                child_mask = df.loc[:, columns].isna()
+                parent_mask = df.loc[:, matches[0]].isna()
+                child_mask = df.loc[:, found_columns[column][0]].isna()
                 if (parent_mask != child_mask).any():
                     metabolites_errors.append(f'Warning: The column pair, "{matches[0]}" and "{found_columns[column][0]}", '
                                               'in the METABOLITES table should have data in the '
@@ -367,8 +389,8 @@ def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
     # If a column in df matches multiple standard names, print a warning to prefer separating them.
     for column_name, standard_names in columns_to_standard_columns.items():
         if len(standard_names) > 1:
-            metabolites_errors.append(f'Warning: The column, "{column_name}", in the METABOLTIES table '
-                                      'was matched to multiple standard names. This is a good indication '
+            metabolites_errors.append(f'Warning: The column, "{column_name}", in the {metabolites_location} table '
+                                      f'was matched to multiple standard names, {standard_names}. This is a good indication '
                                       'that the values in that column should be split into the appropriate '
                                       'individual columns.')
 
@@ -391,31 +413,21 @@ def validate_extended(mwtabfile, data_section_key, mwtabfile_tables):
                      mwtabfile["SUBJECT_SAMPLE_FACTORS"]}
     
     if mwtabfile._input_format == 'mwtab':
-        extra_string = ''
+        extended_location = 'EXTENDED_METABOLITE_DATA'
         ssf_string = 'in the SUBJECT_SAMPLE_FACTORS section'
     else:
-        extra_string = f' in ["{data_section_key}"]["Extended"]'
+        extended_location = f' in ["{data_section_key}"]["Extended"]'
         ssf_string = 'in ["SUBJECT_SAMPLE_FACTORS"]'
     
     df = mwtabfile_tables['Extended']
     if "sample_id" not in df.columns:
-        extended_errors.append(f"Error: The EXTENDED_METABOLITE_DATA data table{extra_string} does not have a column for \"sample_id\".")
+        extended_errors.append(f"Error: The {extended_location} table does not have a column for \"sample_id\".")
     else:
         extended_id_set = set(df.loc[:, 'sample_id'])
-        not_in_ssf = sample_id_set - extended_id_set
+        not_in_ssf = extended_id_set - sample_id_set
         if not_in_ssf:
-            extended_errors.append(f"Error: The EXTENDED_METABOLITE_DATA data table{extra_string} has Sample IDs that were not found "
-                                   f"{ssf_string}. Those IDs are:\n" + '\n'.join(not_in_ssf))
-
-    # TODO confirm the new way identifies the same missing sample IDs.
-    # for index, extended_data in enumerate(mwtabfile[data_section_key]["Extended"]):
-    #     if "sample_id" not in extended_data.keys():
-    #         extended_errors.append("EXTENDED_{}: Data entry #{} missing Sample ID.".format(data_section_key, index + 1))
-    #     elif not extended_data["sample_id"] in sample_id_set:
-    #         extended_errors.append(
-    #             "EXTENDED_{}: Data entry #{} contains Sample ID \"{}\" not found in SUBJECT_SAMPLE_FACTORS section.".format(
-    #                 data_section_key, index + 1, extended_data["sample_id"]
-    #             ))
+            extended_errors.append(f"Error: The {extended_location} table has Sample IDs that were not found "
+                                   f"{ssf_string}. Those IDs are:\n\t" + '\n\t'.join(f'"{value}"' for value in not_in_ssf))
 
     return extended_errors
 
@@ -446,7 +458,7 @@ def validate_metabolite_names(mwtabfile, data_section_key):
     else:
         extended_section_bad_names = []
     
-    if mwtab._input_format == 'mwtab':
+    if mwtabfile._input_format == 'mwtab':
         desc_string = 'in the {} table'
         metabolite_string = 'METABOLITES'
         data_string = 'METABOLITE_DATA' if not 'BINNED' in data_section_key else 'BINNED_DATA'
@@ -473,12 +485,14 @@ def validate_metabolite_names(mwtabfile, data_section_key):
 
 
 def create_better_error_messages(errors_generator: Iterable[jsonschema.exceptions.ValidationError], 
-                                 mwtabfile: 'mwtab.mwtab.MWTabFile') -> list[str]:
+                                 mwtabfile: 'mwtab.mwtab.MWTabFile',
+                                 schema: dict) -> list[str]:
     """Create better error messages for jsonschema validation errors.
         
     Args:
         errors_generator: The generator returned from validator.iter_errors().
         mwtabfile: The mwtabfile that was validated against.
+        schema: The schema used to create errors_generator. Used to get more information and craft better messages.
     
     Returns:
         A list of the errors encountered.
@@ -492,23 +506,60 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
     #         print(key, value)
     #         print()
     
+    # for key, value in error._contents().items():
+    #     print(key, value)
+    #     print()
+        
+    #     message
+
+    #     cause
+
+    #     context
+
+    #     validator
+
+    #     validator_value
+
+    #     path
+
+    #     schema_path
+
+    #     instance
+
+    #     schema
+
+    #     parent
+    
+    # with open('C:/Users/Sparda/Desktop/New folder (2)/__test.txt', 'w') as jsonFile:
+    #     jsonFile.write(error.message)
+    
     errors = []
     for error in errors_generator:
-        
-        message = "Error: "
+        # TODO changethis back to just Error.
+        message = "SchemaError: "
         custom_message = ""
         
+        error_path_len = len(error.relative_path)
+        # This should be an additional properties error.
+        if error_path_len == 0:
+            pass
         # MS_RESULTS_FILE or NMR_RESULTS_FILE is the only thing that can be 3 levels deep.
-        if len(error.relative_path) == 3:
+        elif error_path_len == 3:
             section = error.relative_path[-3]
             subsection = error.relative_path[-2]
             result_key = error.relative_path[-1]
             
-            # TODO propagate this input_format stuff to all messaging.
             if mwtabfile._input_format == 'mwtab':
                 format_string = f'for the subsection, "{subsection}", in the "{section}" section, for the "{result_key}" attribute'
             else:
                 format_string = f'in ["{section}"]["{subsection}"]["{result_key}"]'
+        elif error_path_len == 1:
+            section = error.relative_path[-1]
+            
+            if mwtabfile._input_format == 'mwtab':
+                format_string = f'in the "{section}" section '
+            else:
+                format_string = f'in ["{section}"]'
         else:
             section = error.relative_path[-2]
             subsection = error.relative_path[-1]
@@ -530,10 +581,7 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             custom_message = " cannot be empty."
         elif error.validator == "required":
             required_property = match(r"(\'.*\')", error.message).group(1)
-            if len(error.relative_path) == 0:
-                message += "The required property " + required_property + " is missing."
-            else:
-                message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing the required property " + required_property + "."
+            message += f'The required property, "{required_property}", {format_string} is missing.'
         elif error.validator == "dependencies":
             message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing a dependent property.\n"
             message += error.message
@@ -575,12 +623,22 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             custom_message = " has non-unique elements."
         elif error.validator == 'not':
             message = message + f'An empty value or a null value was detected {format_string}.'
+            
             if mwtabfile._input_format == 'mwtab':
-                message = message + ' Either a value should be provided for this subsection or it should be removed altogether if not required.'
+                container_noun = 'subsection'
             else:
-                message = message + ' Either a value should be provided for this key or it should be removed altogether if not required.'
+                container_noun = 'key'
+            
+            if (required := schema['properties'][section].get('required')) and subsection in required:
+                message = message + f' A legitimate value should be provided for this required {container_noun}'
+            else:
+                message = message + f' Either a legitimate value should be provided for this {container_noun}, or it should be removed altogether.'
+            # if mwtabfile._input_format == 'mwtab':
+            #     message = message + ' Either a value should be provided for this subsection or it should be removed altogether if not required.'
+            # else:
+            #     message = message + ' Either a value should be provided for this key or it should be removed altogether if not required.'
         else:
-            errors.append(error)
+            message += error.message
         
         
         if custom_message:
@@ -589,91 +647,26 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
         errors.append(message)
     return errors
 
-# TODO finish modifying this function.
-def validate_section_schema(mwtabfile, section, schema, section_key):
+
+def validate_schema(mwtabfile, schema):
     """Validate section of ``mwTab`` formatted file.
     
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param section: Section of :class:`~mwtab.mwtab.MWTabFile`.
-    :type section: :py:class:`collections.OrderedDict`
-    :param schema: Schema definition.
-    :type schema: :py:class:`~schema.schema`
-    :param str section_key: Section key.
-    :return: Validated section.
-    :rtype: :py:class:`collections.OrderedDict`
+    :param schema: JSON Schema schema.
+    :type schema: :py:class:`dict`
+    :return: JSON Schema errors.
+    :rtype: :py:class:`list`
     """
     validator = jsonschema.validators.validator_for(schema)
     format_checker = jsonschema.FormatChecker()
     validator = validator(schema=schema, format_checker=format_checker)
-    create_better_error_messages(validator.iter_errors(mwtabfile), mwtabfile)
+    # errors_generator = validator.iter_errors(mwtabfile)
+    return create_better_error_messages(validator.iter_errors(mwtabfile), mwtabfile, schema)
     
+  
     
-    
-    
-    
-    # dict_for_Schema = OrderedDict()
-    # for section_key, section in mwtabfile.items():
-    #     dict_for_Schema[section_key] = section
-    # errors = []
-    # try:
-    #     base_schema.validate(dict_for_Schema)
-    # except Exception as e:
-    #     messages = []
-    #     for auto in e.autos:
-    #         print(auto)
-    #         if auto:
-    #             if auto.startswith("Wrong keys"):
-    #                 bad_key = match(r"Wrong keys ('.*') in .*", auto).group(1)
-    #                 auto = "Unknown or malformed keys " + bad_key + "."
-    #             elif auto.startswith("Wrong key"):
-    #                 bad_key = match(r"Wrong key ('.*') .*", auto).group(1)
-    #                 auto = "Unknown or malformed key " + bad_key + "."
-    #             messages.append(auto)
-    #     errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
-    #                   "\n".join(messages))
-    #     # errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
-    #     #               "\n".join([message for message in e.autos[1:] if message]))
-    # # Need to manually check this because Schema can't do conditional checks.
-    # if 'MS' in mwtabfile and 'CHROMATOGRAPHY' not in mwtabfile:
-    #     if errors[-1].startswith("SCHEMA: There is an issue with the top level of the data."):
-    #         errors[-1] = errors[-1] + "\nMissing key: 'CHROMATOGRAPHY'"
-    #     else:
-    #         errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
-
-    # # validate PROJECT, STUDY, ANALYSIS... and Schemas
-    # errors = []
-    # for section_key, section in mwtabfile.items():
-    #     try:
-    #         schema = section_schema_mapping[section_key]
-    #         # section = validate_section_schema(section, schema, section_key, error_stout)
-    #         section, schema_errors = validate_section_schema(section, schema, section_key)
-    #         errors.extend(schema_errors)
-    #         # mwtabfile[section_key] = section
-    #     except Exception as e:
-    #         errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    schema_errors = list()
-
-    keys_to_delete = []
-    if section_key in ITEM_SECTIONS:
-        for key in section.keys():
-            if not section[key]:
-                schema_errors.append("{}: Contains item \"{}\" with null value.".format(section_key, key))
-                keys_to_delete.append(key)
-
-    return schema.validate(section), schema_errors
-    
-def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables):
+def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables, na_values = NA_VALUES):
     """Validate the values of all table sections.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -682,11 +675,22 @@ def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables):
     :type data_section_key: :py:class:`str`
     :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
     :type mwtabfile_tables: :py:class:`dict`
+    :param na_values: List of values to consider null values. 
+    :type na_values: :py:class:`list`
     """
+    if mwtabfile._input_format == 'mwtab':
+        data_location = data_section_key
+        met_location = 'METABOLITES'
+        extended_location = 'EXTENDED_METABOLITE_DATA'
+    else:
+        data_location = f'["{data_section_key}"]["Data"]'
+        met_location = f'["{data_section_key}"]["Metabolites"]'
+        extended_location = f'["{data_section_key}"]["Extended"]'
+    
     message_strings = {
-        'Data': "[\"" + data_section_key + "\"][\"Data\"] \ METABOLITE_DATA" if not 'BINNED' in data_section_key else "[\"" + data_section_key + "\"][\"Data\"] \ BINNED_DATA",
-        'Metabolites': "[\"" + data_section_key + "\"][\"Metabolites\"] \ METABOLITES",
-        'Extended': "[\"" + data_section_key + "\"][\"Extended\"] \ EXTENDED_METABOLITE_DATA"
+        'Data': data_location,
+        'Metabolites': met_location,
+        'Extended': extended_location
         }
     errors = []
     for table_name in mwtabfile.table_names:
@@ -695,23 +699,36 @@ def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables):
             if len(records) > 0:
                 headers = list(records[0].keys())
                 if not all([list(data_dict.keys()) == headers for data_dict in records]):
-                    # TODO test
-                    message = ('Error: The table in the \"{}\" section does not have the same columns for every row. '
-                               'The table, represented as a list of dictionaries, has dictionaries '
-                               'with different keys. All dictionaries in the list should have the same keys.'.format(message_strings[table_name]))
+                    message = ('Error: The {} table does not have '
+                               'the same columns for every row.'.format(message_strings[table_name]))
                     errors.append(message)
             
             data_df = mwtabfile_tables[table_name]
-            # temp_list = [duplicates_dict._JSON_DUPLICATE_KEYS__Jobj for duplicates_dict in mwtabfile[data_section_key][table_name]]
-            # data_df = pandas.DataFrame.from_records(temp_list)
-            # data_df = pandas.DataFrame.from_records(mwtabfile[data_section_key][table_name])
+            
+            # Look for empty column names.
+            if any(name == '' for name in data_df.columns):
+                message = (f'Warning: Column(s) with no name were found in the {message_strings[table_name]} table.')
+                errors.append(message)
+            
+            # Look for NA values that aren't the empty string.
+            na_values_sans_empty_string = [value for value in na_values if value != '']
+            values_mask = data_df.isin(na_values_sans_empty_string)
+            if values_mask.any().any():
+                na_values_in_df = [f'"{value}"' for value in pandas.unique(data_df[values_mask].values.ravel()) if not pandas.isna(value)]
+                message = (f'Warning: Nonstandard NA values were found in the {message_strings[table_name]} table. '
+                           'NA values should be expressed using the empty string unless '
+                           'the empty string means something else, such as "not found", '
+                           'in which case there should be both NA and NF values and no empty string. '
+                           'The following values were the nonstandard values found:\n\t')
+                message = message + '\n\t'.join(na_values_in_df)
+                errors.append(message)
             
             # Look for completely null columns.
-            null_columns = data_df.isna().all() | (data_df == "").all()
+            null_columns = data_df.isna().all() | data_df.isin(na_values).all()
             null_columns = null_columns[null_columns]
             if len(null_columns) > 0:
                 for column in null_columns.index:
-                    message = "Warning: The column, \"{}\", in the {} section has all null values.".format(column, message_strings[table_name])
+                    message = "Warning: The column, \"{}\", in the {} table has all null values.".format(column, message_strings[table_name])
                     errors.append(message)
             
             # Look for overbalanced values, so if 90% of a column is dominated by a single value print a warning.
@@ -720,57 +737,60 @@ def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables):
                 value_counts = temp_column.value_counts(dropna=False)
                 value_counts = value_counts / value_counts.sum()
                 if any(value_counts > .9) and len(value_counts) > 1:
-                    message = ("Warning: The column, \"{}\", in the {} section may have incorrect values. "
+                    message = ("Warning: The column, \"{}\", in the {} table may have incorrect values. "
                               "90% or more of the values are the same, but 10% or less are different.".format(column, message_strings[table_name]))
                     errors.append(message)
             
             # Look for duplicate rows.
-            #TODO test.
             if data_df.duplicated().any():
-                message = "Warning: There are duplicate rows in the {} section.".format(message_strings[table_name])
+                message = "Warning: There are duplicate rows in the {} table.".format(message_strings[table_name])
                 errors.append(message)
     return errors
 
 
-# TODO check the values of ion_mode and talk to hunter about restricting this to only pos or neg.
-# Add docstring.
-# Not sure there won't be MS that could have other modes.
-def validate_polarity(mwtabfile, mwtabfile_tables):
-    """
+def validate_polarity(mwtabfile, data_section_key, mwtabfile_tables):
+    """Validate that polarity columns are mono valued.
     
     :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
     :type mwtabfile_tables: :py:class:`dict`
+    :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
+    :type data_section_key: :py:class:`str`
+    :param mwtabfile_tables: Dictionary where the keys are table names and the values are the tables as pandas DataFrames.
+    :type mwtabfile_tables: :py:class:`dict`
     """
-    common_message = ('A single mwTab file is supposed to be restricted to a single analysis. '
-                      'This means multiple MS runs under different settings should each be '
-                      'in their own file.')
-    errors = []
-    if 'MS' in mwtabfile and 'ION_MODE' in mwtabfile['MS']:
-        ion_mode = mwtabfile['MS']['ION_MODE']
-        if ion_mode not in ['pos', 'neg', 'positive', 'negative']:
-            errors.append('Error: The indicated ION_MODE should be either POSITIVE or NEGATIVE. ' + common_message)
+    if mwtabfile._input_format == 'mwtab':
+        location = 'METABOLITES'
+    else:
+        location = f'["{data_section_key}"]["Metabolites"]'
     
+    errors = []    
     df = mwtabfile_tables['Metabolites']
     column_finder = column_finders['polarity']
     columns = {column:column.lower().strip() for column in df.columns}
     if column_matches := column_finder.name_dict_match(columns):
         for column_match in column_matches:
-            pos_values = df.loc[:, column_match].apply(lambda x: 'pos' in x or '+' in x)
-            neg_values = df.loc[:, column_match].apply(lambda x: 'neg' in x or '-' in x)
+            pos_values = df.loc[:, column_match].str.lower().isin(['pos', 'positive', '+'])
+            neg_values = df.loc[:, column_match].str.lower().isin(['neg', 'negative', '+'])
             if pos_values.any() and neg_values.any():
-                errors.append(f'Error: The "{column_match}" column in the METABOLITES table '
+                errors.append(f'Error: The "{column_match}" column in the {location} table '
                               'indicates multiple polarities in a single analysis, and '
-                              'this should not be. ' + common_message)
+                              'this should not be. A single mwTab file is supposed to be '
+                              'restricted to a single analysis. This means multiple MS '
+                              'runs under different settings should each be in their own file.')
                 break
     return errors
 
 
-def validate_file(mwtabfile, validation_schema=compiled_schema, verbose=False, metabolites=True):
+def validate_file(mwtabfile, 
+                  ms_schema = ms_required_schema,
+                  nmr_schema = nmr_required_schema,
+                  verbose = False, metabolites = True):
     """Validate ``mwTab`` formatted file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param dict validation_schema: jsonschema to validate the file.
+    :param dict ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
+    :param dict nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
     :param bool verbose: whether to be verbose or not.
     :param bool metabolites: whether to validate metabolites section.
     :return: Validated file and errors if verbose is False.
@@ -802,82 +822,44 @@ def validate_file(mwtabfile, validation_schema=compiled_schema, verbose=False, m
     for table_name in mwtabfile.table_names:
         mwtabfile_tables[table_name] = mwtabfile.get_table_as_pandas(table_name)
     
+    if 'NM' in mwtabfile:
+        errors.extend(validate_schema(mwtabfile, nmr_schema))
+    else:
+        if 'MS' not in mwtabfile:
+            errors.append('Error: No "MS" or "NM" section was found, '
+                          'so analysis type could not be determined. '
+                          'Mass spec will be assumed.')
+        errors.extend(validate_schema(mwtabfile, ms_schema))
     
-    
-    
-    
-    
-    
-    # dict_for_Schema = OrderedDict()
-    # for section_key, section in mwtabfile.items():
-    #     dict_for_Schema[section_key] = section
-    # try:
-    #     base_schema.validate(dict_for_Schema)
-    # except Exception as e:
-    #     messages = []
-    #     for auto in e.autos:
-    #         if auto.startswith("Wrong keys"):
-    #             bad_key = match(r"Wrong keys ('.*') in .*", auto).group(1)
-    #             auto = "Unknown or malformed keys " + bad_key + "."
-    #         elif auto.startswith("Wrong key"):
-    #             bad_key = match(r"Wrong key ('.*') .*", auto).group(1)
-    #             auto = "Unknown or malformed key " + bad_key + "."
-    #         messages.append(auto)
-    #     errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
-    #                   "\n".join(messages))
-    #     # errors.append("SCHEMA: There is an issue with the top level of the data.\n" + 
-    #     #               "\n".join([message for message in e.autos[1:] if message]))
-    # # Need to manually check this because Schema can't do conditional checks.
-    # if 'MS' in mwtabfile and 'CHROMATOGRAPHY' not in mwtabfile:
-    #     if errors[-1].startswith("SCHEMA: There is an issue with the top level of the data."):
-    #         errors[-1] = errors[-1] + "\nMissing key: 'CHROMATOGRAPHY'"
-    #     else:
-    #         errors.append("SCHEMA: There is an issue with the top level of the data.\nMissing key: 'CHROMATOGRAPHY'")
-
-    # # validate PROJECT, STUDY, ANALYSIS... and Schemas
-    # errors = []
-    # for section_key, section in mwtabfile.items():
-    #     try:
-    #         schema = section_schema_mapping[section_key]
-    #         # section = validate_section_schema(section, schema, section_key, error_stout)
-    #         section, schema_errors = validate_section_schema(section, schema, section_key)
-    #         errors.extend(schema_errors)
-    #         # mwtabfile[section_key] = section
-    #     except Exception as e:
-    #         errors.append("SCHEMA: Section \"{}\" does not match the allowed schema. ".format(section_key) + str(e))
-
-
-
-
-
-
     # validate SUBJECT_SAMPLE_FACTORS
-    # validate_subject_samples_factors(mwtabfile, error_stout)
     errors.extend(validate_subject_samples_factors(mwtabfile))
     errors.extend(validate_factors(mwtabfile))
 
     # validate ..._DATA sections
     data_section_key = mwtabfile.data_section_key
     if data_section_key:
-        data_section_key = data_section_key[0]
-        # validate_data(mwtabfile, data_section_key, error_stout, False)
-        errors.extend(validate_data(mwtabfile, data_section_key, False, metabolites))
+        errors.extend(validate_data(mwtabfile, data_section_key, mwtabfile_tables))
 
         if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
             # temp for testing
+            # TODO remove this if. metabolites should always be validated. Also remove the parameter metabolites form the function header.
             if metabolites:
                 if "Metabolites" in mwtabfile[data_section_key].keys():
-                    errors.extend(validate_metabolites(mwtabfile, data_section_key))
+                    errors.extend(validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables))
                 else:
                     errors.append("DATA: Missing METABOLITES section.")
+        
         if "Extended" in mwtabfile[data_section_key].keys():
-            errors.extend(validate_extended(mwtabfile, data_section_key))
+            errors.extend(validate_extended(mwtabfile, data_section_key, mwtabfile_tables))
         
         errors.extend(validate_samples(mwtabfile, data_section_key))
         errors.extend(validate_metabolite_names(mwtabfile, data_section_key))
-        errors.extend(validate_table_values(mwtabfile, data_section_key))
+        errors.extend(validate_table_values(mwtabfile, data_section_key, mwtabfile_tables))
+        errors.extend(validate_metabolite_headers(mwtabfile, data_section_key))
+        errors.extend(validate_polarity(mwtabfile, data_section_key, mwtabfile_tables))
 
     else:
+        # TODO remove this because it is redundant with mwschema checks now.
         if "MS" in mwtabfile.keys():
             if not mwtabfile["MS"].get("MS_RESULTS_FILE"):
                 errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
@@ -885,9 +867,9 @@ def validate_file(mwtabfile, validation_schema=compiled_schema, verbose=False, m
             if not mwtabfile['NM'].get('NMR_RESULTS_FILE'):
                 errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section or NMR_RESULTS_FILE item in NM section.")
     
-    errors.extend(validate_metabolite_headers(mwtabfile))
     errors.extend(validate_header_lengths(mwtabfile))
     errors.extend(validate_sub_section_uniqueness(mwtabfile))
+    
 
     # finish writing validation/error log
     if errors:
@@ -921,9 +903,18 @@ def validate_file(mwtabfile, validation_schema=compiled_schema, verbose=False, m
 # Look for ID values such as HMDB in the other_id column and suggest to make specific columns for them instead of putting them in other_id. Done
 # Warn if a column name matches 2 different regexes in METABOLITES. 'retention time_m/z' in AN002889   AN004492 Feature@RT  Done
 
-# Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area.
+# Look for column names that are the empty string and warn about them. AN000427 in ['MS_METABOLITE_DATA']['Data'] 
+# This will double the message from validate_header_lengths, but we need to warn for JSON. 
+# Maybe check if 'METABOLITE_DATA' etc is in _short_headers before printing the message again. Done.
 
-# Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg
+# Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area. Done in mwschema.
+
+# Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg Done in validate_polarity.
+
+# Look for NA values that aren't just the empty string. Warn if found. Put in the message that NA values should be the empty string unless 
+# the empty string means something else, such as "not found", in which case there should be both NA and NF values and no empty string. Done in validate_tables
 
 # Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.
+# Hunter also wanted to consider adding things like the _factors properties into the JSON as well. For example, the _factors could be added 
+# into ['MS_METABOLITE_DATA'] under a 'Factors' key.
 

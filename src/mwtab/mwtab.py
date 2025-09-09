@@ -29,7 +29,7 @@ import pandas
 
 from .tokenizer import tokenizer, _results_file_line_to_dict
 from .validator import validate_file
-from .mwschema import compiled_schema
+from .mwschema import ms_required_schema, nmr_required_schema
 from .duplicates_dict import DuplicatesDict
 
 
@@ -327,10 +327,11 @@ class MWTabFile(dict):
         """
         return self.get_table_as_pandas('Data')
     
-    def validate(self, validation_schema=compiled_schema, verbose=True, metabolites=True):
+    def validate(self, ms_schema = ms_required_schema, nmr_schema = nmr_required_schema, verbose = True, metabolites = True):
         """Validate the instance.
         
-        :param dict section_schema_mapping: Dictionary that provides mapping between section name and schema definition.
+        :param dict ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
+        :param dict nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
         :param bool verbose: whether to be verbose or not.
         :param bool metabolites: whether to validate metabolites section.
         :return: Validated file and errors if verbose is False.
@@ -338,9 +339,10 @@ class MWTabFile(dict):
         """
         return validate_file(
                     mwtabfile=self,
-                    validation_schema=compiled_schema,
-                    verbose=verbose,
-                    metabolites=metabolites
+                    ms_schema = ms_schema,
+                    nmr_schema = nmr_schema,
+                    verbose = verbose,
+                    metabolites = metabolites
                 )
     
     @classmethod
@@ -370,6 +372,16 @@ class MWTabFile(dict):
 
         if json_str:
             self.update(json_str)
+            
+            self._metabolite_header = list(self.get_metabolites_as_pandas().columns[1:])
+            self._metabolite_header = self._metabolite_header if self._metabolite_header else None
+            self._extended_metabolite_header = list(self.get_extended_as_pandas().columns[1:])
+            self._extended_metabolite_header = self._extended_metabolite_header if self._extended_metabolite_header else None
+            self._samples = list(self.get_metabolites_data_as_pandas().columns[1:])
+            self._samples = self._samples if self._samples else None
+            if (data_section_key := self.data_section_key) and "BINNED" in data_section_key:
+                self._binned_header = self._samples
+        
         elif mwtab_str:
             self._build_mwtabfile(mwtab_str)
         else:

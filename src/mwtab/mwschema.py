@@ -65,7 +65,8 @@ def create_unit_error_message(can_be_range: bool = False,
     else:
         unit_string = f'followed by a space with a unit (ex. "5 V") from the following list: {units}.'
     
-    message = f' should be a {"unitless " if no_units else ""}number{range_string}{unit_string}'
+    message = (f' should be a {"unitless " if no_units else ""}number{range_string}{unit_string} '
+               'Ignore this when more complicated descriptions are required.')
     return message
 
 def _create_unit_regex_and_message(units: list[str], can_be_range: bool = False) -> str:
@@ -188,7 +189,10 @@ subject_schema = \
 {'type': 'object',
  'properties': {'SUBJECT_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'SUBJECT_SPECIES': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
-                'TAXONOMY_ID': {'type': 'string', 'pattern': metadata_column_matching.make_list_regex(r'\d+', r'(,|;|\||/)'), 'pattern_custom_message': ' must be a number or list of numbers.'},
+                'TAXONOMY_ID': {'type': 'string', 
+                                'pattern': metadata_column_matching.make_list_regex(r'\d+', r'(,|;|\||/)', empty_string = True), 
+                                'pattern_custom_message': ' must be a number or list of numbers.',
+                                'not':{'enum': NA_VALUES}},
                 'GENOTYPE_STRAIN': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'AGE_OR_AGE_RANGE': {'type': 'string', **_create_unit_regex_and_message(['weeks', 'days', 'months', 'years'], True)},
                 'WEIGHT_OR_WEIGHT_RANGE': {'type': 'string', **_create_unit_regex_and_message(['g', 'mg', 'kg', 'lbs'], True)},
@@ -225,7 +229,7 @@ subject_schema = \
 subject_sample_factors_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Subject ID': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
+           'properties': {'Subject ID': {'type': 'string', 'minLength': 1},
                           'Sample ID': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                           'Factors': {'type': 'object'},
                           'Additional sample data': {'type': 'object',
@@ -426,12 +430,14 @@ ms_schema = \
                 'INSTRUMENT_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MS_TYPE': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 # TODO ask Hunter about capitalization.
-                'ION_MODE': {'type': 'string', 'enum': ['POSITIVE', 'NEGATIVE', 'UNSPECIFIED', 'POSITIVE, NEGATIVE']},
+                'ION_MODE': {'type': 'string', 'enum': ['POSITIVE', 'NEGATIVE', 'UNSPECIFIED', 'POSITIVE, NEGATIVE',
+                                                        'positive', 'negative', 'unspecified', 'positive, negative',
+                                                        'Positive', 'Negative', 'Unspecified', 'Positive, Negative']},
                 'CAPILLARY_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
                 'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
                 'COLLISION_ENERGY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 # TODO ask Hunter about capitalization for nitrogen and argon.
-                'COLLISION_GAS': {'type': 'string', 'enum': ['Nitrogen', 'Argon']},
+                'COLLISION_GAS': {'type': 'string', 'enum': ['Nitrogen', 'Argon', 'nitrogen', 'argon']},
                 'DRY_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message(['L/hr', 'L/min'])},
                 'DRY_GAS_TEMP': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
                 'FRAGMENT_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V'])},
@@ -440,9 +446,11 @@ ms_schema = \
                 'HELIUM_FLOW': {'type': 'string', **_create_unit_regex_and_message(['mL/min'])},
                 'ION_SOURCE_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'])},
                 'ION_SPRAY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
-                'IONIZATION': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}, 
-                               'pattern': '(?i)^(pos|neg|positive|negative|postive|both)$',
-                               'pattern_custom_message': ' should not be "positive" or "negative". "ION_MODE" is where that should be indicated.'},
+                # TODO test this and make sure the not pattern works as expected.
+                'IONIZATION': {'type': 'string', 'minLength': 1, 
+                               'not':{'enum': NA_VALUES, 
+                                      'pattern': '(?i)^(pos|neg|positive|negative|postive|both)$',
+                                      'pattern_custom_message': ' should not be "positive" or "negative". "ION_MODE" is where that should be indicated.'}},
                 'IONIZATION_ENERGY': {'type': 'string', **_create_unit_regex_and_message(['eV'])},
                 'IONIZATION_POTENTIAL': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
                 'MASS_ACCURACY': {'type': 'string', 'minLength': 1, 'not':{'enum': NA_VALUES}},
@@ -612,10 +620,11 @@ nmr_required_schema['then'] = {'properties': {'NM':{'required':['NMR_RESULTS_FIL
 # TODO catch the "'NMR_RESULTS_FILE' is a required property" error and say that either a data section or results file is required.
 # Look in validation output file after validating everything again and see if this error shows up.
 
-
-compiled_schema = \
-{'type': 'object',
- 'oneOf':[ms_required_schema,
-          nmr_required_schema]}
+# oneOf prevents specific error messages from being printed, so instead 
+# determine whether MS or NMR should be validated and validate using the appropriate schema.
+# compiled_schema = \
+# {'type': 'object',
+#  'oneOf':[ms_required_schema,
+#           nmr_required_schema]}
     
     

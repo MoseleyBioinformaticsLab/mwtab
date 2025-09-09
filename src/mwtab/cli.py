@@ -57,7 +57,7 @@ GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 from . import fileio, mwextract, mwrest
 from .converter import Converter
 from .validator import validate_file
-from .mwschema import compiled_schema
+from .mwschema import ms_required_schema, nmr_required_schema
 
 from os import getcwd, makedirs, path
 from os.path import join, isfile
@@ -180,9 +180,10 @@ def cli(cmdargs):
                 print()
                 continue
             validate_file(
-                mwtabfile=mwfile,
-                validation_schema=compiled_schema,
-                verbose=cmdargs.get("--verbose")
+                mwtabfile = mwfile,
+                ms_schema = ms_required_schema, 
+                nmr_schema = nmr_required_schema,
+                verbose = cmdargs.get("--verbose")
             )
     
     # mwtab download ...

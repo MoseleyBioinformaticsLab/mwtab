@@ -14,6 +14,14 @@ import pandas
 
 
 
+# Sometimes 0 is also an NA value, but it can be hard tell unless you see it in an ID column like KEGG ID or something.
+# Note the slightly different hyphen character. It is not a duplicate.
+NA_VALUES = ['', '-', '−', '--', '---', '.', ',',
+             'NA', 'na', 'n.a.', 'N.A.', 'n/a', 'N/A', '#N/A', 'NaN', 'nan', 'N', 'null', 'Null', 'NULL', 'NF',
+             'No result', 'NOT Found in Database', 'No ID', 'no data', 'unknown', 'undefined', 'No record', 'NIDB',
+             'Not available', 'TBC', 'Internal Standard', 'Intstd', 'internal standard', 'Internal standard',
+             'Spiked Stable Isotope Labeled Internal Standards', 'Int Std']
+
 
 WRAP_STRING = r'[^a-zA-Z0-9]'
 def _create_column_regex_any(match_strings: list[str]) -> str:
@@ -282,7 +290,7 @@ class ValueMatcher():
         self.values_regex = values_regex if isinstance(values_regex, str) else ''
         self.values_inverse_regex = values_inverse_regex if isinstance(values_inverse_regex, str) else ''
     
-    def series_match(self, series: pandas.Series) -> pandas.Series:
+    def series_match(self, series: pandas.Series, na_values: list|None = None) -> pandas.Series:
         """Return a mask for the series based on type and regex matching.
         
         "values_regex" and "values_inverse_regex" are mutually exclusive and "values_regex" will take precedence if both are given. 
@@ -291,26 +299,36 @@ class ValueMatcher():
         
         Args:
             series: series to match values based on type and/or regex.
+            na_values: list of values to consider NA values. NA values are ignored for type and regex matching.
         
         Returns:
             A pandas Series the same length as "series" with Boolean values that can be used to select the matching values in the series.
         """
+        if na_values is None:
+            na_values = []
+        
+        stripped_series = series.str.strip()
+        stripped_series = stripped_series.str.strip('\u200e')
+        old_NAs = (stripped_series.isna()) | (stripped_series.isin(na_values))
+        
         if self.values_regex:
-            regex_match = series.str.fullmatch(self.values_regex, na=False)
+            regex_match = stripped_series.str.fullmatch(self.values_regex, na=False)
         elif self.values_inverse_regex:
-            regex_match = ~series.str.fullmatch(self.values_inverse_regex, na=True)
+            regex_match = ~stripped_series.str.fullmatch(self.values_inverse_regex, na=True)
         else:
             regex_match = pandas.Series([True]*len(series), index=series.index)
         
-        old_NAs = series.isna()
-        column_to_numeric = pandas.to_numeric(series, errors='coerce')
+        regex_match = regex_match | old_NAs
+        
+        
+        column_to_numeric = pandas.to_numeric(stripped_series, errors='coerce')
         column_to_numeric_NAs = column_to_numeric.isna()
         new_NAs = column_to_numeric_NAs ^ old_NAs
         
         if self.values_type == "integer":
             # The top line will return True for values like '1.0', but the bottom line won't.
             # type_match = (column_to_numeric % 1 == 0) | ~new_NAs
-            type_match = ~series.str.contains('.', regex=False, na=False) | old_NAs
+            type_match = ~stripped_series.str.contains('.', regex=False, na=False) | old_NAs
         elif self.values_type == "numeric":
             type_match = ~new_NAs
         elif self.values_type == "non-numeric":
@@ -370,10 +388,10 @@ class ColumnFinder:
         """
         return self.name_matcher.dict_match(name_map)
     
-    def values_series_match(self, series):
+    def values_series_match(self, series, na_values = None):
         """Convenience method to use the series_match method for value_matcher.
         """
-        return self.value_matcher.series_match(series)
+        return self.value_matcher.series_match(series, na_values)
  
 
 
@@ -720,9 +738,10 @@ column_finders = [
                                              BRACKETED_LIST_OF_FORMULAS + '|' + \
                                              BRACKETED_LIST_OF_ISOTOPIC_FORMULAS + ')',)),
     
-    ColumnFinder("metabolite",
-                 NameMatcher(exact_strings = ['metabolite'],),
-                 ValueMatcher(values_type = 'non-numeric',)),
+    # Metabolite is the first left-most column in every table for mwtab. This Finder will only create false positives.
+    # ColumnFinder("metabolite",
+    #              NameMatcher(exact_strings = ['metabolite'],),
+    #              ValueMatcher(values_type = 'non-numeric',)),
     
     ColumnFinder("compound",
                  NameMatcher(in_strings = ['compound', 'compund'],
@@ -783,7 +802,7 @@ column_finders = [
                                              LIST_OF_IONS + '|' + \
                                              LIST_OF_IONS_UNDERSCORE + ')',)),
     
-    ColumnFinder("pubchem",
+    ColumnFinder("pubchem_id",
                  NameMatcher(regex_search_strings = ['cid'],
                              in_strings = ['pubchem'],
                              not_in_strings = ['formula', 'kegg'],),
@@ -796,7 +815,7 @@ column_finders = [
                                              r'Sum \(\d+ \+ \d+\)' + '|' + \
                                              r'CID' + POSITIVE_INTS + ')',)),
     
-    ColumnFinder("kegg",
+    ColumnFinder("kegg_id",
                  NameMatcher(in_strings = ['kegg'],
                              not_in_strings = ['name'],),
                  ValueMatcher(values_regex = '(' + KEGG + '|' + \
@@ -812,7 +831,7 @@ column_finders = [
                                              KEGG + r'-' + FORMULA  + '|' + \
                                              KEGG + r';\d+' + ')',)),
     
-    ColumnFinder("hmdb",
+    ColumnFinder("hmdb_id",
                  NameMatcher(in_strings = ['hmdb', 'human metabolome'],
                              in_string_sets = [['hmp', 'id']],
                              not_in_strings = ['class'],),
@@ -829,7 +848,7 @@ column_finders = [
                                              r'METPA\d+' + '|' + \
                                              LIST_OF_HMDB_UNDERSCORE + ')',)),
     
-    ColumnFinder("lmp",
+    ColumnFinder("lm_id",
                  NameMatcher(in_strings = ['lipidmaps', 'lmid'],
                              in_string_sets = [['lmp', 'id'], ['lipid', 'map'], ['lm', 'id']],),
                  ValueMatcher(values_regex = '(' + LIPID_MAPS + '|' + \
@@ -838,7 +857,7 @@ column_finders = [
                                              LIST_OF_LMP_SLASH + '|' + \
                                              POSITIVE_INTS + ')',)),
     
-    ColumnFinder("chemspider",
+    ColumnFinder("chemspider_id",
                  NameMatcher(in_strings = ['chemspider'],),
                  ValueMatcher(values_regex = '(' + POSITIVE_INTS + r'[&?]?' + '|' + \
                                              LIST_OF_POS_INTS + '|' + \
@@ -852,7 +871,7 @@ column_finders = [
                                              r'[CD]\d{5}' + '|' + \
                                              make_list_regex(r'[CD]\d{5}', r'\|') + ')',)),
     
-    ColumnFinder("metlin",
+    ColumnFinder("metlin_id",
                  NameMatcher(in_strings = ['metlin'],),
                  ValueMatcher(values_regex = '(' + POSITIVE_INTS + '|' + r'METLIN:' + POSITIVE_INTS + ')',)),
     
