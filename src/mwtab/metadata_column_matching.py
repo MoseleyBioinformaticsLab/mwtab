@@ -17,7 +17,7 @@ import pandas
 # Sometimes 0 is also an NA value, but it can be hard tell unless you see it in an ID column like KEGG ID or something.
 # Note the slightly different hyphen character. It is not a duplicate.
 NA_VALUES = ['', '-', '−', '--', '---', '.', ',',
-             'NA', 'na', 'n.a.', 'N.A.', 'n/a', 'N/A', '#N/A', 'NaN', 'nan', 'N', 'null', 'Null', 'NULL', 'NF',
+             'NA', 'na', 'n.a.', 'N.A.', 'n/a', 'N/A', '<NA>', '#N/A', 'NaN', 'nan', 'N', 'null', 'Null', 'NULL', 'NF',
              'No result', 'NOT Found in Database', 'No ID', 'no data', 'unknown', 'undefined', 'No record', 'NIDB',
              'Not available', 'TBC', 'Internal Standard', 'Intstd', 'internal standard', 'Internal standard',
              'Spiked Stable Isotope Labeled Internal Standards', 'Int Std']

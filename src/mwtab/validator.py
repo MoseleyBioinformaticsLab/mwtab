@@ -121,88 +121,47 @@ def validate_metabolite_headers(mwtabfile, data_section_key):
     return errors
 
 
-def validate_samples(mwtabfile, data_section_key):
-    """Validate that the samples in SUBJECT_SAMPLE_FACTORS and METABOLITE_DATA or BINNED_DATA are the same.
-    
-    :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
-    :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
-    :param data_section_key: Section key (either MS_METABOLITE_DATA, NMR_METABOLITE_DATA, or NMR_BINNED_DATA)
-    :type data_section_key: :py:class:`str`
-    """
-    if mwtabfile._input_format == 'mwtab':
-        if 'BINNED' in data_section_key:
-            sample_location = 'BINNED_DATA'
-        else:
-            sample_location = 'METABOLITE_DATA'
-    else:
-        sample_location = f'["{data_section_key}"]["Data"]'
-        
-    errors = []
-    if mwtabfile._samples and (len(mwtabfile._samples) > len(set(mwtabfile._samples))):
-        errors.append("Warning: There are duplicate Samples in the "
-                      f"{sample_location} section. (Samples line)")
-    return errors
-
-
 def validate_subject_samples_factors(mwtabfile):
     """Validate ``SUBJECT_SAMPLE_FACTORS`` section.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
     """
+    if mwtabfile._input_format == 'mwtab':
+        location = 'SUBJECT_SAMPLE_FACTORS entry #{}'
+        index_corrector = lambda x: x+1
+    else:
+        location = 'The SSF at ["SUBJECT_SAMPLE_FACTORS"][{}]'
+        index_corrector = lambda x: x
+        
     subject_samples_factors_errors = list()
-    
     seen_samples = set()
     for index, subject_sample_factor in enumerate(mwtabfile["SUBJECT_SAMPLE_FACTORS"]):
-        if not subject_sample_factor["Subject ID"]:
-            subject_samples_factors_errors.append(
-                "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing Subject ID.".format(index+1)
-            )
-        if not subject_sample_factor["Sample ID"]:
-            subject_samples_factors_errors.append(
-                "Error: SUBJECT_SAMPLE_FACTORS entry #{} missing Sample ID.".format(index + 1)
-            )
-        else:
+        if subject_sample_factor["Sample ID"]:
             if subject_sample_factor["Sample ID"] in seen_samples:
                 subject_samples_factors_errors.append(
-                    "Warning: SUBJECT_SAMPLE_FACTORS entry #{} has a duplicate Sample ID.".format(index + 1)
+                    f"Warning: {location.format(index_corrector(index))} has a duplicate Sample ID."
                 )
             seen_samples.add(subject_sample_factor["Sample ID"])
-        if subject_sample_factor.get("Factors"):
-            ssf_factors = subject_sample_factor["Factors"]
-            for factor_key in ssf_factors:
-                if not ssf_factors[factor_key]:
-                    subject_samples_factors_errors.append(
-                        "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing value for Factor {}.".format(index + 1, factor_key)
-                    )
-            
-            duplicate_keys = [match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key).group(1) 
-                              for key in subject_sample_factor["Factors"]
-                              if match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key)]
+        if subject_sample_factor.get("Factors"):           
+            duplicate_keys = [re_match.group(1) for key in subject_sample_factor["Factors"]
+                              if (re_match := match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key))]
         
             if duplicate_keys:
-                subject_samples_factors_errors.append("Warning: SUBJECT_SAMPLE_FACTORS entry #" + str(index + 1) + 
-                                                      " has the following duplicate keys in Factors:\n\t" + 
-                                                      "\n\t".join(f'"{value}"' for value in duplicate_keys))
+                subject_samples_factors_errors.append(
+                    f"Warning: {location.format(index_corrector(index))} has the "
+                    "following duplicate keys in its Factors:\n\t" + 
+                    "\n\t".join(f'"{value}"' for value in duplicate_keys))
         
         if subject_sample_factor.get("Additional sample data"):
-            ssf_asd = subject_sample_factor["Additional sample data"]
-            for additional_key in ssf_asd:
-                if not ssf_asd[additional_key]:
-                    subject_samples_factors_errors.append(
-                        "Warning: SUBJECT_SAMPLE_FACTORS entry #{} missing value for Additional sample data {}.".format(
-                            index + 1, additional_key
-                        )
-                    )
-            
-            duplicate_keys = [match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key).group(1) 
-                              for key in subject_sample_factor["Additional sample data"]
-                              if match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key)]
+            duplicate_keys = [re_match.group(1) for key in subject_sample_factor["Additional sample data"]
+                              if (re_match := match(mwtab.duplicates_dict.DUPLICATE_KEY_REGEX, key))]
         
             if duplicate_keys:
-                subject_samples_factors_errors.append("Warning: SUBJECT_SAMPLE_FACTORS entry #" + str(index + 1) + 
-                                                      " has the following duplicate keys in Additional sample data:\n\t" + 
-                                                      "\n\t".join(f'"{value}"' for value in duplicate_keys))
+                subject_samples_factors_errors.append(
+                    f"Warning: {location.format(index_corrector(index))} has the "
+                    "following duplicate keys in its Additional sample data:\n\t" + 
+                    "\n\t".join(f'"{value}"' for value in duplicate_keys))
     return subject_samples_factors_errors
 
 
@@ -239,6 +198,11 @@ def validate_data(mwtabfile, data_section_key, mwtabfile_tables):
             "\n\t".join(f'"{value}"' for value in sorted(list(data_sample_id_set - subject_sample_factors_sample_id_set))),
         ))
     
+    # Check if there are duplicate sample names.
+    if mwtabfile._samples and (len(mwtabfile._samples) > len(set(mwtabfile._samples))):
+        data_errors.append("Warning: There are duplicate samples in the "
+                           f"{location} section.")
+    
     # Check whether mwtabolites in Data are in the Metabolites section.
     if mwtabfile._input_format == 'mwtab':
         metabolites_location = 'METABOLITES'
@@ -257,7 +221,7 @@ def validate_data(mwtabfile, data_section_key, mwtabfile_tables):
         metabolites_in_metabolites = pandas.Series()
     data_not_in_met_mask = ~metabolites_in_data_section.isin(metabolites_in_metabolites)
     data_not_in_met = metabolites_in_data_section[data_not_in_met_mask]
-    if len(data_not_in_met) > 0:
+    if len(data_not_in_met) > 0 and 'BINNED' not in data_section_key:
         message = (f'Warning: The following metabolites in the, {data_location} table '
                   f'were not found in the {metabolites_location} table:\n\t')
         message = message + '\n\t'.join(f'"{value}"' for value in data_not_in_met.values)
@@ -535,34 +499,74 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
     
     errors = []
     for error in errors_generator:
-        # TODO changethis back to just Error.
-        message = "SchemaError: "
+        if prefix := error.schema.get(f'{error.validator}_prefix'):
+            message = prefix
+        else:
+            # TODO changethis back to just Error.
+            message = "SchemaError: "
         custom_message = ""
+        
         
         error_path_len = len(error.relative_path)
         # This should be an additional properties error.
         if error_path_len == 0:
             pass
-        # MS_RESULTS_FILE or NMR_RESULTS_FILE is the only thing that can be 3 levels deep.
-        elif error_path_len == 3:
-            section = error.relative_path[-3]
-            subsection = error.relative_path[-2]
-            result_key = error.relative_path[-1]
+        # 4 levels deep should be an issue with a metabolite in MS_METABOLITE_DATA or something in SUBJECT_SAMPLE_FACTORS.
+        elif error_path_len == 4:
+            section = error.relative_path[0]
+            subsection = error.relative_path[1]
+            element = error.relative_path[2]
+            result_key = error.relative_path[3]
             
-            if mwtabfile._input_format == 'mwtab':
-                format_string = f'for the subsection, "{subsection}", in the "{section}" section, for the "{result_key}" attribute'
+            if isinstance(subsection, int):
+                if mwtabfile._input_format == 'mwtab':
+                    format_string = f'for the "{result_key}" in "{element}" in entry {subsection+1} of the "{section}" section'
+                else:
+                    format_string = f'in ["{section}"][{subsection}]["{element}"]["{result_key}"]'
+                
+                # This is likely a key in the Factors or Additional data dicts of SUBJECT_SAMPLE_FACTORS, so no keys are required.
+                required = []
             else:
-                format_string = f'in ["{section}"]["{subsection}"]["{result_key}"]'
+                if mwtabfile._input_format == 'mwtab':
+                    format_string = f'in the "{section}" section, in row number {element}, for the "{result_key}" column'
+                else:
+                    format_string = f'in ["{section}"]["{subsection}"][{element}]["{result_key}"]'
+                
+                required = schema['properties'][section]['properties'][subsection]['items'].get('required')
+            key_is_required = required and result_key in required
+            
+        # MS_RESULTS_FILE or NMR_RESULTS_FILE or SUBJECT_SAMPLE_FACTORS.
+        elif error_path_len == 3:
+            section = error.relative_path[0]
+            subsection = error.relative_path[1]
+            result_key = error.relative_path[2]
+            
+            if isinstance(subsection, int):
+                if mwtabfile._input_format == 'mwtab':
+                    format_string = f'for the "{result_key}" in entry {subsection+1} of the "{section}" section'
+                else:
+                    format_string = f'in ["{section}"][{subsection}]["{result_key}"]'
+                
+                required = schema['properties'][section]['items'].get('required')
+            else:
+                if mwtabfile._input_format == 'mwtab':
+                    format_string = f'for the subsection, "{subsection}", in the "{section}" section, for the "{result_key}" attribute'
+                else:
+                    format_string = f'in ["{section}"]["{subsection}"]["{result_key}"]'
+                
+                required = schema['properties'][section]['properties'][subsection].get('required')
+            key_is_required = required and result_key in required
+            
         elif error_path_len == 1:
-            section = error.relative_path[-1]
+            section = error.relative_path[0]
             
             if mwtabfile._input_format == 'mwtab':
                 format_string = f'in the "{section}" section '
             else:
                 format_string = f'in ["{section}"]'
         else:
-            section = error.relative_path[-2]
-            subsection = error.relative_path[-1]
+            section = error.relative_path[0]
+            subsection = error.relative_path[1]
             
             if mwtabfile._input_format == 'mwtab':
                 if section == 'METABOLOMICS WORKBENCH':
@@ -572,6 +576,31 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             else:
                 format_string = f'in ["{section}"]["{subsection}"]'
             
+            required = schema['properties'][section].get('required')
+            key_is_required = required and subsection in required
+            
+        
+        # There is one special case where 'not' is not only being used for {'not': {'enum':NA_VALUES}}.
+        # This is for IONIZATION in the MS section. This code is a more generalized approach to determine 
+        # which schema within a 'oneOf' is the one that actually triggered the validation error. It 
+        # is probably overkill for this special case, but might be relevant in the future.
+        if error.validator == "not" and 'oneOf' in error.schema['not']:
+            real_schema_found = False
+            i = 0
+            while not real_schema_found and i < len(error.schema['not']['oneOf']):
+                try:
+                    jsonschema.validate(error.instance, {'not':error.schema['not']['oneOf'][i]})
+                except jsonschema.ValidationError as error2:
+                    real_schema_found = True
+                    custom_message_keys = [key for key in error2.schema['not'] if 'custom_message' in key]
+                    if custom_message_keys:
+                        error.validator = match(r'(.*)_custom_message', custom_message_keys[0]).group(1)
+                        error.schema = error2.schema['not']
+                    else:
+                        error.validator = error2.validator
+                        error.schema = error2.schema
+                i += 1
+        
         
         if custom_message_attr := error.schema.get(f'{error.validator}_custom_message'):
             custom_message = custom_message_attr
@@ -581,7 +610,7 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             custom_message = " cannot be empty."
         elif error.validator == "required":
             required_property = match(r"(\'.*\')", error.message).group(1)
-            message += f'The required property, "{required_property}", {format_string} is missing.'
+            message += f'The required property, {required_property}, {format_string} is missing.'
         elif error.validator == "dependencies":
             message += "The entry " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + " is missing a dependent property.\n"
             message += error.message
@@ -621,6 +650,9 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             custom_message = " must be less than or equal to " + str(error.validator_value) + "."
         elif error.validator == "uniqueItems":
             custom_message = " has non-unique elements."
+        # For now 'not' is assumed to only be for {'not': {'enum':NA_VALUES}}.
+        # If a new use case for 'not' gets added, see if adding 'not_custom_message' 
+        # like what is done for Factors in SUBJECT_SAMPLE_FACTORS will do what is needed.
         elif error.validator == 'not':
             message = message + f'An empty value or a null value was detected {format_string}.'
             
@@ -629,8 +661,8 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             else:
                 container_noun = 'key'
             
-            if (required := schema['properties'][section].get('required')) and subsection in required:
-                message = message + f' A legitimate value should be provided for this required {container_noun}'
+            if key_is_required:
+                message = message + f' A legitimate value should be provided for this required {container_noun}.'
             else:
                 message = message + f' Either a legitimate value should be provided for this {container_noun}, or it should be removed altogether.'
             # if mwtabfile._input_format == 'mwtab':
@@ -711,17 +743,18 @@ def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables, na_valu
                 errors.append(message)
             
             # Look for NA values that aren't the empty string.
-            na_values_sans_empty_string = [value for value in na_values if value != '']
-            values_mask = data_df.isin(na_values_sans_empty_string)
-            if values_mask.any().any():
-                na_values_in_df = [f'"{value}"' for value in pandas.unique(data_df[values_mask].values.ravel()) if not pandas.isna(value)]
-                message = (f'Warning: Nonstandard NA values were found in the {message_strings[table_name]} table. '
-                           'NA values should be expressed using the empty string unless '
-                           'the empty string means something else, such as "not found", '
-                           'in which case there should be both NA and NF values and no empty string. '
-                           'The following values were the nonstandard values found:\n\t')
-                message = message + '\n\t'.join(na_values_in_df)
-                errors.append(message)
+            # Hunter did not like this in validation since normalizing NA values is not too difficult as a cleaning step.
+            # na_values_sans_empty_string = [value for value in na_values if value != '']
+            # values_mask = data_df.isin(na_values_sans_empty_string)
+            # if values_mask.any().any():
+            #     na_values_in_df = [f'"{value}"' for value in pandas.unique(data_df[values_mask].values.ravel()) if not pandas.isna(value)]
+            #     message = (f'Warning: Nonstandard NA values were found in the {message_strings[table_name]} table. '
+            #                'NA values should be expressed using the empty string unless '
+            #                'the empty string means something else, such as "not found", '
+            #                'in which case there should be both NA and NF values and no empty string. '
+            #                'The following values were the nonstandard values found:\n\t')
+            #     message = message + '\n\t'.join(na_values_in_df)
+            #     errors.append(message)
             
             # Look for completely null columns.
             null_columns = data_df.isna().all() | data_df.isin(na_values).all()
@@ -841,31 +874,22 @@ def validate_file(mwtabfile,
         errors.extend(validate_data(mwtabfile, data_section_key, mwtabfile_tables))
 
         if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
-            # temp for testing
-            # TODO remove this if. metabolites should always be validated. Also remove the parameter metabolites form the function header.
-            if metabolites:
-                if "Metabolites" in mwtabfile[data_section_key].keys():
-                    errors.extend(validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables))
+            if "Metabolites" in mwtabfile[data_section_key].keys():
+                errors.extend(validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables))
+            else:
+                if mwtabfile._input_format == 'mwtab':
+                    location = 'METABOLITES'
                 else:
-                    errors.append("DATA: Missing METABOLITES section.")
+                    location = f'["{data_section_key}"]["Metabolites"]'
+                errors.append(f"Warning: Missing {location} section.")
         
         if "Extended" in mwtabfile[data_section_key].keys():
             errors.extend(validate_extended(mwtabfile, data_section_key, mwtabfile_tables))
         
-        errors.extend(validate_samples(mwtabfile, data_section_key))
         errors.extend(validate_metabolite_names(mwtabfile, data_section_key))
         errors.extend(validate_table_values(mwtabfile, data_section_key, mwtabfile_tables))
         errors.extend(validate_metabolite_headers(mwtabfile, data_section_key))
         errors.extend(validate_polarity(mwtabfile, data_section_key, mwtabfile_tables))
-
-    else:
-        # TODO remove this because it is redundant with mwschema checks now.
-        if "MS" in mwtabfile.keys():
-            if not mwtabfile["MS"].get("MS_RESULTS_FILE"):
-                errors.append("DATA: Missing MS_METABOLITE_DATA section or MS_RESULTS_FILE item in MS section.")
-        elif "NM" in mwtabfile.keys():
-            if not mwtabfile['NM'].get('NMR_RESULTS_FILE'):
-                errors.append("DATA: Missing either NMR_METABOLITE_DATA or NMR_BINNED_DATA section or NMR_RESULTS_FILE item in NM section.")
     
     errors.extend(validate_header_lengths(mwtabfile))
     errors.extend(validate_sub_section_uniqueness(mwtabfile))
@@ -917,4 +941,10 @@ def validate_file(mwtabfile,
 # Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.
 # Hunter also wanted to consider adding things like the _factors properties into the JSON as well. For example, the _factors could be added 
 # into ['MS_METABOLITE_DATA'] under a 'Factors' key.
+
+
+# TODO check downloading. AN001335 is not in the downloads, but I found a JSON version of it in New Folder (2). See what's going on there.
+# I converted the file to mwtab and there are 2 completely blank rows in METABOLITES which then causes an error when trying to read in.
+# This might be the issue.
+
 

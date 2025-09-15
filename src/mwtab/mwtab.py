@@ -30,7 +30,8 @@ import pandas
 from .tokenizer import tokenizer, _results_file_line_to_dict
 from .validator import validate_file
 from .mwschema import ms_required_schema, nmr_required_schema
-from .duplicates_dict import DuplicatesDict
+from .duplicates_dict import DuplicatesDict, DUPLICATE_KEY_REGEX
+from .metadata_column_matching import NA_VALUES
 
 
 # The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
@@ -373,11 +374,14 @@ class MWTabFile(dict):
         if json_str:
             self.update(json_str)
             
-            self._metabolite_header = list(self.get_metabolites_as_pandas().columns[1:])
+            self._metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                                       for column in self.get_metabolites_as_pandas().columns[1:]]
             self._metabolite_header = self._metabolite_header if self._metabolite_header else None
-            self._extended_metabolite_header = list(self.get_extended_as_pandas().columns[1:])
+            self._extended_metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                                                for column in self.get_extended_as_pandas().columns[1:]]
             self._extended_metabolite_header = self._extended_metabolite_header if self._extended_metabolite_header else None
-            self._samples = list(self.get_metabolites_data_as_pandas().columns[1:])
+            self._samples = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                             for column in self.get_metabolites_data_as_pandas().columns[1:]]
             self._samples = self._samples if self._samples else None
             if (data_section_key := self.data_section_key) and "BINNED" in data_section_key:
                 self._binned_header = self._samples
@@ -501,7 +505,10 @@ class MWTabFile(dict):
         """
         section = {}
         token = next(lexer)
-
+        
+        if 'SUBJECT_SAMPLE_FACTORS' in self:
+            ssf_samples = [value['Sample ID'] for value in self['SUBJECT_SAMPLE_FACTORS']]
+        
         while not token.key.startswith("#ENDSECTION"):
 
             if token.key.startswith("SUBJECT_SAMPLE_FACTORS"):
@@ -529,6 +536,7 @@ class MWTabFile(dict):
                     while not token_value[-1]:
                         token_value.pop()
                     
+                                        
                     if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
                         self._binned_header = token_value[1:]
                         self._samples = self._binned_header
@@ -545,7 +553,7 @@ class MWTabFile(dict):
                                 factor_dict[factor_key.strip()] = factor_value.strip()
                             self._factors[header[i+1]] = factor_dict
                     
-                    elif token.key == "Samples" and "METABOLITE_DATA" in section_name and loop_count < 3:
+                    elif "METABOLITE_DATA" in section_name and loop_count < 3 and any(sample in ssf_samples for sample in token_value[1:]):
                         self._samples = token_value[1:]
                     
                     elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
@@ -817,6 +825,16 @@ class MWTabFile(dict):
                 for key in section_value:
                     if key.endswith("_RESULTS_FILE"):
                         temp[section_key][key] = self._create_result_file_string(section_key, key, "json")
+        
+        if 'NMR_BINNED_DATA' in temp:
+            for i in range(len(temp['NMR_BINNED_DATA']['Data'])):
+                new_dict = self._default_dict_type()
+                new_dict['Bin range(ppm)'] = temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
+                del temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
+                # Note that the update method cannot be used here because it can mess up DuplicatesDict.
+                for key, value in temp['NMR_BINNED_DATA']['Data'][i].items():
+                    new_dict[key] = value
+                temp['NMR_BINNED_DATA']['Data'][i] = new_dict
         
         # Note that indent cannot be None or json will use a version of the 
         # encoder written in C and DuplicatesDict will not be printed correctly.
