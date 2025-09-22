@@ -8,6 +8,14 @@ Release History
 -Validation now validates the main sections not just the internals of them.
 -Validate now checks that metabolites in the Data section are in the Metabolites section and vice versa.
 -Batch processing from the command line is more fault tolerant and won't stop the batch for 1 bad file.
+-Changed schema validation to use jsonschema instead of schema.
+-Added validations for METABOLITES columns that try to give warnings for bad values, for example 'kegg_id' column should all be something like C00000.
+-Expanded the standard column name functionality to look for many more column names than in the previous version and do it in a much more robust way.
+-Changed validation error messages to be aware of whether the input file is JSON or mwTab and print accordingly.
+-Reduced many spurious validation messages.
+-Added a validation for when certain columns are found in METABOLITES, to look for the implied pair and warn if it isn't there. For example, retention_index and retention_index_type.
+-Added validations on some values, such as gender.
+-Many more various minor validations were added.
 
 
 1.2.5.post1 (2022-05-11)

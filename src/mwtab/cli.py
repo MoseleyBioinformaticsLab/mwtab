@@ -52,7 +52,6 @@ Options:
 Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
 GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
-# TODO add option to print duplicate keys. change code so it errors if try to print duplicate keys.
 
 from . import fileio, mwextract, mwrest
 from .converter import Converter
@@ -122,7 +121,6 @@ def download(context, cmdparams):
     :rtype: :py:obj:`None`
     """
     try:
-        # TODO: Convert to using mwrest.generate_study_urls() method
         # create and validate a callable URL to pull data from Metabolomics Workbench's REST API
         mwresturl = mwrest.GenericMWURL({
             "context": context,
@@ -208,7 +206,6 @@ def cli(cmdargs):
                 # mwtab download study all ...
                 # mwtab download study all --input-item=analysis_id ...
                 # mwtab download study all --input-item=study_id ...
-                # TODO: mwtab download study all --input-item=project_id ...
                 if not cmdargs["--input-item"] or cmdargs["--input-item"] in ("analysis_id", "study_id"):
                     cmdargs["<input-item>"] = cmdargs["--input-item"]
 

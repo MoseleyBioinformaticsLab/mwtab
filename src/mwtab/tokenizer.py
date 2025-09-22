@@ -157,7 +157,7 @@ def tokenizer(text, dict_type = None):
                         else:
                             yield KeyValue(key.strip()[3:], value)
                     else:
-                        yield KeyValue(key.strip(), value)
+                        yield KeyValue(key.strip(), value.strip())
 
         except IndexError as e:
             raise IndexError("LINE WITH ERROR:\n\t" + repr(line)) from e

@@ -473,37 +473,13 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
     # for key, value in error._contents().items():
     #     print(key, value)
     #     print()
-        
-    #     message
-
-    #     cause
-
-    #     context
-
-    #     validator
-
-    #     validator_value
-
-    #     path
-
-    #     schema_path
-
-    #     instance
-
-    #     schema
-
-    #     parent
-    
-    # with open('C:/Users/Sparda/Desktop/New folder (2)/__test.txt', 'w') as jsonFile:
-    #     jsonFile.write(error.message)
     
     errors = []
     for error in errors_generator:
         if prefix := error.schema.get(f'{error.validator}_prefix'):
             message = prefix
         else:
-            # TODO changethis back to just Error.
-            message = "SchemaError: "
+            message = "Error: "
         custom_message = ""
         
         
@@ -528,7 +504,7 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
                 required = []
             else:
                 if mwtabfile._input_format == 'mwtab':
-                    format_string = f'in the "{section}" section, in row number {element}, for the "{result_key}" column'
+                    format_string = f'in the "{section}" section, in row number {element+1}, for the "{result_key}" column'
                 else:
                     format_string = f'in ["{section}"]["{subsection}"][{element}]["{result_key}"]'
                 
@@ -606,6 +582,12 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
             custom_message = custom_message_attr
         elif message_attr := error.schema.get(f'{error.validator}_message'):
             message = message_attr
+        elif error.validator == "additionalProperties":
+            bad_key = match(r'.* \(\'(.*)\' was unexpected\).*', error.message).group(1)
+            if error_path_len == 0:
+                message = message + f'Unknown or invalid section, "{bad_key}".'
+            else:
+                message = message + f'Unknown or invalid subsection, "{bad_key}", {format_string}.'
         elif error.validator == "minProperties":
             custom_message = " cannot be empty."
         elif error.validator == "required":
@@ -665,17 +647,16 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
                 message = message + f' A legitimate value should be provided for this required {container_noun}.'
             else:
                 message = message + f' Either a legitimate value should be provided for this {container_noun}, or it should be removed altogether.'
-            # if mwtabfile._input_format == 'mwtab':
-            #     message = message + ' Either a value should be provided for this subsection or it should be removed altogether if not required.'
-            # else:
-            #     message = message + ' Either a value should be provided for this key or it should be removed altogether if not required.'
         else:
             message += error.message
         
         
         if custom_message:
-            # message = message + "The value for " + "[%s]" % "][".join(repr(index) for index in error.relative_path) + custom_message
-            message = message + f"The value {format_string}" + custom_message
+            str_instance = str(error.instance)
+            if len(str_instance) < 50:
+                message = message + f"The value, \"{str_instance}\", {format_string}" + custom_message
+            else:
+                message = message + f"The value {format_string}" + custom_message
         errors.append(message)
     return errors
 
@@ -817,7 +798,7 @@ def validate_polarity(mwtabfile, data_section_key, mwtabfile_tables):
 def validate_file(mwtabfile, 
                   ms_schema = ms_required_schema,
                   nmr_schema = nmr_required_schema,
-                  verbose = False, metabolites = True):
+                  verbose = False):
     """Validate ``mwTab`` formatted file.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
@@ -825,7 +806,6 @@ def validate_file(mwtabfile,
     :param dict ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
     :param dict nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
     :param bool verbose: whether to be verbose or not.
-    :param bool metabolites: whether to validate metabolites section.
     :return: Validated file and errors if verbose is False.
     :rtype: :py:class:`~mwtab.mwtab.MWTabFile`, _io.StringIO
     """
@@ -916,35 +896,5 @@ def validate_file(mwtabfile,
         return mwtabfile, None
     else:
         return mwtabfile, error_stout.getvalue()
-
-# TODO add checks for METABOLITES columns and try to give warnings for bad values, for example 'kegg_id' column should all be C00000, formula, inchi key,
-# Change some error messages to only print once if the file is a tab file and not a JSON file. For example if a column name is off.
-
-# When certain columns are found in METABOLITES, look for the implied pair and warn if it isn't there. For example, other_id and other_id_type  and retention_index and retention_index_type.
-# Also look at the values in each pair and make sure they match, for instance AN000645 has values in other_id_type, but none in other_id.
-# I put these in validate_metabolites.
-
-# Look for ID values such as HMDB in the other_id column and suggest to make specific columns for them instead of putting them in other_id. Done
-# Warn if a column name matches 2 different regexes in METABOLITES. 'retention time_m/z' in AN002889   AN004492 Feature@RT  Done
-
-# Look for column names that are the empty string and warn about them. AN000427 in ['MS_METABOLITE_DATA']['Data'] 
-# This will double the message from validate_header_lengths, but we need to warn for JSON. 
-# Maybe check if 'METABOLITE_DATA' etc is in _short_headers before printing the message again. Done.
-
-# Validate some values? Talk to Hunter. AN003426 has MS_METABOLITE_DATA:UNITS value as "counts" which seems wrong. Clearly peak area. Done in mwschema.
-
-# Detect if multiple polarities in the same dataset and warn about it. UNSPECIFIED  MS:ION_MODE  or polarity column with both pos and neg Done in validate_polarity.
-
-# Look for NA values that aren't just the empty string. Warn if found. Put in the message that NA values should be the empty string unless 
-# the empty string means something else, such as "not found", in which case there should be both NA and NF values and no empty string. Done in validate_tables
-
-# Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.
-# Hunter also wanted to consider adding things like the _factors properties into the JSON as well. For example, the _factors could be added 
-# into ['MS_METABOLITE_DATA'] under a 'Factors' key.
-
-
-# TODO check downloading. AN001335 is not in the downloads, but I found a JSON version of it in New Folder (2). See what's going on there.
-# I converted the file to mwtab and there are 2 completely blank rows in METABOLITES which then causes an error when trying to read in.
-# This might be the issue.
 
 

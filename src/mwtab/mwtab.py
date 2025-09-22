@@ -31,15 +31,14 @@ from .tokenizer import tokenizer, _results_file_line_to_dict
 from .validator import validate_file
 from .mwschema import ms_required_schema, nmr_required_schema
 from .duplicates_dict import DuplicatesDict, DUPLICATE_KEY_REGEX
-from .metadata_column_matching import NA_VALUES
 
+SORT_KEYS = False
+INDENT = 4
 
-# The stuff before the MWTabFile class is all to do with being able to handle duplicate keys from a JSON file.
-# Python's parser can't do it and you have to do some workarounds for it.
 
 # From https://stackoverflow.com/questions/14902299/json-loads-allows-duplicate-keys-in-a-dictionary-overwriting-the-first-value
 def _handle_duplicate_keys(ordered_pairs):
-    """Use special type to store duplicate keys."""
+    """Object pairs hook for the json package to be able to read in duplicate keys for dictionaries."""
     d = DuplicatesDict()
     s = set()
     for k, v in ordered_pairs:
@@ -52,25 +51,8 @@ def _handle_duplicate_keys(ordered_pairs):
         return d
 
 
-
-SORT_KEYS = False
-INDENT = 4
-def _JSON_serializer_for_dupe_class(o):
-    """ """
-    return o.dumps(sort_keys=SORT_KEYS, indent=INDENT)
-
-
-def _match_process(matchobj):
-    temp_string = matchobj.group(2)
-    temp_string = temp_string.replace('\\"', '"')
-    temp_string = temp_string.replace('\\"', '"')
-    temp_string = temp_string.replace('\\n',  '\n' + ' '*(3*INDENT))
-    return matchobj.group(1) + ': {' + temp_string + '}'
-
-
 def _parse_header_input(input_str):
-    """Attempt to parse a header string into a dict.
-    """
+    """Attempt to parse a header string into a dict."""
     match_re = re.match(r"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*", input_str)
     if match_re:
         key_values = re.findall(r" (\w*:\w*)", input_str)
@@ -385,6 +367,18 @@ class MWTabFile(dict):
             self._samples = self._samples if self._samples else None
             if (data_section_key := self.data_section_key) and "BINNED" in data_section_key:
                 self._binned_header = self._samples
+                
+                for i in range(len(self['NMR_BINNED_DATA']['Data'])):
+                    if 'Bin range(ppm)' in self['NMR_BINNED_DATA']['Data'][i]:
+                        self['NMR_BINNED_DATA']['Data'][i]['Metabolite'] = self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
+                        
+                        # new_dict = self._default_dict_type()
+                        # new_dict['Metabolite'] = self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
+                        # del self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
+                        # # Note that the update method cannot be used here because it can mess up DuplicatesDict.
+                        # for key, value in self['NMR_BINNED_DATA']['Data'][i].items():
+                        #     new_dict[key] = value
+                        # self['NMR_BINNED_DATA']['Data'][i] = new_dict
         
         elif mwtab_str:
             self._build_mwtabfile(mwtab_str)
@@ -543,7 +537,7 @@ class MWTabFile(dict):
                     # Have seen Factors section in incorrect sections such as METABOLITES, 
                     # and seen multiple Factors sections in a single METABOLITE_DATA section.
                     # So just grab the one near the top.
-                    elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 3:
+                    elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 2:
                         self._factors = {}
                         for i, factor_string in enumerate(token_value[1:]):
                             factor_pairs = factor_string.split(" | ")
@@ -553,7 +547,9 @@ class MWTabFile(dict):
                                 factor_dict[factor_key.strip()] = factor_value.strip()
                             self._factors[header[i+1]] = factor_dict
                     
-                    elif "METABOLITE_DATA" in section_name and loop_count < 3 and any(sample in ssf_samples for sample in token_value[1:]):
+                    elif "METABOLITE_DATA" in section_name and 'EXTENDED' not in section_name and \
+                         loop_count < 2 and any(sample in ssf_samples for sample in token_value[1:]) and \
+                         self._samples is None:
                         self._samples = token_value[1:]
                     
                     elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
@@ -828,13 +824,20 @@ class MWTabFile(dict):
         
         if 'NMR_BINNED_DATA' in temp:
             for i in range(len(temp['NMR_BINNED_DATA']['Data'])):
-                new_dict = self._default_dict_type()
-                new_dict['Bin range(ppm)'] = temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
-                del temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
-                # Note that the update method cannot be used here because it can mess up DuplicatesDict.
-                for key, value in temp['NMR_BINNED_DATA']['Data'][i].items():
-                    new_dict[key] = value
-                temp['NMR_BINNED_DATA']['Data'][i] = new_dict
+                if 'Bin range(ppm)' in temp['NMR_BINNED_DATA']['Data'][i]:
+                    if temp['NMR_BINNED_DATA']['Data'][i]['Metabolite'] != temp['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']:
+                        print("Warning: The \"Metabolite\" key and \"Bin range(ppm)\" "
+                              f"key in ['NMR_BINNED_DATA']['Data'][{i}] are different "
+                              "values. Only the value in \"Bin range(ppm)\" will be written out.")
+                    del temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
+                else:
+                    new_dict = self._default_dict_type()
+                    new_dict['Bin range(ppm)'] = temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
+                    del temp['NMR_BINNED_DATA']['Data'][i]['Metabolite']
+                    # Note that the update method cannot be used here because it can mess up DuplicatesDict.
+                    for key, value in temp['NMR_BINNED_DATA']['Data'][i].items():
+                        new_dict[key] = value
+                    temp['NMR_BINNED_DATA']['Data'][i] = new_dict
         
         # Note that indent cannot be None or json will use a version of the 
         # encoder written in C and DuplicatesDict will not be printed correctly.
@@ -932,8 +935,16 @@ class MWTabFile(dict):
         except ValueError:
             return False
     
-    def _create_result_file_string(self, section_key, key, to_format):
-        """
+    def _create_result_file_string(self, section_key: str, key: str, to_format: str) -> str:
+        """Build result file string from its dictionary parts.
+        
+        Args:
+            section_key: The section where the result file dicitonary is.
+            key: The key where the result file is.
+            to_format: If 'mwtab', then formats the string for mwTab, otherwise formats for JSON.
+        
+        Returns:
+            A string to go in either the mwTab or JSON file.
         """
         delimiter = "\t" if to_format == "mwtab" else " "
         
@@ -957,26 +968,10 @@ class MWTabFile(dict):
         return new_value
     
     def _set_key_order(self):
-        """
-        """
-        # TODO see if we can use this code below, or the new schema in mwschema. Below code was created before change to jsonschema
-        # This is a way to build the key_order diction from the schema, but it can't be used 
-        # until we only support Python > 3.6 because we have to be able to rely on ordered 
-        # dict behavior.
-        # from .mwschema import section_schema_mapping
-        # key_order = {}
-        # for key, schema in section_schema_mapping.items():
-        #     json_schema = schema.json_schema("asdf")
-        #     if "properties" in json_schema:
-        #         key_order[key] = {}
-        #         for json_property, property_dict in json_schema["properties"].items():
-        #             if "items" in property_dict:
-        #                 key_order[key][json_property] = list(property_dict["items"]["properties"].keys())
-        #             else:
-        #                 key_order[key][json_property] = []
-        #     elif "items" in json_schema:
-        #         key_order[key] = {json_property:[] for json_property in json_schema["items"]["properties"]}
-               
+        """Set the key order to a specific order.
+        
+        Sets the key order to a certain order for better reproducibility and consistency.
+        """               
         key_order = \
             {'METABOLOMICS WORKBENCH': {},
              'PROJECT': {},

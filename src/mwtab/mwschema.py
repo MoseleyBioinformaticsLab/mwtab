@@ -19,6 +19,8 @@ NA_VALUES = ['', '-', '−', '--', '---',
              'NA', 'na', 'n.a.', 'N.A.', 'n/a', 'N/A', '#N/A', 'NaN', 'nan', 
              'null', 'Null', 'NULL', 'none', 'None',
              'unspecified', 'Unspecified']
+# 'NA' is a legitimate metabolite name that very rarely shows up.
+METABOLITE_NA_VALUES = [value for value in NA_VALUES if value != 'NA']
 
 
 def create_units_regex(units: list[str], can_be_range: bool = False) -> str:
@@ -44,13 +46,15 @@ def create_units_regex(units: list[str], can_be_range: bool = False) -> str:
 
 def create_unit_error_message(can_be_range: bool = False, 
                               no_units: bool = False, 
-                              units: list[str]|None = None) -> str:
+                              units: list[str]|None = None,
+                              integer: bool = False) -> str:
     """Generate the error message for mwTab subsections that fail the unit regex.
     
     Args:
         can_be_range: If True, the regular expression used to validate could have matched a number range, so the message is modified to note that.
         no_units: If True, the regular expression did not require units to be present, so the message is modified to note that.
         units: If the regular expression required units, pass them in with this parameter so the message will indicate the allowed units.
+        integer: If True, only integers are allowed so the message will refer to intergers instead of numbers.
     
     Returns:
         A completed string error message.
@@ -65,7 +69,12 @@ def create_unit_error_message(can_be_range: bool = False,
     else:
         unit_string = f'followed by a space with a unit (ex. "5 V") from the following list: {units}.'
     
-    message = (f' should be a {"unitless " if no_units else ""}number{range_string}{unit_string} '
+    if integer:
+        number = 'integer'
+    else:
+        number = 'number'
+    
+    message = (f' should be a {"unitless " if no_units else ""}{number}{range_string}{unit_string} '
                'Ignore this when more complicated descriptions are required.')
     return message
 
@@ -100,6 +109,25 @@ def _create_num_regex_and_message(can_be_range: bool = False) -> str:
     
     Args:
         can_be_range: If true, the regex will match a number range and the message will be slightly different.
+    
+    Returns:
+        A dicitonary {'pattern': regex, 'message_func': message_function}.
+    """
+    regex = '^((\d+)|(\d*\.\d+))$'
+    message = create_unit_error_message(can_be_range = can_be_range, no_units = True, units = None)
+    return {'pattern': regex, 'pattern_custom_message': message}
+
+def _create_int_regex_and_message(can_be_range: bool = False) -> str:
+    """Simple wrapper for DRY purposes.
+    
+    Creating the regular expression and validation error message in 1 function mixes too many 
+    concerns into 1 function, so they are split into 2 and this function serves as a convenience 
+    to pass them into a jsonschema easily. To this end the return is in dictionary form with the 
+    intention for it to be unpacked into the jsonschema. For example, 
+    {**_create_num_regex_and_message(True)}
+    
+    Args:
+        can_be_range: If true, the regex will match an integer range and the message will be slightly different.
     
     Returns:
         A dicitonary {'pattern': regex, 'message_func': message_function}.
@@ -525,12 +553,12 @@ nmr_schema = \
                 'PRESATURATION_POWER_LEVEL': {'type': 'string', **_create_unit_regex_and_message(['W', 'dB'])},
                 'CHEMICAL_SHIFT_REF_CPD': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C', 'K'])},
-                'NUMBER_OF_SCANS': {'type': 'string', **_create_num_regex_and_message(False)},
+                'NUMBER_OF_SCANS': {'type': 'string', **_create_int_regex_and_message(False)},
                 'DUMMY_SCANS': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'ACQUISITION_TIME': {'type': 'string', **_create_unit_regex_and_message(['s'])},
                 'RELAXATION_DELAY': {'type': 'string', **_create_unit_regex_and_message(['s', 'ms', 'us', 'μs'])},
                 'SPECTRAL_WIDTH': {'type': 'string', **_create_unit_regex_and_message(['ppm', 'Hz'])},
-                'NUM_DATA_POINTS_ACQUIRED': {'type': 'string', **_create_num_regex_and_message(False)},
+                'NUM_DATA_POINTS_ACQUIRED': {'type': 'string', **_create_int_regex_and_message(False)},
                 'REAL_DATA_POINTS': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'LINE_BROADENING': {'type': 'string', **_create_unit_regex_and_message(['Hz'])},
                 'ZERO_FILLING': {'type': 'string', 'not':{'enum': NA_VALUES}},
@@ -549,19 +577,17 @@ nmr_schema = \
               'SPECTROMETER_FREQUENCY'],
  'additionalProperties': False}
 
-# TODO consider removing the data sections because we validate these as tables, so checking each item in the array is 
-# probably not necessary and might even lead to duplicate errors or errors that shouldn't be.
 data_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': NA_VALUES}}},
+           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}}},
            'required': ['Metabolite'],
            'additionalProperties': True}}
 
 extended_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': NA_VALUES}},
+           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}},
                           'sample_id': {'type': 'string', 'not':{'enum': NA_VALUES}}},
            'required': ['Metabolite', 'sample_id'],
            'additionalProperties': True}}
