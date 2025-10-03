@@ -8,9 +8,12 @@ import shutil
 import time
 import pathlib
 import subprocess
+import requests
 
+from mwtab import cli
 
-def teardown_module(module):
+@pytest.fixture()
+def teardown_module():
     path = pathlib.Path("tests/example_data/tmp/")
     if os.path.exists(path):
         shutil.rmtree(path)
@@ -21,6 +24,35 @@ def teardown_module(module):
             time_counter += 1
             if time_counter > time_to_wait:
                 raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+
+@pytest.fixture()
+def teardown_module_cwd():
+    path = pathlib.Path(os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST000001%2Fsummary.txt'))
+    if os.path.exists(path):
+        os.remove(path)
+        time_to_wait=10
+        time_counter = 0
+        while path.exists():
+            time.sleep(1)
+            time_counter += 1
+            if time_counter > time_to_wait:
+                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+
+@pytest.fixture()
+def disable_network_calls(monkeypatch):
+    def stunted_get():
+        raise RuntimeError("Network access not allowed during testing!")
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: stunted_get())
+    monkeypatch.setattr("urllib.request.urlopen", lambda *args, **kwargs: stunted_get())
+    monkeypatch.setattr("urllib.parse.urlparse", lambda *args, **kwargs: stunted_get())
+    monkeypatch.setattr("mwtab.fileio.urlopen", lambda *args, **kwargs: stunted_get())
+    monkeypatch.setattr("mwtab.fileio.urlparse", lambda *args, **kwargs: stunted_get())
+
+@pytest.fixture()
+def disable_sleep(monkeypatch):
+    def no_sleep(arg):
+        pass
+    monkeypatch.setattr('mwtab.cli.time.sleep', no_sleep)
 
 
 @pytest.mark.parametrize("files_source", [
@@ -119,7 +151,7 @@ def test_convert_command(from_path, to_path, from_format, to_format):
     assert mwtabfiles_analysis_ids_set.issubset({"AN000204"})
 
 
-def test_convert_command_mwrest_option():
+def test_convert_command_mwrest_option(teardown_module):
     """Test that the --mw-rest option works for the convert command. Test this by setting a bad url and making sure there is an error."""
     command = "python -m mwtab convert 204 tests/example_data/tmp/tmp.json --mw-rest=https://bad_url --from-format=mwtab --to-format=json"
     command = command.split(" ")
@@ -128,7 +160,7 @@ def test_convert_command_mwrest_option():
     assert subp.returncode == 0
 
 
-def test_convert_command_error_recovery():
+def test_convert_command_error_recovery(teardown_module):
     """Test that the convert command can recover from a bad file."""
     command = "python -m mwtab convert tests/example_data/files_to_test_error_recovery tests/example_data/tmp/ --from-format=mwtab --to-format=json"
     command = command.split(" ")
@@ -162,7 +194,7 @@ def test_convert_command_error_recovery():
     "python -m mwtab download exactmass  \"GlcCer(d42:2)\" M-H --to-path=tests/example_data/tmp/tmp.txt",
 
 ])
-def test_download_command(command):
+def test_download_command(command, teardown_module):
     assert os.system(command) == 0
 
     file_str = ""
@@ -174,7 +206,210 @@ def test_download_command(command):
     assert file_str
 
 
-def test_download_url_command_error():
+def test_download_command_cwd(teardown_module_cwd):
+    assert os.system('python -m mwtab download url https://www.metabolomicsworkbench.org/rest/study/study_id/ST000001/summary') == 0
+    file_path = os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST000001%2Fsummary.txt')
+
+    file_str = ""
+    with open(file_path, "r") as fh:
+        file_str = fh.read()
+        fh.close()
+    with open(file_path, "w") as fh:
+        fh.close()
+    assert file_str
+
+
+def test_download_all_analysis_ids(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': True,
+        '--input-item': 'analysis_id'
+        }
+    mocker.patch('mwtab.cli.mwrest.analysis_ids', side_effect = [['AN000001', 'AN000002']])
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'AN000001' in captured.out
+    assert 'AN000002' in captured.out
+
+def test_download_all_analysis_ids2(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    """The same as the previous test, but with --input-item being null to test the default."""
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': True,
+        '--input-item': 'analysis_id'
+        }
+    mocker.patch('mwtab.cli.mwrest.analysis_ids', side_effect = [['AN000001', 'AN000002']])
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'AN000001' in captured.out
+    assert 'AN000002' in captured.out
+
+def test_download_all_study_ids(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': True,
+        '--input-item': 'study_id'
+        }
+    mocker.patch('mwtab.cli.mwrest.study_ids', side_effect = [['ST000001', 'ST000002']])
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'ST000001' in captured.out
+    assert 'ST000002' in captured.out
+
+def test_download_all_download_error(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': True,
+        '--input-item': 'analysis_id'
+        }
+    mocker.patch('mwtab.cli.mwrest.analysis_ids', side_effect = [['AN000001', 'AN000002']])
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [Exception, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'AN000001' in captured.out
+    assert 'AN000002' in captured.out
+    assert 'Something went wrong and AN000001 could not be downloaded.' in captured.out
+
+def test_download_all_bad_input_item(teardown_module, disable_network_calls, disable_sleep):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': True,
+        '--input-item': 'asdf'
+        }
+    
+    with pytest.raises(ValueError, match = r'Unknown "--input-item" asdf'):
+        cli.cli(cmdargs)
+
+def test_download_study_file_list_analysis(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': None,
+        '--input-item': 'analysis_id',
+        '<input-item>': None,
+        '<input-value>': 'tests/example_data/other_test_data/download_studies_an_ids.json'
+        }
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'Found 2 Files to be Downloaded' in captured.out
+    assert 'AN000001' in captured.out
+    assert 'AN000002' in captured.out
+
+def test_download_study_file_list_study(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    """Same as previous test, but the list is study IDs instead of AN IDs."""
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': None,
+        '--input-item': 'study_id',
+        '<input-item>': None,
+        '<input-value>': 'tests/example_data/other_test_data/download_studies_study_ids.json'
+        }
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'Found 2 Files to be Downloaded' in captured.out
+    assert 'ST000001' in captured.out
+    assert 'ST000002' in captured.out
+
+
+def test_download_study_file_list_mixed(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
+    """Same as previous test, but the list values are mixed."""
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': None,
+        '--input-item': None,
+        '<input-item>': None,
+        '<input-value>': 'tests/example_data/other_test_data/download_studies_mixed_ids.json'
+        }
+    mocker.patch('mwtab.cli.download_and_save_mwrest_file', side_effect = [None, None, None, Exception])
+    
+    cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert 'Found 4 Files to be Downloaded' in captured.out
+    assert '000001' in captured.out
+    assert 'AN000002' in captured.out
+    assert 'ST000003' in captured.out
+    assert 'Something went wrong and asdf could not be downloaded.' in captured.out
+
+
+def test_download_study_file_list_bad_input_item(teardown_module, disable_network_calls, disable_sleep):
+    """Same as previous test, but the list values are mixed."""
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': None,
+        '--input-item': 'asdf',
+        '<input-item>': None,
+        '<input-value>': 'tests/example_data/other_test_data/download_studies_mixed_ids.json'
+        }
+    
+    with pytest.raises(ValueError, match = r'Unknown "--input-item" asdf'):
+        cli.cli(cmdargs)
+
+
+def test_download_url_command_error(teardown_module):
     """Test that the download url command can have an error and print appropriately."""
     command = "python -m mwtab download url https://bad_url --to-path=tests/example_data/tmp/tmp.txt"
     command = command.split(" ")
@@ -197,9 +432,9 @@ def test_download_study_error_recovery():
 @pytest.mark.parametrize("from_path, to_path, key, to_format, no_header", [
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", " --no-header"),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "csv", ""),
-    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", "")
+    ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metadata", "SUBJECT_TYPE", "json", ""),
 ])
-def test_extract_metadata_command(from_path, to_path, key, to_format, no_header):
+def test_extract_metadata_command(from_path, to_path, key, to_format, no_header, teardown_module):
     command = "python -m mwtab extract metadata {} {} {} --to-format={}{}".format(
         from_path, to_path, key, to_format, no_header
     )
@@ -221,7 +456,14 @@ def test_extract_metadata_command(from_path, to_path, key, to_format, no_header)
             assert False
 
 
-def test_extract_metadata_error_recovery():
+def test_extract_metadata_stdout():
+    command = "python -m mwtab extract metadata tests/example_data/mwtab_files/ - SUBJECT_TYPE --to-format=json"
+    subp = subprocess.run(command, capture_output=True, encoding="UTF-8")
+    assert subp.returncode == 0
+    assert "{'SUBJECT_TYPE': {'Human'}}" == subp.stdout[:-1]
+
+
+def test_extract_metadata_error_recovery(teardown_module):
     """Test that the extract metadata command can recover from an error."""
     command = "python -m mwtab extract metadata tests/example_data/files_to_test_error_recovery tests/example_data/tmp/ SUBJECT_TYPE"
     command = command.split(" ")
@@ -233,7 +475,7 @@ def test_extract_metadata_error_recovery():
     assert "ValueError: Blank input string retrieved from source." in subp.stdout
 
 
-def test_extract_metadata_no_data_extracted():
+def test_extract_metadata_no_data_extracted(teardown_module):
     """Test that the extract metadata command prints a message when no data is extracted and no file is made."""
     command = "python -m mwtab extract metadata tests/example_data/mwtab_files/ tests/example_data/tmp/ asdf"
     command = command.split(" ")
@@ -253,26 +495,26 @@ def test_extract_metadata_no_data_extracted():
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Human)'\"", "csv", ""),
     ("tests/example_data/mwtab_files/", "tests/example_data/tmp/test_extract_metabolites", "SU:SUBJECT_TYPE", "\"r'(Human)'\"", "json", "")
 ])
-def test_extract_metabolites_command(from_path, to_path, key, value, to_format, no_header):
+def test_extract_metabolites_command(from_path, to_path, key, value, to_format, no_header, teardown_module):
     command = "python -m mwtab extract metabolites {} {} {} {} --to-format={}{}".format(
         from_path, to_path, key, value, to_format, no_header
     )
     assert os.system(command) == 0
     
     expected_data = [['17-hydroxypregnenolone', '1', '1', '13'],
-                     ['17-hydroxyprogesterone', '1', '1', '29'],
-                     ['Allodihydrotestosterone', '1', '1', '18'],
-                     ['Androstenedione', '1', '1', '42'],
-                     ['Androstenolone (DHEA)', '1', '1', '42'],
-                     ['Cortexolone', '1', '1', '21'],
-                     ['Cortexone', '1', '1', '41'],
-                     ['Corticosterone_ DOC', '1', '1', '29'],
-                     ['Cortisol', '1', '1', '42'],
-                     ['Estradiol', '1', '1', '42'],
-                     ['Estrone', '1', '1', '42'],
-                     ['Pregnenolone', '1', '1', '12'],
-                     ['Progesterone', '1', '1', '39'],
-                     ['Testosterone', '1', '1', '42']]
+                      ['17-hydroxyprogesterone', '1', '1', '29'],
+                      ['Allodihydrotestosterone', '1', '1', '18'],
+                      ['Androstenedione', '1', '1', '42'],
+                      ['Androstenolone (DHEA)', '1', '1', '42'],
+                      ['Cortexolone', '1', '1', '21'],
+                      ['Cortexone', '1', '1', '41'],
+                      ['Corticosterone_ DOC', '1', '1', '29'],
+                      ['Cortisol', '1', '1', '42'],
+                      ['Estradiol', '1', '1', '42'],
+                      ['Estrone', '1', '1', '42'],
+                      ['Pregnenolone', '1', '1', '12'],
+                      ['Progesterone', '1', '1', '39'],
+                      ['Testosterone', '1', '1', '42']]
 
     if to_format == "csv":
         filepath = to_path
@@ -298,7 +540,14 @@ def test_extract_metabolites_command(from_path, to_path, key, value, to_format, 
         assert False
 
 
-def test_extract_metabolites_error_recovery():
+def test_extract_metabolites_stdout():
+    command = "python -m mwtab extract metabolites tests/example_data/mwtab_files/ - SU:SUBJECT_TYPE Human --to-format=json"
+    subp = subprocess.run(command, capture_output=True, encoding="UTF-8")
+    assert subp.returncode == 0
+    assert '{\n    "17-hydroxypregnenolone": {\n        "ST000122": {' in subp.stdout
+
+
+def test_extract_metabolites_error_recovery(teardown_module):
     """Test that the extract metabolites command can recover from an error."""
     command = "python -m mwtab extract metabolites tests/example_data/files_to_test_error_recovery tests/example_data/tmp/ SU:SUBJECT_TYPE Human"
     command = command.split(" ")
@@ -316,7 +565,7 @@ def test_extract_metabolites_error_recovery():
     assert "ValueError: Blank input string retrieved from source." in subp.stdout
 
 
-def test_extract_metabolites_no_data_extracted():
+def test_extract_metabolites_no_data_extracted(teardown_module):
     """Test that the extract metabolites command prints a message when no data is extracted and no file is made."""
     command = "python -m mwtab extract metabolites tests/example_data/mwtab_files/ tests/example_data/tmp/ SU:SUBJECT_TYPE Plant"
     command = command.split(" ")

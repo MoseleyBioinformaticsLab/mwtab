@@ -13,6 +13,12 @@ Once the documentation is built, make sure the different style doc strings are b
 
 Note in the documentation that is not recommended to download JSON directly. Better to download mwTab and convert.
 
+Note in documentation about compatability mode and that it is expected to be in compatability mode for validation. Might get unexpected results if not.
+
+Add documentation about duplicate_keys parameter to MWTabFile class.
+
+Add documentation about MWTabfile.study_id, analysis_id, and header.
+
 Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.
 Hunter also wanted to consider adding things like the _factors properties into the JSON as well. For example, the _factors could be added into ['MS_METABOLITE_DATA'] under a 'Factors' key.
 

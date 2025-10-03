@@ -399,7 +399,7 @@ class ColumnFinder:
 
 
 def make_list_regex(element_regex: str, delimiter: str , quoted_elements: bool = False, empty_string: bool = False) -> str:
-    """Creates a regular expression that will match a list of element_regex delimited by delimiter.
+    r"""Creates a regular expression that will match a list of element_regex delimited by delimiter.
     
     Note that delimiter can be a regular expression like (,|;) to match 2 different types of delimiters. 
     If quoted_elements is True, then allow element_regex to be surrounded by single or double quotes. 
@@ -517,7 +517,7 @@ POSITIVE_NUMS = NUMS.replace('-?', '')
 POSITIVE_INTS = r'\d+'
 LIST_OF_POS_INTS = make_list_regex(POSITIVE_INTS, ',')
 LIST_OF_POS_INTS_OR = make_list_regex(POSITIVE_INTS, 'or')
-LIST_OF_POS_INTS_BAR = make_list_regex(POSITIVE_INTS, '\|')
+LIST_OF_POS_INTS_BAR = make_list_regex(POSITIVE_INTS, r'\|')
 LIST_OF_POS_INTS_SLASH = make_list_regex(POSITIVE_INTS, '/')
 LIST_OF_POS_INTS_SEMICOLON = make_list_regex(POSITIVE_INTS, ';')
 LIST_OF_POS_INTS_SPACE = make_list_regex(POSITIVE_INTS, ' ')
@@ -546,15 +546,15 @@ ISOTOPIC_NUM = r'\d+'
 ISOTOPIC_SYMBOL = ELEMENT_SYMBOL[0:-1] + r'|D)'
 ISOTOPIC_ELEMENT = ISOTOPIC_SYMBOL + ELEMENT_COUNT
 ISOTOPIC_FORMULA = '(' + ISOTOPIC_ELEMENT + '|' + \
-                   '\[' + ISOTOPIC_NUM + ISOTOPIC_SYMBOL + '\]' + ELEMENT_COUNT + '|' + \
-                   '\[' + ISOTOPIC_NUM + '\]' + ISOTOPIC_ELEMENT + '|' + \
-                   '\[' + ISOTOPIC_SYMBOL + ISOTOPIC_NUM + '\]' + ELEMENT_COUNT + '|' + \
-                   ISOTOPIC_SYMBOL + '\(' + ISOTOPIC_NUM + '\)' + ELEMENT_COUNT + '|' + \
-                   make_list_regex(ISOTOPIC_NUM + ISOTOPIC_SYMBOL + ELEMENT_COUNT, '\+') + ')+'
+                   r'\[' + ISOTOPIC_NUM + ISOTOPIC_SYMBOL + r'\]' + ELEMENT_COUNT + '|' + \
+                   r'\[' + ISOTOPIC_NUM + r'\]' + ISOTOPIC_ELEMENT + '|' + \
+                   r'\[' + ISOTOPIC_SYMBOL + ISOTOPIC_NUM + r'\]' + ELEMENT_COUNT + '|' + \
+                   ISOTOPIC_SYMBOL + r'\(' + ISOTOPIC_NUM + r'\)' + ELEMENT_COUNT + '|' + \
+                   make_list_regex(ISOTOPIC_NUM + ISOTOPIC_SYMBOL + ELEMENT_COUNT, r'\+') + ')+'
 LIST_OF_ISOTOPIC_FORMULAS = make_list_regex(ISOTOPIC_FORMULA, ',', True)
 BRACKETED_LIST_OF_ISOTOPIC_FORMULAS = r'\[' + LIST_OF_ISOTOPIC_FORMULAS + r'\]'
 # C12H22O11+, [C12H22O11]+
-CHARGE_FORMULA = r'(\[' + FORMULA + r'\](-|\+)' + '|' + FORMULA + '(-|\+)' + ')'
+CHARGE_FORMULA = r'(\[' + FORMULA + r'\](-|\+)' + '|' + FORMULA + r'(-|\+)' + ')'
 # CH3(CH2)16COOH
 GROUP_FORMULA = '(' + FORMULA_ELEMENT + '|' + r'\(' + FORMULA + r'\)\d+' + r')+'
 
@@ -572,7 +572,7 @@ LIST_OF_SMILES_SEMICOLON = make_list_regex(SMILES, ';')
 
 INCHIKEY = r'(InChIKey=)?[a-zA-Z]{14}-[a-zA-Z]{10}-[a-zA-Z]?'
 INCHIKEY_OR_NULL = '(' + INCHIKEY + r'|null|No record)'
-LIST_OF_INCHIKEYS = '(' + INCHIKEY + '\s*,\s*)+' + '(' + INCHIKEY + r'\s*|\s*)'
+LIST_OF_INCHIKEYS = '(' + INCHIKEY + r'\s*,\s*)+' + '(' + INCHIKEY + r'\s*|\s*)'
 LIST_OF_INCHIKEYS_SLASH = LIST_OF_INCHIKEYS.replace(',', '/')
 
 # InChI=1 or InChI=1 where "1" is a version number and "S" means it's a standard InChI.
@@ -617,7 +617,7 @@ ION_ELEMENTS = r'(\d?(m|M)' + '|' + \
                r'(-|\+)?\d*' + FORMULA + r'\d*(\((-|\+)\))?' +  '|' + \
                r'[ [a-zA-Z]*(A|a)cid' + '|' + \
                r'Cat' + '|' + r'Chol-head' + '|' + r'Hac' + '|' + r'\di' + '|' + r'FA|NA|A' + ')'
-ION = '(' + make_list_regex(ION_ELEMENTS, '(-|\+)?') + ')'
+ION = '(' + make_list_regex(ION_ELEMENTS, r'(-|\+)?') + ')'
 ION = '(' + ION + '|' + \
       r'\[' + ION + r'\]\(?\d?\s?(-|\+)?\d?\)?' + '|' + \
       ION + r'\](-|\+)?' + '|' + \
@@ -640,7 +640,7 @@ LIST_OF_KEGG_DOUBLE_SLASH = make_list_regex(KEGG, '//')
 LIST_OF_KEGG_UNDERSCORE = make_list_regex(KEGG, '_')
 LIST_OF_KEGG_HYPHEN = make_list_regex(KEGG, '-')
 LIST_OF_KEGG_MIXED = make_list_regex(KEGG, '(/|,)')
-LIST_OF_KEGG_BAR = make_list_regex(KEGG, '(\|)')
+LIST_OF_KEGG_BAR = make_list_regex(KEGG, r'(\|)')
 
 HMDB = '(' + r'(HMDB|HDMB|YMDB|HMBD)\d+(\*|\?)?' + '|' + r'n/a' + ')'
 LIST_OF_HMDB = make_list_regex(HMDB, ',')
@@ -653,7 +653,7 @@ HMDB_INT = r'\d{,5}'
 LIST_OF_HMDB_INTS = make_list_regex(HMDB_INT, ',')
 LIST_OF_HMDB_INTS_SLASH = make_list_regex(HMDB_INT, '/')
 
-LIPID_MAPS = '(' + 'LM(PK|ST|GL|FA|SP|GP|PR|SL)[0-9A-Z]{8,10}\*?' + '|' + r'(ST|FA|PR|GP|PK|GL|SP)\d{4,6}-' + FORMULA + ')'
+LIPID_MAPS = '(' + r'LM(PK|ST|GL|FA|SP|GP|PR|SL)[0-9A-Z]{8,10}\*?' + '|' + r'(ST|FA|PR|GP|PK|GL|SP)\d{4,6}-' + FORMULA + ')'
 LIST_OF_LMP = make_list_regex(LIPID_MAPS, ',')
 LIST_OF_LMP_UNDERSCORE = make_list_regex(LIPID_MAPS, '_')
 LIST_OF_LMP_SLASH = make_list_regex(LIPID_MAPS, '/')
@@ -680,7 +680,7 @@ column_finders = [
                                              LIST_OF_NUMS + '|' + \
                                              LIST_OF_NUMS_UNDERSCORE + '|' + \
                                              NUMS + r'\s*/\s*' + NUMS + '|' + \
-                                             '(' + NUMS + r'\s*\(' + NUMS + r'\)' + '\s*;\s*)+' + '(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*|\s*)' + '|' + \
+                                             '(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*;\s*)+' + '(' + NUMS + r'\s*\(' + NUMS + r'\)' + r'\s*|\s*)' + '|' + \
                                              NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \
                                              '(' + NUMS + r'\s*)+' + '|' + \
                                              NUMS + r'\s*\(\s*' + NUMS + r'\s*\)' + '|' + \
@@ -732,7 +732,7 @@ column_finders = [
     ColumnFinder("formula",
                  NameMatcher(in_strings = ['formula'],),
                  ValueMatcher(values_type = 'non-numeric',
-                              values_regex = '(' + ISOTOPIC_FORMULA.replace('\d*', '\d*\s*') + '|' + \
+                              values_regex = '(' + ISOTOPIC_FORMULA.replace(r'\d*', r'\d*\s*') + '|' + \
                                              CHARGE_FORMULA + '|' + \
                                              GROUP_FORMULA + '|' + \
                                              BRACKETED_LIST_OF_FORMULAS + '|' + \

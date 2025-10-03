@@ -166,7 +166,7 @@ def read_files(*sources, return_exceptions=False, **kwds):
                                         return_exceptions=return_exceptions)
             continue
         try:
-            f = mwtab.MWTabFile(source, compatability_mode=True)
+            f = mwtab.MWTabFile(source, duplicate_keys=True)
             f.read(fh)
             fh.close()
 

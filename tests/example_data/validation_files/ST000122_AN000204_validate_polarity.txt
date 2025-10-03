@@ -33,8 +33,8 @@ SU:SUBJECT_TYPE                  	Human
 SU:SUBJECT_SPECIES               	Homo sapiens
 SU:TAXONOMY_ID                   	9606
 #SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
-SUBJECT_SAMPLE_FACTORS           	CER030_294717_ML_1	CER030_294717_ML_1	Tissue/Fluid:Serum	key_1=value_1; key_1=value_3; key_2=value_2
-SUBJECT_SAMPLE_FACTORS           	CER040_242995_ML_2	CER040_242995_ML_2	Tissue/Fluid:Serum	key_1=value_4; key_2=value_5
+SUBJECT_SAMPLE_FACTORS           	CER030_294717_ML_1	CER030_294717_ML_1	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER040_242995_ML_2	CER040_242995_ML_2	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER055_249947_ML_3	CER055_249947_ML_3	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER062_246153_ML_4	CER062_246153_ML_4	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER085_251176_ML_5	CER085_251176_ML_5	Tissue/Fluid:Serum	
@@ -141,9 +141,9 @@ Testosterone	75.7500	63.2500	42.7500	98.0000	24.2500	35.0000	165.7500	23.2500	73
 MS_METABOLITE_DATA_END
 #METABOLITES
 METABOLITES_START
-metabolite_name	moverz_quant	ri	ri_type	pubchem_id	inchi_key	kegg_id	other_id	other_id_type
-17-hydroxypregnenolone				91451			2Q4710	UCDavis_Gaikwad_Lab_ID
-17-hydroxyprogesterone				6238			6Q3360	UCDavis_Gaikwad_Lab_ID
+metabolite_name	moverz_quant	ri	ri_type	pubchem_id	inchi_key	kegg_id	other_id	other_id_type	polarity
+17-hydroxypregnenolone				91451			2Q4710	UCDavis_Gaikwad_Lab_ID	positive
+17-hydroxyprogesterone				6238			6Q3360	UCDavis_Gaikwad_Lab_ID	negative
 Allodihydrotestosterone				10635			14A2570	UCDavis_Gaikwad_Lab_ID
 Androstenedione				6128			12A6030	UCDavis_Gaikwad_Lab_ID
 Androstenolone (DHEA)				5881			3A8500	UCDavis_Gaikwad_Lab_ID

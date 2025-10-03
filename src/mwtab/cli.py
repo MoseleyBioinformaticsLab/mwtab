@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 """
 The mwtab command-line interface
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,10 +34,6 @@ Options:
     --mw-rest=<url>                      URL to MW REST interface
                                             [default: https://www.metabolomicsworkbench.org/rest/].
     --to-path=<path>                     Directory to save outputs into. Defaults to the current working directory.
-    --last-split                         Change how additional sample data and factors split on their delimiters to determine key and value.
-                                         This option splits on the last delimiter, but the default splits on the first.
-    --add-replace=<add-replace>          What to replace extra '=' with in additional sample data, if there are extra '='. [default: =]
-    --factor-replace=<factor-replace>    What to replace extra ':' with in subject sample factors, if there are extra ':'. [default: :]
     --prefix=<prefix>                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
     --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
     --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
@@ -53,12 +50,7 @@ Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
 GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
 
-from . import fileio, mwextract, mwrest
-from .converter import Converter
-from .validator import validate_file
-from .mwschema import ms_required_schema, nmr_required_schema
-
-from os import getcwd, makedirs, path
+from os import getcwd
 from os.path import join, isfile
 from urllib.parse import quote_plus
 import traceback
@@ -67,6 +59,12 @@ import re
 import sys
 import time
 import datetime
+import pathlib
+
+from . import fileio, mwextract, mwrest
+from .converter import Converter
+from .validator import validate_file
+from .mwschema import ms_required_schema, nmr_required_schema
 
 
 OUTPUT_FORMATS = {
@@ -76,75 +74,114 @@ OUTPUT_FORMATS = {
     None: None
 }
 VERBOSE = False
+# Note that 'url' is not a context for the Metabolomics Workbench REST API, but the code works better to have it in this list.
+CONTEXTS = ['study', 'compound', 'refmet', 'gene', 'protein', 'moverz', 'exactmass', 'url']
 
-
-def check_filepath(filepath):
-    """Method for validating that a given path directory exits. If not, the directory is created.
-
-    :param str filepath: File path string.
-    :return: None
-    :rtype: :py:obj:`None`
+def build_file_path(to_path: str|None, filename: str|None, extension: str|None) -> str:
+    """Build path to save a file to.
+    
+    If to_path is given, check if the directory exists and create it if not. 
+    If to_path is a directory, then add filename and extension to the returned path. 
+    If to_path is not a directory, then return to_path.
+    
+    Args:
+        to_path: Path to a directory or file.
+        filename: The name of the file to create a path for.
+        extension: The extension of the file to create a path for.
+    
+    Returns:
+        A string representing the path to the file.
     """
-    if not path.exists(path.dirname(filepath)):
-        dirname = path.dirname(filepath)
-        if dirname:
-            makedirs(dirname)
+    if to_path:
+        fileio._create_save_path(to_path)
+        if pathlib.Path(to_path).suffix:
+            return to_path
+    
+    full_path = join(getcwd(), quote_plus(filename).replace(".", "_") + "." + extension)
+    return full_path
 
 
-def get_file_path(dir_path, filename, extension):
-    """Helper method for validating that the commandline arguments "--to-path" or _ are not "None". Returns the given
-    command argument if not none or creates a default file path from the given filename and the current working
-    directory.
-
-    :param dir_path: Path to directory file is to be saved in.
-    :type dir_path: :py:class:`str` or :py:class:`None`
-    :param str filename: Filename processed file is to be saved as.
-    :param str extension: File extension.
-    :return: Complete file path.
-    :rtype: :py:class:`str`
+def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> mwrest.MWRESTFile:
+    """Create Metabolomics Workbench REST URL and request file.
+    
+    Args:
+        res_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.
+                    For instance <context> would correspond to 'context' and <input item> would correspond to 'input_item'.
+        mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.
+        full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. 
+                  If given, all other parameters are ignored and this URL is used to download.
+    
+    Returns:
+        The downloaded file as an MWRESTFile object if no exceptions occured, otherwise None with a raised exception.
     """
-    # check to see if given directory path is not None
-    dir_path = dir_path if dir_path else getcwd()
-    if path.splitext(dir_path)[1]:
-        return dir_path
-    extension = extension if extension else "txt"
-    return join(dir_path, ".".join([quote_plus(filename).replace(".", "_"), extension]))
-
-
-def download(context, cmdparams):
-    """Method for creating Metabolomics Workbench REST URLs and requesting files based on given commandline arguments.
-    Retrieved data is then saved out as specified.
-
-    :param str context: String indicating the type of data ("context") to be accessed from the Metabolomics Workbench.
-    :param dict cmdparams: Commandline arguments specifying data to be accessed from Metabolomics Workbench.
-    :return: None
-    :rtype: :py:obj:`None`
-    """
-    try:
+    if full_url:
+        mwrestfile = next(fileio.read_mwrest(full_url))
+    else:
         # create and validate a callable URL to pull data from Metabolomics Workbench's REST API
-        mwresturl = mwrest.GenericMWURL({
-            "context": context,
-            "input_item": cmdparams.get("<input-item>") if cmdparams.get("<input-item>") else "analysis_id",
-            "input_value": cmdparams["<input-value>"],
-            "output_item": cmdparams.get("<output-item>") if cmdparams.get("<output-item>") else "mwtab",
-            "output_format": OUTPUT_FORMATS[cmdparams.get("--output-format")] if cmdparams.get("--output-format") else "txt",
-        }, cmdparams["--mw-rest"]).url
-        mwrestfile = next(fileio.read_mwrest(mwresturl))
+        fileurl = mwrest.GenericMWURL(rest_params, mwrest_base_url).url
+        mwrestfile = next(fileio.read_mwrest(fileurl))
+    
+    return mwrestfile
 
-        if mwrestfile.text:  # if the text file isn't blank
-            path_to_save = get_file_path(
-                                        cmdparams.get("--to-path"),
-                                        mwrestfile.source,
-                                        OUTPUT_FORMATS[cmdparams.get("--output-format")])
-            fileio._create_save_path(path_to_save)
-            with open(path_to_save, "w", encoding="utf-8") as fh:
-                mwrestfile.write(fh)
-        else:
-            print("When trying to download a file for the value, \"" + 
-                  cmdparams["<input-value>"] + 
-                  "\", a blank file or an error was returned, so no file was created for it.")
-    except Exception as e:
-        raise e
+def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt') -> bool:
+    """Save the given MWRESTFile object to the given path if it has text.
+    
+    Args:
+        mwrestfile: The MWRESTFile object to save.
+        to_path: The path to save the file to. Defaults to the current working directory.
+        output_format: The format to save the file to. Should be 'txt', 'json', or 'mwtab'.
+    
+    Returns:
+        True if the mwrestfile had text and was therefore saved, False otherwise.
+    """
+    if mwrestfile.text:  # if the text file isn't blank
+        path_to_save = build_file_path(to_path,
+                                       mwrestfile.source,
+                                       OUTPUT_FORMATS[output_format])
+        fileio._create_save_path(path_to_save)
+        with open(path_to_save, "w", encoding="utf-8") as fh:
+            mwrestfile.write(fh)
+        return True
+    return False
+
+def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, 
+                                  mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
+    """DRY function to combine downloading, saving, and error printing."""
+    mwrestfile = download(rest_params, mwrest_base_url, full_url)
+    extension = output_format if (output_format := rest_params.get('output_format')) else 'txt'
+    if not save_mwrest_file(mwrestfile, to_path, extension):
+        value = full_url if full_url else rest_params['input_value']
+        print(f'When trying to download a file for the value, "{value}", '
+              'a blank file or an error was returned, so no file was created for it.')
+
+def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]], verbose: bool,
+                              to_path: str|None = None, 
+                              mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None):
+    for count, (input_id, input_item) in enumerate(id_list):
+        rest_params['input_value'] = input_id
+        rest_params['input_item'] = input_item
+        if verbose:
+            print("[{:4}/{:4}]".format(count+1, len(id_list)), input_id, datetime.datetime.now())
+        try:
+            download_and_save_mwrest_file(rest_params, to_path, mwrest_base_url, full_url)
+        except Exception:
+            print("Something went wrong and " + input_id + " could not be downloaded.")
+            traceback.print_exc(file=sys.stdout)
+            print()
+        time.sleep(3)
+
+def classify_input_value(input_value):
+    if input_value.isdigit():
+        input_value = "AN{}".format(input_value.zfill(6))
+        input_item = "analysis_id"
+    elif re.match(r'(AN[0-9]{6}$)', input_value):
+        input_item = "analysis_id"
+    elif re.match(r'(ST[0-9]{6}$)', input_value):
+        input_item = "study_id"
+    else:
+        input_item = "analysis_id"
+    
+    return input_value, input_item
 
 
 def cli(cmdargs):
@@ -155,9 +192,18 @@ def cli(cmdargs):
 
     VERBOSE = cmdargs["--verbose"]
     fileio.VERBOSE = cmdargs["--verbose"]
-    fileio.MWREST_URL = cmdargs["--mw-rest"]
+    mwrest_base_url = cmdargs['--mw-rest']
+    fileio.MWREST_URL = mwrest_base_url
+    mwrest.BASE_URL = mwrest_base_url
     mwrest.VERBOSE = cmdargs["--verbose"]
     output_format = OUTPUT_FORMATS[cmdargs.get("--output-format")] if cmdargs.get("--output-format") else "txt"
+    required_input_value = cmdargs.get('<input-value>')
+    required_input_item = cmdargs.get('<input-item>')
+    optional_input_item = cmdargs.get('--input-item')
+    optional_to_path = cmdargs.get('--to-path')
+    optional_output_item = cmdargs.get('--output-item')
+    required_output_item = cmdargs.get('<output-item>')
+    
 
     # mwtab convert ...
     if cmdargs["convert"]:
@@ -186,160 +232,102 @@ def cli(cmdargs):
     
     # mwtab download ...
     elif cmdargs["download"]:
+        context = [_context for _context in CONTEXTS if cmdargs.get(_context)][0]
 
         # mwtab download url ...
         if cmdargs["<url>"]:
-            mwrestfile = next(fileio.read_mwrest(cmdargs["<url>"]))
-            path_to_save = get_file_path(
-                                        cmdargs["--to-path"],
-                                        mwrestfile.source,
-                                        output_format)
-            fileio._create_save_path(path_to_save)
-            with open(path_to_save, "w", encoding="utf-8") as fh:
-                mwrestfile.write(fh)
+            download_and_save_mwrest_file({}, optional_to_path, full_url = cmdargs['<url>'])
 
         # mwtab download study ...
         elif cmdargs["study"]:
-
             # mwtab download study all ...
             if cmdargs["all"]:
                 # mwtab download study all ...
                 # mwtab download study all --input-item=analysis_id ...
                 # mwtab download study all --input-item=study_id ...
-                if not cmdargs["--input-item"] or cmdargs["--input-item"] in ("analysis_id", "study_id"):
-                    cmdargs["<input-item>"] = cmdargs["--input-item"]
-
-                    id_list = list()
-                    if not cmdargs["--input-item"] or cmdargs["--input-item"] == "analysis_id":
-                        id_list = mwrest.analysis_ids()
-                    elif cmdargs["--input-item"] == "study_id":
-                        id_list = mwrest.study_ids()
-
-                    for count, input_id in enumerate(id_list):
-                        if VERBOSE:
-                            print("[{:4}/{:4}]".format(count+1, len(id_list)), input_id, datetime.datetime.now())
-                        cmdargs["<input-value>"] = input_id
-                        try:
-                            download("study", cmdargs)
-                        except Exception:
-                            print("Something went wrong and " + input_id + " could not be downloaded.")
-                            traceback.print_exc(file=sys.stdout)
-                            print()
-                        time.sleep(3)
+                if not optional_input_item or optional_input_item in ("analysis_id", "study_id"):
+                    if not optional_input_item or optional_input_item == "analysis_id":
+                        id_list = [(an_id, 'analysis_id') for an_id in mwrest.analysis_ids()]
+                    elif optional_input_item == "study_id":
+                        id_list = [(study_id, 'study_id') for study_id in mwrest.study_ids()]
+                    rest_params = {'context': 'study',
+                                   'output_item': 'mwtab',
+                                   'output_format': output_format}
+                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, mwrest_base_url)
 
                 else:
-                    raise ValueError("Unknown \"--input-item\" {}".format(cmdargs["--input-item"]))
+                    raise ValueError("Unknown \"--input-item\" {}".format(optional_input_item))
 
             # mwtab download study <input_value> ...
-            elif cmdargs["<input-value>"] and not cmdargs["<input-item>"]:
-                # Read a json file with a list and make a best attempt to parse and downlod studies and analyses from the list.
-                if isfile(cmdargs["<input-value>"]):
-                    with open(cmdargs["<input-value>"], "r") as fh:
+            elif required_input_value and not required_input_item:
+                # Read a json file with a list and make a best attempt to parse and download studies and analyses from the list.
+                if isfile(required_input_value):
+                    with open(required_input_value, "r") as fh:
                         id_list = json.loads(fh.read())
                     
-                    if cmdargs["--input-item"]:
-                        if cmdargs["--input-item"] in ("analysis_id", "study_id"):
-                            item_list = [cmdargs["--input-item"]]*len(id_list)
+                    if optional_input_item:
+                        if optional_input_item in ("analysis_id", "study_id"):
+                            id_list = [(input_id, optional_input_item) for input_id in id_list]
                         else:
-                            raise ValueError("Unknown \"--input-item\" {}".format(cmdargs["--input-item"]))
+                            raise ValueError("Unknown \"--input-item\" {}".format(optional_input_item))
                     else:
-                        item_list = []
-                        for i, input_value in enumerate(id_list):
-                            if input_value.isdigit():
-                                id_list[i] = "AN{}".format(input_value.zfill(6))
-                                item_list.append("analysis_id")
-                            elif re.match(r'(AN[0-9]{6}$)', input_value):
-                                item_list.append("analysis_id")
-                            elif re.match(r'(ST[0-9]{6}$)', input_value):
-                                item_list.append("study_id")
-                            else:
-                                item_list.append("analysis_id")
+                        id_list = [classify_input_value(_input_value) for _input_value in id_list]
                     
+                    # TODO check if giving a file path instead of a directory path to --to-path makes this save wrong.
                     if VERBOSE:
                         print("Found {} Files to be Downloaded".format(len(id_list)))
-                    for count, input_id in enumerate(id_list):
-                        if VERBOSE:
-                            print("[{:4}/{:4}]".format(count + 1, len(id_list)), input_id, datetime.datetime.now())
-                        cmdargs["<input-value>"] = input_id
-                        cmdargs["<input-item>"] = item_list[count]
-                        try:
-                            download("study", cmdargs)
-                        except Exception:
-                            print("Something went wrong and " + input_id + " could not be downloaded.")
-                            traceback.print_exc(file=sys.stdout)
-                            print()
-                        time.sleep(3)
+                    
+                    rest_params = {'context': 'study', 
+                                    'output_item': optional_output_item if optional_output_item else 'mwtab',
+                                    'output_format': output_format}
+                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, mwrest_base_url)
 
                 # Assume input value is a single analysis or study id and use --input-item to decide which, default to analysis_id
                 else:
                     input_item = cmdargs.get("--input-item")
-                    input_value = cmdargs["<input-value>"]
+                    input_value = required_input_value
                     if not input_item:
-                        if input_value.isdigit():
-                            input_value = "AN{}".format(input_value.zfill(6))
-                            input_item = "analysis_id"
-                        elif re.match(r'(AN[0-9]{6}$)', input_value):
-                            input_item = "analysis_id"
-                        elif re.match(r'(ST[0-9]{6}$)', input_value):
-                            input_item = "study_id"
-                        else:
-                            input_item = "analysis_id"
-                    mwresturl = mwrest.GenericMWURL({
-                        "context": "study",
-                        "input_item": input_item,
-                        "input_value": input_value,
-                        "output_item": cmdargs.get("--output-item") or "mwtab",
-                        "output_format": output_format,
-                    }, cmdargs["--mw-rest"]).url
-                    mwrestfile = next(fileio.read_mwrest(mwresturl))
-                    if cmdargs["--to-path"]:
-                        to_path = cmdargs["--to-path"]
-                    else:
-                        to_path = join(getcwd(),
-                                       quote_plus(mwrestfile.source).replace(".", "_") + 
-                                                  "." + output_format)
-                    with open(to_path, "w", encoding="utf-8") as fh:
-                        mwrestfile.write(fh)
+                        input_value, input_item = classify_input_value(input_value)
+                    rest_params = {'context': 'study', 
+                                   'input_value': input_value, 
+                                   'input_item': input_item,
+                                   'output_item': optional_output_item if optional_output_item else 'mwtab',
+                                   'output_format': output_format}
+                    download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
 
             # mwtab download (study | ...) <input_item> ...
-            elif cmdargs["<input-item>"]:
-                download("study", cmdargs)
-
-        # mwtab download (... compound | refmet | gene | protein) ...
-        elif cmdargs["compound"]:
-            download("compound", cmdargs)
-        elif cmdargs["refmet"]:
-            download("refmet", cmdargs)
-        elif cmdargs["gene"]:
-            download("gene", cmdargs)
-        elif cmdargs["protein"]:
-            download("protein", cmdargs)
-
+            elif required_input_item:
+                rest_params = {'context': 'study', 
+                               'input_value': required_input_value, 
+                               'input_item': required_input_item,
+                               'output_item': required_output_item,
+                               'output_format': output_format}
+                download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+        
+        # mwtab download (... | compound | refmet | gene | protein) ...
+        elif context in ['compound', 'refmet', 'gene', 'protein']:
+            rest_params = {'context': context, 
+                           'input_value': required_input_value, 
+                           'input_item': required_input_item,
+                           'output_item': required_output_item,
+                           'output_format': output_format}
+            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+                
         # mwtab download moverz <input-value> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--verbose]
         elif cmdargs["moverz"]:
-            mwresturl = mwrest.GenericMWURL({
-                "context": "moverz",
-                "input_item": cmdargs["<input-item>"],
-                "m/z_value": cmdargs["<m/z-value>"],
-                "ion_type_value": cmdargs["<ion-type-value>"],
-                "m/z_tolerance_value": cmdargs["<m/z-tolerance-value>"],
-            }, cmdargs["--mw-rest"]).url
-            mwrestfile = next(fileio.read_mwrest(mwresturl))
-            with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + ".txt"),
-                      "w") as fh:
-                mwrestfile.write(fh)
+            rest_params = {'context': 'moverz', 
+                           'input_item': required_input_item, 
+                           "m/z_value": cmdargs["<m/z-value>"],
+                           "ion_type_value": cmdargs["<ion-type-value>"],
+                           "m/z_tolerance_value": cmdargs["<m/z-tolerance-value>"]}
+            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
 
         # mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--verbose]
         elif cmdargs["exactmass"]:
-            mwresturl = mwrest.GenericMWURL({
-                "context": "exactmass",
-                "LIPID_abbreviation": cmdargs["<LIPID-abbreviation>"],
-                "ion_type_value": cmdargs["<ion-type-value>"],
-            }, cmdargs["--mw-rest"]).url
-            mwrestfile = next(fileio.read_mwrest(mwresturl))
-            with open(cmdargs["--to-path"] or join(getcwd(), quote_plus(mwrestfile.source).replace(".", "_") + ".txt"),
-                      "w") as fh:
-                mwrestfile.write(fh)
+            rest_params = {'context': 'exactmass', 
+                           "LIPID_abbreviation": cmdargs["<LIPID-abbreviation>"],
+                           "ion_type_value": cmdargs["<ion-type-value>"],}
+            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
 
     # mwtab extract ...
     elif cmdargs["extract"]:

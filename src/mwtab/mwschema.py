@@ -113,7 +113,7 @@ def _create_num_regex_and_message(can_be_range: bool = False) -> str:
     Returns:
         A dicitonary {'pattern': regex, 'message_func': message_function}.
     """
-    regex = '^((\d+)|(\d*\.\d+))$'
+    regex = r'^((\d+)|(\d*\.\d+))$'
     message = create_unit_error_message(can_be_range = can_be_range, no_units = True, units = None)
     return {'pattern': regex, 'pattern_custom_message': message}
 
@@ -132,7 +132,7 @@ def _create_int_regex_and_message(can_be_range: bool = False) -> str:
     Returns:
         A dicitonary {'pattern': regex, 'message_func': message_function}.
     """
-    regex = '^\d+$'
+    regex = r'^\d+$'
     message = create_unit_error_message(can_be_range = can_be_range, no_units = True, units = None)
     return {'pattern': regex, 'pattern_custom_message': message}
 
@@ -290,7 +290,7 @@ collection_schema = \
                 'STORAGE_VIALS': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'COLLECTION_TUBE_TEMP': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'ADDITIVES': {'type': 'string', 'not':{'enum': NA_VALUES}},
-                'BLOOD_SERUM_OR_PLASMA': {'type': 'string', 'pattern': r'^(?i)(blood|plasma|serum)$',
+                'BLOOD_SERUM_OR_PLASMA': {'type': 'string', 'pattern': r'(?i)^(blood|plasma|serum)$',
                                           'pattern_custom_message': (' should be one of "Blood", "Plasma", or "Serum". '
                                                                      'Ignore this when more complicated descriptions are required.')},
                 'TISSUE_CELL_IDENTIFICATION': {'type': 'string', 'not':{'enum': NA_VALUES}},
@@ -472,13 +472,13 @@ ms_schema = \
  'properties': {'INSTRUMENT_NAME': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'INSTRUMENT_TYPE': {'type': 'string', 'not':{'enum': NA_VALUES}},
                 'MS_TYPE': {'type': 'string', 'not':{'enum': NA_VALUES}},
-                'ION_MODE': {'type': 'string', 'pattern': r'^(?i)(positive|negative|positive, negative|unspecified)$',
+                'ION_MODE': {'type': 'string', 'pattern': r'(?i)^(positive|negative|positive, negative|unspecified)$',
                            'pattern_custom_message': (' should be one of "Positive", "Negative", "Positive, Negative", or "Unspecified". '
                                                       'Ignore this when more complicated descriptions are required.')},
                 'CAPILLARY_TEMPERATURE': {'type': 'string', **_create_unit_regex_and_message(['°C', 'C'], True)},
                 'CAPILLARY_VOLTAGE': {'type': 'string', **_create_unit_regex_and_message(['V', 'kV'])},
                 'COLLISION_ENERGY': {'type': 'string', 'not':{'enum': NA_VALUES}},
-                'COLLISION_GAS': {'type': 'string', 'pattern': r'^(?i)(nitrogen|argon)$',
+                'COLLISION_GAS': {'type': 'string', 'pattern': r'(?i)^(nitrogen|argon)$',
                                   'pattern_custom_message': (' should be one of "Nitrogen" or "Argon". '
                                                              'Ignore this when more complicated descriptions are required.')},
                 'DRY_GAS_FLOW': {'type': 'string', **_create_unit_regex_and_message(['L/hr', 'L/min'])},

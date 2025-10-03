@@ -18,6 +18,8 @@ Each token is a tuple of "key-value"-like pairs, tuple of
 from __future__ import print_function, division, unicode_literals
 from collections import deque, namedtuple
 import re
+import traceback
+import sys
 
 
 KeyValue = namedtuple("KeyValue", ["key", "value"])
@@ -31,11 +33,11 @@ def _results_file_line_to_dict(line: str):
     Returns:
         A dictionary of the values found in the line, won't always have every key.
     """
-    filename_regex = '(.*?)([^\s]+?\s*?)((\s(UNITS|Has m/z|Has RT|RT units))|$)'
-    units_regex = '(.*)UNITS:(.*?)((\s(Has m/z|Has RT|RT units))|$)'
-    has_mz_regex = '(.*)Has m/z:(.*?)((\s(UNITS|Has RT|RT units))|$)'
-    has_rt_regex = '(.*)Has RT:(.*?)((\s(Has m/z|UNITS|RT units))|$)'
-    rt_units_regex = '(.*)RT units:(.*?)((\s(Has m/z|Has RT|UNITS))|$)'
+    filename_regex = r'(\s*)([^\s]+?\s*?)((UNITS|Has m/z|Has RT|RT units)|$)'
+    units_regex = r'(.*)UNITS:(.*?)((\s(Has m/z|Has RT|RT units))|$)'
+    has_mz_regex = r'(.*)Has m/z:(.*?)((\s(UNITS|Has RT|RT units))|$)'
+    has_rt_regex = r'(.*)Has RT:(.*?)((\s(Has m/z|UNITS|RT units))|$)'
+    rt_units_regex = r'(.*)RT units:(.*?)((\s(Has m/z|Has RT|UNITS))|$)'
     
     filename_value = None if not (match := re.match(filename_regex, line)) else match.group(2).rstrip()
     units_value = None if not (match := re.match(units_regex, line)) else match.group(2).strip()
@@ -145,7 +147,8 @@ def tokenizer(text, dict_type = None):
             elif line:
                 if "_RESULTS_FILE" in line:
                     line_items = line.split("\t")
-                    yield KeyValue(line_items[0].strip()[3:], _results_file_line_to_dict('\t'.join(line_items[1:])))
+                    # Sometimes RESULTS_FILE is found in DATA sections like UNITS is. So key needs to be parsed out accordingly.
+                    yield KeyValue(line_items[0].split(':')[1].strip(), _results_file_line_to_dict('\t'.join(line_items[1:])))
                 else:
                     try:
                         key, value = line.split("\t", 1)
@@ -160,8 +163,10 @@ def tokenizer(text, dict_type = None):
                         yield KeyValue(key.strip(), value.strip())
 
         except IndexError as e:
+            print(traceback.format_exc(), file=sys.stderr)
             raise IndexError("LINE WITH ERROR:\n\t" + repr(line)) from e
         except ValueError as e:
+            print(traceback.format_exc(), file=sys.stderr)
             raise ValueError("LINE WITH ERROR:\n\t" + repr(line)) from e
 
     # end of file

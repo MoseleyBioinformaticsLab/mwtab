@@ -1,4 +1,4 @@
-#METABOLOMICS WORKBENCH STUDY_ID:ST000122 ANALYSIS_ID:AN000204 PROJECT_ID:PR000109
+#METABOLOMICS WORKBENCH STUDY_ID:ST000122 ANALYSIS_ID:AN000204 PROJECT_ID:PR000109 STUDY_ID:ST000123
 VERSION             	1
 CREATED_ON          	2016-09-17
 #PROJECT
@@ -27,6 +27,7 @@ ST:FIRST_NAME                    	Nilesh
 ST:ADDRESS                       	-
 ST:EMAIL                         	nwgaikwad@ucdavis.edu
 ST:PHONE                         	-
+ST:NUM_GROUPS                    	NA
 ST:NUM_GROUPS                    	NA
 #SUBJECT
 SU:SUBJECT_TYPE                  	Human

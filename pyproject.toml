@@ -40,3 +40,6 @@ mwtab = "mwtab.__main__:main"
 
 [tool.setuptools_scm]
 write_to = "src/mwtab/_version.py"
+
+[tool.coverage.run]
+patch = ["subprocess"]

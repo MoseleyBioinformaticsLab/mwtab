@@ -1,0 +1,392 @@
+{
+    "METABOLOMICS WORKBENCH": {
+        "STUDY_ID": "ST000122",
+        "ANALYSIS_ID": "000204",
+        "PROJECT_ID": "PR000109",
+        "VERSION": "1",
+        "CREATED_ON": "2016-09-17"
+    },
+    "PROJECT": {
+        "PROJECT_TITLE": "Perinatal DDT causes dysfunctional lipid metabolism underlying metabolic",
+        "PROJECT_TYPE": "Pilot and Feasibility Projects",
+        "PROJECT_SUMMARY": "asdf",
+        "INSTITUTE": "University of California, Davis",
+        "DEPARTMENT": "Nutrition",
+        "LABORATORY": "Gaikwad Lab",
+        "LAST_NAME": "Gaikwad",
+        "FIRST_NAME": "Nilesh",
+        "ADDRESS": "asdf",
+        "EMAIL": "nwgaikwad@ucdavis.edu",
+        "PHONE": "530-752-2906",
+        "FUNDING_SOURCE": "NIH 1U24DK097154 ;\u00a0 PI Fiehn, Oliver\u00a0 ; UC Davis WEST COAST CENTRAL METABOLOMICS RESOURCE CORE (WC3MRC)"
+    },
+    "STUDY": {
+        "STUDY_TITLE": "Perinatal DDT causes dysfunctional lipid metabolism underlying metabolic",
+        "STUDY_TYPE": "steroid panel",
+        "STUDY_SUMMARY": "asdf",
+        "INSTITUTE": "University of California, Davis",
+        "DEPARTMENT": "Nutrition",
+        "LABORATORY": "Gaikwad Lab",
+        "LAST_NAME": "Gaikwad",
+        "FIRST_NAME": "Nilesh",
+        "ADDRESS": "asdf",
+        "EMAIL": "nwgaikwad@ucdavis.edu",
+        "PHONE": "asdf",
+        "NUM_GROUPS": "2"
+    },
+    "SUBJECT": {
+        "SUBJECT_TYPE": "Human",
+        "SUBJECT_SPECIES": "Homo sapiens",
+        "TAXONOMY_ID": "9606"
+    },
+    "SUBJECT_SAMPLE_FACTORS": [
+        {
+            "Subject ID": "CER030_294717_ML_1",
+            "Sample ID": "CER030_294717_ML_1",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER040_242995_ML_2",
+            "Sample ID": "CER040_242995_ML_2",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER055_249947_ML_3",
+            "Sample ID": "CER055_249947_ML_3",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER062_246153_ML_4",
+            "Sample ID": "CER062_246153_ML_4",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER085_251176_ML_5",
+            "Sample ID": "CER085_251176_ML_5",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER093_242931_ML_6",
+            "Sample ID": "CER093_242931_ML_6",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER110_238825_ML_7",
+            "Sample ID": "CER110_238825_ML_7",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER120_253690_ML_8",
+            "Sample ID": "CER120_253690_ML_8",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER147_254803_ML_9",
+            "Sample ID": "CER147_254803_ML_9",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER149_266689_ML_10",
+            "Sample ID": "CER149_266689_ML_10",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER158_254231_ML_11",
+            "Sample ID": "CER158_254231_ML_11",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER165_287001_ML_12",
+            "Sample ID": "CER165_287001_ML_12",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER178_295145_ML_13",
+            "Sample ID": "CER178_295145_ML_13",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER181_244392_ML_14",
+            "Sample ID": "CER181_244392_ML_14",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER188_250760_ML_15",
+            "Sample ID": "CER188_250760_ML_15",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER192_254091_ML_16",
+            "Sample ID": "CER192_254091_ML_16",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER201_244193_ML_17",
+            "Sample ID": "CER201_244193_ML_17",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER216_242490_ML_18",
+            "Sample ID": "CER216_242490_ML_18",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER220_274308_ML_19",
+            "Sample ID": "CER220_274308_ML_19",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER223_264067_ML_20",
+            "Sample ID": "CER223_264067_ML_20",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER226_254303_ML_21",
+            "Sample ID": "CER226_254303_ML_21",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER277_255328_ML_22",
+            "Sample ID": "CER277_255328_ML_22",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER287_248530_ML_23",
+            "Sample ID": "CER287_248530_ML_23",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER303_253023_ML_24",
+            "Sample ID": "CER303_253023_ML_24",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER315_282966_ML_25",
+            "Sample ID": "CER315_282966_ML_25",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER324_285069_ML_26",
+            "Sample ID": "CER324_285069_ML_26",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER340_244448_ML_27",
+            "Sample ID": "CER340_244448_ML_27",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER346_246320_ML_28",
+            "Sample ID": "CER346_246320_ML_28",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER356_269662_ML_29",
+            "Sample ID": "CER356_269662_ML_29",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER368_250104_ML_30",
+            "Sample ID": "CER368_250104_ML_30",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER369_276355_ML_31",
+            "Sample ID": "CER369_276355_ML_31",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER384_264971_ML_32",
+            "Sample ID": "CER384_264971_ML_32",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER445_286527_ML_33",
+            "Sample ID": "CER445_286527_ML_33",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER452_240972_ML_34",
+            "Sample ID": "CER452_240972_ML_34",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER463_271249_ML_35",
+            "Sample ID": "CER463_271249_ML_35",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER465_265004_ML_36",
+            "Sample ID": "CER465_265004_ML_36",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER483_294606_ML_37",
+            "Sample ID": "CER483_294606_ML_37",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER488_274343_ML_38",
+            "Sample ID": "CER488_274343_ML_38",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER530_249229_ML_39",
+            "Sample ID": "CER530_249229_ML_39",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER540_240346_ML_40",
+            "Sample ID": "CER540_240346_ML_40",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER552_241945_ML_41",
+            "Sample ID": "CER552_241945_ML_41",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        },
+        {
+            "Subject ID": "CER555_251239_ML_42",
+            "Sample ID": "CER555_251239_ML_42",
+            "Factors": {
+                "Tissue/Fluid": "Serum"
+            }
+        }
+    ],
+    "COLLECTION": {
+        "COLLECTION_SUMMARY": "asdf"
+    },
+    "TREATMENT": {
+        "TREATMENT_SUMMARY": "asdf"
+    },
+    "SAMPLEPREP": {
+        "SAMPLEPREP_SUMMARY": "Methanol: Water Extraction",
+        "SAMPLEPREP_PROTOCOL_FILENAME": "NIH_WCMC_LaMerrill_Method_GaikwadLab__SteroidAnalysis_2013-14.docx",
+        "PROCESSING_METHOD": "Homogenization and Solvent Removal w/ Speed Vac",
+        "PROCESSING_STORAGE_CONDITIONS": "On Ice",
+        "EXTRACTION_METHOD": "1:1 Methanol: Water",
+        "EXTRACT_STORAGE": "-80C",
+        "SAMPLE_RESUSPENSION": "150ul CH3OH/H2O",
+        "ORGAN": "Sprague-Dawley Maternal: Adrenal, liver, placenta, amniotic fluid Fetal: Male and female brain, male and female liver"
+    },
+    "CHROMATOGRAPHY": {
+        "CHROMATOGRAPHY_SUMMARY": "Targeted UPLC-MS/MS",
+        "CHROMATOGRAPHY_TYPE": "Reversed phase",
+        "INSTRUMENT_NAME": "Waters Acquity",
+        "COLUMN_NAME": "Waters Acquity HSS T3 (150 x 2.1mm, 1.8um)",
+        "FLOW_GRADIENT": "0-2 min 100% A (Water 0.1% formic acid) 0% B (CH3CN 0.1 % formic acid), 2-4 min A, 4-9mins 45% A, 9-11 mins 20% A, 11-12 mins 100% A",
+        "FLOW_RATE": "0.15 mL/min",
+        "SAMPLE_INJECTION": "10 uL",
+        "SOLVENT_A": "Water 0.1% formic acid",
+        "SOLVENT_B": "CH3CN 0.1 % formic acid",
+        "ANALYTICAL_TIME": "12 min",
+        "COLUMN_TEMPERATURE": "150 C"
+    },
+    "ANALYSIS": {
+        "ANALYSIS_TYPE": "MS",
+        "LABORATORY_NAME": "Gaikwad Laboratory",
+        "ACQUISITION_DATE": "41716",
+        "SOFTWARE_VERSION": "Masslynx",
+        "OPERATOR_NAME": "Nilesh Gaikwad"
+    },
+    "MS": {
+        "INSTRUMENT_NAME": "Waters Xevo-TQ",
+        "INSTRUMENT_TYPE": "Triple quadrupole",
+        "MS_TYPE": "ESI",
+        "ION_MODE": "POSITIVE",
+        "CAPILLARY_VOLTAGE": "3.0 kV",
+        "COLLISION_GAS": "Nitrogen",
+        "IONIZATION": "Electrospray Ionization",
+        "SOURCE_TEMPERATURE": "150 C",
+        "DESOLVATION_GAS_FLOW": "600 L/hr",
+        "DESOLVATION_TEMPERATURE": "350 C",
+        "MS_COMMENTS": "UPLC-MS/MS"
+    },
+    "MS_METABOLITE_DATA": {
+        "Units": "pg/ml",
+        "Data":[],
+        "Metabolites":[]
+    }
+}

@@ -63,7 +63,7 @@ def _parse_header_input(input_str):
         
         return temp_dict
     else:
-        raise ValueError("header cannot be set because it is not of the form \"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*\"")
+        raise ValueError(r"Header cannot be set because it is not of the form \"#METABOLOMICS WORKBENCH( )?([^: ]+ )?([A-Z_]+:\w+ ?)*\"")
 
 
 
@@ -112,8 +112,6 @@ class MWTabProperty:
                 temp_dict = _parse_header_input(value)
                 obj["METABOLOMICS WORKBENCH"]  = temp_dict
             
-    def __delete__(self, obj):
-        del obj.__dict__[self._name]
 
 
 class MWTabFile(dict):
@@ -149,7 +147,7 @@ class MWTabFile(dict):
     analysis_id = MWTabProperty()
     header = MWTabProperty()
 
-    def __init__(self, source, compatability_mode=False, *args, **kwds):
+    def __init__(self, source, duplicate_keys=False, *args, **kwds):
         """File initializer.
 
         :param str source: Source a `MWTabFile` instance was created from.
@@ -164,8 +162,8 @@ class MWTabFile(dict):
         self._short_headers = set()
         self._duplicate_sub_sections = {}
         self._input_format = 'json'
-        self.compatability_mode = compatability_mode
-        if compatability_mode:
+        self.duplicate_keys = duplicate_keys
+        if duplicate_keys:
             self._default_dict_type = DuplicatesDict
         else:
             self._default_dict_type = dict
@@ -182,7 +180,7 @@ class MWTabFile(dict):
             return data_section_key[0]
         return None
     
-    def set_table_as_pandas(self, df, table_name, clear_header=False):
+    def set_table_from_pandas(self, df, table_name, clear_header=False):
         """Return the given table_name as a pandas.DataFrame.
         
         table_name must be one of "Metabolites", "Extended", or "Data".
@@ -226,7 +224,7 @@ class MWTabFile(dict):
         :return: None
         :rtype: :py:obj:`None`
         """
-        self.set_table_as_pandas(df, 'Metabolites', clear_header)
+        self.set_table_from_pandas(df, 'Metabolites', clear_header)
     
     def set_extended_from_pandas(self, df, clear_header=False):
         """Update MWTabFile based on provided pandas.DataFrame.
@@ -240,7 +238,7 @@ class MWTabFile(dict):
         :return: None
         :rtype: :py:obj:`None`
         """
-        self.set_table_as_pandas(df, 'Extended', clear_header)
+        self.set_table_from_pandas(df, 'Extended', clear_header)
     
     def set_metabolites_data_from_pandas(self, df, clear_header=False):
         """Update MWTabFile based on provided pandas.DataFrame.
@@ -254,14 +252,14 @@ class MWTabFile(dict):
         :return: None
         :rtype: :py:obj:`None`
         """
-        self.set_table_as_pandas(df, 'Data', clear_header)
+        self.set_table_from_pandas(df, 'Data', clear_header)
     
     def get_table_as_pandas(self, table_name):
         """Return the given table_name as a pandas.DataFrame.
         
         table_name must be one of "Metabolites", "Extended", or "Data". Note that 
         if there are duplicate column names, they will have a string appended to the 
-        end of the name like {{{_\d+_}}}.
+        end of the name like {{{_\\d+_}}}.
         
         :param str table_name: the name of the table to return as a pandas.DataFrame.
         :return: The list of dicts for the given table_name as a pandas.DataFrame.
@@ -269,7 +267,7 @@ class MWTabFile(dict):
         """
         data_section_key = self.data_section_key
         if data_section_key and table_name in self[data_section_key]:
-            if self.compatability_mode:
+            if self.duplicate_keys:
                 temp_list = [duplicates_dict.data for duplicates_dict in self[data_section_key][table_name]]
             else:
                 temp_list = self[data_section_key][table_name]
@@ -281,7 +279,7 @@ class MWTabFile(dict):
         """Return the Metabolites table as a pandas.DataFrame.
         
         Note that if there are duplicate column names, they will have a string appended to the 
-        end of the name like {{{_\d+_}}}.
+        end of the name like {{{_\\d+_}}}.
         
         :return: The list of dicts for the Metabolites table as a pandas.DataFrame.
         :rtype: pandas.DataFrame
@@ -292,7 +290,7 @@ class MWTabFile(dict):
         """Return the Extended table as a pandas.DataFrame.
         
         Note that if there are duplicate column names, they will have a string appended to the 
-        end of the name like {{{_\d+_}}}.
+        end of the name like {{{_\\d+_}}}.
         
         :return: The list of dicts for the Extended table as a pandas.DataFrame.
         :rtype: pandas.DataFrame
@@ -303,20 +301,19 @@ class MWTabFile(dict):
         """Return the Data table as a pandas.DataFrame.
         
         Note that if there are duplicate column names, they will have a string appended to the 
-        end of the name like {{{_\d+_}}}.
+        end of the name like {{{_\\d+_}}}.
         
         :return: The list of dicts for the Data table as a pandas.DataFrame.
         :rtype: pandas.DataFrame
         """
         return self.get_table_as_pandas('Data')
     
-    def validate(self, ms_schema = ms_required_schema, nmr_schema = nmr_required_schema, verbose = True, metabolites = True):
+    def validate(self, ms_schema = ms_required_schema, nmr_schema = nmr_required_schema, verbose = True):
         """Validate the instance.
         
         :param dict ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
         :param dict nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
         :param bool verbose: whether to be verbose or not.
-        :param bool metabolites: whether to validate metabolites section.
         :return: Validated file and errors if verbose is False.
         :rtype: :py:class:`~mwtab.mwtab.MWTabFile`, _io.StringIO
         """
@@ -325,7 +322,6 @@ class MWTabFile(dict):
                     ms_schema = ms_schema,
                     nmr_schema = nmr_schema,
                     verbose = verbose,
-                    metabolites = metabolites
                 )
     
     @classmethod
@@ -351,7 +347,7 @@ class MWTabFile(dict):
 
         mwtab_str = self._is_mwtab(input_str)
         self._input_format = 'mwtab' if mwtab_str else 'json'
-        json_str = self._is_json(input_str, self.compatability_mode)
+        json_str = self._is_json(input_str, self.duplicate_keys)
 
         if json_str:
             self.update(json_str)
@@ -586,10 +582,8 @@ class MWTabFile(dict):
                 key, value = token
                 if key in section:
                     if section[key] == value:
-                        if name in self._duplicate_sub_sections:
-                            self._duplicate_sub_sections[name][key] = value
-                        else:
-                            self._duplicate_sub_sections[name] = {key : value}
+                        self._duplicate_sub_sections.setdefault(name, {})
+                        self._duplicate_sub_sections[name][key] = value
                     if name.endswith('WORKBENCH'):
                         section[key] = value
                     else:
@@ -879,31 +873,31 @@ class MWTabFile(dict):
         return False
 
     @staticmethod
-    def _is_json(string, compatability_mode=False):
+    def _is_json(string, duplicate_keys=False):
         """Test if input string is in JSON format.
 
         :param string: Input string.
         :type string: :py:class:`str` or :py:class:`bytes`
-        :param compatability_mode: if true, replace some dictionaries with DuplicatesDict.
+        :param duplicate_keys: if true, replace some dictionaries with DuplicatesDict.
         :type text: py:class:`bool`
         :return: Input string if in JSON format or False otherwise.
         :rtype: :py:class:`str` or :py:obj:`False`
         """
         try:
             if isinstance(string, bytes):
-                if compatability_mode:
+                if duplicate_keys:
                     json_str = json.loads(string.decode("utf-8"), object_pairs_hook=_handle_duplicate_keys)
                 else:
                     json_str = json.loads(string.decode("utf-8"))
             elif isinstance(string, str):
-                if compatability_mode:
+                if duplicate_keys:
                     json_str = json.loads(string, object_pairs_hook=_handle_duplicate_keys)
                 else:
                     json_str = json.loads(string)
             else:
                 raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
             
-            if compatability_mode:
+            if duplicate_keys:
                 for i, ssf_dict in enumerate(json_str['SUBJECT_SAMPLE_FACTORS']):
                     if not isinstance(ssf_dict['Factors'], DuplicatesDict):
                         json_str['SUBJECT_SAMPLE_FACTORS'][i]['Factors'] = DuplicatesDict(ssf_dict['Factors'])
@@ -1026,7 +1020,7 @@ class MWTabFile(dict):
                                     for unordered_key in element:
                                         if unordered_key not in temp_list[i]:
                                             temp_list[i][unordered_key] = element[unordered_key]
-                                    if self.compatability_mode:
+                                    if self.duplicate_keys:
                                         temp_list[i] = DuplicatesDict(temp_list[i])
                                 temp_dict[sub_key] = temp_list
                             else:
@@ -1051,16 +1045,20 @@ class MWTabFile(dict):
             self[key] = temp
     
     def __deepcopy__(self, memo):
-        new_tabfile = MWTabFile(self.source, self.compatability_mode)
+        new_tabfile = MWTabFile(self.source, self.duplicate_keys)
         memo[id(new_tabfile)] = new_tabfile
         for key, value in self.items():
             new_tabfile[key] = copy.deepcopy(value, memo)
+        for key, value in self.__dict__.items():
+            new_tabfile.__dict__[key] = copy.deepcopy(value, memo)
         return new_tabfile
     
     def __copy__(self):
-        new_tabfile = MWTabFile(self.source, self.compatability_mode)
+        new_tabfile = MWTabFile(self.source, self.duplicate_keys)
         for key, value in self.items():
             new_tabfile[key] = copy.copy(value)
+        for key, value in self.__dict__.items():
+            new_tabfile.__dict__[key] = copy.copy(value)
         return new_tabfile
     
     

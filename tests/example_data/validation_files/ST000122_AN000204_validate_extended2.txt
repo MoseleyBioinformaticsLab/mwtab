@@ -33,8 +33,8 @@ SU:SUBJECT_TYPE                  	Human
 SU:SUBJECT_SPECIES               	Homo sapiens
 SU:TAXONOMY_ID                   	9606
 #SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
-SUBJECT_SAMPLE_FACTORS           	CER030_294717_ML_1	CER030_294717_ML_1	Tissue/Fluid:Serum	key_1=value_1; key_1=value_3; key_2=value_2
-SUBJECT_SAMPLE_FACTORS           	CER040_242995_ML_2	CER040_242995_ML_2	Tissue/Fluid:Serum	key_1=value_4; key_2=value_5
+SUBJECT_SAMPLE_FACTORS           	CER030_294717_ML_1	CER030_294717_ML_1	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER040_242995_ML_2	CER040_242995_ML_2	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER055_249947_ML_3	CER055_249947_ML_3	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER062_246153_ML_4	CER062_246153_ML_4	Tissue/Fluid:Serum	
 SUBJECT_SAMPLE_FACTORS           	CER085_251176_ML_5	CER085_251176_ML_5	Tissue/Fluid:Serum	
@@ -157,6 +157,10 @@ Pregnenolone				8955			1Q5500	UCDavis_Gaikwad_Lab_ID
 Progesterone				5994			5Q2600	UCDavis_Gaikwad_Lab_ID
 Testosterone				6013			13A6950	UCDavis_Gaikwad_Lab_ID
 METABOLITES_END
+EXTENDED_MS_METABOLITE_DATA_START
+metabolite_name	assigned_mass	assigned_mass%type	assigned_mass%units	assignment%type	assignment_scores	expectation_values	raw_mz	raw_mz%units	raw_mz_sd	asdf
+IMF1	[518.13104102, 513.17564587]	adduct subtracted	daltons	['SMIRFE', 'voted']	[0.99991183, 'NA']	[8.817e-05, 'NA']	536.16541515	daltons/charge	2.412e-05	16_A0_Lung_naive_0days_170427_UKy_GCH_rep1-lipid
+EXTENDED_MS_METABOLITE_DATA_END
 #END
 
 

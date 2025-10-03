@@ -202,6 +202,8 @@ class Converter(object):
                 self._one_to_one()
         elif self.file_generator.from_path.isdigit():
             self._one_to_one()
+        elif not os.path.exists(self.file_generator.from_path):
+            raise FileNotFoundError('No such file or directory: "{self.file_generator.from_path}"')
         else:
             raise TypeError('Unknown input file format: "{}"'.format(self.file_generator.from_path))
 
