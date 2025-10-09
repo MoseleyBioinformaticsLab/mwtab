@@ -9,8 +9,8 @@ The mwtab command-line interface
 Usage:
     mwtab -h | --help
     mwtab --version
-    mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--validate] [--mw-rest=<url>] [--verbose]
-    mwtab validate <from-path> [--mw-rest=<url>] [--verbose]
+    mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--verbose]
+    mwtab validate <from-path> [--mw-rest=<url>]
     mwtab download url <url> [--to-path=<path>] [--verbose]
     mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
     mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
@@ -24,7 +24,6 @@ Options:
     -h, --help                           Show this screen.
     --version                            Show version.
     --verbose                            Print what files are processing.
-    --validate                           Validate the mwTab file.
     --from-format=<format>               Input file format, available formats: mwtab, json [default: mwtab].
     --to-format=<format>                 Output file format [default: json].
                                          Available formats for convert:
@@ -77,36 +76,14 @@ VERBOSE = False
 # Note that 'url' is not a context for the Metabolomics Workbench REST API, but the code works better to have it in this list.
 CONTEXTS = ['study', 'compound', 'refmet', 'gene', 'protein', 'moverz', 'exactmass', 'url']
 
-def build_file_path(to_path: str|None, filename: str|None, extension: str|None) -> str:
-    """Build path to save a file to.
-    
-    If to_path is given, check if the directory exists and create it if not. 
-    If to_path is a directory, then add filename and extension to the returned path. 
-    If to_path is not a directory, then return to_path.
-    
-    Args:
-        to_path: Path to a directory or file.
-        filename: The name of the file to create a path for.
-        extension: The extension of the file to create a path for.
-    
-    Returns:
-        A string representing the path to the file.
-    """
-    if to_path:
-        fileio._create_save_path(to_path)
-        if pathlib.Path(to_path).suffix:
-            return to_path
-    
-    full_path = join(getcwd(), quote_plus(filename).replace(".", "_") + "." + extension)
-    return full_path
 
 
 def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> mwrest.MWRESTFile:
     """Create Metabolomics Workbench REST URL and request file.
     
     Args:
-        res_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.
-                    For instance <context> would correspond to 'context' and <input item> would correspond to 'input_item'.
+        rets_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.
+                     For instance <context> would correspond to 'context' and <input item> would correspond to 'input_item'.
         mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.
         full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. 
                   If given, all other parameters are ignored and this URL is used to download.
@@ -123,6 +100,7 @@ def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url
     
     return mwrestfile
 
+
 def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt') -> bool:
     """Save the given MWRESTFile object to the given path if it has text.
     
@@ -135,14 +113,22 @@ def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, ou
         True if the mwrestfile had text and was therefore saved, False otherwise.
     """
     if mwrestfile.text:  # if the text file isn't blank
-        path_to_save = build_file_path(to_path,
-                                       mwrestfile.source,
-                                       OUTPUT_FORMATS[output_format])
-        fileio._create_save_path(path_to_save)
+        filename = quote_plus(mwrestfile.source).replace(".", "_")
+        extension = OUTPUT_FORMATS[output_format]
+        if to_path:
+            fileio._create_save_path(to_path)
+            if pathlib.Path(to_path).suffix:
+                path_to_save = to_path
+            else:
+                path_to_save = join(to_path, filename + "." + extension)
+        else:
+            path_to_save = join(getcwd(), filename + "." + extension)
+        
         with open(path_to_save, "w", encoding="utf-8") as fh:
             mwrestfile.write(fh)
         return True
     return False
+
 
 def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, 
                                   mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
@@ -154,9 +140,22 @@ def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None,
         print(f'When trying to download a file for the value, "{value}", '
               'a blank file or an error was returned, so no file was created for it.')
 
+
 def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]], verbose: bool,
                               to_path: str|None = None, 
-                              mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None):
+                              mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
+    """Download and save a list of study and/or analysis IDs.
+    
+    Args:
+        rest_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.
+                     For instance <context> would correspond to 'context' and <input item> would correspond to 'input_item'.
+        id_list: A list of tuples that are pairs of IDs and their classification.
+        verbose: If True, print more information about each ID being downloaded.
+        to_path: The directory path to save the files to. Defaults to the current working directory.
+        mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.
+        full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. 
+                  If given, all other parameters are ignored and this URL is used to download.
+    """
     for count, (input_id, input_item) in enumerate(id_list):
         rest_params['input_value'] = input_id
         rest_params['input_item'] = input_item
@@ -170,7 +169,20 @@ def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]],
             print()
         time.sleep(3)
 
-def classify_input_value(input_value):
+
+def classify_input_value(input_value: str) -> tuple[str, str]:
+    """Classify input_value as either 'analysis_id' or 'study_id'.
+    
+    If input_value is just a number, such as 000001, then 'AN' is added 
+    to the front in the return value. The default classification is 'analysis_id'.
+    
+    Args:
+        input_value: A string that should be a study ID or analysis ID.
+    
+    Returns:
+        A tuple where the first element is the input_value, possibly modified, 
+        and the second element is the classification, either 'study_id' or 'analysis_id'.
+    """
     if input_value.isdigit():
         input_value = "AN{}".format(input_value.zfill(6))
         input_item = "analysis_id"
@@ -210,8 +222,7 @@ def cli(cmdargs):
         converter = Converter(from_path=cmdargs["<from-path>"],
                               to_path=cmdargs["<to-path>"],
                               from_format=cmdargs["--from-format"],
-                              to_format=cmdargs["--to-format"],
-                              validate=cmdargs["--validate"])
+                              to_format=cmdargs["--to-format"])
         converter.convert()
 
     # mwtab validate ...
@@ -227,7 +238,7 @@ def cli(cmdargs):
                 mwtabfile = mwfile,
                 ms_schema = ms_required_schema, 
                 nmr_schema = nmr_required_schema,
-                verbose = cmdargs.get("--verbose")
+                verbose = True
             )
     
     # mwtab download ...
@@ -265,6 +276,12 @@ def cli(cmdargs):
                     with open(required_input_value, "r") as fh:
                         id_list = json.loads(fh.read())
                     
+                    if len(id_list) > 1 and optional_to_path and pathlib.Path(optional_to_path).suffix:
+                        print('Error: The given "--to-path" option is a path to a file, '
+                              'but the given list of IDs to download is greater '
+                              'than 1. Please specify a directory to save the files to.')
+                        sys.exit(0)
+                    
                     if optional_input_item:
                         if optional_input_item in ("analysis_id", "study_id"):
                             id_list = [(input_id, optional_input_item) for input_id in id_list]
@@ -273,7 +290,6 @@ def cli(cmdargs):
                     else:
                         id_list = [classify_input_value(_input_value) for _input_value in id_list]
                     
-                    # TODO check if giving a file path instead of a directory path to --to-path makes this save wrong.
                     if VERBOSE:
                         print("Found {} Files to be Downloaded".format(len(id_list)))
                     

@@ -120,7 +120,7 @@ def extract_metabolites(sources, matcher_generator):
             print()
             continue
         if all([matcher(mwtabfile) for matcher in matchers]):
-            data_section_key = list(set(mwtabfile.keys()) & {"MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", "NMR_BINNED_DATA"})[0]
+            data_section_key = mwtabfile.data_section_key
             for data_dict in mwtabfile[data_section_key]["Data"]:
                 for test_key in (key for key in data_dict.keys() if key != "Metabolite"):
                     try:
@@ -129,7 +129,7 @@ def extract_metabolites(sources, matcher_generator):
                                 .setdefault(mwtabfile.study_id, dict())\
                                 .setdefault(mwtabfile.analysis_id, set())\
                                 .add(test_key)
-                    except Exception as e:
+                    except Exception:
                         pass
     return metabolites
 

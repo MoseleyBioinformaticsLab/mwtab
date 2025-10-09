@@ -4,19 +4,21 @@ import json
 import mwtab
 import os
 import pytest
-import shutil
 import time
 import pathlib
 import subprocess
 import requests
 
+from fixtures import teardown_module
+
 from mwtab import cli
 
-@pytest.fixture()
-def teardown_module():
-    path = pathlib.Path("tests/example_data/tmp/")
-    if os.path.exists(path):
-        shutil.rmtree(path)
+teardown_module = teardown_module
+
+def delete_ST000001_cwd():
+    path = pathlib.Path(os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST000001%2Fsummary.txt'))
+    if path.exists():
+        os.remove(path)
         time_to_wait=10
         time_counter = 0
         while path.exists():
@@ -27,16 +29,10 @@ def teardown_module():
 
 @pytest.fixture()
 def teardown_module_cwd():
-    path = pathlib.Path(os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST000001%2Fsummary.txt'))
-    if os.path.exists(path):
-        os.remove(path)
-        time_to_wait=10
-        time_counter = 0
-        while path.exists():
-            time.sleep(1)
-            time_counter += 1
-            if time_counter > time_to_wait:
-                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+    delete_ST000001_cwd()
+    yield
+    delete_ST000001_cwd()
+    
 
 @pytest.fixture()
 def disable_network_calls(monkeypatch):
@@ -390,7 +386,6 @@ def test_download_study_file_list_mixed(teardown_module, disable_network_calls, 
 
 
 def test_download_study_file_list_bad_input_item(teardown_module, disable_network_calls, disable_sleep):
-    """Same as previous test, but the list values are mixed."""
     cmdargs = {
         '--verbose': True,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
@@ -409,6 +404,29 @@ def test_download_study_file_list_bad_input_item(teardown_module, disable_networ
         cli.cli(cmdargs)
 
 
+def test_download_study_file_list_bad_to_path(teardown_module, disable_network_calls, disable_sleep, capsys):
+    cmdargs = {
+        '--verbose': True,
+        '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
+        'convert': False,
+        'validate': False,
+        'download': True,
+        '<url>': None,
+        'study': True,
+        'all': None,
+        '--to-path': 'filename.txt',
+        '<input-item>': None,
+        '<input-value>': 'tests/example_data/other_test_data/download_studies_mixed_ids.json'
+        }
+    
+    with pytest.raises(SystemExit):
+        cli.cli(cmdargs)
+    captured = capsys.readouterr()
+    assert ('Error: The given "--to-path" option is a path to a file, '
+            'but the given list of IDs to download is greater '
+            'than 1. Please specify a directory to save the files to.') in captured.out
+
+
 def test_download_url_command_error(teardown_module):
     """Test that the download url command can have an error and print appropriately."""
     command = "python -m mwtab download url https://bad_url --to-path=tests/example_data/tmp/tmp.txt"
@@ -417,7 +435,7 @@ def test_download_url_command_error(teardown_module):
     assert subp.returncode == 1
 
 
-def test_download_study_error_recovery():
+def test_download_study_error_recovery(teardown_module):
     """Test that the download study command can recover from an error."""
     command = "python -m mwtab download study tests/example_data/other_test_data/download_studies_with_error.json --to-path=tests/example_data/tmp/"
     command = command.split(" ")

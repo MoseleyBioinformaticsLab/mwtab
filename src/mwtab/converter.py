@@ -117,7 +117,7 @@ from . import fileio
 class Translator(object):
     """Translator abstract class."""
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None, validate=False):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None):
         """Translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
@@ -130,7 +130,6 @@ class Translator(object):
         self.to_format = to_format
         self.from_path_compression = fileio.GenericFilePath.is_compressed(from_path)
         self.to_path_compression = fileio.GenericFilePath.is_compressed(to_path)
-        self.validate = validate
 
     def __iter__(self):
         """Abstract iterator must be implemented in a subclass."""
@@ -143,22 +142,21 @@ class MWTabFileToMWTabFile(Translator):
     file_extension = {"json": ".json",
                       "mwtab": ".txt"}
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None, validate=False):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None):
         """MWTabFileToMWTabFile translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
-        :param bool validate: whether to validate or not.
         """
-        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format, validate)
+        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format)
 
     def __iter__(self):
         """Iterator that yields instances of :class:`~mwtab.mwtab.MWTabFile` instances.
         :return: instance of :class:`~mwtab.mwtab.MWTabFile` object instance.
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
-        for mwtabfile, e in fileio.read_files(self.from_path, validate=self.validate, return_exceptions=True):
+        for mwtabfile, e in fileio.read_files(self.from_path, return_exceptions=True):
             if e is not None:
                 file_source = mwtabfile if isinstance(mwtabfile, str) else self.from_path
                 print("Something went wrong when trying to read " + file_source)
@@ -171,15 +169,14 @@ class MWTabFileToMWTabFile(Translator):
 class Converter(object):
     """Converter class to convert ``mwTab`` files from ``mwTab`` to ``JSON`` or from ``JSON`` to ``mwTab`` format."""
 
-    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json", validate=False):
+    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json"):
         """Converter initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
-        :param bool validate: whether to validate or not.
         """
-        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format, validate)
+        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format)
 
     def convert(self):
         """Convert file(s) from ``mwTab`` format to ``JSON`` format or from ``JSON`` format to ``mwTab`` format.
@@ -203,7 +200,7 @@ class Converter(object):
         elif self.file_generator.from_path.isdigit():
             self._one_to_one()
         elif not os.path.exists(self.file_generator.from_path):
-            raise FileNotFoundError('No such file or directory: "{self.file_generator.from_path}"')
+            raise FileNotFoundError(f'No such file or directory: "{self.file_generator.from_path}"')
         else:
             raise TypeError('Unknown input file format: "{}"'.format(self.file_generator.from_path))
 
@@ -239,7 +236,7 @@ class Converter(object):
             raise TypeError('One-to-many conversion, cannot convert "{}" into "{}"'.format(self.file_generator.from_path,
                                                                                            self.file_generator.to_path))
         else:
-            raise TypeError('Unknown format: "{}"'.format(self.file_generator.to_path))
+            raise TypeError('Unknown output file format: "{}"'.format(self.file_generator.to_path))
 
     def _to_dir(self, file_generator):
         """Convert files to directory.

@@ -1,13 +1,14 @@
 import os
-import shutil
 import pytest
 import mwtab
 from json import loads
-import time
-import pathlib
+
+from fixtures import teardown_module
 
 from mwtab.converter import Converter
 
+
+teardown_module = teardown_module
 
 ITEM_SECTIONS = {
     # "METABOLOMICS WORKBENCH",
@@ -22,19 +23,6 @@ ITEM_SECTIONS = {
     "MS",
     "NMR",
 }
-
-
-def teardown_module(module):
-    path = pathlib.Path("tests/example_data/tmp/")
-    if os.path.exists(path):
-        shutil.rmtree(path)
-        time_to_wait=10
-        time_counter = 0
-        while path.exists():
-            time.sleep(1)
-            time_counter += 1
-            if time_counter > time_to_wait:
-                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
 
 
 
@@ -63,7 +51,7 @@ def compare_item_sections(dict1, dict2):
 @pytest.mark.parametrize("mwtab_file_path, json_file_path", [
     ("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/mwtab_files/ST000122_AN000204.json")
 ])
-def test_convert_mwtab_to_json(mwtab_file_path, json_file_path):
+def test_convert_mwtab_to_json(mwtab_file_path, json_file_path, teardown_module):
     """
 
     """
@@ -159,3 +147,146 @@ def test_converter_module(from_path, to_path, from_format, to_format):
     mwtabfiles_analysis_ids_set = set(mwf.analysis_id for mwf in mwtabfiles_list)
     assert mwtabfiles_study_ids_set.issubset({"ST000122"})
     assert mwtabfiles_analysis_ids_set.issubset({"AN000204"})
+
+
+@pytest.mark.parametrize("from_path, to_path, from_format, to_format, error, message", [
+    ("nonexistent_file.txt", "tests/example_data/tmp/json/ST000122_AN000204.json", "mwtab", "json", FileNotFoundError, r'No such file or directory: "nonexistent_file.txt"'),
+    ("tests/example_data/other_test_data/unknown_file_format.asdf", "tests/example_data/tmp/json/ST000122_AN000204.json", "mwtab", "json", TypeError, r'Unknown input file format: "tests/example_data/other_test_data/unknown_file_format.asdf"'),
+])
+def test_convert_exceptions(teardown_module, from_path, to_path, from_format, to_format, error, message, mocker):
+    converter = Converter(from_path=from_path,
+                          to_path=to_path,
+                          from_format=from_format,
+                          to_format=to_format)
+    
+    # I can't find a way to trigger the last else without mocking, but I don't want to remove the line either.
+    if error is TypeError:
+        mocker.patch('mwtab.converter.os.path.isfile', side_effect = [False])
+    
+    with pytest.raises(error, match = message):
+        converter.convert()
+
+
+@pytest.mark.parametrize("from_path, to_path, from_format, to_format, error, message", [
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", "bad_path.gz", "mwtab", "json", TypeError, r'Many-to-one conversion, cannot convert "tests/example_data/mwtab_files/ST000122_AN000204.txt" into "bad_path.gz"'),
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/other_test_data/unknown_file_format.asdf", "mwtab", "json", TypeError, r'Unknown output file format: "tests/example_data/other_test_data/unknown_file_format.asdf"'),
+])
+def test_many_to_many_exceptions(teardown_module, from_path, to_path, from_format, to_format, error, message):
+    converter = Converter(from_path=from_path,
+                          to_path=to_path,
+                          from_format=from_format,
+                          to_format=to_format)
+    
+    # Can't get the last else line to trigger any other way than to do something like this.
+    if 'unknown_file_format' in to_path:
+        converter.file_generator.to_path_compression = '.asdf'
+    
+    with pytest.raises(error, match = message):
+        converter._many_to_many()
+
+
+@pytest.mark.parametrize("from_path, to_path, from_format, to_format, error, message", [
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", "bad_path.tar", "mwtab", "json", TypeError, r'One-to-many conversion, cannot convert "tests/example_data/mwtab_files/ST000122_AN000204.txt" into "bad_path.tar"'),
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/other_test_data/unknown_file_format.asdf", "mwtab", "json", TypeError, r'Unknown output file format: "tests/example_data/other_test_data/unknown_file_format.asdf"'),
+])
+def test_one_to_one_exceptions(teardown_module, from_path, to_path, from_format, to_format, error, message):
+    converter = Converter(from_path=from_path,
+                          to_path=to_path,
+                          from_format=from_format,
+                          to_format=to_format)
+    
+    # Can't get the last else line to trigger any other way than to do something like this.
+    if 'unknown_file_format' in to_path:
+        converter.file_generator.to_path_compression = '.asdf'
+    
+    with pytest.raises(error, match = message):
+        converter._one_to_one()
+
+
+def test_to_dir_exceptions(teardown_module, capsys, mocker):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json/ST000122_AN000204.json", "mwtab", "json")
+    
+    # Simulate an exception with this mock.
+    mocker.patch('mwtab.converter.os.path.exists', side_effect = [True])
+    converter._to_dir(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+def test_to_zipfile_exceptions(teardown_module, capsys, mocker):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json.zip", "mwtab", "json")
+    
+    # Simulate an exception with this mock.
+    mocker.patch('mwtab.converter.Converter._output_path', side_effect = [TypeError])
+    
+    # None of the private methods check for this, since convert() does it, so it must be created here.
+    if not os.path.exists('tests/example_data/tmp'):
+        os.makedirs('tests/example_data/tmp')
+    
+    converter._to_zipfile(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+def test_to_tarfile_exceptions(teardown_module, capsys, mocker):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json.tar", "mwtab", "json")
+    
+    # This is not necessary for the exception, but tests the last else line.
+    converter.file_generator.to_path_compression = 'asdf'
+    
+    # Simulate an exception with this mock.
+    mocker.patch('mwtab.converter.Converter._output_path', side_effect = [TypeError])
+    
+    # None of the private methods check for this, since convert() does it, so it must be created here.
+    if not os.path.exists('tests/example_data/tmp'):
+        os.makedirs('tests/example_data/tmp')
+    
+    converter._to_tarfile(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+def test_to_bz2file_exceptions(teardown_module, capsys):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json.bz2", "mwtab", "json")
+    
+    converter.file_generator.to_format = 0
+    
+    # None of the private methods check for this, since convert() does it, so it must be created here.
+    if not os.path.exists('tests/example_data/tmp'):
+        os.makedirs('tests/example_data/tmp')
+    
+    converter._to_bz2file(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+def test_to_gzipfile_exceptions(teardown_module, capsys):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json.gz", "mwtab", "json")
+    
+    converter.file_generator.to_format = 0
+    
+    # None of the private methods check for this, since convert() does it, so it must be created here.
+    if not os.path.exists('tests/example_data/tmp'):
+        os.makedirs('tests/example_data/tmp')
+    
+    converter._to_gzipfile(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+def test_to_textfile_exceptions(teardown_module, capsys, mocker):
+    converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/txt.txt", "mwtab", "mwtab")
+    
+    mocker.patch('mwtab.fileio.mwtab.MWTabFile.writestr', side_effect = [TypeError])
+    
+    # None of the private methods check for this, since convert() does it, so it must be created here.
+    if not os.path.exists('tests/example_data/tmp'):
+        os.makedirs('tests/example_data/tmp')
+    
+    converter._to_textfile(converter.file_generator)
+    captured = capsys.readouterr()
+    assert 'Something went wrong when trying to convert' in captured.out
+
+
+
+

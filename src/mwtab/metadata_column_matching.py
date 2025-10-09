@@ -327,8 +327,8 @@ class ValueMatcher():
         
         if self.values_type == "integer":
             # The top line will return True for values like '1.0', but the bottom line won't.
-            # type_match = (column_to_numeric % 1 == 0) | ~new_NAs
-            type_match = ~stripped_series.str.contains('.', regex=False, na=False) | old_NAs
+            # type_match = (column_to_numeric % 1 == 0) & ~new_NAs
+            type_match = ~stripped_series.str.contains('.', regex=False, na=False) & ~new_NAs
         elif self.values_type == "numeric":
             type_match = ~new_NAs
         elif self.values_type == "non-numeric":

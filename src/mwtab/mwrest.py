@@ -70,7 +70,7 @@ def _pull_study_analysis(base_url=BASE_URL):
         {"context": "study", "input_item": "study_id", "input_value": "ST", "output_item": "analysis"},
         base_url
     ).url
-    mwrestfile = next(fileio.read_mwrest(url, **{"convertJSON": True}))
+    mwrestfile = next(fileio.read_mwrest(url))
     json_object = mwrestfile._is_json(mwrestfile.text)
 
     study_analysis_dict = dict()
@@ -137,28 +137,29 @@ def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt', ret
                                                return_exceptions=return_exceptions)
 
 
-def generate_urls(input_items, base_url=BASE_URL, return_exceptions=False, **kwds):
-    """
-    Method for creating a generator which yields validated Metabolomics Workbench REST urls.
+# Unused funciton. Leaving here for now.
+# def generate_urls(input_items, base_url=BASE_URL, return_exceptions=False, **kwds):
+#     """
+#     Method for creating a generator which yields validated Metabolomics Workbench REST urls.
 
-    :param list input_items: List of Metabolomics Workbench input values for mwTab files.
-    :param str base_url: Base url to Metabolomics Workbench REST API.
-    :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.
-    :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.
-    :return: Metabolomics Workbench REST URL string(s).
-    :rtype: :py:class:`str`
-    """
-    for input_item in input_items:
-        try:
-            params = dict(kwds)
-            params["input_item"] = input_item
-            yield fileio._return_correct_yield(GenericMWURL(params, base_url).url, 
-                                               exception=None, 
-                                               return_exceptions=return_exceptions)
-        except Exception as e:
-            yield fileio._return_correct_yield(None, 
-                                               exception=e, 
-                                               return_exceptions=return_exceptions)
+#     :param list input_items: List of Metabolomics Workbench input values for mwTab files.
+#     :param str base_url: Base url to Metabolomics Workbench REST API.
+#     :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.
+#     :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.
+#     :return: Metabolomics Workbench REST URL string(s).
+#     :rtype: :py:class:`str`
+#     """
+#     for input_item in input_items:
+#         try:
+#             params = dict(kwds)
+#             params["input_item"] = input_item
+#             yield fileio._return_correct_yield(GenericMWURL(params, base_url).url, 
+#                                                exception=None, 
+#                                                return_exceptions=return_exceptions)
+#         except Exception as e:
+#             yield fileio._return_correct_yield(None, 
+#                                                exception=e, 
+#                                                return_exceptions=return_exceptions)
 
 
 class GenericMWURL(object):
@@ -286,7 +287,7 @@ class GenericMWURL(object):
         :rtype: :py:obj:`None`
         """
         if not self.rest_params["context"] in self.context.keys():
-            raise KeyError("Error: Invalid/missing context")
+            raise ValueError("Error: Invalid/missing context")
         elif self.rest_params["context"] in {"study", "compound", "refmet", "gene", "protein"}:
             self._validate_generic()
         elif self.rest_params["context"] == "moverz":
@@ -575,8 +576,8 @@ class MWRESTFile(object):
 
         :param string: Input string.
         :type string: :py:class:`str` or :py:class:`bytes`
-        :return: Input string if in JSON format or False otherwise.
-        :rtype: :py:class:`str` or :py:obj:`False`
+        :return: string parsed into a JSON object or False if there was an error.
+        :rtype: :py:class:`str` or :py:class:`dict` or :py:class:`list` or :py:class:`None` or :py:obj:`False`
         """
         try:
             if isinstance(string, bytes):
