@@ -64,10 +64,10 @@ def tokenizer(text, dict_type = None):
     """A lexical analyzer for the `mwtab` formatted files.
 
     :param text: `mwTab` formatted text.
-    :type text: py:class:`str`
+    :type text: :py:class:`str`
     :param dict_type: the type of dictionary to use, default is dict.
     :return: Tuples of data.
-    :rtype: py:class:`~collections.namedtuple`
+    :rtype: :py:class:`~collections.namedtuple`
     """
     if dict_type is None:
         dict_type = dict

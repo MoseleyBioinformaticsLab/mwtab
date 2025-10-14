@@ -3,7 +3,7 @@
 
 """
 mwtab.mwextract
-~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 This module provides a number of functions and classes for extracting and saving data and metadata
 stored in ``mwTab`` formatted files in the form of :class:`~mwtab.mwtab.MWTabFile`.
@@ -106,7 +106,7 @@ def extract_metabolites(sources, matcher_generator):
 
     :param generator sources: Generator of mwtab file objects (:class:`~mwtab.mwtab.MWTabFile`).
     :param generator matcher_generator: Generator of matcher objects (:class:`~mwtab.mwextract.ItemMatcher` or
-    :class:`~mwtab.mwextract.ReGeXMatcher`).
+                                                                      :class:`~mwtab.mwextract.ReGeXMatcher`).
     :return: Extracted metabolites dictionary.
     :rtype: :py:class:`dict`
     """
@@ -259,25 +259,27 @@ class SetEncoder(json.JSONEncoder):
 def write_json(to_path, extracted_dict):
     """Write extracted data or metadata :py:class:`dict` into json file.
 
-    Metabolites example:
-    {
-        "1,2,4-benzenetriol": {
-            "ST000001": {
-                "AN000001": [
-                    "LabF_115816",
-                    ...
-                ]
+    .. code-block:: text
+    
+        Metabolites example:
+        {
+            "1,2,4-benzenetriol": {
+                "ST000001": {
+                    "AN000001": [
+                        "LabF_115816",
+                        ...
+                    ]
+                }
             }
         }
-    }
-
-    Metadata example:
-    {
-        "SUBJECT_TYPE": [
-            "Plant",
-            "Human"
-        ]
-    }
+    
+        Metadata example:
+        {
+            "SUBJECT_TYPE": [
+                "Plant",
+                "Human"
+            ]
+        }
 
     :param str to_path: Path to output file.
     :param dict extracted_dict: Metabolites data or metadata dictionary to be saved.

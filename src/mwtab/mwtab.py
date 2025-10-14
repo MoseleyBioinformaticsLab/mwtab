@@ -117,6 +117,46 @@ class MWTabProperty:
 class MWTabFile(dict):
     """MWTabFile class that stores data from a single ``mwTab`` formatted file in
     the form of a dictionary.
+    
+    Parameters:
+        source: A string that should be the file path to the mwtab file that will be read in.
+        duplicate_keys: If True, use a special dictionary type that can handle duplicate keys. 
+                        If you are uisng this class to build an mwtab file by hand, don't set 
+                        this to True. This was added because some files already upload to the 
+                        Metabolomics Workbench erroneously have duplicate keys and the class 
+                        needed to be able to read write them back out correctly.
+    Attributes:
+        source: A string that should be the file path to the mwtab file that was read in.
+        study_id: A managed property. The study ID is stored in the METABOLOMICS WORKBENCH 
+                  key of this class and the JSON version of an mwTab file. This property 
+                  is provided as a convenience to access the study ID.
+        analysis_id: A managed property. The analysis ID is stored in the METABOLOMICS WORKBENCH 
+                     key of this class and the JSON version of an mwTab file. This property 
+                     is provided as a convenience to access the analysis ID.
+        header: A managed property. It is provided as a convenience to be able to view the 
+                header line of the file. You can also set the METABOLOMICS WORKBENCH key by 
+                setting this property. It will parse the string you assign into the dictionary 
+                that belongs in the METABOLOMICS WORKBENCH key. Assuming the provided string is 
+                a correctly generated header line.
+        data_section_key: A simple property that will give you the key to the data section. 
+                          Either one of "MS_METABOLITE_DATA", "NMR_METABOLITE_DATA", or "NMR_BINNED_DATA", 
+                          or None if none of those were found.
+    
+    Special Notes:
+        In general this class has the same structure as mwTab JSON, but there are a few exceptions to that.
+        One is that the _RESULTS_FILE subsection, whether in the MS or NM section, is a dictionary in this 
+        class with keys for the elements found. In the mwTab JSON this is just a string. The possible 
+        keys the dictionary could have are: "filename", "UNITS", "Has m/z", "Has RT", and "RT units". 
+        If the _RESULTS_FILE line did not have these keys, then they won't be in the dictionary.
+        
+        The Metabolomics Workbench has deprecated mwTab files with NMR_BINNED_DATA sections, but for 
+        the few that do exist if you read them in using this class, the dictionaries in the ['NMR_BINNED_DATA']['Data'] 
+        list of dicts will have keys for both "Metabolite" and "Bin range(ppm)". This is because the 
+        JSON version from the Metabolomics Workbench uses "Bin range(ppm)" and not "Metabolite", but 
+        we wanted to present a seemless unified interface for this class regardless of the analysis type. 
+        They print out with only the "Bin range(ppm)" keys to match what the Metabolomics Workbench provides, 
+        but internally both keys will be there. If they somehow become different, you will see a message 
+        about it when you try to write the file out.
     """
 
     prefixes = {
@@ -162,7 +202,7 @@ class MWTabFile(dict):
         self._short_headers = set()
         self._duplicate_sub_sections = {}
         self._input_format = 'json'
-        self.duplicate_keys = duplicate_keys
+        self._duplicate_keys = duplicate_keys
         if duplicate_keys:
             self._default_dict_type = DuplicatesDict
         else:
@@ -267,7 +307,7 @@ class MWTabFile(dict):
         """
         data_section_key = self.data_section_key
         if data_section_key and table_name in self[data_section_key]:
-            if self.duplicate_keys:
+            if self._duplicate_keys:
                 temp_list = [duplicates_dict.data for duplicates_dict in self[data_section_key][table_name]]
             else:
                 temp_list = self[data_section_key][table_name]
@@ -347,7 +387,7 @@ class MWTabFile(dict):
 
         mwtab_str = self._is_mwtab(input_str)
         self._input_format = 'mwtab' if mwtab_str else 'json'
-        json_str = self._is_json(input_str, self.duplicate_keys)
+        json_str = self._is_json(input_str, self._duplicate_keys)
 
         if json_str:
             self.update(json_str)
@@ -1020,7 +1060,7 @@ class MWTabFile(dict):
                                     for unordered_key in element:
                                         if unordered_key not in temp_list[i]:
                                             temp_list[i][unordered_key] = element[unordered_key]
-                                    if self.duplicate_keys:
+                                    if self._duplicate_keys:
                                         temp_list[i] = DuplicatesDict(temp_list[i])
                                 temp_dict[sub_key] = temp_list
                             else:
@@ -1045,7 +1085,7 @@ class MWTabFile(dict):
             self[key] = temp
     
     def __deepcopy__(self, memo):
-        new_tabfile = MWTabFile(self.source, self.duplicate_keys)
+        new_tabfile = MWTabFile(self.source, self._duplicate_keys)
         memo[id(new_tabfile)] = new_tabfile
         for key, value in self.items():
             new_tabfile[key] = copy.deepcopy(value, memo)
@@ -1054,7 +1094,7 @@ class MWTabFile(dict):
         return new_tabfile
     
     def __copy__(self):
-        new_tabfile = MWTabFile(self.source, self.duplicate_keys)
+        new_tabfile = MWTabFile(self.source, self._duplicate_keys)
         for key, value in self.items():
             new_tabfile[key] = copy.copy(value)
         for key, value in self.__dict__.items():

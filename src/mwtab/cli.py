@@ -1,52 +1,53 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
+# Note that this docstring has Sphinx directives in it. Those are removed in __main__ before passing to docopt.
 """
-The mwtab command-line interface
+The mwtab Command Line Interface
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: text
 
-Usage:
-    mwtab -h | --help
-    mwtab --version
-    mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--verbose]
-    mwtab validate <from-path> [--mw-rest=<url>]
-    mwtab download url <url> [--to-path=<path>] [--verbose]
-    mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
-    mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
-    mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
-    mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
-    mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
-    mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
-    mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
-
-Options:
-    -h, --help                           Show this screen.
-    --version                            Show version.
-    --verbose                            Print what files are processing.
-    --from-format=<format>               Input file format, available formats: mwtab, json [default: mwtab].
-    --to-format=<format>                 Output file format [default: json].
-                                         Available formats for convert:
-                                             mwtab, json.
-                                         Available formats for extract:
-                                             json, csv.
-    --mw-rest=<url>                      URL to MW REST interface
-                                            [default: https://www.metabolomicsworkbench.org/rest/].
-    --to-path=<path>                     Directory to save outputs into. Defaults to the current working directory.
-    --prefix=<prefix>                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
-    --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
-    --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
-                                         compound, refmet, gene, protein, moverz, exactmass [default: study].
-    --input-item=<item>                  Item to search Metabolomics Workbench with.
-    --output-item=<item>                 Item to be retrieved from Metabolomics Workbench.
-    --output-format=<format>             Format for item to be retrieved in, available formats: mwtab, json.
-    --no-header                          Include header at the top of csv formatted files.
-
-    For extraction <to-path> can take a "-" which will use stdout.
-    All <from-path>'s can be single files, directories, or URLs.
-
-Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
-GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
+    Usage:
+        mwtab -h | --help
+        mwtab --version
+        mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--verbose]
+        mwtab validate <from-path> [--mw-rest=<url>]
+        mwtab download url <url> [--to-path=<path>] [--verbose]
+        mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+        mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+        mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+        mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+        mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+        mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
+        mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
+    
+    Options:
+        -h, --help                           Show this screen.
+        --version                            Show version.
+        --verbose                            Print what files are processing.
+        --from-format=<format>               Input file format, available formats: mwtab, json [default: mwtab].
+        --to-format=<format>                 Output file format [default: json].
+                                             Available formats for convert:
+                                                 mwtab, json.
+                                             Available formats for extract:
+                                                 json, csv.
+        --mw-rest=<url>                      URL to MW REST interface
+                                                [default: https://www.metabolomicsworkbench.org/rest/].
+        --to-path=<path>                     Directory to save outputs into. Defaults to the current working directory.
+        --prefix=<prefix>                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
+        --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
+        --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
+                                             compound, refmet, gene, protein, moverz, exactmass [default: study].
+        --input-item=<item>                  Item to search Metabolomics Workbench with.
+        --output-item=<item>                 Item to be retrieved from Metabolomics Workbench.
+        --output-format=<format>             Format for item to be retrieved in, available formats: mwtab, json.
+        --no-header                          Include header at the top of csv formatted files.
+    
+        For extraction <to-path> can take a "-" which will use stdout.
+        All <from-path>'s can be single files, directories, or URLs.
+    
+    Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
+    GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
 
 from os import getcwd

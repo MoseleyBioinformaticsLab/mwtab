@@ -41,6 +41,16 @@ This package includes the following modules:
     python dictionary representation of a Metabolomics Workbench REST URL. The class
     is used to validate query parameters and to generate a URL path which can be
     used to request data from Metabolomics Workbench through their REST API.
+    
+``metadata_column_matching``
+    This module provides the :class:`~mwtab.metadata_column_matching.ColumnFinder` class 
+    which is composed of a :class:`~mwtab.metadata_column_matching.NameMatcher` and 
+    :class:`~mwtab.metadata_column_matching.ValueMatcher`. They are used to match 
+    column names and values, respecitively. Matching is done using regular expressions 
+    the "in" operator, equality operator, and type matching for values. This module 
+    also includes the "column_finders" dicitonary which is a dictionary of ColumnFinders 
+    created to match the most common columns found in the Metabolomics Workbench datasets. 
+    More information about this module can be found on the :doc:`metadata_column_matching` page.
 """
 from logging import getLogger, NullHandler
 from .fileio import read_files, read_mwrest

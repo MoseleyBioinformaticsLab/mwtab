@@ -167,7 +167,9 @@ class GenericMWURL(object):
 
     Metabolomics REST API requests are performed using URL requests in the form of
         https://www.metabolomicsworkbench.org/rest/context/input_specification/output_specification
-
+    
+    .. code-block:: text
+    
         where:
             if context = "study" | "compound" | "refmet" | "gene" | "protein"
                 input_specification = input_item/input_value
@@ -186,7 +188,6 @@ class GenericMWURL(object):
                     input_value1 = LIPID_abbreviation
                     input_value2 = ion_type_value
                 output_specification = None
-
     """
     context = {
         "study": {

@@ -22,7 +22,7 @@ The ``mwtab`` package can be used in several ways:
 Installation
 ~~~~~~~~~~~~
 
-The :mod:`mwtab` package runs under Python 2.7 and Python 3.4+.
+The :mod:`mwtab` package runs under Python 3.6+.
 Starting with Python 3.4, pip_ is included by default. To install
 system-wide with pip_ run the following:
 
@@ -96,21 +96,29 @@ run the following commands:
            python3 -m pip install docopt  # On Linux, Mac OS X
            py -3 -m pip install docopt    # On Windows
 
-   * schema_ for validating functionality of ``mwTab`` files based on ``JSON`` schema.
-      * To install the schema_ Python library run the following:
+   * jsonschema_ for validating functionality of ``mwTab`` files based on ``JSON`` schema.
+      * To install the jsonschema_ Python library run the following:
 
         .. code:: bash
 
-           python3 -m pip install schema  # On Linux, Mac OS X
-           py -3 -m pip install schema    # On Windows
-           
-   * json_duplicate_keys_ for being able to handle JSON files with duplicate keys.
-      * To install the json_duplicate_keys_ Python library run the following:
+           python3 -m pip install jsonschema  # On Linux, Mac OS X
+           py -3 -m pip install jsonschema    # On Windows
 
-        .. code:: bash
+    * pandas_ for working with tabular data sections within the mwTab format.
+       * To install the pandas_ Python library run the following:
 
-           python3 -m pip install json_duplicate_keys  # On Linux, Mac OS X
-           py -3 -m pip install json_duplicate_keys    # On Windows
+         .. code:: bash
+
+            python3 -m pip install pandas  # On Linux, Mac OS X
+            py -3 -m pip install pandas    # On Windows
+
+    * setuptools-scm_ for handling versioning.
+       * To install the setuptools-scm_ Python library run the following:
+
+         .. code:: bash
+
+            python3 -m pip install setuptools-scm  # On Linux, Mac OS X
+            py -3 -m pip install setuptools-scm    # On Windows
 
 
 Basic usage
@@ -141,6 +149,7 @@ The :mod:`mwtab` package can be used in several ways:
 .. _pip: https://pip.pypa.io/
 .. _virtualenv: https://virtualenv.pypa.io/
 .. _docopt: https://pypi.org/project/docopt/
-.. _schema: https://pypi.org/project/schema/
+.. _jsonschema: https://pypi.org/project/jsonschema/
+.. _pandas: https://pypi.org/project/pandas/
+.. _setuptools-scm: https://pypi.org/project/setuptools-scm/
 .. _Metabolomics Workbench: http://www.metabolomicsworkbench.org/
-.. _json_duplicate_keys: https://pypi.org/project/json-duplicate-keys/

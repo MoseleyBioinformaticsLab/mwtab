@@ -15,6 +15,7 @@ Documentation index:
    metadata_column_matching
    api
    license
+   todo
 
 
 Indices and tables

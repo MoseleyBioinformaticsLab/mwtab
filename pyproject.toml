@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "mwtab"
 description = "Parser for mwtab files from the Metabolomics Workbench"
 readme = "README.rst"
-requires-python = ">=3.5"
+requires-python = ">=3.6"
 keywords = ["mwtab", "metabolomics workbench"]
 license = {file = "LICENSE"}
 classifiers = [

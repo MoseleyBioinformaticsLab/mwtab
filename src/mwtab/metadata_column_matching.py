@@ -22,12 +22,12 @@ NA_VALUES = ['', '-', '−', '--', '---', '.', ',',
              'Not available', 'TBC', 'Internal Standard', 'Intstd', 'internal standard', 'Internal standard',
              'Spiked Stable Isotope Labeled Internal Standards', 'Int Std']
 
-
+#: Used for wrapping regexes in certain functions.
 WRAP_STRING = r'[^a-zA-Z0-9]'
 def _create_column_regex_any(match_strings: list[str]) -> str:
-    f"""Return a regular expression string that will match any of the strings in match_strings.
+    """Return a regular expression string that will match any of the strings in match_strings.
     
-    Automatically adds '{WRAP_STRING}' to either side of each string to help with some fuzzy matching. 
+    Automatically adds ``WRAP_STRING`` to either side of each string to help with some fuzzy matching. 
     Intended to be used to match column names in METABOLITES data.
     
     Args:
@@ -40,9 +40,9 @@ def _create_column_regex_any(match_strings: list[str]) -> str:
     return regex
 
 def _create_column_regex_all(match_strings_sets: list[list[str]]) -> str:
-    f"""Return a regular expression string that will match any of the string sets in match_strings_sets.
+    """Return a regular expression string that will match any of the string sets in match_strings_sets.
     
-    Automatically adds '{WRAP_STRING}' to either side of each string to help with some fuzzy matching. 
+    Automatically adds ``WRAP_STRING`` to either side of each string to help with some fuzzy matching. 
     Intended to be used to match column names in METABOLITES data. The "all" refers to requiring each 
     string within a set to be present to match, but if multiple sets are given, then any set will match. 
     "set" does not mean the actual "set" data type, any iterable collection is fine.
@@ -56,8 +56,9 @@ def _create_column_regex_all(match_strings_sets: list[list[str]]) -> str:
     regex = '|'.join([''.join(['(?=.*(' + WRAP_STRING + '|^)' + match_string + '(' + WRAP_STRING + '|$))' for match_string in match_strings]) for match_strings in match_strings_sets])
     return regex
 
+
 class NameMatcher():
-    f"""Used to filter names that match certain criteria.
+    """Used to filter names that match certain criteria.
 
     Mostly intended to be used through the ColumnFinder class. Created for the purpose 
     of matching tabular column names based on regular expressions and "in" criteria.
@@ -66,7 +67,7 @@ class NameMatcher():
         regex_search_strings: A collection of strings to deliver to re.search() to match a column name. 
           If any string in the collection matches, then the name is matched. This does not simply 
           look for any of the strings within a column name to match. Each string is wrapped with 
-          '{WRAP_STRING}' before searching, so the string 'bar' would not be found in 
+          ``WRAP_STRING`` before searching, so the string 'bar' would not be found in 
           the column name "foobarbaz", but would be found in the name "foo bar baz".
         not_regex_search_strings: The same as regex_search_strings, except a match to a column name 
           eliminates that name. Attributes that begin with "not" take precedence over the others. 
@@ -75,7 +76,7 @@ class NameMatcher():
         regex_search_sets: A collection of sets of strings. Each string in the set of strings must 
           be found in the column name to match, but any set could be found. For example, [('foo', 'bar'), ('baz', 'asd')] 
           will match the name "foo bar" or "bar foo", but not "foobar", due to the aforementioned 
-          wrapping with '{WRAP_STRING}'. The names "foo", "baz", or "asd" would not match either, but "var asd baz" would.
+          wrapping with ``WRAP_STRING``. The names "foo", "baz", or "asd" would not match either, but "var asd baz" would.
         in_strings: Similar to regex_search_strings except instead of using re.search() the "in" operator 
           is used. For example, ['foo'] would match the column name "a fool", since 'foo' is in "a fool".
         not_in_strings: The same as in_strings, but matches to a column name eliminate or filter OUT that name.

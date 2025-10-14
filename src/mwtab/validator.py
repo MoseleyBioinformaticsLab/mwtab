@@ -7,7 +7,7 @@ mwtab.validator
 
 This module contains routines to validate consistency of the ``mwTab``
 formatted files, e.g. make sure that ``Samples`` and ``Factors``
-identifiers are consistent across the file, make sure that all
+identifiers are consistent across the file, and make sure that all
 required key-value pairs are present.
 """
 
@@ -851,6 +851,15 @@ def validate_file(mwtabfile,
                   nmr_schema = nmr_required_schema,
                   verbose = False):
     """Validate ``mwTab`` formatted file.
+    
+    Note that some of the validations are pretty strict to account for the majority of cases, 
+    but if warranted could be ignored. For example, COLUMN_PRESSURE in the CHROMATOGRAPHY 
+    section will print a warning if the value is not a single number or range of numbers 
+    followed by a unit, but there might be some situations where the method is complex 
+    and thus the column pressure is not static. So something like 
+    "60 bar at starting conditions. 180 bar at %A" would be required to accurately 
+    describe the COLUMN_PRESSURE, and would be valid. So in these kinds of situations 
+    the warning printed can safely be ignored.
 
     :param mwtabfile: Instance of :class:`~mwtab.mwtab.MWTabFile`.
     :type mwtabfile: :class:`~mwtab.mwtab.MWTabFile`
