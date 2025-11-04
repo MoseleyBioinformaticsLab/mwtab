@@ -68,3 +68,31 @@ def test_GenericFilePath_is_url(mocker):
     assert fileio.GenericFilePath.is_url('asdf') == False
 
 
+def test_read_lines(mocker, capsys):
+    """We are really testing the ReadLines class, but doing it through the read_lines function."""
+    fileio.VERBOSE = True
+    lines = next(fileio.read_lines('tests/example_data/mwtab_files/ST000122_AN000204.txt')).lines
+    captured = capsys.readouterr()
+    assert 'Processed file: ' in captured.out
+    assert lines[0].startswith('#METABOLOMICS WORKBENCH')
+        
+    mocker.patch('mwtab.fileio._generate_handles', side_effect = [((open('tests/example_data/mwtab_files/ST000122_AN000204.txt', 'rb'), 'asdf', None) for a in [1])])
+    lines = next(fileio.read_lines('tests/example_data/mwtab_files/ST000122_AN000204.txt')).lines
+    assert lines[0].startswith('#METABOLOMICS WORKBENCH')
+
+def test_read_lines_exceptions(mocker, capsys):
+    """We are really testing the ReadLines class, but doing it through the read_lines function."""
+    fileio.VERBOSE = True
+    class mock_class:
+        def __init__(self, *args, **kwargs):
+            pass
+        def read(self):
+            return 1
+        def close(self):
+            pass
+    mocker.patch('mwtab.fileio._generate_handles', side_effect = [((mock_class(), 'asdf', None) for a in [1])])
+    with pytest.raises(TypeError, match = r"Expecting <class 'str'> or <class 'bytes'>,"):
+        next(fileio.read_lines(['tests/example_data/mwtab_files/ST000122_AN000204.txt']))
+    captured = capsys.readouterr()
+    assert 'Error processing file:' in captured.out
+

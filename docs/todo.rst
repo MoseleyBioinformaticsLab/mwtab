@@ -1,6 +1,8 @@
 TODO
 ====
 
+Add options to validate CLI and validate method in mwtab to save out the new JSON file.
+
 Add --limit or --ignore option to validate to filter out certain types of errors/warnings. Need to first create some classifications to tag them with.
 
 Think about extending METABOLITES and EXTENDED blocks with an "Attributes" line like "Factors" in DATA block as a way to add more information about the columns themselves.

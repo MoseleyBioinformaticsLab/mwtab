@@ -348,14 +348,16 @@ class MWTabFile(dict):
         """
         return self.get_table_as_pandas('Data')
     
-    def validate(self, ms_schema = ms_required_schema, nmr_schema = nmr_required_schema, verbose = True):
+    def validate(self, ms_schema: dict = ms_required_schema, nmr_schema: dict = nmr_required_schema, verbose: bool = True) -> (str, list[dict]):
         """Validate the instance.
         
-        :param dict ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
-        :param dict nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
-        :param bool verbose: whether to be verbose or not.
-        :return: Validated file and errors if verbose is False.
-        :rtype: :py:class:`~mwtab.mwtab.MWTabFile`, _io.StringIO
+        Args:
+            ms_schema: jsonschema to validate both the base parts of the file and the MS specific parts of the file.
+            nmr_schema: jsonschema to validate both the base parts of the file and the NMR specific parts of the file.
+            verbose: whether to be verbose or not.
+        
+        Returns: 
+            Error messages as a single string and error messages in JSON form. If verbose is True, then the single string will be None.
         """
         return validate_file(
                     mwtabfile=self,

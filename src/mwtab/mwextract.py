@@ -166,10 +166,6 @@ def write_metadata_csv(to_path, extracted_values, no_header=False):
     :return: None
     :rtype: :py:obj:`None`
     """
-    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-    #     dirname = os.path.dirname(to_path)
-    #     if dirname:
-    #         os.makedirs(dirname)
     fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:
@@ -219,10 +215,6 @@ def write_metabolites_csv(to_path, extracted_values, no_header=False):
             num_samples
         ])
 
-    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-    #     dirname = os.path.dirname(to_path)
-    #     if dirname:
-    #         os.makedirs(dirname)
     fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:
@@ -286,10 +278,6 @@ def write_json(to_path, extracted_dict):
     :return: None
     :rtype: :py:obj:`None`
     """
-    # if not os.path.exists(os.path.dirname(os.path.splitext(to_path)[0])):
-    #     dirname = os.path.dirname(to_path)
-    #     if dirname:
-    #         os.makedirs(dirname)
     fileio._create_save_path(to_path)
 
     if not os.path.splitext(to_path)[1]:

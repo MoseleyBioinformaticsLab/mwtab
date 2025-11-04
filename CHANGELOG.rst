@@ -1,13 +1,14 @@
 Release History
 ===============
 
-1.2.6
-~~~~
+2.0.0
+~~~~~
 -Can now read duplicate keys in "Additional sample data" and reproduce it in write, will validate it as an error.
 -Writing out now ensures correct key ordering for JSON.
 -Validation now validates the main sections not just the internals of them.
 -Validate now checks that metabolites in the Data section are in the Metabolites section and vice versa.
 -Batch processing from the command line is more fault tolerant and won't stop the batch for 1 bad file.
+-Improved tokenizer so more files can be read in without error.
 -Changed schema validation to use jsonschema instead of schema.
 -Added validations for METABOLITES columns that try to give warnings for bad values, for example 'kegg_id' column should all be something like C00000.
 -Expanded the standard column name functionality to look for many more column names than in the previous version and do it in a much more robust way.

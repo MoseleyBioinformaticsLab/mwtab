@@ -27,8 +27,6 @@ from typing import Any
 from functools import partial
 
 from . import mwtab
-from . import validator
-from . import mwschema
 from . import mwrest
 
 from urllib.request import urlopen
@@ -195,123 +193,27 @@ def read_with_class(sources: str|list[str], read_class: type, class_kwds: dict, 
 read_files = partial(read_with_class, read_class = mwtab.MWTabFile, class_kwds = {"duplicate_keys": True})
 read_mwrest = partial(read_with_class, read_class = mwrest.MWRESTFile, class_kwds = {})
 
-
-# TODO delete this functions after testing.
-# def read_files(sources, return_exceptions=False):
-#     """Construct a generator that yields file instances.
-
-#     :param sources: One or more strings representing path to file(s).
-#     :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
-#     """
-#     try:
-#         filenames = _generate_filenames(sources, True)
-#         filehandles = _generate_handles(filenames, True)
-#     except Exception as e:
-#         yield _return_correct_yield(None, 
-#                                     exception=e, 
-#                                     return_exceptions=return_exceptions)
-#     for fh, source, exc in filehandles:
-#         if exc is not None:
-#             yield _return_correct_yield(source, 
-#                                         exception=exc, 
-#                                         return_exceptions=return_exceptions)
-#             continue
-#         try:
-#             f = mwtab.MWTabFile(source, duplicate_keys=True)
-#             f.read(fh)
-#             fh.close()
-
-#             if VERBOSE:
-#                 print("Processed file: {}".format(os.path.abspath(source)))
-            
-#             yield _return_correct_yield(f, 
-#                                         exception=None, 
-#                                         return_exceptions=return_exceptions)
-
-#         except Exception as e:
-#             fh.close()
-#             if VERBOSE:
-#                 print("Error processing file: ", os.path.abspath(source), "\nReason:", e)
-#             yield _return_correct_yield(source, 
-#                                         exception=e, 
-#                                         return_exceptions=return_exceptions)
-
-
-# def read_mwrest(*sources, return_exceptions=False):
-#     """Construct a generator that yields file instances.
-
-#     :param sources: One or more strings representing path to file(s).
-#     :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
-#     """
-#     try:
-#         filenames = _generate_filenames(sources, True)
-#         filehandles = _generate_handles(filenames, True)
-#     except Exception as e:
-#         yield _return_correct_yield(None, 
-#                                     exception=e, 
-#                                     return_exceptions=return_exceptions)
-#     for fh, source, exc in filehandles:
-#         try:
-#             f = mwrest.MWRESTFile(source)
-#             f.read(fh)
-#             fh.close()
-
-#             if VERBOSE:
-#                 print("Processed url: {}".format(source))
-
-#             yield _return_correct_yield(f, 
-#                                         exception=None, 
-#                                         return_exceptions=return_exceptions)
-
-#         except Exception as e:
-#             fh.close()
-#             if VERBOSE:
-#                 print("Error processing url: ", source, "\nReason:", e)
-#             yield _return_correct_yield(None, 
-#                                         exception=e, 
-#                                         return_exceptions=return_exceptions)
-
-# Unused function, leaving here for now.
-# def read_lines(*sources, return_exceptions=False):
-#     """Construct a generator that yields file instances.
-
-#     :param sources: One or more strings representing path to file(s).
-#     :param bool return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
-#     """
-#     try:
-#         filenames = _generate_filenames(sources, True)
-#         filehandles = _generate_handles(filenames, True)
-#     except Exception as e:
-#         yield _return_correct_yield(None, 
-#                                     exception=e, 
-#                                     return_exceptions=return_exceptions)
-#     for fh, source, exc in filehandles:
-#         try:
-#             string = fh.read()
-#             fh.close()
-#             if isinstance(string, str):
-#                 lines = string.replace("\r", "\n").split("\n")
-#             elif isinstance(string, bytes):
-#                 lines = string.decode("utf-8").replace("\r", "\n").split("\n")
-#             else:
-#                 raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
-
-#             lines = [line for line in lines if line]
-            
-#             if VERBOSE:
-#                 print("Processed file: {}".format(os.path.abspath(source)))
-            
-#             yield _return_correct_yield((lines, source), 
-#                                         exception=None, 
-#                                         return_exceptions=return_exceptions)
+class ReadLines():
+    def __init__(self, source, *args, **kwargs):
+        self.source = source
+        self.lines = []
+    
+    def read(self, filehandle):
+        """
+        """
+        string = filehandle.read()
+        filehandle.close()
+        if isinstance(string, str):
+            lines = string.replace("\r", "\n").split("\n")
+        elif isinstance(string, bytes):
+            lines = string.decode("utf-8").replace("\r", "\n").split("\n")
+        else:
+            raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
         
-#         except Exception as e:
-#             fh.close()
-#             if VERBOSE:
-#                 print("Error processing file: ", source, "\nReason:", e)
-#             yield _return_correct_yield(source, 
-#                                         exception=e, 
-#                                         return_exceptions=return_exceptions)
+        self.lines = [line for line in lines if line]
+        
+
+read_lines = partial(read_with_class, read_class = ReadLines, class_kwds = {})
 
 
 class GenericFilePath(object):

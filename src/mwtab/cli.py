@@ -49,6 +49,7 @@ The mwtab Command Line Interface
     Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
     GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
+## TODO add options to vlaidate to save out the new JSON.
 
 from os import getcwd
 from os.path import join, isfile

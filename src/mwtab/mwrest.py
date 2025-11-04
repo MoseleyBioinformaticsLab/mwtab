@@ -137,7 +137,7 @@ def generate_mwtab_urls(input_items, base_url=BASE_URL, output_format='txt', ret
                                                return_exceptions=return_exceptions)
 
 
-# Unused funciton. Leaving here for now.
+# Unused function. Leaving here for now.
 # def generate_urls(input_items, base_url=BASE_URL, return_exceptions=False, **kwds):
 #     """
 #     Method for creating a generator which yields validated Metabolomics Workbench REST urls.
