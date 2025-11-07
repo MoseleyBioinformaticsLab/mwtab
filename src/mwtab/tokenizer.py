@@ -100,16 +100,27 @@ def tokenizer(text, dict_type = None):
             elif line.startswith("SUBJECT_SAMPLE_FACTORS"):
                 line_items = line.split("\t")
                 
-                factor_pairs = line_items[3].split(" | ")
                 factor_dict = dict_type()
-                for pair in factor_pairs:
-                    try:
-                        factor_key, factor_value = pair.split(":")
-                    except ValueError as e:
-                        raise ValueError("Expected exactly 1 ':' in the factor key value pair, '" + pair + "'") from e
-                    factor_key = factor_key.strip()
-                    factor_value = factor_value.strip()
-                    factor_dict[factor_key] = factor_value
+                colon_split = line_items[3].split(":")
+                factor_items = [item for factor_item in colon_split for item in factor_item.rsplit(' | ', 1)]
+                element_indexes_without_bar = [i+1 for i, value in enumerate(colon_split[1:-1]) if ' | ' not in value]
+                if element_indexes_without_bar:
+                    index = element_indexes_without_bar[0]
+                    factor_item_start = colon_split[index-1]
+                    if ' | ' in factor_item_start:
+                        factor_item_start = factor_item_start.split(' | ')[1]
+                    factor_item_end = colon_split[index+1]
+                    if ' | ' in factor_item_end:
+                        factor_item_end = factor_item_end.split(' | ')[0]
+                    factor_item = ':'.join([factor_item_start, 
+                                            colon_split[index],
+                                            factor_item_end])
+                    message = ("Either a bar (' | ') separating 2 items is missing or there is an extra colon (':') "
+                               "in the factor key value pair, '" + factor_item + "'")
+                    raise ValueError(message)
+                
+                for key, value in zip(factor_items[0::2], factor_items[1::2]):
+                    factor_dict[key.strip()] = value.strip()
                 
                 subject_sample_factors_dict = {
                     "Subject ID": line_items[1],
@@ -118,14 +129,27 @@ def tokenizer(text, dict_type = None):
                 }
                 if line_items[4]:
                     additional_data = dict_type()
-                    for factor_item in line_items[4].split("; "):
-                        try:
-                            key, value = factor_item.split("=")
-                        except ValueError as e:
-                            raise ValueError("Expected exactly 1 '=' in the additional data key value pair, '" + factor_item + "'") from e
-                        key = key.strip()
-                        value = value.strip()
-                        additional_data[key] = value
+                    equal_split = line_items[4].split("=")
+                    add_items = [item for add_item in equal_split for item in add_item.rsplit('; ', 1)]
+                    element_indexes_without_semicolon = [i+1 for i, value in enumerate(equal_split[1:-1]) if '; ' not in value]
+                    if element_indexes_without_semicolon:
+                        index = element_indexes_without_semicolon[0]
+                        add_item_start = equal_split[index-1]
+                        if '; ' in add_item_start:
+                            add_item_start = add_item_start.split('; ')[1]
+                        add_item_end = equal_split[index+1]
+                        if '; ' in add_item_end:
+                            add_item_end = add_item_end.split('; ')[0]
+                        add_item = '='.join([add_item_start, 
+                                             equal_split[index],
+                                             add_item_end])
+                        message = ("Either a semicolon ('; ') separating 2 items is missing or there is an extra equal sign ('=') "
+                                   "in the additional data key value pair, '" + add_item + "'")
+                        raise ValueError(message)
+                    
+                    for key, value in zip(add_items[0::2], add_items[1::2]):
+                        additional_data[key.strip()] = value.strip()
+                    
                     subject_sample_factors_dict["Additional sample data"] = additional_data
                 yield KeyValue(line_items[0].strip(), subject_sample_factors_dict)
 
