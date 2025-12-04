@@ -577,26 +577,28 @@ nmr_schema = \
               'SPECTROMETER_FREQUENCY'],
  'additionalProperties': False}
 
+# The 'properties' and 'required' keys are commented out because they are validated in separate 
+# functions. Doing it here causes many more spurious errors to be printed.
 data_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}}},
-           'required': ['Metabolite'],
+           # 'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}}},
+           # 'required': ['Metabolite'],
            'additionalProperties': True}}
 
 extended_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}},
-                          'sample_id': {'type': 'string', 'not':{'enum': NA_VALUES}}},
-           'required': ['Metabolite', 'sample_id'],
+           # 'properties': {'Metabolite': {'type': 'string', 'not':{'enum': METABOLITE_NA_VALUES}},
+           #                'sample_id': {'type': 'string', 'not':{'enum': NA_VALUES}}},
+           # 'required': ['Metabolite', 'sample_id'],
            'additionalProperties': True}}
 
 binned_data_schema = \
 {'type': 'array',
  'items': {'type': 'object',
-           'properties': {'Bin range(ppm)': {'type': 'string', 'not':{'enum': NA_VALUES}}},
-           'required': ['Bin range(ppm)'],
+           # 'properties': {'Bin range(ppm)': {'type': 'string', 'not':{'enum': NA_VALUES}}},
+           # 'required': ['Bin range(ppm)'],
            'additionalProperties': True}}
 
 ms_metabolite_data_schema = \

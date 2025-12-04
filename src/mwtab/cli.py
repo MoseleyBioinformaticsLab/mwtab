@@ -10,21 +10,22 @@ The mwtab Command Line Interface
     Usage:
         mwtab -h | --help
         mwtab --version
-        mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--verbose]
-        mwtab validate <from-path> [--mw-rest=<url>]
+        mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--force] [--verbose]
+        mwtab validate <from-path> [--to-path=<path>] [--mw-rest=<url>] [--force] [--silent]
         mwtab download url <url> [--to-path=<path>] [--verbose]
         mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
         mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
         mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
         mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
         mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
-        mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header]
-        mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header]
+        mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header] [--force]
+        mwtab extract metabolites <from-path> <to-path> (<key> <value>) ... [--to-format=<format>] [--no-header] [--force]
     
     Options:
         -h, --help                           Show this screen.
         --version                            Show version.
         --verbose                            Print what files are processing.
+        --silent                             Silence all standard output.
         --from-format=<format>               Input file format, available formats: mwtab, json [default: mwtab].
         --to-format=<format>                 Output file format [default: json].
                                              Available formats for convert:
@@ -34,6 +35,9 @@ The mwtab Command Line Interface
         --mw-rest=<url>                      URL to MW REST interface
                                                 [default: https://www.metabolomicsworkbench.org/rest/].
         --to-path=<path>                     Directory to save outputs into. Defaults to the current working directory.
+                                             For the validate command, if the given path ends in '.json', then 
+                                             all JSON file outputs will be condensed into that 1 file. Also for 
+                                             the validate command no output files are saved unless this option is given.
         --prefix=<prefix>                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
         --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
         --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
@@ -42,6 +46,7 @@ The mwtab Command Line Interface
         --output-item=<item>                 Item to be retrieved from Metabolomics Workbench.
         --output-format=<format>             Format for item to be retrieved in, available formats: mwtab, json.
         --no-header                          Include header at the top of csv formatted files.
+        --force                              Ignore non-dictionary values in METABOLITES_DATA, METABOLITES, and EXTENDED tables for JSON files.
     
         For extraction <to-path> can take a "-" which will use stdout.
         All <from-path>'s can be single files, directories, or URLs.
@@ -49,7 +54,6 @@ The mwtab Command Line Interface
     Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
     GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
 """
-## TODO add options to vlaidate to save out the new JSON.
 
 from os import getcwd
 from os.path import join, isfile
@@ -66,6 +70,7 @@ from . import fileio, mwextract, mwrest
 from .converter import Converter
 from .validator import validate_file
 from .mwschema import ms_required_schema, nmr_required_schema
+from .mwtab import MWTabFile
 
 
 OUTPUT_FORMATS = {
@@ -205,7 +210,9 @@ def cli(cmdargs):
     """
 
     VERBOSE = cmdargs["--verbose"]
+    force = cmdargs['--force']
     fileio.VERBOSE = cmdargs["--verbose"]
+    silent = cmdargs['--silent']
     mwrest_base_url = cmdargs['--mw-rest']
     fileio.MWREST_URL = mwrest_base_url
     mwrest.BASE_URL = mwrest_base_url
@@ -229,19 +236,43 @@ def cli(cmdargs):
 
     # mwtab validate ...
     elif cmdargs["validate"]:
-        for i, (mwfile, e) in enumerate(fileio.read_files(cmdargs["<from-path>"], return_exceptions=True)):
+        save_files = False
+        consolidate_files = False
+        consolidated_json = {}
+        if optional_to_path:
+            save_files = True
+            fileio._create_save_path(optional_to_path)
+            to_path = pathlib.Path(optional_to_path)
+            if pathlib.Path(to_path).suffix == '.json':
+                consolidate_files = True
+        
+        for i, (mwfile, e) in enumerate(fileio.read_with_class(cmdargs["<from-path>"], 
+                                                               MWTabFile, 
+                                                               {'duplicate_keys':True, 'force':force}, 
+                                                               return_exceptions=True)):
             if e is not None:
                 file_source = mwfile if isinstance(mwfile, str) else cmdargs["<from-path>"]
                 print("Something went wrong when trying to read " + file_source)
                 traceback.print_exception(e, file=sys.stdout)
                 print()
                 continue
-            validate_file(
-                mwtabfile = mwfile,
-                ms_schema = ms_required_schema, 
-                nmr_schema = nmr_required_schema,
-                verbose = True
-            )
+            _, errors_list = validate_file(
+                                            mwtabfile = mwfile,
+                                            ms_schema = ms_required_schema, 
+                                            nmr_schema = nmr_required_schema,
+                                            verbose = not silent
+                                            )
+            if save_files:
+                if consolidate_files:
+                    consolidated_json[pathlib.Path(mwfile.source).stem] = errors_list
+                else:
+                    filename = pathlib.Path(mwfile.source).stem + '_validations.json'
+                    with open(join(to_path, filename), "w", encoding="utf-8") as fh:
+                        fh.write(json.dumps(errors_list, indent=2))
+        
+        if consolidate_files:
+            with open(to_path, "w", encoding="utf-8") as fh:
+                fh.write(json.dumps(consolidated_json, indent=2))
     
     # mwtab download ...
     elif cmdargs["download"]:
@@ -349,7 +380,10 @@ def cli(cmdargs):
 
     # mwtab extract ...
     elif cmdargs["extract"]:
-        mwfile_generator = fileio.read_files(cmdargs["<from-path>"], return_exceptions=True)
+        mwfile_generator = fileio.read_with_class(cmdargs["<from-path>"], 
+                                                  MWTabFile, 
+                                                  {'duplicate_keys':True, "force": force}, 
+                                                  return_exceptions=True)
         if cmdargs["metabolites"]:
             metabolites_dict = mwextract.extract_metabolites(
                 mwfile_generator,

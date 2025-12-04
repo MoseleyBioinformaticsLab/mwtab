@@ -112,6 +112,7 @@ import traceback
 import sys
 
 from . import fileio
+from .mwtab import MWTabFile
 
 
 class Translator(object):
@@ -142,21 +143,26 @@ class MWTabFileToMWTabFile(Translator):
     file_extension = {"json": ".json",
                       "mwtab": ".txt"}
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None, force=False):
         """MWTabFileToMWTabFile translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
+        :param bool force: If True, replace non-dictionary values in METABOLITES_DATA, METABOLITES, 
+                           and EXTENDED with empty dicts on read in for JSON.
         """
-        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format)
+        super(MWTabFileToMWTabFile, self).__init__(from_path, to_path, from_format, to_format, force)
 
     def __iter__(self):
         """Iterator that yields instances of :class:`~mwtab.mwtab.MWTabFile` instances.
         :return: instance of :class:`~mwtab.mwtab.MWTabFile` object instance.
         :rtype: :class:`~mwtab.mwtab.MWTabFile`
         """
-        for mwtabfile, e in fileio.read_files(self.from_path, return_exceptions=True):
+        for mwtabfile, e in fileio.read_with_class(self.from_path, 
+                                                   MWTabFile, 
+                                                   {'duplicate_keys':True, 'force':self.force}, 
+                                                   return_exceptions=True):
             if e is not None:
                 file_source = mwtabfile if isinstance(mwtabfile, str) else self.from_path
                 print("Something went wrong when trying to read " + file_source)
@@ -169,14 +175,16 @@ class MWTabFileToMWTabFile(Translator):
 class Converter(object):
     """Converter class to convert ``mwTab`` files from ``mwTab`` to ``JSON`` or from ``JSON`` to ``mwTab`` format."""
 
-    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json"):
+    def __init__(self, from_path, to_path, from_format="mwtab", to_format="json", force=False):
         """Converter initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
         :param str from_format: Input format: `mwtab` or `json`.
         :param str to_format: Output format: `mwtab` or `json`.
+        :param bool force: If True, replace non-dictionary values in METABOLITES_DATA, METABOLITES, 
+                           and EXTENDED with empty dicts on read in for JSON.
         """
-        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format)
+        self.file_generator = MWTabFileToMWTabFile(from_path, to_path, from_format, to_format, force)
 
     def convert(self):
         """Convert file(s) from ``mwTab`` format to ``JSON`` format or from ``JSON`` format to ``mwTab`` format.

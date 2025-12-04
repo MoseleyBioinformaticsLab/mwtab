@@ -125,6 +125,9 @@ class MWTabFile(dict):
                         this to True. This was added because some files already upload to the 
                         Metabolomics Workbench erroneously have duplicate keys and the class 
                         needed to be able to read write them back out correctly.
+        force: If True, replace non-dictionary values in METABOLITES_DATA, METABOLITES, and EXTENDED 
+               tables with empty dicts on JSON read in.
+    
     Attributes:
         source: A string that should be the file path to the mwtab file that was read in.
         study_id: A managed property. The study ID is stored in the METABOLOMICS WORKBENCH 
@@ -187,18 +190,23 @@ class MWTabFile(dict):
     analysis_id = MWTabProperty()
     header = MWTabProperty()
 
-    def __init__(self, source, duplicate_keys=False, *args, **kwds):
+    def __init__(self, source, duplicate_keys=False, force=False, *args, **kwds):
         """File initializer.
 
         :param str source: Source a `MWTabFile` instance was created from.
         """
         super(MWTabFile, self).__init__(*args, **kwds)
         self.source = source
+        self._force = force
         self._factors = None
         self._samples = None
+        self._raw_samples = None
         self._metabolite_header = None
+        self._raw_metabolite_header = None
         self._extended_metabolite_header = None
+        self._raw_extended_metabolite_header = None
         self._binned_header = None
+        self._raw_binned_header = None
         self._short_headers = set()
         self._duplicate_sub_sections = {}
         self._input_format = 'json'
@@ -389,34 +397,33 @@ class MWTabFile(dict):
 
         mwtab_str = self._is_mwtab(input_str)
         self._input_format = 'mwtab' if mwtab_str else 'json'
-        json_str = self._is_json(input_str, self._duplicate_keys)
+        json_str = self._is_json(input_str, self._duplicate_keys, self._force)
 
         if json_str:
             self.update(json_str)
             
-            self._metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
-                                       for column in self.get_metabolites_as_pandas().columns[1:]]
-            self._metabolite_header = self._metabolite_header if self._metabolite_header else None
-            self._extended_metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
-                                                for column in self.get_extended_as_pandas().columns[1:]]
-            self._extended_metabolite_header = self._extended_metabolite_header if self._extended_metabolite_header else None
-            self._samples = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
-                             for column in self.get_metabolites_data_as_pandas().columns[1:]]
-            self._samples = self._samples if self._samples else None
+            metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                                 for column in self.get_metabolites_as_pandas().columns]
+            self._raw_metabolite_header = metabolite_header if metabolite_header else None
+            self._metabolite_header = metabolite_header[1:] if metabolite_header[1:] else None
+            
+            extended_metabolite_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                                          for column in self.get_extended_as_pandas().columns]
+            self._raw_extended_metabolite_header = extended_metabolite_header if extended_metabolite_header else None
+            self._extended_metabolite_header = extended_metabolite_header[1:] if extended_metabolite_header[1:] else None
+            
+            samples = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                       for column in self.get_metabolites_data_as_pandas().columns]
+            self._raw_samples = samples if samples else None
+            self._samples = samples[1:] if samples[1:] else None
+            
             if (data_section_key := self.data_section_key) and "BINNED" in data_section_key:
                 self._binned_header = self._samples
+                self._raw_binned_header = self._raw_samples
                 
                 for i in range(len(self['NMR_BINNED_DATA']['Data'])):
                     if 'Bin range(ppm)' in self['NMR_BINNED_DATA']['Data'][i]:
                         self['NMR_BINNED_DATA']['Data'][i]['Metabolite'] = self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
-                        
-                        # new_dict = self._default_dict_type()
-                        # new_dict['Metabolite'] = self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
-                        # del self['NMR_BINNED_DATA']['Data'][i]['Bin range(ppm)']
-                        # # Note that the update method cannot be used here because it can mess up DuplicatesDict.
-                        # for key, value in self['NMR_BINNED_DATA']['Data'][i].items():
-                        #     new_dict[key] = value
-                        # self['NMR_BINNED_DATA']['Data'][i] = new_dict
         
         elif mwtab_str:
             self._build_mwtabfile(mwtab_str)
@@ -568,35 +575,85 @@ class MWTabFile(dict):
                     while not token_value[-1]:
                         token_value.pop()
                     
-                                        
-                    if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
-                        self._binned_header = token_value[1:]
-                        self._samples = self._binned_header
+                    is_header = False
+                    if "BINNED_DATA" in section_name and loop_count < 2:
+                        if loop_count < 1:
+                            self._raw_binned_headers = token_value
+                            self._raw_samples = self._raw_binned_headers
+                        if token.key == "Bin range(ppm)":
+                            self._binned_header = token_value[1:]
+                            self._samples = self._binned_header
+                            is_header = True
                     # Have seen Factors section in incorrect sections such as METABOLITES, 
                     # and seen multiple Factors sections in a single METABOLITE_DATA section.
                     # So just grab the one near the top.
                     elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 2:
                         self._factors = {}
                         for i, factor_string in enumerate(token_value[1:]):
-                            factor_pairs = factor_string.split(" | ")
+                            factor_pairs = factor_string.split("| ")
                             factor_dict = self._default_dict_type()
                             for pair in factor_pairs:
                                 factor_key, factor_value = pair.split(":")
                                 factor_dict[factor_key.strip()] = factor_value.strip()
                             self._factors[header[i+1]] = factor_dict
+                        is_header = True
                     
-                    elif "METABOLITE_DATA" in section_name and 'EXTENDED' not in section_name and \
-                         loop_count < 2 and any(sample in ssf_samples for sample in token_value[1:]) and \
-                         self._samples is None:
-                        self._samples = token_value[1:]
+                    elif "METABOLITE_DATA" in section_name and 'EXTENDED' not in section_name and loop_count < 2:
+                        if loop_count < 1:
+                            self._raw_samples = token_value
+                        # The last check for len(token_value) == 1 is for ones like AN000788.
+                        if self._samples is None and \
+                           (any(sample in ssf_samples for sample in token_value[1:]) or \
+                           (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
+                            self._samples = token_value[1:]
+                            is_header = True
                     
-                    elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
-                        self._metabolite_header = token_value[1:]
+                    elif "METABOLITES" in section_name and loop_count < 2:
+                        if loop_count < 1:
+                            self._raw_metabolite_header = token_value
+                        if token.key.lower() == "metabolite_name":
+                            self._metabolite_header = token_value[1:]
+                            is_header = True
                     
-                    elif token.key.lower() == "metabolite_name" and "EXTENDED" in section_name and loop_count < 2:
-                        self._extended_metabolite_header = token_value[1:]
+                    elif "EXTENDED" in section_name and loop_count < 2:
+                        if loop_count < 1:
+                            self._raw_extended_metabolite_header = token_value
+                        if token.key.lower() == "metabolite_name":
+                            self._extended_metabolite_header = token_value[1:]
+                            is_header = True
+                    
+                    
+                    
+                    # TODO remove.
+                    # if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
+                    #     self._binned_header = token_value[1:]
+                    #     self._samples = self._binned_header
+                    # # Have seen Factors section in incorrect sections such as METABOLITES, 
+                    # # and seen multiple Factors sections in a single METABOLITE_DATA section.
+                    # # So just grab the one near the top.
+                    # elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 2:
+                    #     self._factors = {}
+                    #     for i, factor_string in enumerate(token_value[1:]):
+                    #         factor_pairs = factor_string.split("| ")
+                    #         factor_dict = self._default_dict_type()
+                    #         for pair in factor_pairs:
+                    #             factor_key, factor_value = pair.split(":")
+                    #             factor_dict[factor_key.strip()] = factor_value.strip()
+                    #         self._factors[header[i+1]] = factor_dict
+                    
+                    # # The last check for len(token_value) == 1 is for ones like AN000788.
+                    # elif "METABOLITE_DATA" in section_name and 'EXTENDED' not in section_name and self._samples is None and \
+                    #      loop_count < 2 and (any(sample in ssf_samples for sample in token_value[1:]) or \
+                    #      (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
+                    #     self._samples = token_value[1:]
+                    
+                    # elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
+                    #     self._metabolite_header = token_value[1:]
+                    
+                    # elif token.key.lower() == "metabolite_name" and "EXTENDED" in section_name and loop_count < 2:
+                    #     self._extended_metabolite_header = token_value[1:]
                         
-                    else:                        
+                    if not is_header:                        
                         token_len = len(token_value)
                         temp_dict = self._default_dict_type()
                         for item in zip_longest(metabolite_header, token_value, fillvalue=''):
@@ -736,13 +793,13 @@ class MWTabFile(dict):
 
                     if "METABOLITE" in section_key:
                         # prints "Samples" line at head of data section
-                        sample_names = None
+                        sample_names = []
                         if self._samples is not None:
                             sample_names = self._samples
                         elif self[section_key][key]:
                             sample_names = [k for k in self[section_key][key][0].keys()][1:]
+                        print("\t".join(["Samples"] + sample_names), file=f)
                         if sample_names:
-                            print("\t".join(["Samples"] + sample_names), file=f)
                             # prints "Factors" line at head of data section
                             if self._factors is not None:
                                 factors_dict = {}
@@ -915,12 +972,14 @@ class MWTabFile(dict):
         return False
 
     @staticmethod
-    def _is_json(string, duplicate_keys=False):
+    def _is_json(string, duplicate_keys=False, force=False):
         """Test if input string is in JSON format.
 
         :param string: Input string.
         :type string: :py:class:`str` or :py:class:`bytes`
         :param duplicate_keys: if true, replace some dictionaries with DuplicatesDict.
+        :type text: py:class:`bool`
+        :param force: if true, replace non-dictionary values in METABOLITES_DATA, METABOLITES, and EXTENDED with empty dicts.
         :type text: py:class:`bool`
         :return: Input string if in JSON format or False otherwise.
         :rtype: :py:class:`str` or :py:obj:`False`
@@ -939,6 +998,9 @@ class MWTabFile(dict):
             else:
                 raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
             
+            if duplicate_keys and isinstance(json_str, DuplicatesDict):
+                raise KeyError("Given JSON contains duplicate keys at the highest level.")
+            
             if duplicate_keys:
                 for i, ssf_dict in enumerate(json_str['SUBJECT_SAMPLE_FACTORS']):
                     if not isinstance(ssf_dict['Factors'], DuplicatesDict):
@@ -946,14 +1008,23 @@ class MWTabFile(dict):
                     if 'Additional sample data' in ssf_dict and not isinstance(ssf_dict['Additional sample data'], DuplicatesDict):
                         json_str['SUBJECT_SAMPLE_FACTORS'][i]['Additional sample data'] = DuplicatesDict(ssf_dict['Additional sample data'])
                 
-                data_key = [n for n in json_str.keys() if "METABOLITE_DATA" in n or "BINNED_DATA" in n]
-                if data_key:
-                    data_key = data_key[0]
-                    for section_key, section_value in json_str[data_key].items():
-                        if section_key in ["Data", "Metabolites", "Extended"]:
-                            for i, data_dict in enumerate(section_value):
-                                if not isinstance(data_dict, DuplicatesDict):
+            data_key = [n for n in json_str.keys() if "METABOLITE_DATA" in n or "BINNED_DATA" in n]
+            if data_key:
+                data_key = data_key[0]
+                for section_key, section_value in json_str[data_key].items():
+                    if section_key in ["Data", "Metabolites", "Extended"]:
+                        indexes_to_delete = []
+                        for i, data_dict in enumerate(section_value):
+                            if isinstance(data_dict, dict):
+                                if duplicate_keys and not isinstance(data_dict, DuplicatesDict):
                                     json_str[data_key][section_key][i] = DuplicatesDict(json_str[data_key][section_key][i])
+                            else:
+                                if force:
+                                    indexes_to_delete.append(i)
+                                else:
+                                    raise TypeError(f'Given JSON contains non-dictionary values in ["{data_key}"]["{section_key}"].')
+                        for index in indexes_to_delete:
+                            del json_str[data_key][section_key][index]
             
             # Have to tokenize the results file.
             # "ST000071_AN000111_Results.txt UNITS:Peak area Has m/z:Yes Has RT:Yes RT units:Minutes"

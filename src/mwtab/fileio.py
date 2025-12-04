@@ -155,7 +155,7 @@ def read_with_class(sources: str|list[str], read_class: type, class_kwds: dict, 
     Returns:
         Returns the instantiated class and any exceptions, or None and any exceptions, or the source and any exceptions.
     """
-    sources = [sources] if isinstance(sources, str) else sources
+    sources = [sources] if not isinstance(sources, list) else sources
     try:
         filenames = _generate_filenames(sources, True)
         filehandles = _generate_handles(filenames, True)

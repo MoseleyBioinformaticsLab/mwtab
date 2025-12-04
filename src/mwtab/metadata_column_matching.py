@@ -291,7 +291,7 @@ class ValueMatcher():
         self.values_regex = values_regex if isinstance(values_regex, str) else ''
         self.values_inverse_regex = values_inverse_regex if isinstance(values_inverse_regex, str) else ''
     
-    def series_match(self, series: pandas.Series, na_values: list|None = None) -> pandas.Series:
+    def series_match(self, series: pandas.Series, na_values: list|None = None, match_na_values: bool = True) -> pandas.Series:
         """Return a mask for the series based on type and regex matching.
         
         "values_regex" and "values_inverse_regex" are mutually exclusive and "values_regex" will take precedence if both are given. 
@@ -300,7 +300,8 @@ class ValueMatcher():
         
         Args:
             series: series to match values based on type and/or regex.
-            na_values: list of values to consider NA values. NA values are ignored for type and regex matching.
+            na_values: list of values to consider NA values.
+            match_na_values: if True, NA values will be consider a match and return True, False otherwise.
         
         Returns:
             A pandas Series the same length as "series" with Boolean values that can be used to select the matching values in the series.
@@ -319,7 +320,8 @@ class ValueMatcher():
         else:
             regex_match = pandas.Series([True]*len(series), index=series.index)
         
-        regex_match = regex_match | old_NAs
+        if match_na_values:
+            regex_match = regex_match | old_NAs
         
         
         column_to_numeric = pandas.to_numeric(stripped_series, errors='coerce')
@@ -389,10 +391,10 @@ class ColumnFinder:
         """
         return self.name_matcher.dict_match(name_map)
     
-    def values_series_match(self, series, na_values = None):
+    def values_series_match(self, series, na_values = None, match_na_values = True):
         """Convenience method to use the series_match method for value_matcher.
         """
-        return self.value_matcher.series_match(series, na_values)
+        return self.value_matcher.series_match(series, na_values, match_na_values)
  
 
 
@@ -752,7 +754,7 @@ column_finders = [
     ColumnFinder("name",
                  NameMatcher(in_strings = ['name'],
                              in_string_sets = [['name', 'refmet']],
-                             not_in_strings = ['adduct', 'named', 'internal', 'ion'],),
+                             not_in_strings = ['adduct', 'named', 'internal', 'ion', 'metabolite_name'],),
                  ValueMatcher(values_type = 'non-numeric',)),
     
     ColumnFinder("refmet",

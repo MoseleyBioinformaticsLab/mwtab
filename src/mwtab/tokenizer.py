@@ -102,20 +102,20 @@ def tokenizer(text, dict_type = None):
                 
                 factor_dict = dict_type()
                 colon_split = line_items[3].split(":")
-                factor_items = [item for factor_item in colon_split for item in factor_item.rsplit(' | ', 1)]
-                element_indexes_without_bar = [i+1 for i, value in enumerate(colon_split[1:-1]) if ' | ' not in value]
+                factor_items = [item for factor_item in colon_split for item in factor_item.rsplit('| ', 1)]
+                element_indexes_without_bar = [i+1 for i, value in enumerate(colon_split[1:-1]) if '| ' not in value]
                 if element_indexes_without_bar:
                     index = element_indexes_without_bar[0]
                     factor_item_start = colon_split[index-1]
-                    if ' | ' in factor_item_start:
-                        factor_item_start = factor_item_start.split(' | ')[1]
+                    if '| ' in factor_item_start:
+                        factor_item_start = factor_item_start.split('| ')[1]
                     factor_item_end = colon_split[index+1]
-                    if ' | ' in factor_item_end:
-                        factor_item_end = factor_item_end.split(' | ')[0]
+                    if '| ' in factor_item_end:
+                        factor_item_end = factor_item_end.split('| ')[0]
                     factor_item = ':'.join([factor_item_start, 
                                             colon_split[index],
                                             factor_item_end])
-                    message = ("Either a bar (' | ') separating 2 items is missing or there is an extra colon (':') "
+                    message = ("Either a bar ('| ') separating 2 items is missing or there is an extra colon (':') "
                                "in the factor key value pair, '" + factor_item + "'")
                     raise ValueError(message)
                 
@@ -127,7 +127,8 @@ def tokenizer(text, dict_type = None):
                     "Sample ID": line_items[2],
                     "Factors": factor_dict
                 }
-                if line_items[4]:
+                
+                if len(line_items) > 4 and line_items[4]:
                     additional_data = dict_type()
                     equal_split = line_items[4].split("=")
                     add_items = [item for add_item in equal_split for item in add_item.rsplit('; ', 1)]
@@ -187,11 +188,15 @@ def tokenizer(text, dict_type = None):
                         yield KeyValue(key.strip(), value.strip())
 
         except IndexError as e:
-            print(traceback.format_exc(), file=sys.stderr)
-            raise IndexError("LINE WITH ERROR:\n\t" + repr(line)) from e
+            message = traceback.format_exc() + "LINE WITH ERROR:\n\t" + repr(line)
+            raise IndexError(message) from e
+            # print(traceback.format_exc(), file=sys.stderr)
+            # raise IndexError("LINE WITH ERROR:\n\t" + repr(line)) from e
         except ValueError as e:
-            print(traceback.format_exc(), file=sys.stderr)
-            raise ValueError("LINE WITH ERROR:\n\t" + repr(line)) from e
+            message = traceback.format_exc() + "LINE WITH ERROR:\n\t" + repr(line)
+            raise ValueError(message) from e
+            # print(traceback.format_exc(), file=sys.stderr)
+            # raise ValueError("LINE WITH ERROR:\n\t" + repr(line)) from e
 
     # end of file
     yield KeyValue("#ENDSECTION", "\n")
