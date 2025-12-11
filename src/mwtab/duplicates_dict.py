@@ -64,6 +64,9 @@ class DuplicatesDict(dict):
     def __eq__(self, compare):
         return self.data == compare
     
+    def __ne__(self, compare):
+        return self.data != compare
+    
     def __repr__(self):
         return self.data.__repr__().replace('OrderedDict', 'DuplicatesDict')
     

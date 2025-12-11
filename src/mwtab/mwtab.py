@@ -581,8 +581,8 @@ class MWTabFile(dict):
                             self._raw_binned_headers = token_value
                             self._raw_samples = self._raw_binned_headers
                         if token.key == "Bin range(ppm)":
-                            self._binned_header = token_value[1:]
-                            self._samples = self._binned_header
+                            # self._binned_header = token_value[1:]
+                            # self._samples = self._binned_header
                             is_header = True
                     # Have seen Factors section in incorrect sections such as METABOLITES, 
                     # and seen multiple Factors sections in a single METABOLITE_DATA section.
@@ -602,24 +602,24 @@ class MWTabFile(dict):
                         if loop_count < 1:
                             self._raw_samples = token_value
                         # The last check for len(token_value) == 1 is for ones like AN000788.
-                        if self._samples is None and \
-                           (any(sample in ssf_samples for sample in token_value[1:]) or \
-                           (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
-                            self._samples = token_value[1:]
+                        if (any(sample in ssf_samples for sample in token_value[1:]) or \
+                           (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name']) or \
+                           (len(ssf_samples) == 0 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
+                            # self._samples = token_value[1:]
                             is_header = True
                     
                     elif "METABOLITES" in section_name and loop_count < 2:
                         if loop_count < 1:
                             self._raw_metabolite_header = token_value
                         if token.key.lower() == "metabolite_name":
-                            self._metabolite_header = token_value[1:]
+                            # self._metabolite_header = token_value[1:]
                             is_header = True
                     
                     elif "EXTENDED" in section_name and loop_count < 2:
                         if loop_count < 1:
                             self._raw_extended_metabolite_header = token_value
                         if token.key.lower() == "metabolite_name":
-                            self._extended_metabolite_header = token_value[1:]
+                            # self._extended_metabolite_header = token_value[1:]
                             is_header = True
                     
                     
@@ -666,12 +666,30 @@ class MWTabFile(dict):
                     token = next(lexer)
                     loop_count += 1
                 
+                # This makes it so all dicitonaries have the same number of values.
+                # Let's say row 3 looks like {'Metabolite': 'asdf', 'col1': 'qwer', '': 2345}
+                # The rows above don't have the '' entry, this code makes it so they do.
+                if self._duplicate_keys:
+                    data = [duplicates_dict.data for duplicates_dict in data]
+                data_df = pandas.DataFrame.from_records(data).fillna('').astype(str)
+                data = data_df.to_dict(orient='records')
+                if self._duplicate_keys:
+                    data = [DuplicatesDict(data_dict) for data_dict in data]
+                min_header = [column if not column.endswith('}}}') else re.match(DUPLICATE_KEY_REGEX, column).group(1) 
+                              for column in data_df.columns]
+                min_header = min_header[1:] if min_header[1:] else None
+                
                 if token.key.startswith("METABOLITES"):
                     section["Metabolites"] = data
+                    self._metabolite_header = min_header
                 elif token.key.startswith("EXTENDED_"):
                     section["Extended"] = data
+                    self._extended_metabolite_header = min_header
                 else:
                     section["Data"] = data
+                    self._samples = min_header
+                    if "BINNED_DATA" in section_name:
+                        self._binned_header = min_header
 
             elif token.key.endswith("_RESULTS_FILE"):
                 key, results_file_dict = token
@@ -716,8 +734,11 @@ class MWTabFile(dict):
                         print("#NMR", file=f)
                     else:
                         print("#{}".format(key), file=f)
-
-                    self.print_block(key, f=f, file_format=file_format)
+                    
+                    if isinstance(self[key], dict):
+                        self.print_block(key, f=f, file_format=file_format)
+                    else:
+                        raise TypeError(f'Key/section "{key}" is not a dictionary. It cannot be translated to the mwTab format.')
             print("#END", file=f)
 
         elif file_format == "json":

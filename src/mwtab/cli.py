@@ -231,7 +231,8 @@ def cli(cmdargs):
         converter = Converter(from_path=cmdargs["<from-path>"],
                               to_path=cmdargs["<to-path>"],
                               from_format=cmdargs["--from-format"],
-                              to_format=cmdargs["--to-format"])
+                              to_format=cmdargs["--to-format"],
+                              force=force)
         converter.convert()
 
     # mwtab validate ...

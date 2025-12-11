@@ -118,7 +118,7 @@ from .mwtab import MWTabFile
 class Translator(object):
     """Translator abstract class."""
 
-    def __init__(self, from_path, to_path, from_format=None, to_format=None):
+    def __init__(self, from_path, to_path, from_format=None, to_format=None, force=False):
         """Translator initializer.
         :param str from_path: Path to input file(s).
         :param str to_path: Path to output file(s).
@@ -131,6 +131,7 @@ class Translator(object):
         self.to_format = to_format
         self.from_path_compression = fileio.GenericFilePath.is_compressed(from_path)
         self.to_path_compression = fileio.GenericFilePath.is_compressed(to_path)
+        self.force = force
 
     def __iter__(self):
         """Abstract iterator must be implemented in a subclass."""
@@ -264,6 +265,9 @@ class Converter(object):
                 print("Something went wrong when trying to convert " + f.source)
                 traceback.print_exception(e, file=sys.stdout)
                 print()
+                
+                if os.path.exists(outpath):
+                    os.remove(outpath)
 
     def _to_zipfile(self, file_generator):
         """Convert files to zip archive.
@@ -344,14 +348,18 @@ class Converter(object):
             if file_generator.to_path.endswith(file_generator.file_extension[file_generator.to_format]) \
             else file_generator.to_path + file_generator.file_extension[file_generator.to_format]
 
-        with open(to_path, mode="w", encoding="utf-8") as outfile:
-            for f in file_generator:
-                try:
+        
+        for f in file_generator:
+            try:
+                with open(to_path, mode="w", encoding="utf-8") as outfile:
                     outfile.write(f.writestr(file_generator.to_format))
-                except Exception as e:
-                    print("Something went wrong when trying to convert " + f.source)
-                    traceback.print_exception(e, file=sys.stdout)
-                    print()
+            except Exception as e:
+                print("Something went wrong when trying to convert " + f.source)
+                traceback.print_exception(e, file=sys.stdout)
+                print()
+                
+                if os.path.exists(to_path):
+                    os.remove(to_path)
 
     def _output_path(self, input_path, to_format, archive=False):
         """Construct an output path string from an input path string.
