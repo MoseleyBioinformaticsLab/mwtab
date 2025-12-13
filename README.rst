@@ -13,9 +13,10 @@ mwtab
    :target: https://pypi.org/project/mwtab
    :alt: Supported Python versions
 
-.. image:: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml/badge.svg
-   :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
-   :alt: Build status
+..
+    .. image:: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml/badge.svg
+       :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
+       :alt: Build status
 
 .. image:: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab/branch/master/graph/badge.svg?token=jhjMsP1qma
    :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
@@ -52,9 +53,7 @@ The ``mwtab`` package can be used in several ways:
    * As a command-line tool to convert between ``mwTab`` format and its equivalent
      ``JSON`` representation.
 
-Recent News
-~~~~~~~~~~~
-The "Travis" branch represents our recent improvements, which we hope to merge into the production branch soon.
+
 
 Citation
 ~~~~~~~~
@@ -81,10 +80,6 @@ Links
 
 Installation
 ~~~~~~~~~~~~
-
-The ``mwtab`` package runs under Python 3.5+. Use pip_ to install.
-Starting with Python 3.4, pip_ is included by default.
-
 
 Install on Linux, Mac OS X
 --------------------------
