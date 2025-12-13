@@ -47,7 +47,12 @@ def test_copy():
     assert test_dict == test_dict2
     assert id(test_dict) != id(test_dict2)
 
-
+def test_not_equal():
+    test_dict = DuplicatesDict()
+    test_dict['a'] = 1
+    test_dict2 = DuplicatesDict()
+    test_dict2['b'] = 2
+    assert test_dict != test_dict2
 
 
 

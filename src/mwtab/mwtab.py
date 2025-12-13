@@ -556,7 +556,7 @@ class MWTabFile(dict):
                 section.append(token.value)
 
             elif token.key.endswith("_START"):
-                section_name = token.key
+                section_name = token.key[0:-6]
                 data = []
 
                 token = next(lexer)
@@ -576,7 +576,7 @@ class MWTabFile(dict):
                         token_value.pop()
                     
                     is_header = False
-                    if "BINNED_DATA" in section_name and loop_count < 2:
+                    if "BINNED_DATA" in section_name and 'EXTENDED' not in section_name and loop_count < 2:
                         if loop_count < 1:
                             self._raw_binned_headers = token_value
                             self._raw_samples = self._raw_binned_headers
@@ -1020,7 +1020,7 @@ class MWTabFile(dict):
                 raise TypeError("Expecting <class 'str'> or <class 'bytes'>, but {} was passed".format(type(string)))
             
             if duplicate_keys and isinstance(json_str, DuplicatesDict):
-                raise KeyError("Given JSON contains duplicate keys at the highest level.")
+                raise KeyError('Given JSON contains duplicate keys at the highest level.')
             
             if duplicate_keys:
                 for i, ssf_dict in enumerate(json_str['SUBJECT_SAMPLE_FACTORS']):

@@ -10,7 +10,9 @@ import json
 import pandas
 import pytest
 # This is an autouse module, so it is being used by every test simply by importing without calling it directly.
-from fixtures import teardown_module_auto
+from fixtures import teardown_module_auto, init_tmp_dir
+
+init_tmp_dir = init_tmp_dir
 
 
 
@@ -53,11 +55,27 @@ def test_read():
     
     assert mwtabfile['NMR_BINNED_DATA']['Data'][0]['Metabolite'] == '0.4...0.46'
     
-    # error
+def test_read_errors():
     with pytest.raises(TypeError, match = r'^Unknown file format'):
         mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/bad_file.txt")
         with open("tests/example_data/other_mwtab_files/bad_file.txt", "r", encoding="utf-8") as f:
             mwtabfile.read(f)
+    
+    with pytest.raises(KeyError, match = r'^\'Given JSON contains duplicate keys at the highest level\.'):
+        mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys_highest_level.json", duplicate_keys=True)
+        with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys_highest_level.json", "r", encoding="utf-8") as f:
+            mwtabfile.read(f)
+    
+    with pytest.raises(TypeError, match = r'^Given JSON contains non-dictionary values in \["MS_METABOLITE_DATA"\]\["Data"\]\.'):
+        mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json")
+        with open("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json", "r", encoding="utf-8") as f:
+            mwtabfile.read(f)
+
+def test_read_with_force():
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json", force=True)
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    assert mwtabfile['MS_METABOLITE_DATA']['Data'][0] != 'asdf'
     
 
 def test_reading_results_file():
@@ -313,7 +331,15 @@ def test_write_edge_cases(capsys):
         mwtabfile6.read(f)
     assert mwtabfile6._samples == save_samples
     assert mwtabfile6._factors is None
-    
+
+def test_write_error(init_tmp_dir):
+    mwtabfile = mwtab.mwtab.MWTabFile("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json", force=True)
+    with open("tests/example_data/other_mwtab_files/ST000122_AN000204_bad_table_type.json", "r", encoding="utf-8") as f:
+        mwtabfile.read(f)
+    mwtabfile['PROJECT'] = []
+    with pytest.raises(TypeError, match = r'^Key/section "PROJECT" is not a dictionary\. It cannot be translated to the mwTab format\.'):
+        with open("tests/example_data/tmp/tmp.txt", "w", encoding="utf-8") as f:
+            mwtabfile.write(f, file_format="mwtab")
     
 
 def test_keys_reorder():
@@ -433,9 +459,9 @@ def test_validate():
     with open("tests/example_data/other_mwtab_files/ST000122_AN000204_duplicate_keys.txt", "r", encoding="utf-8") as f:
         mwtabfile.read(f)
     
-    _, errors = mwtabfile.validate(verbose=False)
+    error_log, _ = mwtabfile.validate(verbose=False)
     
-    assert "duplicate keys" in errors
+    assert "duplicate keys" in error_log
     
     
 def test_from_dict():
@@ -603,12 +629,12 @@ def test_copy():
     mwtabfile2 = copy.copy(mwtabfile)
     assert mwtabfile == mwtabfile2
     assert mwtabfile._samples == mwtabfile2._samples
-    assert mwtabfile.duplicate_keys == mwtabfile2.duplicate_keys
+    assert mwtabfile._duplicate_keys == mwtabfile2._duplicate_keys
     
     mwtabfile3 = copy.deepcopy(mwtabfile)
     assert mwtabfile == mwtabfile3
     assert mwtabfile._samples == mwtabfile3._samples
-    assert mwtabfile.duplicate_keys == mwtabfile3.duplicate_keys
+    assert mwtabfile._duplicate_keys == mwtabfile3._duplicate_keys
 
 
 def test_misc_coverage():

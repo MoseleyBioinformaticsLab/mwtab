@@ -67,6 +67,15 @@ def test_validate_command(files_source):
     command = "python -m mwtab validate {}".format(files_source)
     assert os.system(command) == 0
 
+@pytest.mark.parametrize("file_sources", [
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", 'tests/example_data/tmp/validation_errors.json'),
+    ("tests/example_data/mwtab_files/ST000122_AN000204.txt", 'tests/example_data/tmp')
+])
+def test_validate_command_saving(file_sources, teardown_module):
+    command = "python -m mwtab validate {} --to-path={}".format(*file_sources)
+    assert os.system(command) == 0
+    assert os.path.exists(file_sources[1])
+
 
 def test_validate_command_error_recovery():
     """Test that the validate command can have an error and move to the next one."""
@@ -218,6 +227,8 @@ def test_download_command_cwd(teardown_module_cwd):
 def test_download_all_analysis_ids(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -239,6 +250,8 @@ def test_download_all_analysis_ids2(teardown_module, disable_network_calls, disa
     """The same as the previous test, but with --input-item being null to test the default."""
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -259,6 +272,8 @@ def test_download_all_analysis_ids2(teardown_module, disable_network_calls, disa
 def test_download_all_study_ids(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -279,6 +294,8 @@ def test_download_all_study_ids(teardown_module, disable_network_calls, disable_
 def test_download_all_download_error(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -300,6 +317,8 @@ def test_download_all_download_error(teardown_module, disable_network_calls, dis
 def test_download_all_bad_input_item(teardown_module, disable_network_calls, disable_sleep):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -316,6 +335,8 @@ def test_download_all_bad_input_item(teardown_module, disable_network_calls, dis
 def test_download_study_file_list_analysis(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -339,6 +360,8 @@ def test_download_study_file_list_study(teardown_module, disable_network_calls, 
     """Same as previous test, but the list is study IDs instead of AN IDs."""
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -363,6 +386,8 @@ def test_download_study_file_list_mixed(teardown_module, disable_network_calls, 
     """Same as previous test, but the list values are mixed."""
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -388,6 +413,8 @@ def test_download_study_file_list_mixed(teardown_module, disable_network_calls, 
 def test_download_study_file_list_bad_input_item(teardown_module, disable_network_calls, disable_sleep):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,
@@ -407,6 +434,8 @@ def test_download_study_file_list_bad_input_item(teardown_module, disable_networ
 def test_download_study_file_list_bad_to_path(teardown_module, disable_network_calls, disable_sleep, capsys):
     cmdargs = {
         '--verbose': True,
+        '--force': False,
+        '--silent': False,
         '--mw-rest': 'https://www.metabolomicsworkbench.org/rest/',
         'convert': False,
         'validate': False,

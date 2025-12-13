@@ -207,7 +207,7 @@ def test_to_dir_exceptions(teardown_module, capsys, mocker):
     converter = Converter("tests/example_data/mwtab_files/ST000122_AN000204.txt", "tests/example_data/tmp/json/ST000122_AN000204.json", "mwtab", "json")
     
     # Simulate an exception with this mock.
-    mocker.patch('mwtab.converter.os.path.exists', side_effect = [True])
+    mocker.patch('mwtab.converter.os.path.exists', side_effect = [True, False])
     converter._to_dir(converter.file_generator)
     captured = capsys.readouterr()
     assert 'Something went wrong when trying to convert' in captured.out

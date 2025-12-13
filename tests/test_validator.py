@@ -9,7 +9,7 @@ import copy
 ])
 def test_validate_passing(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert len(validation_log.split('\n')) == 9
     assert 'Status: Passing' in validation_log
 
@@ -20,7 +20,7 @@ def test_validate_passing(file_source):
 ])
 def test_validate_polarity(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert 'Error: The "polarity" column in the ' in validation_log
     assert ('indicates multiple polarities in a single analysis, and '
             'this should not be. A single mwTab file is supposed to be '
@@ -34,8 +34,8 @@ def test_validate_polarity(file_source):
 ])
 def test_validate_table_values(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
-    assert 'Warning: Column(s) with no name were found in the' in validation_log
+    validation_log, _ = mwtab.validate_file(mwfile)
+    assert 'Error: Column(s) with no name were found in the' in validation_log
     
     assert 'Warning: The "null_column" column at position' in validation_log
     assert 'table has all null values.' in validation_log
@@ -51,7 +51,7 @@ def test_validate_table_values(file_source):
 def test_validate_table_values2():
     """Can only be tested for JSON files."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_validate_table_values2.json"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ' table does not have the same columns for every row.' in validation_log
 
 
@@ -62,7 +62,7 @@ def test_validate_table_values2():
 ])
 def test_validate_metabolite_names(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     # This one should bein the Data table.
     assert 'Warning: There is a metabolite name, "samples"' in validation_log
     # This one should be in the Metabolites table.
@@ -82,7 +82,7 @@ def test_validate_metabolite_names(file_source):
 ])
 def test_validate_extended(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ' table has Sample IDs that were not found' in validation_log
     assert 'Those IDs are:\n\t"16_A0_Lung_naive_0days_170427_UKy_GCH_rep1-lipid"' in validation_log
 
@@ -94,7 +94,7 @@ def test_validate_extended(file_source):
 def test_validate_extended2(file_source):
     """Cannot be tested at the same time as the other test for extended."""
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ' table does not have a column for "sample_id".' in validation_log
 
 
@@ -106,7 +106,7 @@ def test_validate_extended2(file_source):
 ])
 def test_validate_subject_samples_factors(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ' has a duplicate Sample ID.' in validation_log
     
     assert 'has the following duplicate keys in its Factors:\n\t"Tissue/Fluid"' in validation_log
@@ -117,7 +117,7 @@ def test_validate_subject_samples_factors(file_source):
 def test_validate_factors():
     """This can only be detected for mwTab, not JSON."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_validate_factors.txt"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ("Error: The factors in the METABOLITE_DATA section "
             "and SUBJECT_SAMPLE_FACTORS section do not match.") in validation_log
 
@@ -128,11 +128,11 @@ def test_validate_factors():
 def test_validate_header_lengths():
     """This can only be detected for mwTab, not JSON."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_validate_header_lengths.txt"))
-    _, validation_log = mwtab.validate_file(mwfile)
-    assert ('Error: The block, METABOLITES_START, has a mismatch between the '
+    validation_log, _ = mwtab.validate_file(mwfile)
+    assert ('Error: The section, METABOLITES, has a mismatch between the '
             'number of headers and the number of elements in each line. Either '
             'a line(s) has more values than headers or there are too few headers.') in validation_log
-    assert ('Error: The block, MS_METABOLITE_DATA_START, has a mismatch between '
+    assert ('Error: The section, MS_METABOLITE_DATA, has a mismatch between '
             'the number of headers and the number of elements in each line. '
             'Either a line(s) has more values than headers or there are too few headers.') in validation_log
 
@@ -140,8 +140,8 @@ def test_validate_header_lengths():
 def test_validate_sub_section_uniqueness():
     """This can only be detected for mwTab, not JSON."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_validate_subsection_uniqueness.txt"))
-    _, validation_log = mwtab.validate_file(mwfile)
-    assert "Error: The block, STUDY, has a sub-section, FIRST_NAME, that is duplicated." in validation_log
+    validation_log, _ = mwtab.validate_file(mwfile)
+    assert "Error: The section, STUDY, has a sub-section, FIRST_NAME, that is duplicated." in validation_log
 
 
 @pytest.mark.parametrize("file_source", [
@@ -150,12 +150,12 @@ def test_validate_sub_section_uniqueness():
 ])
 def test_validate_metabolites(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert 'Warning: The following metabolites in the' in validation_log
     assert 'were not found in the' in validation_log
     assert 'table:\n\t"Corticosterone, DOC"' in validation_log
     
-    assert 'Warning: A metabolite without a name was found in the' in validation_log
+    assert 'Error: A metabolite without a name was found in the' in validation_log
     
     assert 'Warning: The following metabolites in the' in validation_log
     assert 'table appear more than once in the table:\n\t"Testosterone"' in validation_log
@@ -193,7 +193,7 @@ def test_validate_metabolites(file_source):
 ])
 def test_validate_data(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert 'Error: SUBJECT_SAMPLE_FACTORS section missing sample ID(s).' in validation_log
     assert 'The following IDs were found in the' in validation_log 
     assert 'section but not in the SUBJECT_SAMPLE_FACTORS:\n\t"CER040_242995_ML_02"' in validation_log
@@ -204,7 +204,7 @@ def test_validate_data(file_source):
     assert 'were not found in the' in validation_log
     assert 'table:\n\t"Corticosterone_ DOC"' in validation_log
     
-    assert 'Warning: A metabolite without a name was found in the' in validation_log
+    assert 'Error: A metabolite without a name was found in the' in validation_log
     
     assert 'Warning: The following metabolites in the' in validation_log
     assert 'table appear more than once in the table:\n\t"Testosterone"' in validation_log
@@ -218,10 +218,10 @@ def test_validate_data(file_source):
 class TestMWTabSchemaErrors:
     validation_logs = {}
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_schema_errors.txt"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     validation_logs['mwtab'] = validation_log
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/ST000122_AN000204_schema_errors.json"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     validation_logs['json'] = validation_log
     
     
@@ -301,7 +301,7 @@ class TestMWTabSchemaErrorsRare:
     mwfile['FOR_TEST']['MAX'] = 10
     mwfile['FOR_TEST']['UNIQUE_ITEMS'] = ['a', 'a']
     mwfile['FOR_TEST']['NOT_ONEOF'] = 'asdf'
-    _, validation_log = mwtab.validate_file(mwfile, ms_schema=ms_schema)
+    validation_log, _ = mwtab.validate_file(mwfile, ms_schema=ms_schema)
     
     
     def test_minProperties_error(self):
@@ -349,7 +349,7 @@ class TestMWTabSchemaErrorsRare:
 ])
 def test_validation_log_local(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     # assert "mwtab version: {}".format(mwtab.__version__) in validation_log
     assert "Source:        {}".format(file_source) in validation_log
     assert "Study ID:      {}".format("ST000122") in validation_log
@@ -362,7 +362,7 @@ def test_validation_log_local(file_source):
 ])
 def test_validation_log_web(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     # assert "mwtab version: {}".format(mwtab.__version__) in validation_log
     assert "Source:        {}".format("https://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000002/mwtab/txt")\
             in validation_log
@@ -375,7 +375,7 @@ def test_base_schema_error_extra_key():
     """Test that if extra keys are included there is an error."""
     mwfile = next(mwtab.read_files("tests/example_data/mwtab_files/ST000122_AN000204.json"))
     mwfile["NM"] = {}
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
         
     assert 'Error: Unknown or invalid sections, "CHROMATOGRAPHY", "MS", "MS_METABOLITE_DATA".' in validation_log
     assert ('Error: There must be either a "NMR_METABOLITE_DATA" section, a '
@@ -388,7 +388,7 @@ def test_base_schema_error_extra_key():
 ])
 def test_validate_file(file_source):
     mwfile = next(mwtab.read_files(file_source))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
     assert ('Error: No "MS" or "NM" section was found, '
             'so analysis type could not be determined. '
             'Mass spec will be assumed.') in validation_log
@@ -402,15 +402,15 @@ def test_validate_file(file_source):
 def test_validation_complete_coverage():
     """This is just to hit some lines that aren't covered, but also aren't terribly important to test."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/complete_coverage.json"))
-    _, validation_log = mwtab.validate_file(mwfile, verbose=True)
+    validation_log, _ = mwtab.validate_file(mwfile, verbose=True)
     assert validation_log is None
 
 def test_validation_complete_coverage2():
     """This is just to hit some lines that aren't covered, but also aren't terribly important to test."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/complete_coverage2.txt"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
 
 def test_validation_complete_coverage3():
     """This is just to hit some lines that aren't covered, but also aren't terribly important to test."""
     mwfile = next(mwtab.read_files("tests/example_data/validation_files/complete_coverage3.json"))
-    _, validation_log = mwtab.validate_file(mwfile)
+    validation_log, _ = mwtab.validate_file(mwfile)
