@@ -1,0 +1,2019 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The mwtab Tutorial &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=576dab3d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorial';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Metadata Column Matching" href="metadata_column_matching.html" />
+    <link rel="prev" title="User Guide" href="guide.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Brief-mwTab-Format-Overview">Brief mwTab Format Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-mwtab-as-a-Library">Using mwtab as a Library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Importing-the-mwtab-Package">Importing the mwtab Package</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Constructing-a-MWTabFile-Generator">Constructing a MWTabFile Generator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Processing-a-MWTabFile-Generator">Processing a MWTabFile Generator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Accessing-Data-From-a-Single-MWTabFile">Accessing Data From a Single MWTabFile</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Manipulating-Data-From-a-Single-MWTabFile">Manipulating Data From a Single MWTabFile</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Printing-an-MWTabFile-and-its-Components">Printing an MWTabFile and its Components</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Writing-Data-From-a-MWTabFile-Object-Into-a-File">Writing Data From a MWTabFile Object Into a File</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Extracting-Metadata-and-Metabolites-from-mwTab-Files">Extracting Metadata and Metabolites from mwTab Files</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Extracting-Metadata-Values">Extracting Metadata Values</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Extracting-Metabolites-Values">Extracting Metabolites Values</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Converting-mwTab-Files">Converting mwTab Files</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#One-to-one-file-conversions">One-to-one file conversions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Many-to-many-files-conversions">Many-to-many files conversions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Command-Line-Interface">Command-Line Interface</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Converting-mwTab-Files-in-Bulk">Converting <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files in Bulk</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#CLI-one-to-one-file-conversions">CLI one-to-one file conversions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#CLI-Many-to-many-files-conversions">CLI Many-to-many files conversions</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-Files-Through-Metabolomics-Workbench's-REST-API">Download Files Through Metabolomics Workbench’s REST API</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-by-URL">Download by URL</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-study,-compound,-refmet,-gene,-and-protein-Files">Download study, compound, refmet, gene, and protein Files</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-All-mwTab-Formatted-Files">Download All <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Formatted Files</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-moverz-and-exactmass">Download moverz and exactmass</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Extracting-Metabolite-Data-and-Metadata-From-mwTab-Files">Extracting Metabolite Data and Metadata From <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Validating-mwTab-Files">Validating <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-the-mwtab-Package-to-Find-Analyses-Involving-a-Specific-Disease-or-Condition">Using the mwtab Package to Find Analyses Involving a Specific Disease or Condition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-the-mwtab-Package-API-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites">Using the mwtab Package API to Extract Study IDs, Analysis IDs, and Metabolites</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Using-the-mwtab-CLI-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites">Using the mwtab CLI to Extract Study IDs, Analysis IDs, and Metabolites</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">The mwtab Tutorial</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="The-mwtab-Tutorial">
+<h1>The mwtab Tutorial<a class="headerlink" href="#The-mwtab-Tutorial" title="Link to this heading">#</a></h1>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package provides classes and other facilities for downloading,
+parsing, accessing, and manipulating data stored in either the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> or
+<code class="docutils literal notranslate"><span class="pre">JSON</span></code> representation of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files.</p>
+<p>Also, the <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package provides a simple command-line interface to convert
+between <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> and <code class="docutils literal notranslate"><span class="pre">JSON</span></code> representations, download entries from
+Metabolomics Workbench, access the MW REST interface, validate the consistency
+of the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files, or extract metadata and metabolites from these files.</p>
+<section id="Brief-mwTab-Format-Overview">
+<h2>Brief mwTab Format Overview<a class="headerlink" href="#Brief-mwTab-Format-Overview" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the full official specification see the following link (<code class="docutils literal notranslate"><span class="pre">mwTab</span> <span class="pre">file</span> <span class="pre">specification</span></code>):
+<a class="reference external" href="http://www.metabolomicsworkbench.org/data/tutorials.php">http://www.metabolomicsworkbench.org/data/tutorials.php</a></p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files consist of multiple blocks. Each new block starts with <code class="docutils literal notranslate"><span class="pre">#</span></code>.</p>
+<ul class="simple">
+<li><p>Some of the blocks contain only “key-value”-like pairs.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#METABOLOMICS WORKBENCH STUDY_ID:ST000001 ANALYSIS_ID:AN000001
+VERSION              1
+CREATED_ON           2016-09-17
+#PROJECT
+PR:PROJECT_TITLE                     FatB Gene Project
+PR:PROJECT_TYPE                      Genotype treatment
+PR:PROJECT_SUMMARY                   Experiment to test the consequence of a mutation at the FatB gene (At1g08510)
+PR:PROJECT_SUMMARY                   the wound-response of Arabidopsis
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some “key-value”-like pairs can span multiple lines.</p>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">#SUBJECT_SAMPLE_FACTORS</span></code> block is specially formatted, i.e. it contains header
+specification and tab-separated values.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#SUBJECT_SAMPLE_FACTORS:             SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
+SUBJECT_SAMPLE_FACTORS               -       LabF_115873     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+SUBJECT_SAMPLE_FACTORS               -       LabF_115878     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+SUBJECT_SAMPLE_FACTORS               -       LabF_115883     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+SUBJECT_SAMPLE_FACTORS               -       LabF_115888     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+SUBJECT_SAMPLE_FACTORS               -       LabF_115893     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+SUBJECT_SAMPLE_FACTORS               -       LabF_115898     Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">#MS_METABOLITE_DATA</span></code> (results) block contains <code class="docutils literal notranslate"><span class="pre">Samples</span></code> identifiers, <code class="docutils literal notranslate"><span class="pre">Factors</span></code> identifiers
+as well as tab-separated data between <code class="docutils literal notranslate"><span class="pre">*_START</span></code> and <code class="docutils literal notranslate"><span class="pre">*_END</span></code>.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#MS_METABOLITE_DATA
+MS_METABOLITE_DATA:UNITS     Peak height
+MS_METABOLITE_DATA_START
+Samples      LabF_115904     LabF_115909     LabF_115914     LabF_115919     LabF_115924     LabF_115929     LabF_115842     LabF_115847     LabF_115852     LabF_115857     LabF_115862     LabF_115867     LabF_115873     LabF_115878     LabF_115883     LabF_115888     LabF_115893     LabF_115898     LabF_115811     LabF_115816     LabF_115821     LabF_115826     LabF_115831     LabF_115836
+Factors      Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Control - Non-Wounded     Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:fatb-ko KD; At1g08510 | Plant Wounding Treatment:Wounded   Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Control - Non-Wounded        Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded      Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded      Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded      Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded      Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded      Arabidopsis Genotype:Wassilewskija (Ws) | Plant Wounding Treatment:Wounded
+1_2_4-benzenetriol   1874.0000       3566.0000       1945.0000       1456.0000       2004.0000       1995.0000       4040.0000       2432.0000       2189.0000       1931.0000       1307.0000       2880.0000       2218.0000       1754.0000       1369.0000       1201.0000       3324.0000       1355.0000       2257.0000       1718.0000       1740.0000       3472.0000       2054.0000       1367.0000
+1-monostearin        987.0000        450.0000        1910.0000       549.0000        1032.0000       902.0000        393.0000        705.0000        100.0000        481.0000        265.0000        120.0000        1185.0000       867.0000        676.0000        569.0000        579.0000        387.0000        1035.0000       789.0000        875.0000        224.0000        641.0000        693.0000
+...
+MS_METABOLITE_DATA_END
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">#METABOLITES</span></code> metadata block contains a header specifying fields and
+tab-separated data between <code class="docutils literal notranslate"><span class="pre">*_START</span></code> and <code class="docutils literal notranslate"><span class="pre">*_END</span></code>.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#METABOLITES
+METABOLITES_START
+metabolite_name      moverz_quant    ri      ri_type pubchem_id      inchi_key       kegg_id other_id        other_id_type
+1,2,4-benzenetriol   239     522741  Fiehn   10787           C02814  205673  BinBase
+1-monostearin        399     959625  Fiehn   107036          D01947  202835  BinBase
+2-hydroxyvaleric acid        131     310750  Fiehn   98009                   218773  BinBase
+3-phosphoglycerate   299     611619  Fiehn   724             C00597  217821  BinBase
+...
+METABOLITES_END
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">#NMR_BINNED_DATA</span></code> metadata block contains a header specifying fields and
+tab-separated data between <code class="docutils literal notranslate"><span class="pre">*_START</span></code> and <code class="docutils literal notranslate"><span class="pre">*_END</span></code>. Note that this block has
+been deprecated. Binned data is now uploaded as a separate text file and referenced
+with the “NM:NMR_RESULTS_FILE” tag in the NM metadata block.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#NMR_BINNED_DATA
+NMR_BINNED_DATA_START
+Bin range(ppm)       CDC029  CDC030  CDC032  CPL101  CPL102  CPL103  CPL201  CPL202  CPL203  CDS039  CDS052  CDS054
+0.50...0.56  0.00058149      1.6592  0.039301        0       0       0       0.034018        0.0028746       0.0021478       0.013387        0       0
+0.56...0.58  0       0.74267 0       0.007206        0       0       0       0       0       0       0       0.0069721
+0.58...0.60  0.051165        0.8258  0.089149        0.060972        0.026307        0.045697        0.069541        0       0       0.14516 0.057489        0.042255
+...
+NMR_BINNED_DATA_END
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Order of metadata and data blocks (MS)</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#METABOLOMICS WORKBENCH
+VERSION              1
+CREATED_ON           2016-09-17
+...
+#PROJECT
+...
+#STUDY
+...
+#SUBJECT
+...
+#SUBJECT_SAMPLE_FACTORS:             SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
+...
+#COLLECTION
+...
+#TREATMENT
+...
+#SAMPLEPREP
+...
+#CHROMATOGRAPHY
+...
+#ANALYSIS
+...
+#MS
+...
+#MS_METABOLITE_DATA
+MS_METABOLITE_DATA:UNITS     peak area
+MS_METABOLITE_DATA_START
+...
+MS_METABOLITE_DATA_END
+#METABOLITES
+METABOLITES_START
+...
+METABOLITES_END
+#END
+</pre></div>
+</div>
+</section>
+<section id="Using-mwtab-as-a-Library">
+<h2>Using mwtab as a Library<a class="headerlink" href="#Using-mwtab-as-a-Library" title="Link to this heading">#</a></h2>
+<section id="Importing-the-mwtab-Package">
+<h3>Importing the mwtab Package<a class="headerlink" href="#Importing-the-mwtab-Package" title="Link to this heading">#</a></h3>
+<p>If the <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package is installed on the system, it can be imported:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">mwtab</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Constructing-a-MWTabFile-Generator">
+<h3>Constructing a MWTabFile Generator<a class="headerlink" href="#Constructing-a-MWTabFile-Generator" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#module-mwtab.fileio" title="mwtab.fileio"><code class="xref py py-mod docutils literal notranslate"><span class="pre">fileio</span></code></a> module provides the <a class="reference internal" href="api.html#mwtab.fileio.read_files" title="mwtab.fileio.read_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_files()</span></code></a>
+generator function that yields <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> instances. Constructing a
+<a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator is easy - specify the path to a local <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file,
+directory of files, or archive of files:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">mwtab</span>
+
+<span class="n">mwfile_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;ST000017_AN000035.txt&quot;</span><span class="p">)</span>  <span class="c1"># single mwTab file</span>
+<span class="n">mwfiles_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;ST000017_AN000035.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;ST000040_AN000060.json&quot;</span><span class="p">)</span>  <span class="c1"># several mwTab files</span>
+<span class="n">mwdir_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;mwfiles_dir_mwtab&quot;</span><span class="p">)</span>  <span class="c1"># directory of mwTab files</span>
+<span class="n">mwzip_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;mwfiles_mwtab.zip&quot;</span><span class="p">)</span>  <span class="c1"># archive of mwTab files</span>
+<span class="n">mwanalysis_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;35&quot;</span><span class="p">,</span> <span class="s2">&quot;60&quot;</span><span class="p">)</span>       <span class="c1"># ANALYSIS_ID of mwTab files</span>
+<span class="c1"># REST callable url of mwTab file</span>
+<span class="n">mwurl_gen</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;https://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000035/mwtab/txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Processing-a-MWTabFile-Generator">
+<h3>Processing a MWTabFile Generator<a class="headerlink" href="#Processing-a-MWTabFile-Generator" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator can be processed in several ways:</p>
+<ul class="simple">
+<li><p>Feed it to a for-loop and process one file at a time:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">mwfile</span> <span class="ow">in</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;35&quot;</span><span class="p">,</span> <span class="s2">&quot;60&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STUDY_ID:&quot;</span><span class="p">,</span> <span class="n">mwfile</span><span class="o">.</span><span class="n">study_id</span><span class="p">)</span>       <span class="c1"># print STUDY_ID</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ANALYSIS_ID&quot;</span><span class="p">,</span> <span class="n">mwfile</span><span class="o">.</span><span class="n">analysis_id</span><span class="p">)</span>  <span class="c1"># print ANALYSIS_ID</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SOURCE&quot;</span><span class="p">,</span> <span class="n">mwfile</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>            <span class="c1"># print source</span>
+    <span class="k">for</span> <span class="n">block_name</span> <span class="ow">in</span> <span class="n">mwfile</span><span class="p">:</span>                 <span class="c1"># print names of blocks</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">block_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+STUDY_ID: ST000017
+ANALYSIS_ID AN000035
+SOURCE https://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000035/mwtab/txt
+         METABOLOMICS WORKBENCH
+         PROJECT
+         STUDY
+         SUBJECT
+         SUBJECT_SAMPLE_FACTORS
+         COLLECTION
+         TREATMENT
+         SAMPLEPREP
+         CHROMATOGRAPHY
+         ANALYSIS
+         MS
+         MS_METABOLITE_DATA
+STUDY_ID: ST000040
+ANALYSIS_ID AN000060
+SOURCE https://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000060/mwtab/txt
+         METABOLOMICS WORKBENCH
+         PROJECT
+         STUDY
+         SUBJECT
+         SUBJECT_SAMPLE_FACTORS
+         COLLECTION
+         TREATMENT
+         SAMPLEPREP
+         CHROMATOGRAPHY
+         ANALYSIS
+         MS
+         MS_METABOLITE_DATA
+</pre></div></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once the generator is consumed, it becomes empty and needs to be created again.</p>
+</div>
+<ul class="simple">
+<li><p>Since the <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator behaves like an iterator,
+we can call the <a class="reference external" href="https://docs.python.org/3/library/functions.html#next" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">next()</span></code></a> built-in function:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mwfiles_generator</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;35&quot;</span><span class="p">,</span> <span class="s2">&quot;60&quot;</span><span class="p">)</span>
+
+<span class="n">mwfile1</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mwfiles_generator</span><span class="p">)</span>
+<span class="n">mwfile2</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mwfiles_generator</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once the generator is consumed, the <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#StopIteration" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StopIteration</span></code></a> Exception
+will be raised on the subsequent next call.</p>
+</div>
+<ul class="simple">
+<li><p>Convert the <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator into a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of
+<a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> objects:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mwfiles_generator</span> <span class="o">=</span> <span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;35&quot;</span><span class="p">,</span> <span class="s2">&quot;60&quot;</span><span class="p">)</span>
+<span class="n">mwfiles_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mwfiles_generator</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not convert the <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator into a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the generator can yield a large number of files, e.g.
+several thousand, otherwise it can consume all available memory.</p>
+</div>
+</section>
+<section id="Accessing-Data-From-a-Single-MWTabFile">
+<h3>Accessing Data From a Single MWTabFile<a class="headerlink" href="#Accessing-Data-From-a-Single-MWTabFile" title="Link to this heading">#</a></h3>
+<p>Since a <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> is a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>,
+data can be accessed and manipulated as with any regular Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> object
+using bracket accessors.</p>
+<ul class="simple">
+<li><p>Accessing the top-level “keys” in a <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a>:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mwfile</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mwtab</span><span class="o">.</span><span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;ST000017_AN000035.txt&quot;</span><span class="p">))</span>
+
+<span class="c1"># list MWTabFile-level keys, i.e. saveframe names</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">mwfile</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;METABOLOMICS WORKBENCH&#39;,
+ &#39;PROJECT&#39;,
+ &#39;STUDY&#39;,
+ &#39;SUBJECT&#39;,
+ &#39;SUBJECT_SAMPLE_FACTORS&#39;,
+ &#39;COLLECTION&#39;,
+ &#39;TREATMENT&#39;,
+ &#39;SAMPLEPREP&#39;,
+ &#39;CHROMATOGRAPHY&#39;,
+ &#39;ANALYSIS&#39;,
+ &#39;MS&#39;,
+ &#39;MS_METABOLITE_DATA&#39;]
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Accessing individual blocks in <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a>:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access &quot;PROJECT&quot; block</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;PROJECT_TITLE&#39;: &#39;Rat Stamina Studies&#39;,
+ &#39;PROJECT_TYPE&#39;: &#39;Feeding&#39;,
+ &#39;PROJECT_SUMMARY&#39;: &#39;Stamina in rats&#39;,
+ &#39;INSTITUTE&#39;: &#39;University of Michigan&#39;,
+ &#39;DEPARTMENT&#39;: &#39;Internal Medicine&#39;,
+ &#39;LABORATORY&#39;: &#39;Burant Lab&#39;,
+ &#39;LAST_NAME&#39;: &#39;Beecher&#39;,
+ &#39;FIRST_NAME&#39;: &#39;Chris&#39;,
+ &#39;ADDRESS&#39;: &#39;-&#39;,
+ &#39;EMAIL&#39;: &#39;chrisbee@med.umich.edu&#39;,
+ &#39;PHONE&#39;: &#39;734-232-0815&#39;,
+ &#39;FUNDING_SOURCE&#39;: &#39;NIH: R01 DK077200&#39;}
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Accessing individual “key-value” pairs within blocks:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access &quot;INSTITUTE&quot; field within &quot;PROJECT&quot; block</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">][</span><span class="s2">&quot;INSTITUTE&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;University of Michigan&#39;
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Accessing data in the <code class="docutils literal notranslate"><span class="pre">#SUBJECT_SAMPLE_FACTORS</span></code> block:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access &quot;SUBJECT_SAMPLE_FACTORS&quot; block and print first three</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[{&#39;Subject ID&#39;: &#39;-&#39;,
+  &#39;Sample ID&#39;: &#39;S00009477&#39;,
+  &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;}},
+ {&#39;Subject ID&#39;: &#39;-&#39;,
+  &#39;Sample ID&#39;: &#39;S00009478&#39;,
+  &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;}},
+ {&#39;Subject ID&#39;: &#39;-&#39;,
+  &#39;Sample ID&#39;: &#39;S00009479&#39;,
+  &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;}}]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access individual factors (by index)</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;Subject ID&#39;: &#39;-&#39;,
+ &#39;Sample ID&#39;: &#39;S00009477&#39;,
+ &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;}}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access individual fields within factors</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Sample ID&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;S00009477&#39;
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Accessing data in the <code class="docutils literal notranslate"><span class="pre">#MS_METABOLITE_DATA</span></code> block:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access data block keys</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;MS_METABOLITE_DATA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Units&#39;, &#39;Data&#39;, &#39;Metabolites&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access units field</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;MS_METABOLITE_DATA&quot;</span><span class="p">][</span><span class="s2">&quot;Units&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;peak area&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access samples field (by index)</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;MS_METABOLITE_DATA&quot;</span><span class="p">][</span><span class="s2">&quot;Data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Metabolite&#39;, &#39;S00009477&#39;, &#39;S00009478&#39;, &#39;S00009479&#39;, &#39;S00009480&#39;, &#39;S00009481&#39;, &#39;S00009500&#39;, &#39;S00009501&#39;, &#39;S00009502&#39;, &#39;S00009503&#39;, &#39;S00009470&#39;, &#39;S00009471&#39;, &#39;S00009472&#39;, &#39;S00009473&#39;, &#39;S00009474&#39;, &#39;S00009475&#39;, &#39;S00009494&#39;, &#39;S00009495&#39;, &#39;S00009496&#39;, &#39;S00009497&#39;, &#39;S00009498&#39;, &#39;S00009499&#39;, &#39;S00009488&#39;, &#39;S00009489&#39;, &#39;S00009490&#39;, &#39;S00009491&#39;, &#39;S00009492&#39;, &#39;S00009493&#39;, &#39;S00009509&#39;, &#39;S00009510&#39;, &#39;S00009511&#39;, &#39;S00009512&#39;, &#39;S00009513&#39;, &#39;S00009514&#39;, &#39;S00009482&#39;, &#39;S00009483&#39;, &#39;S00009484&#39;, &#39;S00009486&#39;, &#39;S00009504&#39;, &#39;S00009505&#39;, &#39;S00009506&#39;, &#39;S00009507&#39;, &#39;S00009508&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access metabolite data and print first three</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;MS_METABOLITE_DATA&quot;</span><span class="p">][</span><span class="s2">&quot;Metabolites&quot;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[{&#39;Metabolite&#39;: &#39;11BETA,21-DIHYDROXY-5BETA-PREGNANE-3,20-DIONE&#39;,
+  &#39;moverz_quant&#39;: &#39;&#39;,
+  &#39;ri&#39;: &#39;&#39;,
+  &#39;ri_type&#39;: &#39;&#39;,
+  &#39;pubchem_id&#39;: &#39;44263339&#39;,
+  &#39;inchi_key&#39;: &#39;&#39;,
+  &#39;kegg_id&#39;: &#39;C05475&#39;,
+  &#39;other_id&#39;: &#39;775216_UNIQUE&#39;,
+  &#39;other_id_type&#39;: &#39;UM_Target_ID&#39;},
+ {&#39;Metabolite&#39;: &#39;11-BETA-HYDROXYANDROST-4-ENE-3,17-DIONE&#39;,
+  &#39;moverz_quant&#39;: &#39;&#39;,
+  &#39;ri&#39;: &#39;&#39;,
+  &#39;ri_type&#39;: &#39;&#39;,
+  &#39;pubchem_id&#39;: &#39;94141&#39;,
+  &#39;inchi_key&#39;: &#39;&#39;,
+  &#39;kegg_id&#39;: &#39;C05284&#39;,
+  &#39;other_id&#39;: &#39;771312_PRIMARY&#39;,
+  &#39;other_id_type&#39;: &#39;UM_Target_ID&#39;},
+ {&#39;Metabolite&#39;: &#39;13(S)-HPODE&#39;,
+  &#39;moverz_quant&#39;: &#39;&#39;,
+  &#39;ri&#39;: &#39;&#39;,
+  &#39;ri_type&#39;: &#39;&#39;,
+  &#39;pubchem_id&#39;: &#39;1426&#39;,
+  &#39;inchi_key&#39;: &#39;&#39;,
+  &#39;kegg_id&#39;: &#39;C04717&#39;,
+  &#39;other_id&#39;: &#39;775541_UNIQUE&#39;,
+  &#39;other_id_type&#39;: &#39;UM_Target_ID&#39;}]
+</pre></div></div>
+</div>
+</section>
+<section id="Manipulating-Data-From-a-Single-MWTabFile">
+<h3>Manipulating Data From a Single MWTabFile<a class="headerlink" href="#Manipulating-Data-From-a-Single-MWTabFile" title="Link to this heading">#</a></h3>
+<p>In order to change values within the <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a>, descend into
+the appropriate level using square bracket accessors and set a new value.</p>
+<ul class="simple">
+<li><p>Change regular “key-value” pairs:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access phone number information</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">][</span><span class="s2">&quot;PHONE&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;734-232-0815&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># change phone number information</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">][</span><span class="s2">&quot;PHONE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1-530-754-8258&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check that it has been modified</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;PROJECT&quot;</span><span class="p">][</span><span class="s2">&quot;PHONE&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;1-530-754-8258&#39;
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Change <code class="docutils literal notranslate"><span class="pre">#SUBJECT_SAMPLE_FACTORS</span></code> values:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># access the first subject sample factor by index</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;Subject ID&#39;: &#39;-&#39;,
+ &#39;Sample ID&#39;: &#39;S00009477&#39;,
+ &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;}}
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># provide additional details to the first subject sample factor</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Additional sample data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Additional detail key&quot;</span><span class="p">:</span> <span class="s2">&quot;Additional detail value&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check that it has been modified</span>
+<span class="n">mwfile</span><span class="p">[</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;Subject ID&#39;: &#39;-&#39;,
+ &#39;Sample ID&#39;: &#39;S00009477&#39;,
+ &#39;Factors&#39;: {&#39;Feeeding&#39;: &#39;Ad lib&#39;, &#39;Running Capacity&#39;: &#39;High&#39;},
+ &#39;Additional sample data&#39;: {&#39;Additional detail key&#39;: &#39;Additional detail value&#39;}}
+</pre></div></div>
+</div>
+</section>
+<section id="Printing-an-MWTabFile-and-its-Components">
+<h3>Printing an MWTabFile and its Components<a class="headerlink" href="#Printing-an-MWTabFile-and-its-Components" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">MWTabFile</span></code> objects provide the <code class="docutils literal notranslate"><span class="pre">print_file()</span></code> method which can be used to output the file in either <cite>mwTab</cite> or JSON format. The method takes a <code class="docutils literal notranslate"><span class="pre">file_format</span></code> keyword argument which specifices the output format to be displayed.</p>
+<p>The MWTabFile can be printed to output in <cite>mwTab</cite> format in its entirety using:</p>
+<ul class="simple">
+<li><p>mwfile.print_file(file_format=”mwtab”)</p></li>
+<li><p>Print the first 20 lines in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="n">mwtab_file_str</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+<span class="n">mwfile</span><span class="o">.</span><span class="n">print_file</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">mwtab_file_str</span><span class="p">)</span>
+
+<span class="c1"># print out first 20 lines</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mwtab_file_str</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+#METABOLOMICS WORKBENCH STUDY_ID:ST000017 ANALYSIS_ID:AN000035 PROJECT_ID:PR000016
+VERSION                 1
+CREATED_ON              2016-09-17
+#PROJECT
+PR:PROJECT_TITLE                        Rat Stamina Studies
+PR:PROJECT_TYPE                         Feeding
+PR:PROJECT_SUMMARY                      Stamina in rats
+PR:INSTITUTE                            University of Michigan
+PR:DEPARTMENT                           Internal Medicine
+PR:LABORATORY                           Burant Lab
+PR:LAST_NAME                            Beecher
+PR:FIRST_NAME                           Chris
+PR:ADDRESS                              -
+PR:EMAIL                                chrisbee@med.umich.edu
+PR:PHONE                                1-530-754-8258
+PR:FUNDING_SOURCE                       NIH: R01 DK077200
+#STUDY
+ST:STUDY_TITLE                          Rat HCR/LCR Stamina Study
+ST:STUDY_TYPE                           LC-MS analysis
+ST:STUDY_SUMMARY                        To determine the basis of running capacity and health differences in outbread
+</pre></div></div>
+</div>
+<p>The MWTabFile can be printed to output in JSON format in its entirety using:</p>
+<ul class="simple">
+<li><p>mwfile.print_file(file_format=”json”)</p></li>
+<li><p>Print the first 20 lines in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="n">mwtab_file_str</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+<span class="n">mwfile</span><span class="o">.</span><span class="n">print_file</span><span class="p">(</span><span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">mwtab_file_str</span><span class="p">)</span>
+
+<span class="c1"># print out first 20 lines</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mwtab_file_str</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{
+    &#34;METABOLOMICS WORKBENCH&#34;: {
+        &#34;STUDY_ID&#34;: &#34;ST000017&#34;,
+        &#34;ANALYSIS_ID&#34;: &#34;AN000035&#34;,
+        &#34;PROJECT_ID&#34;: &#34;PR000016&#34;,
+        &#34;VERSION&#34;: &#34;1&#34;,
+        &#34;CREATED_ON&#34;: &#34;2016-09-17&#34;
+    },
+    &#34;PROJECT&#34;: {
+        &#34;PROJECT_TITLE&#34;: &#34;Rat Stamina Studies&#34;,
+        &#34;PROJECT_TYPE&#34;: &#34;Feeding&#34;,
+        &#34;PROJECT_SUMMARY&#34;: &#34;Stamina in rats&#34;,
+        &#34;INSTITUTE&#34;: &#34;University of Michigan&#34;,
+        &#34;DEPARTMENT&#34;: &#34;Internal Medicine&#34;,
+        &#34;LABORATORY&#34;: &#34;Burant Lab&#34;,
+        &#34;LAST_NAME&#34;: &#34;Beecher&#34;,
+        &#34;FIRST_NAME&#34;: &#34;Chris&#34;,
+        &#34;ADDRESS&#34;: &#34;-&#34;,
+        &#34;EMAIL&#34;: &#34;chrisbee@med.umich.edu&#34;,
+        &#34;PHONE&#34;: &#34;1-530-754-8258&#34;,
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Print a single block in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mwfile</span><span class="o">.</span><span class="n">print_block</span><span class="p">(</span><span class="s2">&quot;STUDY&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ST:STUDY_TITLE                          Rat HCR/LCR Stamina Study
+ST:STUDY_TYPE                           LC-MS analysis
+ST:STUDY_SUMMARY                        To determine the basis of running capacity and health differences in outbread
+ST:STUDY_SUMMARY                        N/NIH rats selected for high capacity (HCR) and low capacity (LCR) running (a for
+ST:STUDY_SUMMARY                        VO2max) (see:Science. 2005 Jan 21;307(5708):418-20). Plasma collected at 12 of
+ST:STUDY_SUMMARY                        age in generation 28 rats after ad lib feeding or 40% caloric restriction at week
+ST:STUDY_SUMMARY                        8 of age. All animals fasted 4 hours prior to collection between 5-8
+ST:INSTITUTE                            University of Michigan
+ST:DEPARTMENT                           Internal Medicine
+ST:LABORATORY                           Burant Lab (MMOC)
+ST:LAST_NAME                            Qi
+ST:FIRST_NAME                           Nathan
+ST:ADDRESS                              -
+ST:EMAIL                                nathanqi@med.umich.edu
+ST:PHONE                                734-232-0815
+ST:NUM_GROUPS                           2
+ST:TOTAL_SUBJECTS                       42
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Print a single block in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mwfile</span><span class="o">.</span><span class="n">print_block</span><span class="p">(</span><span class="s2">&quot;STUDY&quot;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{
+    &#34;STUDY_TITLE&#34;: &#34;Rat HCR/LCR Stamina Study&#34;,
+    &#34;STUDY_TYPE&#34;: &#34;LC-MS analysis&#34;,
+    &#34;STUDY_SUMMARY&#34;: &#34;To determine the basis of running capacity and health differences in outbread N/NIH rats selected for high capacity (HCR) and low capacity (LCR) running (a for VO2max) (see:Science. 2005 Jan 21;307(5708):418-20). Plasma collected at 12 of age in generation 28 rats after ad lib feeding or 40% caloric restriction at week 8 of age. All animals fasted 4 hours prior to collection between 5-8&#34;,
+    &#34;INSTITUTE&#34;: &#34;University of Michigan&#34;,
+    &#34;DEPARTMENT&#34;: &#34;Internal Medicine&#34;,
+    &#34;LABORATORY&#34;: &#34;Burant Lab (MMOC)&#34;,
+    &#34;LAST_NAME&#34;: &#34;Qi&#34;,
+    &#34;FIRST_NAME&#34;: &#34;Nathan&#34;,
+    &#34;ADDRESS&#34;: &#34;-&#34;,
+    &#34;EMAIL&#34;: &#34;nathanqi@med.umich.edu&#34;,
+    &#34;PHONE&#34;: &#34;734-232-0815&#34;,
+    &#34;NUM_GROUPS&#34;: &#34;2&#34;,
+    &#34;TOTAL_SUBJECTS&#34;: &#34;42&#34;
+}
+</pre></div></div>
+</div>
+</section>
+<section id="Writing-Data-From-a-MWTabFile-Object-Into-a-File">
+<h3>Writing Data From a MWTabFile Object Into a File<a class="headerlink" href="#Writing-Data-From-a-MWTabFile-Object-Into-a-File" title="Link to this heading">#</a></h3>
+<p>Data from a <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> can be written into file
+in original <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format or in equivalent JSON format using
+<a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile.write" title="mwtab.mwtab.MWTabFile.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>:</p>
+<ul class="simple">
+<li><p>Writing into a <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted file:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;out/ST000017_AN000035_modified.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+    <span class="n">mwfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Writing into a <code class="docutils literal notranslate"><span class="pre">JSON</span></code> file:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;out/ST000017_AN000035_modified.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+    <span class="n">mwfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Extracting-Metadata-and-Metabolites-from-mwTab-Files">
+<h3>Extracting Metadata and Metabolites from mwTab Files<a class="headerlink" href="#Extracting-Metadata-and-Metabolites-from-mwTab-Files" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#module-mwtab.mwextract" title="mwtab.mwextract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.mwextract</span></code></a> module can be used to extract metadata from <code class="docutils literal notranslate"><span class="pre">mwTab</span></code>
+files. The module contains two main methods: 1)
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_metadata()</span></code> which can be used to parse metadata
+values from a <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file, and 2)
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_metabolites()</span></code> which can be used to gather a
+list of metabolites and samples containing the found metabolites from multiple
+<code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files which contain a given metadata key value pair.</p>
+<section id="Extracting-Metadata-Values">
+<h4>Extracting Metadata Values<a class="headerlink" href="#Extracting-Metadata-Values" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Extracting metadata values from a given <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.mwextract</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_metadata</span>
+
+<span class="n">extract_metadata</span><span class="p">(</span><span class="n">mwfile</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;STUDY_TYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;SUBJECT_TYPE&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;STUDY_TYPE&#39;: {&#39;LC-MS analysis&#39;}, &#39;SUBJECT_TYPE&#39;: {&#39;Animal&#39;}}
+</pre></div></div>
+</div>
+</section>
+<section id="Extracting-Metabolites-Values">
+<h4>Extracting Metabolites Values<a class="headerlink" href="#Extracting-Metabolites-Values" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Extracting metabolite information from multiple <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files and outputting the first three metabolites:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.mwextract</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_metabolites</span><span class="p">,</span> <span class="n">generate_matchers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mwtab</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_files</span>
+
+<span class="n">mwtab_gen</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span>
+    <span class="s2">&quot;ST000017_AN000035.txt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ST000040_AN000060.txt&quot;</span>
+<span class="p">)</span>
+
+<span class="n">matchers</span> <span class="o">=</span> <span class="n">generate_matchers</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;ST:STUDY_TYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LC-MS analysis&quot;</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">extract_metabolites</span><span class="p">(</span><span class="n">mwtab_gen</span><span class="p">,</span> <span class="n">matchers</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;11BETA_21-DIHYDROXY-5BETA-PREGNANE-3_20-DIONE&#39;,
+ &#39;11-BETA-HYDROXYANDROST-4-ENE-3_17-DIONE&#39;,
+ &#39;13(S)-HPODE&#39;]
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>Extracting metabolite information from multiple <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files using regular expressions and outputting the first three metabolites:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.mwextract</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_metabolites</span><span class="p">,</span> <span class="n">generate_matchers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mwtab</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">re</span><span class="w"> </span><span class="kn">import</span> <span class="nb">compile</span>
+
+<span class="n">mwtab_gen</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span>
+    <span class="s2">&quot;ST000017_AN000035.txt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ST000040_AN000060.txt&quot;</span>
+<span class="p">)</span>
+
+<span class="n">matchers</span> <span class="o">=</span> <span class="n">generate_matchers</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;ST:STUDY_TYPE&quot;</span><span class="p">,</span>
+    <span class="nb">compile</span><span class="p">(</span><span class="s2">&quot;(LC-MS)&quot;</span><span class="p">))</span>
+<span class="p">])</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">extract_metabolites</span><span class="p">(</span><span class="n">mwtab_gen</span><span class="p">,</span> <span class="n">matchers</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;11BETA_21-DIHYDROXY-5BETA-PREGNANE-3_20-DIONE&#39;,
+ &#39;11-BETA-HYDROXYANDROST-4-ENE-3_17-DIONE&#39;,
+ &#39;13(S)-HPODE&#39;]
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="Converting-mwTab-Files">
+<h3>Converting mwTab Files<a class="headerlink" href="#Converting-mwTab-Files" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files can be converted between the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file format and their <code class="docutils literal notranslate"><span class="pre">JSON</span></code>
+representation using the <a class="reference internal" href="api.html#module-mwtab.converter" title="mwtab.converter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.converter</span></code></a> module.</p>
+<section id="One-to-one-file-conversions">
+<h4>One-to-one file conversions<a class="headerlink" href="#One-to-one-file-conversions" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Converting from the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file format into its equivalent <code class="docutils literal notranslate"><span class="pre">JSON</span></code> file format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+
+<span class="c1"># Using valid ANALYSIS_ID to access file from URL: from_path=&quot;1&quot;</span>
+<span class="n">converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">from_path</span><span class="o">=</span><span class="s2">&quot;35&quot;</span><span class="p">,</span> <span class="n">to_path</span><span class="o">=</span><span class="s2">&quot;out/ST000017_AN000035.json&quot;</span><span class="p">,</span>
+                      <span class="n">from_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">,</span> <span class="n">to_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+<span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Converting from JSON file format back to <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+
+<span class="n">converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">from_path</span><span class="o">=</span><span class="s2">&quot;out/ST000017_AN000035.json&quot;</span><span class="p">,</span> <span class="n">to_path</span><span class="o">=</span><span class="s2">&quot;out/ST000017_AN000035.txt&quot;</span><span class="p">,</span>
+                      <span class="n">from_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">to_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">)</span>
+<span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Many-to-many-files-conversions">
+<h4>Many-to-many files conversions<a class="headerlink" href="#Many-to-many-files-conversions" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Converting from a directory of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files into their equivalent
+<code class="docutils literal notranslate"><span class="pre">JSON</span></code> formatted files:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+
+<span class="n">converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">from_path</span><span class="o">=</span><span class="s2">&quot;mwfiles_dir_mwtab&quot;</span><span class="p">,</span>
+                      <span class="n">to_path</span><span class="o">=</span><span class="s2">&quot;out/mwfiles_dir_json&quot;</span><span class="p">,</span>
+                      <span class="n">from_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">,</span>
+                      <span class="n">to_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+<span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Converting from a directory of <code class="docutils literal notranslate"><span class="pre">JSON</span></code> formatted files into their equivalent
+<code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+
+<span class="n">converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">from_path</span><span class="o">=</span><span class="s2">&quot;out/mwfiles_dir_json&quot;</span><span class="p">,</span>
+                      <span class="n">to_path</span><span class="o">=</span><span class="s2">&quot;out/mwfiles_dir_mwtab&quot;</span><span class="p">,</span>
+                      <span class="n">from_format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+                      <span class="n">to_format</span><span class="o">=</span><span class="s2">&quot;mwtab&quot;</span><span class="p">)</span>
+<span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Many-to-many files and one-to-one file conversions are available.
+See <a class="reference internal" href="api.html#module-mwtab.converter" title="mwtab.converter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.converter</span></code></a> for full list of available conversions.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="Command-Line-Interface">
+<h2>Command-Line Interface<a class="headerlink" href="#Command-Line-Interface" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt>The mwtab Command-Line Interface provides the following functionality:</dt><dd><ul class="simple">
+<li><p>Convert from the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file format into its equivalent <code class="docutils literal notranslate"><span class="pre">JSON</span></code> file format and vice versa.</p></li>
+<li><p>Download files through Metabolomics Workbench’s REST API.</p></li>
+<li><p>Validate the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted file.</p></li>
+<li><p>Extract metadata and metabolite information from downloaded files.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>--help
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The mwtab command-line interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Usage:
+    mwtab -h | --help
+    mwtab --version
+    mwtab convert (&lt;from-path&gt; &lt;to-path&gt;) [--from-format=&lt;format&gt;] [--to-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab validate &lt;from-path&gt; [--mw-rest=&lt;url&gt;]
+    mwtab download url &lt;url&gt; [--to-path=&lt;path&gt;] [--verbose]
+    mwtab download study all [--to-path=&lt;path&gt;] [--input-item=&lt;item&gt;] [--output-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab download study &lt;input-value&gt; [--to-path=&lt;path&gt;] [--input-item=&lt;item&gt;] [--output-item=&lt;item&gt;] [--output-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab download (study | compound | refmet | gene | protein) &lt;input-item&gt; &lt;input-value&gt; &lt;output-item&gt; [--output-format=&lt;format&gt;] [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab download moverz &lt;input-item&gt; &lt;m/z-value&gt; &lt;ion-type-value&gt; &lt;m/z-tolerance-value&gt; [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab download exactmass &lt;LIPID-abbreviation&gt; &lt;ion-type-value&gt; [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]
+    mwtab extract metadata &lt;from-path&gt; &lt;to-path&gt; &lt;key&gt; ... [--to-format=&lt;format&gt;] [--no-header]
+    mwtab extract metabolites &lt;from-path&gt; &lt;to-path&gt; (&lt;key&gt; &lt;value&gt;) ... [--to-format=&lt;format&gt;] [--no-header]
+
+Options:
+    -h, --help                           Show this screen.
+    --version                            Show version.
+    --verbose                            Print what files are processing.
+    --from-format=&lt;format&gt;               Input file format, available formats: mwtab, json [default: mwtab].
+    --to-format=&lt;format&gt;                 Output file format [default: json].
+                                         Available formats for convert:
+                                             mwtab, json.
+                                         Available formats for extract:
+                                             json, csv.
+    --mw-rest=&lt;url&gt;                      URL to MW REST interface
+                                            [default: https://www.metabolomicsworkbench.org/rest/].
+    --to-path=&lt;path&gt;                     Directory to save outputs into. Defaults to the current working directory.
+    --prefix=&lt;prefix&gt;                    Prefix to add at the beginning of the output file name. Defaults to no prefix.
+    --suffix=&lt;suffix&gt;                    Suffix to add at the end of the output file name. Defaults to no suffix.
+    --context=&lt;context&gt;                  Type of resource to access from MW REST interface, available contexts: study,
+                                         compound, refmet, gene, protein, moverz, exactmass [default: study].
+    --input-item=&lt;item&gt;                  Item to search Metabolomics Workbench with.
+    --output-item=&lt;item&gt;                 Item to be retrieved from Metabolomics Workbench.
+    --output-format=&lt;format&gt;             Format for item to be retrieved in, available formats: mwtab, json.
+    --no-header                          Include header at the top of csv formatted files.
+
+    For extraction &lt;to-path&gt; can take a &#34;-&#34; which will use stdout.
+    All &lt;from-path&gt;&#39;s can be single files, directories, or URLs.
+
+Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/
+GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab
+</pre></div></div>
+</div>
+<section id="Converting-mwTab-Files-in-Bulk">
+<h3>Converting <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files in Bulk<a class="headerlink" href="#Converting-mwTab-Files-in-Bulk" title="Link to this heading">#</a></h3>
+<section id="CLI-one-to-one-file-conversions">
+<h4>CLI one-to-one file conversions<a class="headerlink" href="#CLI-one-to-one-file-conversions" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Convert from a local file in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a local file in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>ST000017_AN000035.txt<span class="w"> </span>out/ST000017_AN000035.json<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a local file in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format to a local file in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>ST000017_AN000035.json<span class="w"> </span>out/ST000017_AN000035.txt<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a compressed local file in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a compressed local file in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>ST000017_AN000035.txt.gz<span class="w"> </span>out/ST000017_AN000035.json.gz<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a compressed local file in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format to a compressed local file in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>ST000017_AN000035.json.gz<span class="w"> </span>out/ST000017_AN000035.txt.gz<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from an uncompressed URL file in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a compressed local file in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span><span class="m">35</span><span class="w"> </span>out/ST000017_AN000035.json.bz2<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See <a class="reference internal" href="api.html#module-mwtab.converter" title="mwtab.converter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.converter</span></code></a> for full list of available conversions.</p>
+</div>
+</section>
+<section id="CLI-Many-to-many-files-conversions">
+<h4>CLI Many-to-many files conversions<a class="headerlink" href="#CLI-Many-to-many-files-conversions" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Convert from a directory of files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a directory of files in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>mwfiles_dir_mwtab<span class="w"> </span>out/mwfiles_dir_json<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a directory of files in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format to a directory of files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>mwfiles_dir_json<span class="w"> </span>out/mwfiles_dir_mwtab<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a directory of files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a zip archive of files in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>mwfiles_dir_mwtab<span class="w"> </span>out/mwfiles_json.zip<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a compressed tar archive of files in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format to a directory of files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>mwfiles_json.tar.gz<span class="w"> </span>out/mwfiles_dir_mwtab<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Convert from a zip archive of files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format to a compressed tar archive of files in <code class="docutils literal notranslate"><span class="pre">JSON</span></code> format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>convert<span class="w"> </span>mwfiles_mwtab.zip<span class="w"> </span>out/mwfiles_json.tar.bz2<span class="w"> </span><span class="err">\</span>
+          <span class="o">--</span><span class="n">from</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">mwtab</span> <span class="o">--</span><span class="n">to</span><span class="o">-</span><span class="nb">format</span><span class="o">=</span><span class="n">json</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See <a class="reference internal" href="api.html#module-mwtab.converter" title="mwtab.converter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.converter</span></code></a> for full list of available conversions.</p>
+</div>
+</section>
+</section>
+<section id="Download-Files-Through-Metabolomics-Workbench's-REST-API">
+<h3>Download Files Through Metabolomics Workbench’s REST API<a class="headerlink" href="#Download-Files-Through-Metabolomics-Workbench's-REST-API" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package provides the <a class="reference internal" href="api.html#module-mwtab.mwrest" title="mwtab.mwrest"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.mwrest</span></code></a> module, which contains a number of functions and classes for working with Metabolomics Workbench’s REST API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the full official REST API specification see the following link (<code class="docutils literal notranslate"><span class="pre">MW</span> <span class="pre">REST</span> <span class="pre">API</span> <span class="pre">(v1.0,</span> <span class="pre">5/7/2019)</span></code>):
+<a class="reference external" href="https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf">https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We do not recommend downloading the JSON version of mwTab files directly from Metabolomics Workbench.
+There are known errors in some of the JSON files they provide. We recommend downloading in mwTab format
+and then using this package to convert them to JSON.</p>
+</div>
+<section id="Download-by-URL">
+<h4>Download by URL<a class="headerlink" href="#Download-by-URL" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>To download a file based on a given URL, simply call the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">url</span></code> command with the desired URL and provide an output path:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>url<span class="w"> </span><span class="s2">&quot;https://www.metabolomicsworkbench.org/rest/study/analysis_id/AN000035/mwtab/txt&quot;</span><span class="w"> </span>--to-path<span class="o">=</span>out/ST000017_AN000035.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>To download a single analysis <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file, simply call <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">study</span></code> and specify the analysis ID:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>study<span class="w"> </span>AN000035<span class="w"> </span>--to-path<span class="o">=</span>out/ST000017_AN000035.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>To download an entire study <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file, simply call <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">study</span></code> and specify the study ID:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>study<span class="w"> </span>ST000017<span class="w"> </span>--to-path<span class="o">=</span>out/ST000017_AN000035.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>To download a list of studies and/or analyses, simply call <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">study</span></code> and provide a list of IDs in a JSON file:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>study<span class="w"> </span>path_to_json.json<span class="w"> </span>--to-path<span class="o">=</span>out/
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Download-study,-compound,-refmet,-gene,-and-protein-Files">
+<h4>Download study, compound, refmet, gene, and protein Files<a class="headerlink" href="#Download-study,-compound,-refmet,-gene,-and-protein-Files" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>To download study, compound, refmet, gene, and protein context files, call the <code class="docutils literal notranslate"><span class="pre">download</span></code> command and specify the context, input item, input value, and output item (optionally specify the output format).</p></li>
+<li><p>Download a study:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>study<span class="w"> </span>analysis_id<span class="w"> </span>AN000035<span class="w"> </span>mwtab<span class="w"> </span>--output-format<span class="o">=</span>txt<span class="w"> </span>--to-path<span class="o">=</span>out/ST000017_AN000035.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Download compound:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>compound<span class="w"> </span>regno<span class="w"> </span><span class="m">11</span><span class="w"> </span>name<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Download refmet:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>refmet<span class="w"> </span>name<span class="w"> </span>Cholesterol<span class="w"> </span>all<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Download gene:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>gene<span class="w"> </span>gene_symbol<span class="w"> </span>acaca<span class="w"> </span>all<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Download protein:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>protein<span class="w"> </span>uniprot_id<span class="w"> </span>Q13085<span class="w"> </span>all<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Download-All-mwTab-Formatted-Files">
+<h4>Download All <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Formatted Files<a class="headerlink" href="#Download-All-mwTab-Formatted-Files" title="Link to this heading">#</a></h4>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">mwTab</span></code> package provides a number of command line functions for downloading Metabolomics <code class="docutils literal notranslate"><span class="pre">mwtab</span></code> formatted files through the Workbench’s REST API.</p>
+<ul class="simple">
+<li><p>To download all available analysis files, simply call the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">study</span> <span class="pre">all</span></code> command:</p></li>
+</ul>
+<p>! mwtab download study all</p>
+<ul class="simple">
+<li><p>It is also possible to download all study files by calling the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">study</span> <span class="pre">all</span></code> command and providing an input item and output path:</p></li>
+</ul>
+<p>! mwtab download study all –input-item=study_id</p>
+</section>
+<section id="Download-moverz-and-exactmass">
+<h4>Download moverz and exactmass<a class="headerlink" href="#Download-moverz-and-exactmass" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>To download moverz files, call the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">moverz</span></code> command and specify the input value (LIPIDS, MB, or REFMET), m/z value, ion type value, and m/z tolerance value.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>moverz<span class="w"> </span>MB<span class="w"> </span><span class="m">635</span>.52<span class="w"> </span>M+H<span class="w"> </span><span class="m">0</span>.5<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>To download exactmass files, call the <code class="docutils literal notranslate"><span class="pre">download</span> <span class="pre">exactmass</span></code> command and specify the LIPID abbreviation and ion type value.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>download<span class="w"> </span>exactmass<span class="w"> </span><span class="s2">&quot;PC(34:1)&quot;</span><span class="w"> </span>M+H<span class="w"> </span>--to-path<span class="o">=</span>out/tmp.txt
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is not necessary to specify an output format for exactmass files.</p>
+</div>
+</section>
+</section>
+<section id="Extracting-Metabolite-Data-and-Metadata-From-mwTab-Files">
+<h3>Extracting Metabolite Data and Metadata From <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files<a class="headerlink" href="#Extracting-Metabolite-Data-and-Metadata-From-mwTab-Files" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package provides the <a class="reference internal" href="api.html#mwtab.mwextract.extract_metabolites" title="mwtab.mwextract.extract_metabolites"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_metabolites()</span></code></a> and <a class="reference internal" href="api.html#mwtab.mwextract.extract_metadata" title="mwtab.mwextract.extract_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a> functions that can parse <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files. The <a class="reference internal" href="api.html#mwtab.mwextract.extract_metabolites" title="mwtab.mwextract.extract_metabolites"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_metabolites()</span></code></a> takes a source (list of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file) and list of metadata key-value pairs that are used to search for <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files which contain the given metadata pairs. The <a class="reference internal" href="api.html#mwtab.mwextract.extract_metadata" title="mwtab.mwextract.extract_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a> takes a source (list of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file) and list of metadata keys which are used to search the <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files for possible values to the given keys.</p>
+<ul class="simple">
+<li><p>To extract metabolites from <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files in a directory, call the <code class="docutils literal notranslate"><span class="pre">extract</span> <span class="pre">metabolites</span></code> command and provide a list of metadata key value pairs along with an output path and output format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>extract<span class="w"> </span>metabolites<span class="w"> </span>mwfiles_dir_mwtab<span class="w"> </span>out/output_file.csv<span class="w"> </span>SU:SUBJECT_TYPE<span class="w"> </span>Plant<span class="w"> </span>--to-format<span class="o">=</span>csv
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is possible to use ReGeXs to match the metadata value (eg. … SU:SUBJECT_TYPE “r’(Plant)’”).</p>
+</div>
+<ul class="simple">
+<li><p>To extract metadata from <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files in a directory call the <code class="docutils literal notranslate"><span class="pre">extract</span> <span class="pre">metadata</span></code> command and provide a list of metadata keys along with an output path and output format:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>extract<span class="w"> </span>metadata<span class="w"> </span>mwfiles_dir_json<span class="w"> </span>out/output_file.json<span class="w"> </span>SUBJECT_TYPE<span class="w"> </span>--to-format<span class="o">=</span>json
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Validating-mwTab-Files">
+<h3>Validating <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> Files<a class="headerlink" href="#Validating-mwTab-Files" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package provides the <a class="reference internal" href="api.html#mwtab.validator.validate_file" title="mwtab.validator.validate_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate_file()</span></code></a> function
+that can validate files based on a <code class="docutils literal notranslate"><span class="pre">JSON</span></code> schema definition. The <code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab.mwschema</span></code>
+contains schema definitions for every block of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted file, i.e.
+it lists the types of attributes (e.g. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> as well as specifies which keys are
+optional and which are required).</p>
+<ul class="simple">
+<li><p>To validate file(s), simply call the <code class="docutils literal notranslate"><span class="pre">validate</span></code> command and provide a path to file(s):</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>validate<span class="w"> </span><span class="m">35</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Using-the-mwtab-Package-to-Find-Analyses-Involving-a-Specific-Disease-or-Condition">
+<h2>Using the mwtab Package to Find Analyses Involving a Specific Disease or Condition<a class="headerlink" href="#Using-the-mwtab-Package-to-Find-Analyses-Involving-a-Specific-Disease-or-Condition" title="Link to this heading">#</a></h2>
+<p>The Metabolomics Workbench data repository stores mass spectroscopy and nuclear magnetic resonance experimental data and metadata in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files. Metabolomics Workbench also provides a number of tools for searching or analyzing <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files. The mwtab Python package can also be used to perform similar functions through both a programmatic API and command-line interface, which has more search flexibility.</p>
+<dl class="simple">
+<dt>In order to search the repository of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files for analyses associated with a specific disease, Metabolomics Workbench provides a web-based interface:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://www.metabolomicsworkbench.org/data/metsearch_MS_form2.php">https://www.metabolomicsworkbench.org/data/metsearch_MS_form2.php</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>The mwtab Python package can be used in a number of ways to similar effect. The package provides the <a class="reference internal" href="api.html#mwtab.mwextract.extract_metabolites" title="mwtab.mwextract.extract_metabolites"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_metabolites()</span></code></a> method to extract and organize metabolites from multiple <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files through both Python scripts and a command-line interface.  This method has more search flexibility, since it can take either a search string or a regular expression.</p>
+<section id="Using-the-mwtab-Package-API-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites">
+<h3>Using the mwtab Package API to Extract Study IDs, Analysis IDs, and Metabolites<a class="headerlink" href="#Using-the-mwtab-Package-API-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="api.html#mwtab.mwextract.extract_metabolites" title="mwtab.mwextract.extract_metabolites"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_metabolites()</span></code></a> method takes two parameters: 1) an iterable of <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> instances and 2) an iterable of <a class="reference internal" href="api.html#mwtab.mwextract.ItemMatcher" title="mwtab.mwextract.ItemMatcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemMatcher</span></code></a> or <a class="reference internal" href="api.html#mwtab.mwextract.ReGeXMatcher" title="mwtab.mwextract.ReGeXMatcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReGeXMatcher</span></code></a> instances. The iterable of <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> instances can be created by passing <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file sources (filenames, analysis IDs, etc.) to the <a class="reference internal" href="api.html#mwtab.fileio.read_files" title="mwtab.fileio.read_files"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_files()</span></code></a> method. The iterable of matcher instances can be created using the <a class="reference internal" href="api.html#mwtab.mwextract.generate_matchers" title="mwtab.mwextract.generate_matchers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_matchers()</span></code></a> method.</p>
+<ul class="simple">
+<li><p>An example of using the mwtab package API to extract data from analyses associated with diabetes and output the first three metabolites:</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mwtab.mwextract</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_metabolites</span><span class="p">,</span> <span class="n">generate_matchers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mwtab</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_files</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="n">mwtab_gen</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span><span class="s2">&quot;diabetes/&quot;</span><span class="p">)</span>
+
+<span class="n">matchers</span> <span class="o">=</span> <span class="n">generate_matchers</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;ST:STUDY_SUMMARY&quot;</span><span class="p">,</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;(diabetes)&quot;</span><span class="p">))</span>
+<span class="p">])</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">extract_metabolites</span><span class="p">(</span><span class="n">mwtab_gen</span><span class="p">,</span> <span class="n">matchers</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;1_5-anhydroglucitol&#39;, &#39;1-monopalmitin&#39;, &#39;1-monostearin&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Using-the-mwtab-CLI-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites">
+<h3>Using the mwtab CLI to Extract Study IDs, Analysis IDs, and Metabolites<a class="headerlink" href="#Using-the-mwtab-CLI-to-Extract-Study-IDs,-Analysis-IDs,-and-Metabolites" title="Link to this heading">#</a></h3>
+<p>The mwtab command line interface includes a <code class="docutils literal notranslate"><span class="pre">mwtab</span> <span class="pre">extract</span> <span class="pre">metabolites</span></code> method which takes a directory of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files, an output path to save the extracted data in, and a series of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> section item keys and values to be matched (either string values or regular expressions). Additionally an output format can be specified.</p>
+<blockquote>
+<div><p>mwtab extract metabolites &lt;from-path&gt; &lt;to-path&gt; (&lt;key&gt; &lt;value&gt;) … [–to-format=&lt;format&gt;] [–no-header]</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>An example of using the mwtab CLI to extract data from analyses associated with diabetes:</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>mwtab<span class="w"> </span>extract<span class="w"> </span>metabolites<span class="w"> </span>diabetes/<span class="w"> </span>out/output_file.json<span class="w"> </span>ST:STUDY_SUMMARY<span class="w"> </span><span class="s2">&quot;r&#39;(?i)(diabetes)&#39;&quot;</span><span class="w"> </span>--to-format<span class="o">=</span>json
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="guide.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">User Guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="metadata_column_matching.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Metadata Column Matching</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

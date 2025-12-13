@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mwtab.tokenizer &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=576dab3d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mwtab/tokenizer';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">mwtab.tokenizer</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mwtab.tokenizer</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">mwtab.tokenizer</span>
+<span class="sd">~~~~~~~~~~~~~~~</span>
+
+<span class="sd">This module provides the :func:`~mwtab.tokenizer.tokenizer` lexical analyzer for</span>
+<span class="sd">`mwTab` format syntax. It is implemented as Python generator-based state</span>
+<span class="sd">machine which generates (yields) tokens one at a time when :py:func:`next()`</span>
+<span class="sd">is invoked on :func:`~mwtab.tokenizer.tokenizer` instance.</span>
+
+<span class="sd">Each token is a tuple of &quot;key-value&quot;-like pairs, tuple of</span>
+<span class="sd">``SUBJECT_SAMPLE_FACTORS`` or tuple of data deposited between</span>
+<span class="sd">``*_START`` and ``*_END`` blocks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+
+<span class="n">KeyValue</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;KeyValue&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_results_file_line_to_dict</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a RESULTS_FILE line into a dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        line: The line to parse. Expected to just be the value without &quot;RESULTS_FILE&quot; in it.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary of the values found in the line, won&#39;t always have every key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(\s*)([^\s]+?\s*?)((UNITS|Has m/z|Has RT|RT units)|$)&#39;</span>
+    <span class="n">units_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(.*)UNITS:(.*?)((\s(Has m/z|Has RT|RT units))|$)&#39;</span>
+    <span class="n">has_mz_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(.*)Has m/z:(.*?)((\s(UNITS|Has RT|RT units))|$)&#39;</span>
+    <span class="n">has_rt_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(.*)Has RT:(.*?)((\s(Has m/z|UNITS|RT units))|$)&#39;</span>
+    <span class="n">rt_units_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(.*)RT units:(.*?)((\s(Has m/z|Has RT|UNITS))|$)&#39;</span>
+    
+    <span class="n">filename_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename_regex</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="n">units_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">units_regex</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">has_mz_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">has_mz_regex</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">has_rt_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">has_rt_regex</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">rt_units_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">rt_units_regex</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="k">else</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    
+    <span class="n">results_file_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">filename_value</span><span class="p">:</span>
+        <span class="n">results_file_dict</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename_value</span>
+    <span class="k">if</span> <span class="n">units_value</span><span class="p">:</span>
+        <span class="n">results_file_dict</span><span class="p">[</span><span class="s1">&#39;UNITS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units_value</span>
+    <span class="k">if</span> <span class="n">has_mz_value</span><span class="p">:</span>
+        <span class="n">results_file_dict</span><span class="p">[</span><span class="s1">&#39;Has m/z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_mz_value</span>
+    <span class="k">if</span> <span class="n">has_rt_value</span><span class="p">:</span>
+        <span class="n">results_file_dict</span><span class="p">[</span><span class="s1">&#39;Has RT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_rt_value</span>
+    <span class="k">if</span> <span class="n">rt_units_value</span><span class="p">:</span>
+        <span class="n">results_file_dict</span><span class="p">[</span><span class="s1">&#39;RT units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rt_units_value</span>
+    
+    <span class="k">return</span> <span class="n">results_file_dict</span>
+
+
+<div class="viewcode-block" id="tokenizer">
+<a class="viewcode-back" href="../../api.html#mwtab.tokenizer.tokenizer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">dict_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A lexical analyzer for the `mwtab` formatted files.</span>
+
+<span class="sd">    :param text: `mwTab` formatted text.</span>
+<span class="sd">    :type text: :py:class:`str`</span>
+<span class="sd">    :param dict_type: the type of dictionary to use, default is dict.</span>
+<span class="sd">    :return: Tuples of data.</span>
+<span class="sd">    :rtype: :py:class:`~collections.namedtuple`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dict_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dict_type</span> <span class="o">=</span> <span class="nb">dict</span>
+        
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="c1"># header</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#METABOLOMICS WORKBENCH&quot;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;#METABOLOMICS WORKBENCH&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39; |\t&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">identifier</span><span class="p">:</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+            <span class="c1"># SUBJECT_SAMPLE_FACTORS header (reached new section)</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SUBJECT_SAMPLE_FACTORS:&quot;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;#ENDSECTION&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;#SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># section header (reached new section)</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;#ENDSECTION&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># SUBJECT_SAMPLE_FACTORS line</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;SUBJECT_SAMPLE_FACTORS&quot;</span><span class="p">):</span>
+                <span class="n">line_items</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                
+                <span class="n">factor_dict</span> <span class="o">=</span> <span class="n">dict_type</span><span class="p">()</span>
+                <span class="n">colon_split</span> <span class="o">=</span> <span class="n">line_items</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                <span class="n">factor_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">factor_item</span> <span class="ow">in</span> <span class="n">colon_split</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">factor_item</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;| &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+                <span class="n">element_indexes_without_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colon_split</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;| &#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">element_indexes_without_bar</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">element_indexes_without_bar</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">factor_item_start</span> <span class="o">=</span> <span class="n">colon_split</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s1">&#39;| &#39;</span> <span class="ow">in</span> <span class="n">factor_item_start</span><span class="p">:</span>
+                        <span class="n">factor_item_start</span> <span class="o">=</span> <span class="n">factor_item_start</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;| &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">factor_item_end</span> <span class="o">=</span> <span class="n">colon_split</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s1">&#39;| &#39;</span> <span class="ow">in</span> <span class="n">factor_item_end</span><span class="p">:</span>
+                        <span class="n">factor_item_end</span> <span class="o">=</span> <span class="n">factor_item_end</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;| &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">factor_item</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">factor_item_start</span><span class="p">,</span> 
+                                            <span class="n">colon_split</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                                            <span class="n">factor_item_end</span><span class="p">])</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Either a bar (&#39;| &#39;) separating 2 items is missing or there is an extra colon (&#39;:&#39;) &quot;</span>
+                               <span class="s2">&quot;in the factor key value pair, &#39;&quot;</span> <span class="o">+</span> <span class="n">factor_item</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">factor_items</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">factor_items</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+                    <span class="n">factor_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="n">subject_sample_factors_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;Subject ID&quot;</span><span class="p">:</span> <span class="n">line_items</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">&quot;Sample ID&quot;</span><span class="p">:</span> <span class="n">line_items</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s2">&quot;Factors&quot;</span><span class="p">:</span> <span class="n">factor_dict</span>
+                <span class="p">}</span>
+                
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">line_items</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span>
+                    <span class="n">additional_data</span> <span class="o">=</span> <span class="n">dict_type</span><span class="p">()</span>
+                    <span class="n">equal_split</span> <span class="o">=</span> <span class="n">line_items</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                    <span class="n">add_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">add_item</span> <span class="ow">in</span> <span class="n">equal_split</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">add_item</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">element_indexes_without_semicolon</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">equal_split</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;; &#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">element_indexes_without_semicolon</span><span class="p">:</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="n">element_indexes_without_semicolon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">add_item_start</span> <span class="o">=</span> <span class="n">equal_split</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s1">&#39;; &#39;</span> <span class="ow">in</span> <span class="n">add_item_start</span><span class="p">:</span>
+                            <span class="n">add_item_start</span> <span class="o">=</span> <span class="n">add_item_start</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">add_item_end</span> <span class="o">=</span> <span class="n">equal_split</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s1">&#39;; &#39;</span> <span class="ow">in</span> <span class="n">add_item_end</span><span class="p">:</span>
+                            <span class="n">add_item_end</span> <span class="o">=</span> <span class="n">add_item_end</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">add_item</span> <span class="o">=</span> <span class="s1">&#39;=&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">add_item_start</span><span class="p">,</span> 
+                                             <span class="n">equal_split</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                                             <span class="n">add_item_end</span><span class="p">])</span>
+                        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Either a semicolon (&#39;; &#39;) separating 2 items is missing or there is an extra equal sign (&#39;=&#39;) &quot;</span>
+                                   <span class="s2">&quot;in the additional data key value pair, &#39;&quot;</span> <span class="o">+</span> <span class="n">add_item</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                    
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">add_items</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">add_items</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+                        <span class="n">additional_data</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    
+                    <span class="n">subject_sample_factors_dict</span><span class="p">[</span><span class="s2">&quot;Additional sample data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">additional_data</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">line_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">subject_sample_factors_dict</span><span class="p">)</span>
+
+            <span class="c1"># data start header</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_START&quot;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># tokenize lines in data section till line ending with &quot;_END&quot; is reached</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_END&quot;</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_END&quot;</span><span class="p">):</span>
+                        <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot; &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+                        <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+            <span class="c1"># item line in item section (e.g. PROJECT, SUBJECT, etc..)</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;_RESULTS_FILE&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">line_items</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="c1"># Sometimes RESULTS_FILE is found in DATA sections like UNITS is. So key needs to be parsed out accordingly.</span>
+                    <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">line_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">_results_file_line_to_dict</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line_items</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected a tab in the line.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                    <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;:UNITS&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                            <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;Units&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">3</span><span class="p">:],</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;LINE WITH ERROR:</span><span class="se">\n\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="c1"># print(traceback.format_exc(), file=sys.stderr)</span>
+            <span class="c1"># raise IndexError(&quot;LINE WITH ERROR:\n\t&quot; + repr(line)) from e</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;LINE WITH ERROR:</span><span class="se">\n\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="c1"># print(traceback.format_exc(), file=sys.stderr)</span>
+            <span class="c1"># raise ValueError(&quot;LINE WITH ERROR:\n\t&quot; + repr(line)) from e</span>
+
+    <span class="c1"># end of file</span>
+    <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;#ENDSECTION&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">KeyValue</span><span class="p">(</span><span class="s2">&quot;!#ENDFILE&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># This is to ensure that tokenizer terminates when #END is missing.</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

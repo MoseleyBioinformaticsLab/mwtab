@@ -1,0 +1,877 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mwtab.cli &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=576dab3d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mwtab/cli';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">mwtab.cli</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mwtab.cli</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Note that this docstring has Sphinx directives in it. Those are removed in __main__ before passing to docopt.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The mwtab Command Line Interface</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">.. code-block:: text</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        mwtab -h | --help</span>
+<span class="sd">        mwtab --version</span>
+<span class="sd">        mwtab convert (&lt;from-path&gt; &lt;to-path&gt;) [--from-format=&lt;format&gt;] [--to-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--force] [--verbose]</span>
+<span class="sd">        mwtab validate &lt;from-path&gt; [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--force] [--silent]</span>
+<span class="sd">        mwtab download url &lt;url&gt; [--to-path=&lt;path&gt;] [--verbose]</span>
+<span class="sd">        mwtab download study all [--to-path=&lt;path&gt;] [--input-item=&lt;item&gt;] [--output-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--verbose]</span>
+<span class="sd">        mwtab download study &lt;input-value&gt; [--to-path=&lt;path&gt;] [--input-item=&lt;item&gt;] [--output-item=&lt;item&gt;] [--output-format=&lt;format&gt;] [--mw-rest=&lt;url&gt;] [--verbose]</span>
+<span class="sd">        mwtab download (study | compound | refmet | gene | protein) &lt;input-item&gt; &lt;input-value&gt; &lt;output-item&gt; [--output-format=&lt;format&gt;] [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]</span>
+<span class="sd">        mwtab download moverz &lt;input-item&gt; &lt;m/z-value&gt; &lt;ion-type-value&gt; &lt;m/z-tolerance-value&gt; [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]</span>
+<span class="sd">        mwtab download exactmass &lt;LIPID-abbreviation&gt; &lt;ion-type-value&gt; [--to-path=&lt;path&gt;] [--mw-rest=&lt;url&gt;] [--verbose]</span>
+<span class="sd">        mwtab extract metadata &lt;from-path&gt; &lt;to-path&gt; &lt;key&gt; ... [--to-format=&lt;format&gt;] [--no-header] [--force]</span>
+<span class="sd">        mwtab extract metabolites &lt;from-path&gt; &lt;to-path&gt; (&lt;key&gt; &lt;value&gt;) ... [--to-format=&lt;format&gt;] [--no-header] [--force]</span>
+<span class="sd">    </span>
+<span class="sd">    Options:</span>
+<span class="sd">        -h, --help                           Show this screen.</span>
+<span class="sd">        --version                            Show version.</span>
+<span class="sd">        --verbose                            Print what files are processing.</span>
+<span class="sd">        --silent                             Silence all standard output.</span>
+<span class="sd">        --from-format=&lt;format&gt;               Input file format, available formats: mwtab, json [default: mwtab].</span>
+<span class="sd">        --to-format=&lt;format&gt;                 Output file format [default: json].</span>
+<span class="sd">                                             Available formats for convert:</span>
+<span class="sd">                                                 mwtab, json.</span>
+<span class="sd">                                             Available formats for extract:</span>
+<span class="sd">                                                 json, csv.</span>
+<span class="sd">        --mw-rest=&lt;url&gt;                      URL to MW REST interface</span>
+<span class="sd">                                                [default: https://www.metabolomicsworkbench.org/rest/].</span>
+<span class="sd">        --to-path=&lt;path&gt;                     Directory to save outputs into. Defaults to the current working directory.</span>
+<span class="sd">                                             For the validate command, if the given path ends in &#39;.json&#39;, then </span>
+<span class="sd">                                             all JSON file outputs will be condensed into that 1 file. Also for </span>
+<span class="sd">                                             the validate command no output files are saved unless this option is given.</span>
+<span class="sd">        --prefix=&lt;prefix&gt;                    Prefix to add at the beginning of the output file name. Defaults to no prefix.</span>
+<span class="sd">        --suffix=&lt;suffix&gt;                    Suffix to add at the end of the output file name. Defaults to no suffix.</span>
+<span class="sd">        --context=&lt;context&gt;                  Type of resource to access from MW REST interface, available contexts: study,</span>
+<span class="sd">                                             compound, refmet, gene, protein, moverz, exactmass [default: study].</span>
+<span class="sd">        --input-item=&lt;item&gt;                  Item to search Metabolomics Workbench with.</span>
+<span class="sd">        --output-item=&lt;item&gt;                 Item to be retrieved from Metabolomics Workbench.</span>
+<span class="sd">        --output-format=&lt;format&gt;             Format for item to be retrieved in, available formats: mwtab, json.</span>
+<span class="sd">        --no-header                          Include header at the top of csv formatted files.</span>
+<span class="sd">        --force                              Ignore non-dictionary values in METABOLITES_DATA, METABOLITES, and EXTENDED tables for JSON files.</span>
+<span class="sd">    </span>
+<span class="sd">        For extraction &lt;to-path&gt; can take a &quot;-&quot; which will use stdout.</span>
+<span class="sd">        All &lt;from-path&gt;&#39;s can be single files, directories, or URLs.</span>
+<span class="sd">    </span>
+<span class="sd">    Documentation webpage: https://moseleybioinformaticslab.github.io/mwtab/</span>
+<span class="sd">    GitHub webpage: https://github.com/MoseleyBioinformaticsLab/mwtab</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">getcwd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">isfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">quote_plus</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">fileio</span><span class="p">,</span> <span class="n">mwextract</span><span class="p">,</span> <span class="n">mwrest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mwschema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ms_required_schema</span><span class="p">,</span> <span class="n">nmr_required_schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mwtab</span><span class="w"> </span><span class="kn">import</span> <span class="n">MWTabFile</span>
+
+
+<span class="n">OUTPUT_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;txt&quot;</span><span class="p">:</span> <span class="s2">&quot;txt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mwtab&quot;</span><span class="p">:</span> <span class="s2">&quot;txt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+    <span class="kc">None</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># Note that &#39;url&#39; is not a context for the Metabolomics Workbench REST API, but the code works better to have it in this list.</span>
+<span class="n">CONTEXTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;refmet&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">,</span> <span class="s1">&#39;protein&#39;</span><span class="p">,</span> <span class="s1">&#39;moverz&#39;</span><span class="p">,</span> <span class="s1">&#39;exactmass&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">]</span>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="n">rest_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">full_url</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">MWRESTFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create Metabolomics Workbench REST URL and request file.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rets_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.</span>
+<span class="sd">                     For instance &lt;context&gt; would correspond to &#39;context&#39; and &lt;input item&gt; would correspond to &#39;input_item&#39;.</span>
+<span class="sd">        mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.</span>
+<span class="sd">        full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. </span>
+<span class="sd">                  If given, all other parameters are ignored and this URL is used to download.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The downloaded file as an MWRESTFile object if no exceptions occured, otherwise None with a raised exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">full_url</span><span class="p">:</span>
+        <span class="n">mwrestfile</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">fileio</span><span class="o">.</span><span class="n">read_mwrest</span><span class="p">(</span><span class="n">full_url</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># create and validate a callable URL to pull data from Metabolomics Workbench&#39;s REST API</span>
+        <span class="n">fileurl</span> <span class="o">=</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">GenericMWURL</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">mwrestfile</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">fileio</span><span class="o">.</span><span class="n">read_mwrest</span><span class="p">(</span><span class="n">fileurl</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">mwrestfile</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_mwrest_file</span><span class="p">(</span><span class="n">mwrestfile</span><span class="p">:</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">MWRESTFile</span><span class="p">,</span> <span class="n">to_path</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the given MWRESTFile object to the given path if it has text.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        mwrestfile: The MWRESTFile object to save.</span>
+<span class="sd">        to_path: The path to save the file to. Defaults to the current working directory.</span>
+<span class="sd">        output_format: The format to save the file to. Should be &#39;txt&#39;, &#39;json&#39;, or &#39;mwtab&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the mwrestfile had text and was therefore saved, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mwrestfile</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>  <span class="c1"># if the text file isn&#39;t blank</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">quote_plus</span><span class="p">(</span><span class="n">mwrestfile</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="n">OUTPUT_FORMATS</span><span class="p">[</span><span class="n">output_format</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">to_path</span><span class="p">:</span>
+            <span class="n">fileio</span><span class="o">.</span><span class="n">_create_save_path</span><span class="p">(</span><span class="n">to_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">to_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>
+                <span class="n">path_to_save</span> <span class="o">=</span> <span class="n">to_path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path_to_save</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">to_path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path_to_save</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_save</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">mwrestfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">to_path</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                                  <span class="n">mwrest_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">full_url</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DRY function to combine downloading, saving, and error printing.&quot;&quot;&quot;</span>
+    <span class="n">mwrestfile</span> <span class="o">=</span> <span class="n">download</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">,</span> <span class="n">full_url</span><span class="p">)</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">output_format</span> <span class="k">if</span> <span class="p">(</span><span class="n">output_format</span> <span class="o">:=</span> <span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;output_format&#39;</span><span class="p">))</span> <span class="k">else</span> <span class="s1">&#39;txt&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">save_mwrest_file</span><span class="p">(</span><span class="n">mwrestfile</span><span class="p">,</span> <span class="n">to_path</span><span class="p">,</span> <span class="n">extension</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">full_url</span> <span class="k">if</span> <span class="n">full_url</span> <span class="k">else</span> <span class="n">rest_params</span><span class="p">[</span><span class="s1">&#39;input_value&#39;</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;When trying to download a file for the value, &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;, &#39;</span>
+              <span class="s1">&#39;a blank file or an error was returned, so no file was created for it.&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">download_and_save_ID_list</span><span class="p">(</span><span class="n">rest_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">id_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                              <span class="n">to_path</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                              <span class="n">mwrest_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">full_url</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download and save a list of study and/or analysis IDs.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rest_params: A dictionary with values corresponding to the keywords in the Metabolomics Workbench REST specification.</span>
+<span class="sd">                     For instance &lt;context&gt; would correspond to &#39;context&#39; and &lt;input item&gt; would correspond to &#39;input_item&#39;.</span>
+<span class="sd">        id_list: A list of tuples that are pairs of IDs and their classification.</span>
+<span class="sd">        verbose: If True, print more information about each ID being downloaded.</span>
+<span class="sd">        to_path: The directory path to save the files to. Defaults to the current working directory.</span>
+<span class="sd">        mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.</span>
+<span class="sd">        full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. </span>
+<span class="sd">                  If given, all other parameters are ignored and this URL is used to download.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="p">(</span><span class="n">input_id</span><span class="p">,</span> <span class="n">input_item</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">id_list</span><span class="p">):</span>
+        <span class="n">rest_params</span><span class="p">[</span><span class="s1">&#39;input_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_id</span>
+        <span class="n">rest_params</span><span class="p">[</span><span class="s1">&#39;input_item&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_item</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{:4}</span><span class="s2">/</span><span class="si">{:4}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)),</span> <span class="n">input_id</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">,</span> <span class="n">full_url</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong and &quot;</span> <span class="o">+</span> <span class="n">input_id</span> <span class="o">+</span> <span class="s2">&quot; could not be downloaded.&quot;</span><span class="p">)</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">classify_input_value</span><span class="p">(</span><span class="n">input_value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify input_value as either &#39;analysis_id&#39; or &#39;study_id&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    If input_value is just a number, such as 000001, then &#39;AN&#39; is added </span>
+<span class="sd">    to the front in the return value. The default classification is &#39;analysis_id&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        input_value: A string that should be a study ID or analysis ID.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple where the first element is the input_value, possibly modified, </span>
+<span class="sd">        and the second element is the classification, either &#39;study_id&#39; or &#39;analysis_id&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">input_value</span> <span class="o">=</span> <span class="s2">&quot;AN</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_value</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+        <span class="n">input_item</span> <span class="o">=</span> <span class="s2">&quot;analysis_id&quot;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(AN[0-9]</span><span class="si">{6}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+        <span class="n">input_item</span> <span class="o">=</span> <span class="s2">&quot;analysis_id&quot;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(ST[0-9]</span><span class="si">{6}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+        <span class="n">input_item</span> <span class="o">=</span> <span class="s2">&quot;study_id&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_item</span> <span class="o">=</span> <span class="s2">&quot;analysis_id&quot;</span>
+    
+    <span class="k">return</span> <span class="n">input_value</span><span class="p">,</span> <span class="n">input_item</span>
+
+
+<div class="viewcode-block" id="cli">
+<a class="viewcode-back" href="../../api.html#mwtab.cli.cli">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements the command line interface.</span>
+
+<span class="sd">    param dict cmdargs: dictionary of command line arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--verbose&quot;</span><span class="p">]</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s1">&#39;--force&#39;</span><span class="p">]</span>
+    <span class="n">fileio</span><span class="o">.</span><span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--verbose&quot;</span><span class="p">]</span>
+    <span class="n">silent</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s1">&#39;--silent&#39;</span><span class="p">]</span>
+    <span class="n">mwrest_base_url</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s1">&#39;--mw-rest&#39;</span><span class="p">]</span>
+    <span class="n">fileio</span><span class="o">.</span><span class="n">MWREST_URL</span> <span class="o">=</span> <span class="n">mwrest_base_url</span>
+    <span class="n">mwrest</span><span class="o">.</span><span class="n">BASE_URL</span> <span class="o">=</span> <span class="n">mwrest_base_url</span>
+    <span class="n">mwrest</span><span class="o">.</span><span class="n">VERBOSE</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--verbose&quot;</span><span class="p">]</span>
+    <span class="n">output_format</span> <span class="o">=</span> <span class="n">OUTPUT_FORMATS</span><span class="p">[</span><span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;--output-format&quot;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;--output-format&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;txt&quot;</span>
+    <span class="n">required_input_value</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;&lt;input-value&gt;&#39;</span><span class="p">)</span>
+    <span class="n">required_input_item</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;&lt;input-item&gt;&#39;</span><span class="p">)</span>
+    <span class="n">optional_input_item</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;--input-item&#39;</span><span class="p">)</span>
+    <span class="n">optional_to_path</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;--to-path&#39;</span><span class="p">)</span>
+    <span class="n">optional_output_item</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;--output-item&#39;</span><span class="p">)</span>
+    <span class="n">required_output_item</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;&lt;output-item&gt;&#39;</span><span class="p">)</span>
+    
+
+    <span class="c1"># mwtab convert ...</span>
+    <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;convert&quot;</span><span class="p">]:</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">from_path</span><span class="o">=</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;from-path&gt;&quot;</span><span class="p">],</span>
+                              <span class="n">to_path</span><span class="o">=</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">],</span>
+                              <span class="n">from_format</span><span class="o">=</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--from-format&quot;</span><span class="p">],</span>
+                              <span class="n">to_format</span><span class="o">=</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--to-format&quot;</span><span class="p">],</span>
+                              <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+        <span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+
+    <span class="c1"># mwtab validate ...</span>
+    <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;validate&quot;</span><span class="p">]:</span>
+        <span class="n">save_files</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">consolidate_files</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">consolidated_json</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">optional_to_path</span><span class="p">:</span>
+            <span class="n">save_files</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">fileio</span><span class="o">.</span><span class="n">_create_save_path</span><span class="p">(</span><span class="n">optional_to_path</span><span class="p">)</span>
+            <span class="n">to_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">optional_to_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">to_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+                <span class="n">consolidate_files</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">mwfile</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fileio</span><span class="o">.</span><span class="n">read_with_class</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;from-path&gt;&quot;</span><span class="p">],</span> 
+                                                               <span class="n">MWTabFile</span><span class="p">,</span> 
+                                                               <span class="p">{</span><span class="s1">&#39;duplicate_keys&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;force&#39;</span><span class="p">:</span><span class="n">force</span><span class="p">},</span> 
+                                                               <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file_source</span> <span class="o">=</span> <span class="n">mwfile</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mwfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;from-path&gt;&quot;</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong when trying to read &quot;</span> <span class="o">+</span> <span class="n">file_source</span><span class="p">)</span>
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">()</span>
+                <span class="k">continue</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">errors_list</span> <span class="o">=</span> <span class="n">validate_file</span><span class="p">(</span>
+                                            <span class="n">mwtabfile</span> <span class="o">=</span> <span class="n">mwfile</span><span class="p">,</span>
+                                            <span class="n">ms_schema</span> <span class="o">=</span> <span class="n">ms_required_schema</span><span class="p">,</span> 
+                                            <span class="n">nmr_schema</span> <span class="o">=</span> <span class="n">nmr_required_schema</span><span class="p">,</span>
+                                            <span class="n">verbose</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">silent</span>
+                                            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">save_files</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">consolidate_files</span><span class="p">:</span>
+                    <span class="n">consolidated_json</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">mwfile</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors_list</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">mwfile</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s1">&#39;_validations.json&#39;</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">to_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                        <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">errors_list</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">consolidate_files</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">to_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">consolidated_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="c1"># mwtab download ...</span>
+    <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;download&quot;</span><span class="p">]:</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">[</span><span class="n">_context</span> <span class="k">for</span> <span class="n">_context</span> <span class="ow">in</span> <span class="n">CONTEXTS</span> <span class="k">if</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_context</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># mwtab download url ...</span>
+        <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;url&gt;&quot;</span><span class="p">]:</span>
+            <span class="n">download_and_save_mwrest_file</span><span class="p">({},</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">full_url</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s1">&#39;&lt;url&gt;&#39;</span><span class="p">])</span>
+
+        <span class="c1"># mwtab download study ...</span>
+        <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;study&quot;</span><span class="p">]:</span>
+            <span class="c1"># mwtab download study all ...</span>
+            <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+                <span class="c1"># mwtab download study all ...</span>
+                <span class="c1"># mwtab download study all --input-item=analysis_id ...</span>
+                <span class="c1"># mwtab download study all --input-item=study_id ...</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">optional_input_item</span> <span class="ow">or</span> <span class="n">optional_input_item</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;analysis_id&quot;</span><span class="p">,</span> <span class="s2">&quot;study_id&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">optional_input_item</span> <span class="ow">or</span> <span class="n">optional_input_item</span> <span class="o">==</span> <span class="s2">&quot;analysis_id&quot;</span><span class="p">:</span>
+                        <span class="n">id_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">an_id</span><span class="p">,</span> <span class="s1">&#39;analysis_id&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">an_id</span> <span class="ow">in</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">analysis_ids</span><span class="p">()]</span>
+                    <span class="k">elif</span> <span class="n">optional_input_item</span> <span class="o">==</span> <span class="s2">&quot;study_id&quot;</span><span class="p">:</span>
+                        <span class="n">id_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">study_id</span><span class="p">,</span> <span class="s1">&#39;study_id&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">study_id</span> <span class="ow">in</span> <span class="n">mwrest</span><span class="o">.</span><span class="n">study_ids</span><span class="p">()]</span>
+                    <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;output_item&#39;</span><span class="p">:</span> <span class="s1">&#39;mwtab&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="n">output_format</span><span class="p">}</span>
+                    <span class="n">download_and_save_ID_list</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">id_list</span><span class="p">,</span> <span class="n">VERBOSE</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown </span><span class="se">\&quot;</span><span class="s2">--input-item</span><span class="se">\&quot;</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">optional_input_item</span><span class="p">))</span>
+
+            <span class="c1"># mwtab download study &lt;input_value&gt; ...</span>
+            <span class="k">elif</span> <span class="n">required_input_value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">required_input_item</span><span class="p">:</span>
+                <span class="c1"># Read a json file with a list and make a best attempt to parse and download studies and analyses from the list.</span>
+                <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">required_input_value</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">required_input_value</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                        <span class="n">id_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                    
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">optional_to_path</span> <span class="ow">and</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">optional_to_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: The given &quot;--to-path&quot; option is a path to a file, &#39;</span>
+                              <span class="s1">&#39;but the given list of IDs to download is greater &#39;</span>
+                              <span class="s1">&#39;than 1. Please specify a directory to save the files to.&#39;</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    
+                    <span class="k">if</span> <span class="n">optional_input_item</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">optional_input_item</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;analysis_id&quot;</span><span class="p">,</span> <span class="s2">&quot;study_id&quot;</span><span class="p">):</span>
+                            <span class="n">id_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">input_id</span><span class="p">,</span> <span class="n">optional_input_item</span><span class="p">)</span> <span class="k">for</span> <span class="n">input_id</span> <span class="ow">in</span> <span class="n">id_list</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown </span><span class="se">\&quot;</span><span class="s2">--input-item</span><span class="se">\&quot;</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">optional_input_item</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">classify_input_value</span><span class="p">(</span><span class="n">_input_value</span><span class="p">)</span> <span class="k">for</span> <span class="n">_input_value</span> <span class="ow">in</span> <span class="n">id_list</span><span class="p">]</span>
+                    
+                    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2"> Files to be Downloaded&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)))</span>
+                    
+                    <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;output_item&#39;</span><span class="p">:</span> <span class="n">optional_output_item</span> <span class="k">if</span> <span class="n">optional_output_item</span> <span class="k">else</span> <span class="s1">&#39;mwtab&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="n">output_format</span><span class="p">}</span>
+                    <span class="n">download_and_save_ID_list</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">id_list</span><span class="p">,</span> <span class="n">VERBOSE</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+
+                <span class="c1"># Assume input value is a single analysis or study id and use --input-item to decide which, default to analysis_id</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">input_item</span> <span class="o">=</span> <span class="n">cmdargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;--input-item&quot;</span><span class="p">)</span>
+                    <span class="n">input_value</span> <span class="o">=</span> <span class="n">required_input_value</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_item</span><span class="p">:</span>
+                        <span class="n">input_value</span><span class="p">,</span> <span class="n">input_item</span> <span class="o">=</span> <span class="n">classify_input_value</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span>
+                    <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> 
+                                   <span class="s1">&#39;input_value&#39;</span><span class="p">:</span> <span class="n">input_value</span><span class="p">,</span> 
+                                   <span class="s1">&#39;input_item&#39;</span><span class="p">:</span> <span class="n">input_item</span><span class="p">,</span>
+                                   <span class="s1">&#39;output_item&#39;</span><span class="p">:</span> <span class="n">optional_output_item</span> <span class="k">if</span> <span class="n">optional_output_item</span> <span class="k">else</span> <span class="s1">&#39;mwtab&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="n">output_format</span><span class="p">}</span>
+                    <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+
+            <span class="c1"># mwtab download (study | ...) &lt;input_item&gt; ...</span>
+            <span class="k">elif</span> <span class="n">required_input_item</span><span class="p">:</span>
+                <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> 
+                               <span class="s1">&#39;input_value&#39;</span><span class="p">:</span> <span class="n">required_input_value</span><span class="p">,</span> 
+                               <span class="s1">&#39;input_item&#39;</span><span class="p">:</span> <span class="n">required_input_item</span><span class="p">,</span>
+                               <span class="s1">&#39;output_item&#39;</span><span class="p">:</span> <span class="n">required_output_item</span><span class="p">,</span>
+                               <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="n">output_format</span><span class="p">}</span>
+                <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+        
+        <span class="c1"># mwtab download (... | compound | refmet | gene | protein) ...</span>
+        <span class="k">elif</span> <span class="n">context</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;refmet&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">,</span> <span class="s1">&#39;protein&#39;</span><span class="p">]:</span>
+            <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="n">context</span><span class="p">,</span> 
+                           <span class="s1">&#39;input_value&#39;</span><span class="p">:</span> <span class="n">required_input_value</span><span class="p">,</span> 
+                           <span class="s1">&#39;input_item&#39;</span><span class="p">:</span> <span class="n">required_input_item</span><span class="p">,</span>
+                           <span class="s1">&#39;output_item&#39;</span><span class="p">:</span> <span class="n">required_output_item</span><span class="p">,</span>
+                           <span class="s1">&#39;output_format&#39;</span><span class="p">:</span> <span class="n">output_format</span><span class="p">}</span>
+            <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+                
+        <span class="c1"># mwtab download moverz &lt;input-value&gt; &lt;m/z-value&gt; &lt;ion-type-value&gt; &lt;m/z-tolerance-value&gt; [--verbose]</span>
+        <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;moverz&quot;</span><span class="p">]:</span>
+            <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;moverz&#39;</span><span class="p">,</span> 
+                           <span class="s1">&#39;input_item&#39;</span><span class="p">:</span> <span class="n">required_input_item</span><span class="p">,</span> 
+                           <span class="s2">&quot;m/z_value&quot;</span><span class="p">:</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;m/z-value&gt;&quot;</span><span class="p">],</span>
+                           <span class="s2">&quot;ion_type_value&quot;</span><span class="p">:</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;ion-type-value&gt;&quot;</span><span class="p">],</span>
+                           <span class="s2">&quot;m/z_tolerance_value&quot;</span><span class="p">:</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;m/z-tolerance-value&gt;&quot;</span><span class="p">]}</span>
+            <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+
+        <span class="c1"># mwtab download exactmass &lt;LIPID-abbreviation&gt; &lt;ion-type-value&gt; [--verbose]</span>
+        <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;exactmass&quot;</span><span class="p">]:</span>
+            <span class="n">rest_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="s1">&#39;exactmass&#39;</span><span class="p">,</span> 
+                           <span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">:</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;LIPID-abbreviation&gt;&quot;</span><span class="p">],</span>
+                           <span class="s2">&quot;ion_type_value&quot;</span><span class="p">:</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;ion-type-value&gt;&quot;</span><span class="p">],}</span>
+            <span class="n">download_and_save_mwrest_file</span><span class="p">(</span><span class="n">rest_params</span><span class="p">,</span> <span class="n">optional_to_path</span><span class="p">,</span> <span class="n">mwrest_base_url</span><span class="p">)</span>
+
+    <span class="c1"># mwtab extract ...</span>
+    <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;extract&quot;</span><span class="p">]:</span>
+        <span class="n">mwfile_generator</span> <span class="o">=</span> <span class="n">fileio</span><span class="o">.</span><span class="n">read_with_class</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;from-path&gt;&quot;</span><span class="p">],</span> 
+                                                  <span class="n">MWTabFile</span><span class="p">,</span> 
+                                                  <span class="p">{</span><span class="s1">&#39;duplicate_keys&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;force&quot;</span><span class="p">:</span> <span class="n">force</span><span class="p">},</span> 
+                                                  <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;metabolites&quot;</span><span class="p">]:</span>
+            <span class="n">metabolites_dict</span> <span class="o">=</span> <span class="n">mwextract</span><span class="o">.</span><span class="n">extract_metabolites</span><span class="p">(</span>
+                <span class="n">mwfile_generator</span><span class="p">,</span>
+                <span class="n">mwextract</span><span class="o">.</span><span class="n">generate_matchers</span><span class="p">(</span>
+                    <span class="p">[(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;key&gt;&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                      <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;value&gt;&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;value&gt;&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;r&#39;&quot;</span> <span class="k">else</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;value&gt;&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;key&gt;&quot;</span><span class="p">]))]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">metabolites_dict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--to-format&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+                        <span class="n">mwextract</span><span class="o">.</span><span class="n">write_metabolites_csv</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">],</span> <span class="n">metabolites_dict</span><span class="p">,</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--no-header&quot;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">mwextract</span><span class="o">.</span><span class="n">write_json</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">],</span> <span class="n">metabolites_dict</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metabolites_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">mwextract</span><span class="o">.</span><span class="n">SetEncoder</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No metabolites extracted. No file was saved. &quot;</span> 
+                      <span class="s2">&quot;This is likely due to key value pairs filtering all of the studies out. &quot;</span>
+                      <span class="s2">&quot;Check your key value pairs and data.&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">mwtabfile</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">mwfile_generator</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">file_source</span> <span class="o">=</span> <span class="n">mwtabfile</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mwtabfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;from-path&gt;&quot;</span><span class="p">]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong when trying to read &quot;</span> <span class="o">+</span> <span class="n">file_source</span><span class="p">)</span>
+                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">()</span>
+                    <span class="k">continue</span>
+                <span class="n">extracted_values</span> <span class="o">=</span> <span class="n">mwextract</span><span class="o">.</span><span class="n">extract_metadata</span><span class="p">(</span><span class="n">mwtabfile</span><span class="p">,</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;key&gt;&quot;</span><span class="p">])</span>
+                <span class="p">[</span><span class="n">metadata</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="n">extracted_values</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="n">metadata</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--to-format&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+                        <span class="n">mwextract</span><span class="o">.</span><span class="n">write_metadata_csv</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">],</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;--no-header&quot;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">mwextract</span><span class="o">.</span><span class="n">write_json</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="s2">&quot;&lt;to-path&gt;&quot;</span><span class="p">],</span> <span class="n">metadata</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No metadata extracted. No file was saved.&quot;</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

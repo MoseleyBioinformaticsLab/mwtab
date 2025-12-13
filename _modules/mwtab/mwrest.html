@@ -1,0 +1,1055 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mwtab.mwrest &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=576dab3d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mwtab/mwrest';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">mwtab.mwrest</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mwtab.mwrest</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># TODO: Add qualifications for output items per specific context input item.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">mwtab.mwrest</span>
+<span class="sd">~~~~~~~~~~~~</span>
+
+<span class="sd">This module provides routines for accessing the Metabolomics Workbench REST API.</span>
+
+<span class="sd">See https://www.metabolomicsworkbench.org/tools/MWRestAPIv1.0.pdf for details.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">fileio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+
+<span class="n">VERBOSE</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://www.metabolomicsworkbench.org/rest/&quot;</span>
+
+
+<div class="viewcode-block" id="analysis_ids">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.analysis_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analysis_ids</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for retrieving a list of analysis ids for every current analysis in Metabolomics Workbench.</span>
+
+<span class="sd">    :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="sd">    :return: List of every available Metabolomics Workbench analysis identifier.</span>
+<span class="sd">    :rtype: :py:class:`list`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st_an_dict</span> <span class="o">=</span> <span class="n">_pull_study_analysis</span><span class="p">(</span><span class="n">base_url</span><span class="p">)</span>
+    <span class="n">analyses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="p">[</span><span class="n">analyses</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">st_an_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">st_an_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2"> Analysis Files to be Downloaded&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">analyses</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">analyses</span></div>
+
+
+
+<div class="viewcode-block" id="study_ids">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.study_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">study_ids</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for retrieving a list of study ids for every current study in Metabolomics Workbench.</span>
+
+<span class="sd">    :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="sd">    :return: List of every available Metabolomics Workbench study identifier.</span>
+<span class="sd">    :rtype: :py:class:`list`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">st_an_dict</span> <span class="o">=</span> <span class="n">_pull_study_analysis</span><span class="p">(</span><span class="n">base_url</span><span class="p">)</span>
+    <span class="n">studies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">st_an_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2"> Study Files to be Downloaded&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">studies</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">studies</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pull_study_analysis</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for requesting a JSON string containing all study ids and analysis ids from Metabolomics Workbench&#39;s REST</span>
+<span class="sd">    API. Requests a JSON file which contains a list of studies and their accompanying analyses. The JSON file is</span>
+<span class="sd">    converted into a python object (dict) which can then be parsed to create a dictionary with the form study id (key):</span>
+<span class="sd">    analysis id(s) (values).</span>
+
+<span class="sd">    :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="sd">    :return: Dictionary of study ids (keys) and lists of analyses (value).</span>
+<span class="sd">    :rtype: :py:class:`dict`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">GenericMWURL</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;study&quot;</span><span class="p">,</span> <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="s2">&quot;study_id&quot;</span><span class="p">,</span> <span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="s2">&quot;ST&quot;</span><span class="p">,</span> <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="s2">&quot;analysis&quot;</span><span class="p">},</span>
+        <span class="n">base_url</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">url</span>
+    <span class="n">mwrestfile</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">fileio</span><span class="o">.</span><span class="n">read_mwrest</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="n">json_object</span> <span class="o">=</span> <span class="n">mwrestfile</span><span class="o">.</span><span class="n">_is_json</span><span class="p">(</span><span class="n">mwrestfile</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">study_analysis_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">json_object</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">study_analysis_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">json_object</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;study_id&quot;</span><span class="p">]):</span>
+            <span class="n">study_analysis_dict</span><span class="p">[</span><span class="n">json_object</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;study_id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">json_object</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;analysis_id&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">study_analysis_dict</span><span class="p">[</span><span class="n">json_object</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;study_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">json_object</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;analysis_id&quot;</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">study_analysis_dict</span>
+
+
+<div class="viewcode-block" id="generate_mwtab_urls">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.generate_mwtab_urls">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_mwtab_urls</span><span class="p">(</span><span class="n">input_items</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span> <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for generating URLS to be used to retrieve `mwtab` files for analyses and</span>
+<span class="sd">    studies through the REST API of the Metabolomics Workbench database.</span>
+
+<span class="sd">    :param list input_items: List of Metabolomics Workbench input values for mwTab files.</span>
+<span class="sd">    :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="sd">    :param str output_format: Output format for the mwTab files to be retrieved in.</span>
+<span class="sd">    :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.</span>
+<span class="sd">    :return: Metabolomics Workbench REST URL string(s).</span>
+<span class="sd">    :rtype: :py:class:`str`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">input_item</span> <span class="ow">in</span> <span class="n">input_items</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">input_item</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">analysis_id</span> <span class="o">=</span> <span class="s2">&quot;AN</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_item</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+                <span class="k">yield</span> <span class="n">fileio</span><span class="o">.</span><span class="n">_return_correct_yield</span><span class="p">(</span>
+                    <span class="n">GenericMWURL</span><span class="p">({</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;study&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="s2">&quot;analysis_id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="n">analysis_id</span><span class="p">,</span>
+                    <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="s2">&quot;mwtab&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;output_format&quot;</span><span class="p">:</span> <span class="n">output_format</span>
+                    <span class="p">},</span> <span class="n">base_url</span><span class="p">)</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> 
+                    <span class="n">exception</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">return_exceptions</span><span class="o">=</span><span class="n">return_exceptions</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(AN[0-9]</span><span class="si">{6}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">input_item</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">fileio</span><span class="o">.</span><span class="n">_return_correct_yield</span><span class="p">(</span>
+                    <span class="n">GenericMWURL</span><span class="p">({</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;study&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="s2">&quot;analysis_id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="n">input_item</span><span class="p">,</span>
+                    <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="s2">&quot;mwtab&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;output_format&quot;</span><span class="p">:</span> <span class="n">output_format</span>
+                    <span class="p">},</span> <span class="n">base_url</span><span class="p">)</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> 
+                    <span class="n">exception</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">return_exceptions</span><span class="o">=</span><span class="n">return_exceptions</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(ST[0-9]{1,6}$)&#39;</span><span class="p">,</span> <span class="n">input_item</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">fileio</span><span class="o">.</span><span class="n">_return_correct_yield</span><span class="p">(</span>
+                    <span class="n">GenericMWURL</span><span class="p">({</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;study&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="s2">&quot;study_id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="n">input_item</span><span class="p">,</span>
+                    <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="s2">&quot;mwtab&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;output_format&quot;</span><span class="p">:</span> <span class="n">output_format</span>
+                    <span class="p">},</span> <span class="n">base_url</span><span class="p">)</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> 
+                    <span class="n">exception</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">return_exceptions</span><span class="o">=</span><span class="n">return_exceptions</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">fileio</span><span class="o">.</span><span class="n">_return_correct_yield</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> 
+                                               <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> 
+                                               <span class="n">return_exceptions</span><span class="o">=</span><span class="n">return_exceptions</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Unused function. Leaving here for now.</span>
+<span class="c1"># def generate_urls(input_items, base_url=BASE_URL, return_exceptions=False, **kwds):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Method for creating a generator which yields validated Metabolomics Workbench REST urls.</span>
+
+<span class="c1">#     :param list input_items: List of Metabolomics Workbench input values for mwTab files.</span>
+<span class="c1">#     :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="c1">#     :param bool return_exceptions: Whether to yield a tuple with url and exception or just the url.</span>
+<span class="c1">#     :param dict kwds: Keyword arguments of Metabolomics Workbench URL Path items.</span>
+<span class="c1">#     :return: Metabolomics Workbench REST URL string(s).</span>
+<span class="c1">#     :rtype: :py:class:`str`</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     for input_item in input_items:</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             params = dict(kwds)</span>
+<span class="c1">#             params[&quot;input_item&quot;] = input_item</span>
+<span class="c1">#             yield fileio._return_correct_yield(GenericMWURL(params, base_url).url, </span>
+<span class="c1">#                                                exception=None, </span>
+<span class="c1">#                                                return_exceptions=return_exceptions)</span>
+<span class="c1">#         except Exception as e:</span>
+<span class="c1">#             yield fileio._return_correct_yield(None, </span>
+<span class="c1">#                                                exception=e, </span>
+<span class="c1">#                                                return_exceptions=return_exceptions)</span>
+
+
+<div class="viewcode-block" id="GenericMWURL">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.GenericMWURL">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericMWURL</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;GenericMWURL class that stores and validates parameters specifying a Metabolomics Workbench REST URL.</span>
+
+<span class="sd">    Metabolomics REST API requests are performed using URL requests in the form of</span>
+<span class="sd">        https://www.metabolomicsworkbench.org/rest/context/input_specification/output_specification</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: text</span>
+<span class="sd">    </span>
+<span class="sd">        where:</span>
+<span class="sd">            if context = &quot;study&quot; | &quot;compound&quot; | &quot;refmet&quot; | &quot;gene&quot; | &quot;protein&quot;</span>
+<span class="sd">                input_specification = input_item/input_value</span>
+<span class="sd">                output_specification = output_item/[output_format]</span>
+<span class="sd">            elif context = &quot;moverz&quot;</span>
+<span class="sd">                input_specification = input_item/input_value1/input_value2/input_value3</span>
+<span class="sd">                    input_item = &quot;LIPIDS&quot; | &quot;MB&quot; | &quot;REFMET&quot;</span>
+<span class="sd">                    input_value1 = m/z_value</span>
+<span class="sd">                    input_value2 = ion_type_value</span>
+<span class="sd">                    input_value3 = m/z_tolerance_value</span>
+<span class="sd">                output_specification = output_format</span>
+<span class="sd">                    output_format = &quot;txt&quot;</span>
+<span class="sd">            elif context =  &quot;exactmass&quot;</span>
+<span class="sd">                input_specification = input_item/input_value1/input_value2</span>
+<span class="sd">                    input_item = &quot;LIPIDS&quot; | &quot;MB&quot; | &quot;REFMET&quot;</span>
+<span class="sd">                    input_value1 = LIPID_abbreviation</span>
+<span class="sd">                    input_value2 = ion_type_value</span>
+<span class="sd">                output_specification = None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;study&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;study_id&#39;</span><span class="p">,</span> <span class="s1">&#39;study_title&#39;</span><span class="p">,</span> <span class="s1">&#39;institute&#39;</span><span class="p">,</span> <span class="s1">&#39;last_name&#39;</span><span class="p">,</span> <span class="s1">&#39;analysis_id&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite_id&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;summary&#39;</span><span class="p">,</span> <span class="s1">&#39;factors&#39;</span><span class="p">,</span> <span class="s1">&#39;analysis&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolites&#39;</span><span class="p">,</span> <span class="s1">&#39;mwtab&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="s1">&#39;disease&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;number_of_metabolites&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;datatable&#39;</span><span class="p">,</span> <span class="s1">&#39;untarg_studies&#39;</span><span class="p">,</span> <span class="s1">&#39;untarg_factors&#39;</span><span class="p">,</span> <span class="s1">&#39;untarg_data&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;compound&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi_key&#39;</span><span class="p">,</span> <span class="s1">&#39;lm_id&#39;</span><span class="p">,</span> <span class="s1">&#39;pubchem_cid&#39;</span><span class="p">,</span> <span class="s1">&#39;hmdb_id&#39;</span><span class="p">,</span> <span class="s1">&#39;kegg_id&#39;</span><span class="p">,</span> <span class="s1">&#39;chebi_id&#39;</span><span class="p">,</span> <span class="s1">&#39;metacyc_id&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;abbrev&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;exactmass&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi_key&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;sys_name&#39;</span><span class="p">,</span> <span class="s1">&#39;smiles&#39;</span><span class="p">,</span> <span class="s1">&#39;lm_id&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pubchem_cid&#39;</span><span class="p">,</span> <span class="s1">&#39;hmdb_id&#39;</span><span class="p">,</span> <span class="s1">&#39;kegg_id&#39;</span><span class="p">,</span> <span class="s1">&#39;chebi_id&#39;</span><span class="p">,</span> <span class="s1">&#39;metacyc_id&#39;</span><span class="p">,</span> <span class="s1">&#39;classification&#39;</span><span class="p">,</span> <span class="s1">&#39;molfile&#39;</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;refmet&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;match&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi_key&#39;</span><span class="p">,</span> <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;pubchem_cid&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;main_class&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_class&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi_key&#39;</span><span class="p">,</span> <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;pubchem_cid&#39;</span><span class="p">,</span> <span class="s1">&#39;exactmass&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;synonyms&#39;</span><span class="p">,</span> <span class="s1">&#39;sys_name&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;main_class&#39;</span><span class="p">,</span> <span class="s1">&#39;sub_class&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;gene&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;mgp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;taxid&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;lmp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;mgp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_synonyms&#39;</span><span class="p">,</span> <span class="s1">&#39;alt_names&#39;</span><span class="p">,</span> <span class="s1">&#39;chromosome&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;map_location&#39;</span><span class="p">,</span> <span class="s1">&#39;summary&#39;</span><span class="p">,</span> <span class="s1">&#39;taxid&#39;</span><span class="p">,</span> <span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="s1">&#39;species_long&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;protein&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;mgp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;taxid&#39;</span><span class="p">,</span> <span class="s1">&#39;mrna_id&#39;</span><span class="p">,</span> <span class="s1">&#39;refseq_id&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_gi&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;uniprot_id&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_entry&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_name&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;output_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;mgp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gene_symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;taxid&#39;</span><span class="p">,</span> <span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="s1">&#39;species_long&#39;</span><span class="p">,</span> <span class="s1">&#39;mrna_id&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;refseq_id&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_gi&#39;</span><span class="p">,</span> <span class="s1">&#39;uniprot_id&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_entry&#39;</span><span class="p">,</span> <span class="s1">&#39;protein_name&#39;</span><span class="p">,</span> <span class="s1">&#39;seqlength&#39;</span><span class="p">,</span> <span class="s1">&#39;seq&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;is_identical_to&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;moverz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_item&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;LIPIDS&#39;</span><span class="p">,</span> <span class="s1">&#39;MB&#39;</span><span class="p">,</span> <span class="s1">&#39;REFMET&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;ion_type_value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;M+H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+H-H2O&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+3H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+4H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+K&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2K&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Na&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2Na&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Li&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2Li&#39;</span><span class="p">,</span> <span class="s1">&#39;M+NH4&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;M+H+CH3CN&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Na+CH3CN&#39;</span><span class="p">,</span> <span class="s1">&#39;M.NaFormate+H&#39;</span><span class="p">,</span> <span class="s1">&#39;M.NH4Formate+H&#39;</span><span class="p">,</span> <span class="s1">&#39;M.CH3&#39;</span><span class="p">,</span> <span class="s1">&#39;M.TMSi&#39;</span><span class="p">,</span> <span class="s1">&#39;M.tBuDMSi&#39;</span><span class="p">,</span> <span class="s1">&#39;M-H&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;M-H-H2O&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Na-2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+K-2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M-2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M-3H&#39;</span><span class="p">,</span> <span class="s1">&#39;M4H&#39;</span><span class="p">,</span> <span class="s1">&#39;M.Cl&#39;</span><span class="p">,</span> <span class="s1">&#39;M.F&#39;</span><span class="p">,</span> <span class="s1">&#39;M.HF2&#39;</span><span class="p">,</span> <span class="s1">&#39;M.OAc&#39;</span><span class="p">,</span> <span class="s1">&#39;M.Formate&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;M.NaFormate-H&#39;</span><span class="p">,</span> <span class="s1">&#39;M.NH4Formate-H&#39;</span><span class="p">,</span> <span class="s1">&#39;Neutral&#39;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;exactmass&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;ArthroCer&#39;</span><span class="p">,</span> <span class="s1">&#39;asialoGM2Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;CAR&#39;</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">,</span> <span class="s1">&#39;Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;CerP&#39;</span><span class="p">,</span> <span class="s1">&#39;CoA&#39;</span><span class="p">,</span> <span class="s1">&#39;DG&#39;</span><span class="p">,</span> <span class="s1">&#39;DGDG&#39;</span><span class="p">,</span> <span class="s1">&#39;FA&#39;</span><span class="p">,</span> <span class="s1">&#39;GalCer&#39;</span><span class="p">,</span> <span class="s1">&#39;GB3Cer&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;GlcCer&#39;</span><span class="p">,</span> <span class="s1">&#39;GM3Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;GM4Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;iGB3Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;LacCer&#39;</span><span class="p">,</span> <span class="s1">&#39;Lc3Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;Manb1-4GlcCer&#39;</span><span class="p">,</span> <span class="s1">&#39;MG&#39;</span><span class="p">,</span> <span class="s1">&#39;MGDG&#39;</span><span class="p">,</span> <span class="s1">&#39;MolluCer&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;PA&#39;</span><span class="p">,</span> <span class="s1">&#39;PC&#39;</span><span class="p">,</span> <span class="s1">&#39;PE&#39;</span><span class="p">,</span> <span class="s1">&#39;PE-Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;PG&#39;</span><span class="p">,</span> <span class="s1">&#39;PGP&#39;</span><span class="p">,</span> <span class="s1">&#39;PI&#39;</span><span class="p">,</span> <span class="s1">&#39;PI-Cer&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP2&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP3&#39;</span><span class="p">,</span> <span class="s1">&#39;PS&#39;</span><span class="p">,</span> <span class="s1">&#39;SM&#39;</span><span class="p">,</span> <span class="s1">&#39;SQDG&#39;</span><span class="p">,</span> <span class="s1">&#39;TG&#39;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;ion_type_value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;Neutral&#39;</span><span class="p">,</span> <span class="s1">&#39;M+H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+H-H2O&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+3H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+4H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+K&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2K&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2K-H&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Na&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2Na&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;M+2Na-H&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;M+Li&#39;</span><span class="p">,</span> <span class="s1">&#39;M+2Li&#39;</span><span class="p">,</span> <span class="s1">&#39;M+Ag&#39;</span><span class="p">,</span> <span class="s1">&#39;M+NH4&#39;</span><span class="p">,</span> <span class="s1">&#39;M-H&#39;</span><span class="p">,</span> <span class="s1">&#39;M-CH3&#39;</span><span class="p">,</span> <span class="s1">&#39;M2H&#39;</span><span class="p">,</span> <span class="s1">&#39;M-3H&#39;</span><span class="p">,</span> <span class="s1">&#39;M-4H&#39;</span><span class="p">,</span> <span class="s1">&#39;M.Cl&#39;</span><span class="p">,</span> <span class="s1">&#39;M.OAc&#39;</span><span class="p">,</span> <span class="s1">&#39;M.Formate&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rest_params</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="n">BASE_URL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;URL initializer.</span>
+
+<span class="sd">        :param dict rest_params: Dictionary of Metabolomics Workbench URL Path items.</span>
+<span class="sd">        :param str base_url: Base url to Metabolomics Workbench REST API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span> <span class="o">=</span> <span class="n">rest_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_url</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate URL parameters. Raises error if self.rest_params is lacking a &quot;context&quot; keyword. Sub-functions raise</span>
+<span class="sd">        error if missing or invalid parameter(s) in self.rest_params.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: Invalid/missing context&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;study&quot;</span><span class="p">,</span> <span class="s2">&quot;compound&quot;</span><span class="p">,</span> <span class="s2">&quot;refmet&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;protein&quot;</span><span class="p">}:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_generic</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;moverz&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_moverz</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;exactmass&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_exactmass</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates keyword arguments for study, compound, refmet, gene, and protein contexts. Raises error if missing</span>
+<span class="sd">        or invalid parameter(s) in self.rest_params.</span>
+
+<span class="sd">        context = &quot;study&quot;</span>
+<span class="sd">        input_item = &quot;study_id&quot; | &quot;study_title&quot; | &quot;institute&quot; | &quot;last_name&quot; | &quot;analysis_id&quot; | &quot;metabolite_id&quot;</span>
+<span class="sd">        input_value = input_value</span>
+<span class="sd">        output_item = &quot;summary&quot; | &quot;factors&quot; | &quot;analysis&quot; | &quot;metabolites&quot; | &quot;mwtab&quot; | &quot;source&quot; | &quot;species&quot; | &quot;disease&quot; |</span>
+<span class="sd">                      &quot;number_of_metabolites&quot; | &quot;data&quot; | &quot;datatable&quot; | &quot;untarg_studies&quot; | &quot;untarg_factors&quot; |</span>
+<span class="sd">                      &quot;untarg_data&quot;</span>
+<span class="sd">        output_format = &quot;txt&quot; | &quot;json&quot; [Default: &quot;json&quot;]</span>
+
+<span class="sd">        context = &quot;compound&quot;</span>
+<span class="sd">        input_item = &quot;regno&quot; | &quot;formula&quot; | &quot;inchi_key&quot; | &quot;lm_id&quot; | &quot;pubchem_cid&quot; | &quot;hmdb_id&quot; | &quot;kegg_id&quot; | &quot;chebi_id&quot; |</span>
+<span class="sd">                      &quot;metacyc_id&quot; | &quot;abbrev&quot;</span>
+<span class="sd">        input_value = input_value</span>
+<span class="sd">        output_item = &quot;all&quot; | &quot;regno&quot; | &quot;formula&quot; | &quot;exactmass&quot; | &quot;inchi_key&quot; | &quot;name&quot; | &quot;sys_name&quot; | &quot;smiles&quot; |</span>
+<span class="sd">                      &quot;lm_id&quot; | &quot;pubchem_cid&quot; | &quot;hmdb_id&quot; | &quot;kegg_id&quot; | &quot;chebi_id&quot; | &quot;metacyc_id&quot; | &quot;classification&quot; |</span>
+<span class="sd">                      &quot;molfile&quot; | &quot;png&quot; | &quot;regno,formula,exactmass,...&quot;</span>
+<span class="sd">        output_format = &quot;txt&quot; | &quot;json&quot; [Default: &quot;json&quot;]</span>
+
+<span class="sd">        context = &quot;refmet&quot;</span>
+<span class="sd">        input_item = &quot;all&quot; | &quot;match&quot; | &quot;name&quot; | &quot;inchi_key&quot; | &quot;regno&quot; | &quot;pubchem_cid&quot; | &quot;formula&quot; | &quot;main_class&quot; |</span>
+<span class="sd">                     &quot;sub_class&quot;</span>
+<span class="sd">        input_value = input_value</span>
+<span class="sd">        output_item = &quot;all&quot; | &quot;name&quot; | &quot;inchi_key&quot; | &quot;regno&quot; | &quot;pubchem_cid&quot; | &quot;exactmass&quot; | &quot;formula&quot; | &quot;synonyms&quot; |</span>
+<span class="sd">                       &quot;sys_name&quot; | &quot;main_class&quot; | &quot;sub_class&quot; | &quot;name,inchi_key,regno,...&quot;</span>
+<span class="sd">        output_format = &quot;txt&quot; | &quot;json&quot; [Default: &quot;json&quot;]</span>
+
+<span class="sd">        context = &quot;gene&quot;</span>
+<span class="sd">        input_item = &quot;mgp_id&quot; | &quot;gene_id&quot; | &quot;gene_name&quot; | &quot;gene_symbol&quot; | &quot;taxid&quot;</span>
+<span class="sd">        input_value = input_value</span>
+<span class="sd">        output_item = &quot;all&quot; | &quot;lmp_id&quot; | &quot;mgp_id&quot; | &quot;gene_name&quot; | &quot;gene_symbol&quot; | &quot;gene_synonyms&quot; | &quot;alt_names&quot; |</span>
+<span class="sd">                      &quot;chromosome&quot; | &quot;map_location&quot; | &quot;summary&quot; | &quot;taxid&quot; | &quot;species&quot; | &quot;species_long&quot; |</span>
+<span class="sd">                      &quot;mgp_id,gene_id,gene_name,...&quot;</span>
+<span class="sd">        output_format = &quot;txt&quot; | &quot;json&quot; [Default: &quot;json&quot;]</span>
+
+<span class="sd">        context = &quot;protein&quot;</span>
+<span class="sd">        input_item = &quot;mgp_id&quot; | &quot;gene_id&quot; | &quot;gene_name&quot; | &quot;gene_symbol&quot; | &quot;taxid&quot; | &quot;mrna_id&quot; | &quot;refseq_id&quot; |</span>
+<span class="sd">                     &quot;protein_gi&quot; | &quot;uniprot_id&quot; | &quot;protein_entry&quot; | &quot;protein_name&quot;</span>
+<span class="sd">        input_value = input_value</span>
+<span class="sd">        output_item = &quot;all&quot; | &quot;mgp_id&quot; | &quot;gene_id&quot; | &quot;gene_name&quot; | &quot;gene_symbol&quot; | &quot;taxid&quot; | &quot;species&quot; |</span>
+<span class="sd">                      &quot;species_long&quot; | &quot;mrna_id&quot; | &quot;refseq_id&quot; | &quot;protein_gi&quot; | &quot;uniprot_id&quot; | &quot;protein_entry&quot; |</span>
+<span class="sd">                      &quot;protein_name&quot; | &quot;seqlength&quot; | &quot;seq&quot; | &quot;is_identical_to&quot; | &quot;mgp_id,gene_id,gene_name,...&quot;</span>
+<span class="sd">        output_format = &quot;txt&quot; | &quot;json&quot; [Default: &quot;json&quot;]</span>
+
+<span class="sd">        Uses static method self._validate_id() to validate input_value parameter.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input_item&quot;</span><span class="p">,</span> <span class="s2">&quot;input_value&quot;</span><span class="p">,</span> <span class="s2">&quot;output_item&quot;</span><span class="p">}</span>
+        <span class="c1"># validate all required parameters are present</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing input item(s): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="c1"># validate input_item</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;input_item&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]][</span><span class="s2">&quot;input_item&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid input item&quot;</span><span class="p">)</span>
+
+        <span class="c1"># validate input_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;input_item&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;input_value&quot;</span><span class="p">])</span>
+
+        <span class="c1"># validate output_item(s)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;output_item&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;study&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid output items. Study only takes a single output item.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]][</span><span class="s2">&quot;output_item&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;output_item&quot;</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid output item(s): &quot;</span> <span class="o">+</span>
+                                 <span class="nb">str</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;output_item&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]][</span><span class="s2">&quot;output_item&quot;</span><span class="p">])))</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;output_item&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]][</span><span class="s2">&quot;output_item&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid output item&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_moverz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate keyword arguments for moverz context. Raises error if missing or invalid parameter(s) in</span>
+<span class="sd">        self.rest_params.</span>
+
+<span class="sd">        context = &quot;moverz&quot;</span>
+<span class="sd">        input_item = &quot;LIPIDS&quot; | &quot;MB&quot; | &quot;REFMET&quot;</span>
+<span class="sd">        input_value1 = m/z_value</span>
+<span class="sd">        input_value2 = ion_type_value</span>
+<span class="sd">        input_value3 = m/z_tolerance_value</span>
+<span class="sd">        output_format = &quot;txt&quot;</span>
+
+<span class="sd">        m/z_value range: 50-2000</span>
+<span class="sd">        See CONTEXT variable for supported ion type values.</span>
+<span class="sd">        m/z_tolerance_value range: 0.0001-1</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input_item&quot;</span><span class="p">,</span> <span class="s2">&quot;m/z_value&quot;</span><span class="p">,</span> <span class="s2">&quot;ion_type_value&quot;</span><span class="p">,</span> <span class="s2">&quot;m/z_tolerance_value&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing input item(s): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;input_item&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;moverz&quot;</span><span class="p">][</span><span class="s2">&quot;input_item&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid input item&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="mi">50</span> <span class="o">&lt;=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;m/z_value&quot;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">2000</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;m/z value outside of range: 50-2000&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;ion_type_value&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;moverz&quot;</span><span class="p">][</span><span class="s2">&quot;ion_type_value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid ion type value&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="mf">0.0001</span> <span class="o">&lt;=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;m/z_tolerance_value&quot;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;m/z tolerance value outside of range: 0.0001-1&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_exactmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate keyword arguments for exactmass context. Raises error if missing or invalid parameter(s) in</span>
+<span class="sd">        self.rest_params.</span>
+
+<span class="sd">        context = &quot;exactmass&quot;</span>
+<span class="sd">        LIPID_abbreviation = ...</span>
+<span class="sd">        ion_type_value = ...</span>
+
+<span class="sd">        See :class:`~mwtab.mwrest.GenericMWURL.context` variable for full list of possible values for LIPID_abbreviation</span>
+<span class="sd">        and ion_type_value.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">,</span> <span class="s2">&quot;ion_type_value&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing input item(s): &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">keywords</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;exactmass&quot;</span><span class="p">][</span><span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid LIPID abbreviation&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s1">&#39;ion_type_value&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;exactmass&quot;</span><span class="p">][</span><span class="s2">&quot;ion_type_value&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid ion type value&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_input</span><span class="p">(</span><span class="n">input_item</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate keyword arguments for input item where an id is used (ie. study, compound, refmet, gene, and</span>
+<span class="sd">        protein). If invalid, raises value error.</span>
+
+<span class="sd">        :param str input_item: String representing the input item from the input specification.</span>
+<span class="sd">        :param str input_value: String representing the input vlaue from the input specification.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;study_id&quot;</span><span class="p">:</span>
+            <span class="c1"># allows for pulling a range of entries (ie. ST0001 pulls studies 100-199)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(ST[0-9]{0,6}$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Metabolomics Workbench (MW) study ID (ST&lt;6-digit integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;study_title&quot;</span><span class="p">,</span> <span class="s2">&quot;institute&quot;</span><span class="p">,</span> <span class="s2">&quot;last_name&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;formula&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;gene_name&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_symbol&quot;</span><span class="p">,</span> <span class="s2">&quot;protein_entry&quot;</span><span class="p">,</span> <span class="s2">&quot;protein_name&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid </span><span class="si">{}</span><span class="s2"> (&lt;string&gt;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;analysis_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(AN[0-9]</span><span class="si">{6}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Metabolomics Workbench analysis ID for a study (AN&lt;6-digit integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;metabolite_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(ME[0-9]</span><span class="si">{6}</span><span class="s2">$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Metabolomics Workbench metabolite ID for a study (ME&lt;6-digit integer&gt;)&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;regno&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Metabolomics Workbench Metabolite database ID (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;inchi_key&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([A-Z,\-]</span><span class="si">{27}</span><span class="s2">$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid InChIKey (27-character string)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;lm_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(LM[A-Z]</span><span class="si">{2}</span><span class="s2">[0-9]{8,10}$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid LIPID MAPS ID (LM&lt;2-character LIPID MAPS category&gt;&lt;8-10 character string&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;pubchem_cid&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid PubChem Compound ID (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;hmdb_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(HMDB[0-9]+$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Human Metabolome Database ID (HMDB&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;kegg_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(CO[0-9]+$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid KEGG compound ID (CO&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;chebi_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid ChEBI compound id (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="c1"># TODO: update the following two input types.</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;metacyc_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid METACYC compound ID (&lt;string&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;abbrev&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid : Lipid bulk abbreviation (&lt;string&gt;)&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;mgp_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(MGP[0-9]</span><span class="si">{6}</span><span class="s2">$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Human Metabolome Gene/Protein (MGP) database gene ID (MGP&lt;6-digit integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;gene_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Entrez gene ID (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;taxid&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid NCBI taxonomy ID (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;mrna_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(NM_[0-9]+$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid mRNA ID (NM_&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;refseq_id&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(NP_[0-9]+$)&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid mRNA ID (NP_&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;protein_gi&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">input_value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid NCBI protein GI (&lt;integer&gt;)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">input_item</span> <span class="o">==</span> <span class="s2">&quot;uniprot_id&quot;</span><span class="p">:</span>
+            <span class="c1"># regex from https://www.uniprot.org/help/accession_numbers</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[OPQ][0-9][A-Z0-9]</span><span class="si">{3}</span><span class="s2">[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]</span><span class="si">{2}</span><span class="s2">[0-9]){1,2}&quot;</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid UniProt ID (see uniprot.org/help/accession_numbers)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method for constructing a formatted Metabolomics Workbench REST API URL from the given class parameters.</span>
+
+<span class="sd">        :return: Formatted Metabolomics Workbench REST API URL.</span>
+<span class="sd">        :rtype: :py:class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;study&quot;</span><span class="p">,</span> <span class="s2">&quot;compound&quot;</span><span class="p">,</span> <span class="s2">&quot;refmet&quot;</span><span class="p">,</span> <span class="s2">&quot;gene&quot;</span><span class="p">,</span> <span class="s2">&quot;protein&quot;</span><span class="p">}:</span>
+            <span class="c1"># allows for url to include or not include output_format</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_format&quot;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;input_item&quot;</span><span class="p">,</span> <span class="s2">&quot;input_value&quot;</span><span class="p">,</span> <span class="s2">&quot;output_item&quot;</span><span class="p">,</span> <span class="s2">&quot;output_format&quot;</span>
+                <span class="p">]])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;input_item&quot;</span><span class="p">,</span> <span class="s2">&quot;input_value&quot;</span><span class="p">,</span> <span class="s2">&quot;output_item&quot;</span>
+                <span class="p">]])</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;moverz&quot;</span><span class="p">:</span>
+            <span class="n">rest_params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;input_item&quot;</span><span class="p">,</span> <span class="s2">&quot;m/z_value&quot;</span><span class="p">,</span> <span class="s2">&quot;ion_type_value&quot;</span><span class="p">,</span> <span class="s2">&quot;m/z_tolerance_value&quot;</span>
+            <span class="p">]]</span>
+            <span class="n">rest_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;txt&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rest_params</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;exactmass&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rest_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;LIPID_abbreviation&quot;</span><span class="p">,</span> <span class="s2">&quot;ion_type_value&quot;</span>
+            <span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="MWRESTFile">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.MWRESTFile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MWRESTFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MWRESTFile class that stores data from a single file download through Metabolomics Workbench&#39;s REST API.</span>
+
+<span class="sd">    Mirrors :class:`~mwtab.mwtab.MWTabFile`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;File initializer.</span>
+
+<span class="sd">        :param str source: Source a `MWRESTFile` instance was created from.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="MWRESTFile.read">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.MWRESTFile.read">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filehandle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read data into a :class:`~mwtab.mwrest.MWRESTFile` instance.</span>
+
+<span class="sd">        :param filehandle: file-like object.</span>
+<span class="sd">        :type filehandle: :py:class:`io.TextIOWrapper`, :py:class:`gzip.GzipFile`,</span>
+<span class="sd">                          :py:class:`bz2.BZ2File`, :py:class:`zipfile.ZipFile`</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">filehandle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="c1"># input_str = input_str.replace(&quot;\r\n&quot;, &quot;\n&quot;)</span>
+        <span class="c1"># self.text = re.sub(r&quot;&lt;/br&gt;&quot;, &quot;&quot;, self.text)  # included to remove remaining HTML tags</span>
+        <span class="n">filehandle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MWRESTFile.write">
+<a class="viewcode-back" href="../../api.html#mwtab.mwrest.MWRESTFile.write">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filehandle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write :class:`~mwtab.mwrest.MWRESTFile` data into file.</span>
+
+<span class="sd">        :param filehandle: file-like object.</span>
+<span class="sd">        :type filehandle: :py:class:`io.TextIOWrapper`</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">filehandle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;&quot;filehandle&quot; parameter must be writable.&#39;</span><span class="p">)</span>
+        <span class="n">filehandle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_json</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if input string is in JSON format.</span>
+
+<span class="sd">        :param string: Input string.</span>
+<span class="sd">        :type string: :py:class:`str` or :py:class:`bytes`</span>
+<span class="sd">        :return: string parsed into a JSON object or False if there was an error.</span>
+<span class="sd">        :rtype: :py:class:`str` or :py:class:`dict` or :py:class:`list` or :py:class:`None` or :py:obj:`False`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expecting &lt;class &#39;str&#39;&gt; or &lt;class &#39;bytes&#39;&gt;, but </span><span class="si">{}</span><span class="s2"> was passed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">string</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">json_str</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

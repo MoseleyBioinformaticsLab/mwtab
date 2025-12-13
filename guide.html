@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User Guide &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=576dab3d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The mwtab Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Welcome to mwtab’s documentation!" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-on-linux-mac-os-x">Install on Linux, Mac OS X</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-on-windows">Install on Windows</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-inside-virtualenv">Install inside virtualenv</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-the-source-code">Get the source code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic usage</a></li>
+</ul>
+  </nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">User Guide</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading">#</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">mwtab</span></code> package is a Python library that facilitates reading and writing
+files in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format used by the <a class="reference external" href="http://www.metabolomicsworkbench.org/">Metabolomics Workbench</a> for archival of
+Mass Spectrometry (MS) and Nuclear Magnetic Resonance (NMR) experimental data.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mwtab</span></code> package provides facilities to convert <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files into
+their equivalent JSONized (JavaScript Object Notation, an open-standard format that
+uses human-readable text to transmit data objects consisting of attribute-value pairs)
+representation and vice versa.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mwtab</span></code> package can be used in several ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>As a library for accessing and manipulating data stored in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format files.</p></li>
+<li><p>As a command-line tool to convert between <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> format and its equivalent
+<code class="docutils literal notranslate"><span class="pre">JSON</span></code> representation.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package runs under Python 3.6+.
+Starting with Python 3.4, <a class="reference external" href="https://pip.pypa.io/">pip</a> is included by default. To install
+system-wide with <a class="reference external" href="https://pip.pypa.io/">pip</a> run the following:</p>
+<section id="install-on-linux-mac-os-x">
+<h3>Install on Linux, Mac OS X<a class="headerlink" href="#install-on-linux-mac-os-x" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mwtab
+</pre></div>
+</div>
+</section>
+<section id="install-on-windows">
+<h3>Install on Windows<a class="headerlink" href="#install-on-windows" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>py<span class="w"> </span>-3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mwtab
+</pre></div>
+</div>
+</section>
+<section id="install-inside-virtualenv">
+<h3>Install inside virtualenv<a class="headerlink" href="#install-inside-virtualenv" title="Link to this heading">#</a></h3>
+<p>For an isolated install, you can run the same inside a <a class="reference external" href="https://virtualenv.pypa.io/">virtualenv</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>virtualenv<span class="w"> </span>-p<span class="w"> </span>/usr/bin/python3<span class="w"> </span>venv<span class="w">  </span><span class="c1"># create virtual environment, use python3 interpreter</span>
+
+$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">             </span><span class="c1"># activate virtual environment</span>
+
+$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mwtab<span class="w">         </span><span class="c1"># install mwtab as usual</span>
+
+$<span class="w"> </span>deactivate<span class="w">                           </span><span class="c1"># if you are done working in the virtual environment</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="get-the-source-code">
+<h2>Get the source code<a class="headerlink" href="#get-the-source-code" title="Link to this heading">#</a></h2>
+<p>Code is available on GitHub: <a class="github reference external" href="https://github.com/MoseleyBioinformaticsLab/mwtab">MoseleyBioinformaticsLab/mwtab</a></p>
+<p>You can either clone the public repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>https://github.com/MoseleyBioinformaticsLab/mwtab.git
+</pre></div>
+</div>
+<p>Or, download the tarball and/or zipball:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>curl<span class="w"> </span>-OL<span class="w"> </span>https://github.com/MoseleyBioinformaticsLab/mwtab/tarball/master
+
+$<span class="w"> </span>curl<span class="w"> </span>-OL<span class="w"> </span>https://github.com/MoseleyBioinformaticsLab/mwtab/zipball/master
+</pre></div>
+</div>
+<p>Once you have a copy of the source, you can embed it in your own Python package,
+or install it into your system site-packages easily:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>setup.py<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package depends on several Python libraries. The <code class="docutils literal notranslate"><span class="pre">pip</span></code> command
+will install all dependencies automatically, but if you wish to install them manually,
+run the following commands:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt><a class="reference external" href="https://pypi.org/project/docopt/">docopt</a> for creating <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> command-line interface.</dt><dd><ul>
+<li><p>To install <a class="reference external" href="https://pypi.org/project/docopt/">docopt</a> run the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>docopt<span class="w">  </span><span class="c1"># On Linux, Mac OS X</span>
+py<span class="w"> </span>-3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>docopt<span class="w">    </span><span class="c1"># On Windows</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><a class="reference external" href="https://pypi.org/project/jsonschema/">jsonschema</a> for validating functionality of <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files based on <code class="docutils literal notranslate"><span class="pre">JSON</span></code> schema.</dt><dd><ul>
+<li><p>To install the <a class="reference external" href="https://pypi.org/project/jsonschema/">jsonschema</a> Python library run the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>jsonschema<span class="w">  </span><span class="c1"># On Linux, Mac OS X</span>
+py<span class="w"> </span>-3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>jsonschema<span class="w">    </span><span class="c1"># On Windows</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt><a class="reference external" href="https://pypi.org/project/pandas/">pandas</a> for working with tabular data sections within the mwTab format.</dt><dd><ul>
+<li><p>To install the <a class="reference external" href="https://pypi.org/project/pandas/">pandas</a> Python library run the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w">  </span><span class="c1"># On Linux, Mac OS X</span>
+py<span class="w"> </span>-3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w">    </span><span class="c1"># On Windows</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><a class="reference external" href="https://pypi.org/project/setuptools-scm/">setuptools-scm</a> for handling versioning.</dt><dd><ul>
+<li><p>To install the <a class="reference external" href="https://pypi.org/project/setuptools-scm/">setuptools-scm</a> Python library run the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>setuptools-scm<span class="w">  </span><span class="c1"># On Linux, Mac OS X</span>
+py<span class="w"> </span>-3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>setuptools-scm<span class="w">    </span><span class="c1"># On Windows</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</section>
+<section id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a> package can be used in several ways:</p>
+<blockquote>
+<div><ul>
+<li><p>As a library for accessing and manipulating data stored in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> formatted files.</p>
+<blockquote>
+<div><ul>
+<li><p>Create the <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> generator function that will generate
+(yield) a single <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> instance at a time.</p></li>
+<li><p>Process each <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> instance:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Process <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> files in a for-loop, one file at a time.</p></li>
+<li><p>Process as an iterator calling the <a class="reference external" href="https://docs.python.org/3/library/functions.html#next" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">next()</span></code></a> built-in function.</p></li>
+<li><p>Convert the generator into a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="api.html#mwtab.mwtab.MWTabFile" title="mwtab.mwtab.MWTabFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWTabFile</span></code></a> objects.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>As a command-line tool:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Convert from <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file format into its equivalent <code class="docutils literal notranslate"><span class="pre">JSON</span></code> file format and vice versa.</p></li>
+<li><p>Validate data stored in <code class="docutils literal notranslate"><span class="pre">mwTab</span></code> file based on schema definition.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Read <a class="reference internal" href="tutorial.html"><span class="doc">The mwtab Tutorial</span></a> to learn more and see code examples on using the <a class="reference internal" href="api.html#module-mwtab" title="mwtab"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mwtab</span></code></a>
+as a library and as a command-line tool.</p>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to mwtab’s documentation!</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tutorial.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The mwtab Tutorial</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

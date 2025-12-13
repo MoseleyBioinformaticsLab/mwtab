@@ -1,0 +1,1523 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mwtab.metadata_column_matching &#8212; mwtab 0.1.dev1+g842206e48 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=46b6e079" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=576dab3d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mwtab/metadata_column_matching';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.dev1+g842206e48" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mwtab 0.1.dev1+g842206e48 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial.html">
+    The mwtab Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../metadata_column_matching.html">
+    Metadata Column Matching
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    The mwtab API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../license.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../todo.html">
+    TODO
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">mwtab.metadata_column_matching</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mwtab.metadata_column_matching</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Metadata Column Matching</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">Regular expressions, functions, and classes to match column names and values in mwtab METABOLITES blocks. </span>
+
+<span class="sd">More information can be found on the :doc:`metadata_column_matching` page.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+
+
+
+
+<span class="c1"># Sometimes 0 is also an NA value, but it can be hard tell unless you see it in an ID column like KEGG ID or something.</span>
+<span class="c1"># Note the slightly different hyphen character. It is not a duplicate.</span>
+<span class="n">NA_VALUES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;−&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;---&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="s1">&#39;na&#39;</span><span class="p">,</span> <span class="s1">&#39;n.a.&#39;</span><span class="p">,</span> <span class="s1">&#39;N.A.&#39;</span><span class="p">,</span> <span class="s1">&#39;n/a&#39;</span><span class="p">,</span> <span class="s1">&#39;N/A&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;NA&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;#N/A&#39;</span><span class="p">,</span> <span class="s1">&#39;NaN&#39;</span><span class="p">,</span> <span class="s1">&#39;nan&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="s1">&#39;Null&#39;</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="s1">&#39;NF&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;No result&#39;</span><span class="p">,</span> <span class="s1">&#39;NOT Found in Database&#39;</span><span class="p">,</span> <span class="s1">&#39;No ID&#39;</span><span class="p">,</span> <span class="s1">&#39;no data&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span> <span class="s1">&#39;No record&#39;</span><span class="p">,</span> <span class="s1">&#39;NIDB&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;Not available&#39;</span><span class="p">,</span> <span class="s1">&#39;TBC&#39;</span><span class="p">,</span> <span class="s1">&#39;Internal Standard&#39;</span><span class="p">,</span> <span class="s1">&#39;Intstd&#39;</span><span class="p">,</span> <span class="s1">&#39;internal standard&#39;</span><span class="p">,</span> <span class="s1">&#39;Internal standard&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;Spiked Stable Isotope Labeled Internal Standards&#39;</span><span class="p">,</span> <span class="s1">&#39;Int Std&#39;</span><span class="p">]</span>
+
+<span class="c1">#: Used for wrapping regexes in certain functions.</span>
+<span class="n">WRAP_STRING</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[^a-zA-Z0-9]&#39;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_column_regex_any</span><span class="p">(</span><span class="n">match_strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a regular expression string that will match any of the strings in match_strings.</span>
+<span class="sd">    </span>
+<span class="sd">    Automatically adds ``WRAP_STRING`` to either side of each string to help with some fuzzy matching. </span>
+<span class="sd">    Intended to be used to match column names in METABOLITES data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        match_strings: list of strings to create a regex for.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A regular expression string that will match any of the strings in match_strings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">WRAP_STRING</span> <span class="o">+</span> <span class="s1">&#39;|^)&#39;</span> <span class="o">+</span> <span class="n">match_string</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">WRAP_STRING</span> <span class="o">+</span> <span class="s1">&#39;|$)&#39;</span> <span class="k">for</span> <span class="n">match_string</span> <span class="ow">in</span> <span class="n">match_strings</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">regex</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_column_regex_all</span><span class="p">(</span><span class="n">match_strings_sets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a regular expression string that will match any of the string sets in match_strings_sets.</span>
+<span class="sd">    </span>
+<span class="sd">    Automatically adds ``WRAP_STRING`` to either side of each string to help with some fuzzy matching. </span>
+<span class="sd">    Intended to be used to match column names in METABOLITES data. The &quot;all&quot; refers to requiring each </span>
+<span class="sd">    string within a set to be present to match, but if multiple sets are given, then any set will match. </span>
+<span class="sd">    &quot;set&quot; does not mean the actual &quot;set&quot; data type, any iterable collection is fine.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        match_strings_sets: list of string sets to create a regex for.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A regular expression string that will match any of the string sets in match_strings_sets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;(?=.*(&#39;</span> <span class="o">+</span> <span class="n">WRAP_STRING</span> <span class="o">+</span> <span class="s1">&#39;|^)&#39;</span> <span class="o">+</span> <span class="n">match_string</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">WRAP_STRING</span> <span class="o">+</span> <span class="s1">&#39;|$))&#39;</span> <span class="k">for</span> <span class="n">match_string</span> <span class="ow">in</span> <span class="n">match_strings</span><span class="p">])</span> <span class="k">for</span> <span class="n">match_strings</span> <span class="ow">in</span> <span class="n">match_strings_sets</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">regex</span>
+
+
+<div class="viewcode-block" id="NameMatcher">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.NameMatcher">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NameMatcher</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to filter names that match certain criteria.</span>
+
+<span class="sd">    Mostly intended to be used through the ColumnFinder class. Created for the purpose </span>
+<span class="sd">    of matching tabular column names based on regular expressions and &quot;in&quot; criteria.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        regex_search_strings: A collection of strings to deliver to re.search() to match a column name. </span>
+<span class="sd">          If any string in the collection matches, then the name is matched. This does not simply </span>
+<span class="sd">          look for any of the strings within a column name to match. Each string is wrapped with </span>
+<span class="sd">          ``WRAP_STRING`` before searching, so the string &#39;bar&#39; would not be found in </span>
+<span class="sd">          the column name &quot;foobarbaz&quot;, but would be found in the name &quot;foo bar baz&quot;.</span>
+<span class="sd">        not_regex_search_strings: The same as regex_search_strings, except a match to a column name </span>
+<span class="sd">          eliminates that name. Attributes that begin with &quot;not&quot; take precedence over the others. </span>
+<span class="sd">          So if a column name matches a string in regex_search_strings and not_regex_search_strings, </span>
+<span class="sd">          then it will be filtered OUT.</span>
+<span class="sd">        regex_search_sets: A collection of sets of strings. Each string in the set of strings must </span>
+<span class="sd">          be found in the column name to match, but any set could be found. For example, [(&#39;foo&#39;, &#39;bar&#39;), (&#39;baz&#39;, &#39;asd&#39;)] </span>
+<span class="sd">          will match the name &quot;foo bar&quot; or &quot;bar foo&quot;, but not &quot;foobar&quot;, due to the aforementioned </span>
+<span class="sd">          wrapping with ``WRAP_STRING``. The names &quot;foo&quot;, &quot;baz&quot;, or &quot;asd&quot; would not match either, but &quot;var asd baz&quot; would.</span>
+<span class="sd">        in_strings: Similar to regex_search_strings except instead of using re.search() the &quot;in&quot; operator </span>
+<span class="sd">          is used. For example, [&#39;foo&#39;] would match the column name &quot;a fool&quot;, since &#39;foo&#39; is in &quot;a fool&quot;.</span>
+<span class="sd">        not_in_strings: The same as in_strings, but matches to a column name eliminate or filter OUT that name.</span>
+<span class="sd">        in_string_sets: The same as regex_search_sets, but each string in a set is determined to match </span>
+<span class="sd">          using the &quot;in&quot; operator instead of re.search(). For example, [(&#39;foo&#39;, &#39;bar&#39;), (&#39;baz&#39;, &#39;asd&#39;)] </span>
+<span class="sd">          WILL match the column name &quot;foobar&quot; because both &#39;foo&#39; and &#39;bar&#39; are in the name.</span>
+<span class="sd">        exact_strings: A collection of strings that must exactly match the column name. For example, </span>
+<span class="sd">          [&#39;foo&#39;, &#39;bar&#39;] would only the match the column names &quot;foo&quot; or &quot;bar&quot;.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Find a column for &quot;moverz&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; NameMatcher(regex_search_strings = [&#39;m/z&#39;, &#39;mz&#39;, &#39;moverz&#39;, &#39;mx&#39;],</span>
+<span class="sd">        ...             not_regex_search_strings = [&#39;id&#39;],</span>
+<span class="sd">        ...             in_strings = [&#39;m.z&#39;, &#39;calcmz&#39;, &#39;medmz&#39;, &#39;m_z&#39;, &#39;obsmz&#39;, &#39;mass to charge&#39;, &#39;mass over z&#39;],</span>
+<span class="sd">        ...             not_in_strings = [&#39;spec&#39;, &#39;pectrum&#39;, &#39;structure&#39;, &#39;regno&#39;, &#39;retention&#39;])</span>
+<span class="sd">        </span>
+<span class="sd">        This is a real example based on the datasets in the Metabolomics Workbench. We can examine </span>
+<span class="sd">        some of the strings to illustrate the attributes&#39; function. The &quot;id&quot; string needs to be in </span>
+<span class="sd">        not_regex_search_strings, rather than not_in_strings, because &quot;id&quot; is a very small substring </span>
+<span class="sd">        that could easily be in a longer word. Putting in not_regex_search_strings means it will </span>
+<span class="sd">        most likely match &quot;ID&quot; fields, such as &quot;PubChem ID&quot;. Note that it is recommend to lower </span>
+<span class="sd">        all column names before filtering and thus use lower case strings, but in general NameMatcher </span>
+<span class="sd">        is case sensitive. The &quot;spec&quot; string is in not_in_strings, rather than not_regex_search_strings </span>
+<span class="sd">        because the risk of it being in a name that should not be filtered out is low. Also it </span>
+<span class="sd">        catches both the full word &quot;spectrum&quot; and its common abbreviation &quot;spec&quot;. Hopefully, </span>
+<span class="sd">        these 2 explanations of &quot;id&quot; and &quot;spec&quot; have illustrated some of the tradeoffs and </span>
+<span class="sd">        advantages of the &quot;in&quot; style attributes versus the &quot;search&quot; style ones.</span>
+<span class="sd">        </span>
+<span class="sd">        Find a column for &quot;retention time&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; NameMatcher(regex_search_strings = [&#39;rt&#39;],</span>
+<span class="sd">        ...             regex_search_sets = [[&#39;ret&#39;, &#39;time&#39;]],</span>
+<span class="sd">        ...             in_strings = [&#39;rtimes&#39;, &#39;r.t.&#39;, &#39;medrt&#39;, &#39;rtsec&#39;, &#39;bestrt&#39;, &#39;compoundrt&#39;, &#39;rtmed&#39;],</span>
+<span class="sd">        ...             in_string_sets = [[&#39;retention&#39;, &#39;time&#39;], [&#39;rentetion&#39;, &#39;time&#39;], [&#39;retension&#39;, &#39;time&#39;]],</span>
+<span class="sd">        ...             not_in_strings = [&#39;type&#39;, &#39;error&#39;, &#39;index&#39;, &#39;delta&#39;, &#39;feature&#39;, &#39;m/z&#39;])</span>
+<span class="sd">        </span>
+<span class="sd">        This is another real example based on the datasets in the Metabolomics Workbench. It </span>
+<span class="sd">        illustrates the &quot;set&quot; style attributes quite well. For multi-word column names the </span>
+<span class="sd">        &quot;set&quot; style attributes are usually what you want to use. It is possible to to give </span>
+<span class="sd">        a string like &quot;retention time&quot;, note the space character, to an attribute like &quot;in_strings&quot;, </span>
+<span class="sd">        but this is more fragile than it seems and won&#39;t match some common alternate spellings or </span>
+<span class="sd">        mistakes, such as &quot;retention_time&quot; or &quot;retention  time&quot;. Using &quot;set&quot; style attributes </span>
+<span class="sd">        means you don&#39;t have to add as many strings to an attribute like &quot;in_strings&quot;. You </span>
+<span class="sd">        can still see some repetition in the in_string_sets attribute here though to cover the </span>
+<span class="sd">        many mispellings of &quot;retention&quot;. &quot;set&quot; style attributes would not be a good use case </span>
+<span class="sd">        if the strings in the set must be in a certain order though. The set [&#39;ret&#39;, &#39;time&#39;] </span>
+<span class="sd">        will match &#39;ret&#39; and &#39;time&#39; in any order. Generally, this will not be a problem because </span>
+<span class="sd">        there aren&#39;t many instances where you will get a false positive match for a multi-word </span>
+<span class="sd">        column due to the order of the words.</span>
+<span class="sd">        </span>
+<span class="sd">        Find a column for &quot;other_id&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; NameMatcher(not_regex_search_strings = [&#39;cas&#39;],</span>
+<span class="sd">        ...             in_strings = [&#39;other&#39;],</span>
+<span class="sd">        ...             in_string_sets = [[&#39;database&#39;, &#39;identifier&#39;], [&#39;chemical&#39;, &#39;id&#39;], [&#39;cmpd&#39;, &#39;id&#39;], </span>
+<span class="sd">        ...                               [&#39;database&#39;, &#39;id&#39;], [&#39;database&#39;, &#39;match&#39;], [&#39;local&#39;, &#39;id&#39;], </span>
+<span class="sd">        ...                               [&#39;row&#39;, &#39;id&#39;], [&#39;comp&#39;, &#39;id&#39;], [&#39;chem&#39;, &#39;id&#39;], [&#39;chro&#39;, &#39;lib&#39;, &#39;id&#39;], </span>
+<span class="sd">        ...                               [&#39;lib&#39;, &#39;id&#39;]],</span>
+<span class="sd">        ...             not_in_strings = [&#39;type&#39;, &#39;pubchem&#39;, &#39;chemspider&#39;, &#39;kegg&#39;],</span>
+<span class="sd">        ...             exact_strings = [&#39;id&#39;],)</span>
+<span class="sd">        </span>
+<span class="sd">        This is another real example based on the datasets in the Metabolomics Workbench. It is shown </span>
+<span class="sd">        to demonstrate the &quot;exact_strings&quot; attribute. There are many columns that contain the &quot;id&quot; </span>
+<span class="sd">        string. There are specific database ID columns, such as those from PubChem or KEGG, but there </span>
+<span class="sd">        are often lesser known or individual lab IDs. This example is trying to lump many of the lesser </span>
+<span class="sd">        ones into a single &quot;other_id&quot; column. Trying to have &quot;id&quot; in an in_strings or regex_search_strings </span>
+<span class="sd">        attribute would cause far too many false positive matches for reasons described in the first </span>
+<span class="sd">        example, but there are columns simply labeled &quot;ID&quot;, so the only recourse is to use the exact_strings </span>
+<span class="sd">        attribute to match them exactly.</span>
+<span class="sd">        </span>
+<span class="sd">        Typical usage.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; df = pandas.read_csv(&#39;some_file.csv&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; name_matcher = NameMatcher(exact_strings = [&#39;foo&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; modified_columns = {{column_name: column_name.lower().strip() for column_name in df.columns}}</span>
+<span class="sd">        &gt;&gt;&gt; matching_columns = name_matcher.dict_match(modified_columns)</span>
+<span class="sd">        </span>
+<span class="sd">        NameMatcher is really meant to be used as part of a ColumnFinder, but this example uses it </span>
+<span class="sd">        directly for simplicity. The instantiated NameMatcher is also very simple in this example </span>
+<span class="sd">        because it is trying to show the usage of the dict_match method more than anything else. </span>
+<span class="sd">        dict_match requires a dictionary as input, rather than a simple list so that column names </span>
+<span class="sd">        can be modified if necessary for easier matching, but then still be linked back to the original </span>
+<span class="sd">        name in the dataframe. </span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        regex_search_strings (list[str]): The current list of strings used for regex searching.</span>
+<span class="sd">        not_regex_search_strings (list[str]): The current list of strings used for regex searching to exclude names.</span>
+<span class="sd">        regex_search_sets (list[list[str]]): The current list of string sets used for regex searching.</span>
+<span class="sd">        in_strings (list[str]): The current list of strings used for &quot;in&quot; operator matching.</span>
+<span class="sd">        not_in_strings (list[str]): The current list of strings used for &quot;in&quot; operator matching to exclude names.</span>
+<span class="sd">        in_string_sets (list[list[str]]): The current list of string sets used for &quot;in&quot; operator matching.</span>
+<span class="sd">        exact_strings (list[str]): The current collection of strings used for &quot;==&quot; operator matching.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex_search_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">not_regex_search_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">regex_search_sets</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">in_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">not_in_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">in_string_sets</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex_search_strings</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">regex_search_strings</span> <span class="k">if</span> <span class="n">regex_search_strings</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_regex_search_strings</span> <span class="o">=</span> <span class="n">not_regex_search_strings</span> <span class="k">if</span> <span class="n">not_regex_search_strings</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex_search_sets</span> <span class="o">=</span> <span class="n">regex_search_sets</span> <span class="k">if</span> <span class="n">regex_search_sets</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_strings</span> <span class="o">=</span> <span class="n">in_strings</span> <span class="k">if</span> <span class="n">in_strings</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_in_strings</span> <span class="o">=</span> <span class="n">not_in_strings</span> <span class="k">if</span> <span class="n">not_in_strings</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="n">in_string_sets</span> <span class="k">if</span> <span class="n">in_string_sets</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exact_strings</span> <span class="o">=</span> <span class="n">exact_strings</span> <span class="k">if</span> <span class="n">exact_strings</span> <span class="k">else</span> <span class="p">[]</span>
+        
+<div class="viewcode-block" id="NameMatcher.dict_match">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.NameMatcher.dict_match">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dict_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of names that match based on the NameMatcher attributes.</span>
+<span class="sd">        </span>
+<span class="sd">        Find all names in name_map that match. name_map should be a dictionary of original names </span>
+<span class="sd">        to modified names. The value is used for matching, but the key is what will be returned. </span>
+<span class="sd">        Each of the name regex, in_string, and exact strings attributes are ORed together, </span>
+<span class="sd">        meaning any of them can be used to match, except for the &quot;not&quot; parameters. If a column </span>
+<span class="sd">        name is matched by a &quot;not&quot; parameter, then it overrides other matches and will be filtered out.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name_map: a dictionary of original names to the modified version of that name to use for matching.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of names that match based on the NameMatcher attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">search_regex</span> <span class="o">=</span> <span class="n">_create_column_regex_any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_search_strings</span><span class="p">)</span>
+        <span class="n">search_regex_sets</span> <span class="o">=</span> <span class="n">_create_column_regex_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_search_sets</span><span class="p">)</span>
+        <span class="n">not_search_regex</span> <span class="o">=</span> <span class="n">_create_column_regex_any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">not_regex_search_strings</span><span class="p">)</span>
+        <span class="n">has_regex_search_strings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_search_strings</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">has_regex_search_sets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex_search_sets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">has_in_string_sets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_string_sets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">has_no_not_regex_search_strings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">not_regex_search_strings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">has_no_not_in_strings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">not_in_strings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">columns_of_interest</span> <span class="o">=</span> <span class="p">[</span><span class="n">original_name</span> <span class="k">for</span> <span class="n">original_name</span><span class="p">,</span> <span class="n">modified_name</span> <span class="ow">in</span> <span class="n">name_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> \
+                                <span class="p">(</span>
+                                 <span class="p">(</span><span class="n">has_regex_search_strings</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_regex</span><span class="p">,</span> <span class="n">modified_name</span><span class="p">))</span> <span class="ow">or</span> \
+                                 <span class="p">(</span><span class="n">has_regex_search_sets</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_regex_sets</span><span class="p">,</span> <span class="n">modified_name</span><span class="p">))</span> <span class="ow">or</span> \
+                                 <span class="nb">any</span><span class="p">([</span><span class="n">word</span> <span class="ow">in</span> <span class="n">modified_name</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_strings</span><span class="p">])</span> <span class="ow">or</span> \
+                                 <span class="p">(</span><span class="n">has_in_string_sets</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="nb">all</span><span class="p">([</span><span class="n">word</span> <span class="ow">in</span> <span class="n">modified_name</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_set</span><span class="p">])</span> <span class="k">for</span> <span class="n">word_set</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_string_sets</span><span class="p">]))</span> <span class="ow">or</span> \
+                                 <span class="nb">any</span><span class="p">([</span><span class="n">word</span> <span class="o">==</span> <span class="n">modified_name</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exact_strings</span><span class="p">])</span>
+                                <span class="p">)</span> <span class="ow">and</span> \
+                                <span class="p">(</span><span class="n">has_no_not_regex_search_strings</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">not_search_regex</span><span class="p">,</span> <span class="n">modified_name</span><span class="p">))</span> <span class="ow">and</span> \
+                                <span class="p">(</span><span class="n">has_no_not_in_strings</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">([</span><span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modified_name</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_strings</span><span class="p">]))]</span>
+        <span class="k">return</span> <span class="n">columns_of_interest</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ValueMatcher">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.ValueMatcher">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ValueMatcher</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to find a mask for certain values in a column.</span>
+<span class="sd">    </span>
+<span class="sd">    Mostly intended to be used through the ColumnFinder class. Created for the purpose </span>
+<span class="sd">    of matching tabular column data based on regular expressions and type criteria.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        values_type: A string whose only relevant values are &#39;integer&#39;, &#39;numeric&#39;, and &#39;non-numeric&#39;.</span>
+<span class="sd">          &#39;integer&#39; will only match values in a column that are integer numbers. &#39;numeric&#39; will only </span>
+<span class="sd">          match values that are numbers, this includes integers. &#39;non-numeric&#39; will only match values </span>
+<span class="sd">          that are non-numeric. Numeric values can be in the value, but cannot be the whole value. </span>
+<span class="sd">          For example, &#39;123 id&#39; is considered non-numeric.</span>
+<span class="sd">        values_regex: A regular expression to positively identify values in a column.</span>
+<span class="sd">        inverse_values_regex: A regular expression to negatively identify values in a column. This </span>
+<span class="sd">          is mutually exclusive with values_regex. If both are given, values_regex takes precedence </span>
+<span class="sd">          and inverse_values_regex is ignored. values_type can be combined with either regex and </span>
+<span class="sd">          values must match both criteria to match overall.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Simple type example.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; vm = ValueMatcher(values_type = &#39;numeric&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; test = pandas.Series([1, &#39;1&#39;, &#39;foo&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; vm.series_match(test)</span>
+<span class="sd">        0     True</span>
+<span class="sd">        1     True</span>
+<span class="sd">        2    False</span>
+<span class="sd">        dtype: bool</span>
+<span class="sd">        </span>
+<span class="sd">        This ValueMatcher is very simple and will only match numeric values. Note that numeric </span>
+<span class="sd">        values in string form are also recognized as numeric. This is intentional.</span>
+<span class="sd">        </span>
+<span class="sd">        Simple regex example.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; vm = ValueMatcher(values_regex = &#39;foo.*&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; test = pandas.Series([&#39;foo&#39;, &#39;bar&#39;, &#39;foobar&#39;, 1])</span>
+<span class="sd">        &gt;&gt;&gt; vm.series_match(test)</span>
+<span class="sd">        0     True</span>
+<span class="sd">        1    False</span>
+<span class="sd">        2     True</span>
+<span class="sd">        3    False</span>
+<span class="sd">        dtype: bool</span>
+<span class="sd">        </span>
+<span class="sd">        Simple inverse regex example.</span>
+<span class="sd">        &gt;&gt;&gt; vm = ValueMatcher(values_inverse_regex = &#39;foo.*&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; test = pandas.Series([&#39;foo&#39;, &#39;bar&#39;, &#39;foobar&#39;, 1])</span>
+<span class="sd">        &gt;&gt;&gt; vm.series_match(test)</span>
+<span class="sd">        0    False</span>
+<span class="sd">        1     True</span>
+<span class="sd">        2    False</span>
+<span class="sd">        3    False</span>
+<span class="sd">        dtype: bool</span>
+<span class="sd">        </span>
+<span class="sd">        Note that 1 is False in both examples. In general this was designed with strings in mind, so it </span>
+<span class="sd">        is recommended to convert all values to strings in any Series delivered to series_match. </span>
+<span class="sd">        It is also HIGHLY recommended to use the &#39;string[pyarrow]&#39; dtype when using the regex attributes. </span>
+<span class="sd">        This dtype uses much faster regular expression algorithms and can make orders of magnitude speed </span>
+<span class="sd">        differences over Python&#39;s built-in regular expressions. There are some features of regular </span>
+<span class="sd">        expressions that cannot be used with the &#39;string[pyarrow]&#39; dtype though. For example, lookahead </span>
+<span class="sd">        assertions. More information can be found at https://pypi.org/project/re2/. </span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        values_type: The current type of the values being matched.</span>
+<span class="sd">        values_regex: The regular expression to positively identify values in a column.</span>
+<span class="sd">        inverse_values_regex: The regular expression to positively exclude values in a column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values_type</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">values_regex</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">values_inverse_regex</span><span class="p">:</span> <span class="kc">None</span><span class="o">|</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_type</span> <span class="o">=</span> <span class="n">values_type</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_regex</span> <span class="o">=</span> <span class="n">values_regex</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values_regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_inverse_regex</span> <span class="o">=</span> <span class="n">values_inverse_regex</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values_inverse_regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    
+<div class="viewcode-block" id="ValueMatcher.series_match">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.ValueMatcher.series_match">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">series_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">na_values</span><span class="p">:</span> <span class="nb">list</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">match_na_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a mask for the series based on type and regex matching.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;values_regex&quot; and &quot;values_inverse_regex&quot; are mutually exclusive and &quot;values_regex&quot; will take precedence if both are given. </span>
+<span class="sd">        &quot;values_type&quot; and one of the regex parameters can both be used, the intermediate masks are ANDed together. </span>
+<span class="sd">        &quot;values_type&quot; can only be &quot;integer&quot;, &quot;numeric&quot;, or &quot;non-numeric&quot; to match those types, respectively.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            series: series to match values based on type and/or regex.</span>
+<span class="sd">            na_values: list of values to consider NA values.</span>
+<span class="sd">            match_na_values: if True, NA values will be consider a match and return True, False otherwise.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas Series the same length as &quot;series&quot; with Boolean values that can be used to select the matching values in the series.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">na_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">na_values</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="n">stripped_series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">stripped_series</span> <span class="o">=</span> <span class="n">stripped_series</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\u200e</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">old_NAs</span> <span class="o">=</span> <span class="p">(</span><span class="n">stripped_series</span><span class="o">.</span><span class="n">isna</span><span class="p">())</span> <span class="o">|</span> <span class="p">(</span><span class="n">stripped_series</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">na_values</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_regex</span><span class="p">:</span>
+            <span class="n">regex_match</span> <span class="o">=</span> <span class="n">stripped_series</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_regex</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_inverse_regex</span><span class="p">:</span>
+            <span class="n">regex_match</span> <span class="o">=</span> <span class="o">~</span><span class="n">stripped_series</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_inverse_regex</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">regex_match</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">True</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">match_na_values</span><span class="p">:</span>
+            <span class="n">regex_match</span> <span class="o">=</span> <span class="n">regex_match</span> <span class="o">|</span> <span class="n">old_NAs</span>
+        
+        
+        <span class="n">column_to_numeric</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">stripped_series</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+        <span class="n">column_to_numeric_NAs</span> <span class="o">=</span> <span class="n">column_to_numeric</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+        <span class="n">new_NAs</span> <span class="o">=</span> <span class="n">column_to_numeric_NAs</span> <span class="o">^</span> <span class="n">old_NAs</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_type</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
+            <span class="c1"># The top line will return True for values like &#39;1.0&#39;, but the bottom line won&#39;t.</span>
+            <span class="c1"># type_match = (column_to_numeric % 1 == 0) &amp; ~new_NAs</span>
+            <span class="n">type_match</span> <span class="o">=</span> <span class="o">~</span><span class="n">stripped_series</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">new_NAs</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_type</span> <span class="o">==</span> <span class="s2">&quot;numeric&quot;</span><span class="p">:</span>
+            <span class="n">type_match</span> <span class="o">=</span> <span class="o">~</span><span class="n">new_NAs</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_type</span> <span class="o">==</span> <span class="s2">&quot;non-numeric&quot;</span><span class="p">:</span>
+            <span class="n">type_match</span> <span class="o">=</span> <span class="n">new_NAs</span> <span class="o">|</span> <span class="n">old_NAs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">type_match</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">True</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">regex_match</span> <span class="o">&amp;</span> <span class="n">type_match</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ColumnFinder">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.ColumnFinder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnFinder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to find columns in a DataFrame that match a NameMatcher and values in the column that match a ValueMatcher.</span>
+<span class="sd">    </span>
+<span class="sd">    This is pretty much just a convenient way to keep the standard_name, NameMatcher, and ValueMatcher </span>
+<span class="sd">    together in a single object. Convenience methods to utilize the NameMatcher and ValueMatcher are </span>
+<span class="sd">    provided as name_dict_match and values_series_match, respectively.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        standard_name: A string to give a standard name to the column you are trying to find. </span>
+<span class="sd">          Not used by any methods.</span>
+<span class="sd">        name_matcher: The NameMatcher object used to match column names.</span>
+<span class="sd">        value_matcher: The ValueMatcher object used to match column values.</span>
+<span class="sd">        </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Basic usage.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; df = pandas.DataFrame({&#39;foo&#39;:[1, 2, &#39;asdf&#39;], &#39;bar&#39;:[1, 2, 3]})</span>
+<span class="sd">        &gt;&gt;&gt; df</span>
+<span class="sd">            foo  bar</span>
+<span class="sd">        0     1    1</span>
+<span class="sd">        1     2    2</span>
+<span class="sd">        2  asdf    3</span>
+<span class="sd">        &gt;&gt;&gt; column_finder = ColumnFinder(&#39;FOO&#39;, NameMatcher(exact_strings = [&#39;foo&#39;]), ValueMatcher(values_type = &#39;numeric&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; modified_columns = {column_name: column_name.lower().strip() for column_name in df.columns}</span>
+<span class="sd">        &gt;&gt;&gt; matching_columns = column_finder.name_dict_match(modified_columns)</span>
+<span class="sd">        &gt;&gt;&gt; matched_column_name = matching_columns[0]</span>
+<span class="sd">        &gt;&gt;&gt; matched_column_name</span>
+<span class="sd">        foo</span>
+<span class="sd">        &gt;&gt;&gt; matching_values = column_finder.values_series_match(df.loc[:, matched_column_name])</span>
+<span class="sd">        &gt;&gt;&gt; matching_values</span>
+<span class="sd">        0     True</span>
+<span class="sd">        1     True</span>
+<span class="sd">        2    False</span>
+<span class="sd">        dtype: bool</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        standard_name: The standard name of the column trying to be found.</span>
+<span class="sd">        name_matcher: The NameMatcher object used to match column names.</span>
+<span class="sd">        value_matcher: The ValueMatcher object used to match column values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">standard_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name_matcher</span><span class="p">:</span> <span class="n">NameMatcher</span><span class="p">,</span> <span class="n">value_matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="n">standard_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_matcher</span> <span class="o">=</span> <span class="n">name_matcher</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_matcher</span> <span class="o">=</span> <span class="n">value_matcher</span>
+    
+<div class="viewcode-block" id="ColumnFinder.name_dict_match">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.ColumnFinder.name_dict_match">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name_dict_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convenience method to use the dict_match method for name_matcher.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_matcher</span><span class="o">.</span><span class="n">dict_match</span><span class="p">(</span><span class="n">name_map</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ColumnFinder.values_series_match">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.ColumnFinder.values_series_match">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">values_series_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">na_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">match_na_values</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convenience method to use the series_match method for value_matcher.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_matcher</span><span class="o">.</span><span class="n">series_match</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">na_values</span><span class="p">,</span> <span class="n">match_na_values</span><span class="p">)</span></div>
+</div>
+
+ 
+
+
+
+
+
+<div class="viewcode-block" id="make_list_regex">
+<a class="viewcode-back" href="../../api.html#mwtab.metadata_column_matching.make_list_regex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_list_regex</span><span class="p">(</span><span class="n">element_regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="p">,</span> <span class="n">quoted_elements</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">empty_string</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Creates a regular expression that will match a list of element_regex delimited by delimiter.</span>
+<span class="sd">    </span>
+<span class="sd">    Note that delimiter can be a regular expression like (,|;) to match 2 different types of delimiters. </span>
+<span class="sd">    If quoted_elements is True, then allow element_regex to be surrounded by single or double quotes. </span>
+<span class="sd">    Note that this allows mixed elements, so quoted and unquoted elements are both allowed in the same list. </span>
+<span class="sd">    If empty_string is True, then the list regex will match a single element_regex and the empty string. </span>
+<span class="sd">    empty_string = True will actually match anything, but the length of the match for strings that </span>
+<span class="sd">    are not appropriate will be 0. So this parameter could be useful in some edge case scenarios, </span>
+<span class="sd">    but you must investigate the specific match more closely. If the match is the empty string, </span>
+<span class="sd">    but the given string is not itself the empty string, then it is not really a match.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        element_regex: A regular expression in the form of a string that matches the elements of the list to match.</span>
+<span class="sd">        delimiter: The character(s) that seperate list elements.</span>
+<span class="sd">        quoted_elements: If True, list elements can be surrounded by single or double quotes.</span>
+<span class="sd">        empty_string: If True, then allow the returned regular exression to match the empty string.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A regular expression in str form that will match a list of element_regexes delimited by delimiter.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Regular expression to match a list of 4 digit numbers.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; regex = make_list_regex(r&#39;\d\d\d\d&#39;, r&#39;,&#39;)</span>
+<span class="sd">        &#39;((\\d\\d\\d\\d\\s*,\\s*)+(\\d\\d\\d\\d\\s*|\\s*))&#39;</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234, 5678&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">               </span>
+<span class="sd">        Allow the empty string.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; regex = make_list_regex(r&#39;\d\d\d\d&#39;, r&#39;,&#39;, empty_string = True)</span>
+<span class="sd">        &#39;((\\d\\d\\d\\d\\s*,\\s*)*(\\d\\d\\d\\d\\s*|\\s*))&#39;</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234, 5678&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;asdf&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; re.match(regex, &#39;asdf&#39;)</span>
+<span class="sd">        &lt;re.Match object; span=(0, 0), match=&#39;&#39;&gt;</span>
+<span class="sd">        </span>
+<span class="sd">        Allow numbers to be surrounded with quotation marks.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; regex = make_list_regex(r&#39;\d\d\d\d&#39;, r&#39;,&#39;, quoted_elements = True)</span>
+<span class="sd">        &#39;(((\\d\\d\\d\\d\\s*,\\s*)+(\\d\\d\\d\\d\\s*|\\s*))|((\&#39;\\d\\d\\d\\d\&#39;\\s*,\\s*)+(\&#39;\\d\\d\\d\\d\&#39;\\s*|\\s*))|((&quot;\\d\\d\\d\\d&quot;\\s*,\\s*)+(&quot;\\d\\d\\d\\d&quot;\\s*|\\s*)))&#39;</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234, 5678&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;1234, &quot;5678&quot;&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;\&#39;1234\&#39;, &quot;5678&quot;&#39;))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; bool(re.match(regex, &#39;&#39;))</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">quoted_elements</span><span class="p">:</span>
+        <span class="c1"># The simplest regex to add quotes around the element, but allows elements like &#39;element&quot; through.</span>
+        <span class="c1"># element_regex = r&#39;(\&#39;|&quot;|)&#39; + element_regex + r&#39;(\&#39;|&quot;|)&#39;</span>
+        <span class="c1"># Forces an element to be surrounded by the same thing on both sides, but still allows for mixed elements.</span>
+        <span class="c1"># element_regex = r&quot;(&#39;&quot; + element_regex + r&quot;&#39;&quot; + &#39;|&#39; + r&#39;&quot;&#39; + element_regex + r&#39;&quot;&#39; + &#39;|&#39; + element_regex + &#39;)&#39;</span>
+        
+        <span class="c1"># All elements must have the same type of quotation marks.</span>
+        <span class="k">return</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">element_regex</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">empty_string</span><span class="o">=</span><span class="n">empty_string</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+               <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">element_regex</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">empty_string</span><span class="o">=</span><span class="n">empty_string</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+               <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">element_regex</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">empty_string</span><span class="o">=</span><span class="n">empty_string</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+    
+    <span class="n">repetition_symbol</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span> <span class="k">if</span> <span class="n">empty_string</span> <span class="k">else</span> <span class="s1">&#39;+&#39;</span>
+    
+    <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;((&#39;</span> <span class="o">+</span> <span class="n">element_regex</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*&#39;</span> <span class="o">+</span> <span class="n">delimiter</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*)&#39;</span> <span class="o">+</span> <span class="n">repetition_symbol</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">element_regex</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*|\s*))&#39;</span></div>
+
+
+
+
+<span class="c1"># # Testing make_list_regex</span>
+<span class="c1"># pass_values = [&#39;a,&#39;, &#39;a,a&#39;, &#39;a,a,&#39;, &#39;a ,&#39;, &#39;a , a&#39;, &#39;a , a ,&#39;]</span>
+<span class="c1"># fail_values = [&#39;a&#39;, &#39;&#39;]</span>
+
+<span class="c1"># # pass should pass and fail should fail</span>
+<span class="c1"># regex = make_list_regex(&#39;a&#39;, &#39;,&#39;)</span>
+<span class="c1"># # pass should pass, but fail should also pass now.</span>
+<span class="c1"># regex = make_list_regex(&#39;a&#39;, &#39;,&#39;, False, True)</span>
+
+<span class="c1"># for value in pass_values:</span>
+<span class="c1">#     if not re.fullmatch(regex, value):</span>
+<span class="c1">#         print(value)</span>
+
+<span class="c1"># for i, value in enumerate(fail_values):</span>
+<span class="c1">#     if re.fullmatch(regex, value):</span>
+<span class="c1">#         print(i, value)</span>
+
+
+<span class="c1"># pass_values = [&#39;[&quot;a&quot;,]&#39;, &#39;[&quot;a&quot;,&quot;a&quot;]&#39;, &#39;[&quot;a&quot;,&quot;a&quot;,]&#39;, &#39;[&quot;a&quot; ,]&#39;, &#39;[&quot;a&quot; , &quot;a&quot;]&#39;, &#39;[&quot;a&quot; , &quot;a&quot; ,]&#39;, &#39;[&quot;a&quot;]&#39;, &#39;[]&#39;]</span>
+<span class="c1"># fail_values = [&#39;&#39;]</span>
+
+<span class="c1"># regex = r&#39;\[&#39; + make_list_regex(&#39;a&#39;, &#39;,&#39;, True, True) + r&#39;\]&#39;</span>
+
+
+<span class="c1"># Comment for Sphinx to pull in regular expressions.</span>
+<span class="n">INTEGER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;-?\d+&#39;</span>
+<span class="n">FLOAT</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;-?\d*\.\d+&#39;</span>
+<span class="n">SCIENTIFIC_NOTATION</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;-?\d*\.\d+E(-|\+)?\d+&#39;</span>
+<span class="n">NUMS</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">FLOAT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">SCIENTIFIC_NOTATION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">INTEGER</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">NUM_RANGE</span> <span class="o">=</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(-|\sto\s|−)&#39;</span> <span class="o">+</span> <span class="n">NUMS</span>
+<span class="n">LIST_OF_NUMS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">NUMS</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">BRACKETED_LIST_OF_NUMS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span>
+<span class="n">PARENTHESIZED_LIST_OF_NUMS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\(&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)&#39;</span>
+<span class="n">LIST_OF_NUMS_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">NUMS</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_NUMS_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">NUMS</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">POSITIVE_NUMS</span> <span class="o">=</span> <span class="n">NUMS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-?&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">POSITIVE_INTS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d+&#39;</span>
+<span class="n">LIST_OF_POS_INTS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_INTS_OR</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_INTS_BAR</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\|&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_INTS_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_INTS_SEMICOLON</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_INTS_SPACE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_INTS</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+<span class="n">POSITIVE_FLOATS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d*.\d+&#39;</span>
+<span class="n">POSITIVE_SCIENTIFIC_NOTATION</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d*\.\d*E(-|\+)?\d+&#39;</span>
+<span class="n">POSITIVE_FLOAT_RANGE</span> <span class="o">=</span> <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*(_|-)\s*&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_FLOATS</span>
+<span class="n">LIST_OF_POS_FLOATS_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POSITIVE_FLOATS</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">POS_FLOAT_PAIRS</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span>  <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(_|@)&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">LIST_OF_POS_FLOAT_PAIRS_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POS_FLOAT_PAIRS</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_FLOAT_PAIRS_NO_SPACE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POS_FLOAT_PAIRS</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_POS_FLOAT_PAIRS_MIXED</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">POS_FLOAT_PAIRS</span><span class="p">,</span> <span class="s1">&#39;(//|,)&#39;</span><span class="p">)</span>
+<span class="n">POS_INT_FLOAT_PAIR</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span>  <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+
+<span class="n">ELEMENT_SYMBOL</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([BCFHIKNOPSUVWY]|[ISZ][nr]|[ACELP][ru]|A[cglmst]|B[aehikr]|&#39;</span>
+                  <span class="sa">r</span><span class="s1">&#39;C[adeflos]|D[bsy]|Es|F[elmr]|G[ade]|H[efgos]|Kr|L[aiv]|M[cdgnot]|&#39;</span>
+                  <span class="sa">r</span><span class="s1">&#39;N[abdehiop]|O[gs]|P[abdmot]|R[abe-hnu]|S[bcegim]|T[abcehilms]|Xe|Yb)&#39;</span><span class="p">)</span>
+<span class="n">ELEMENT_COUNT</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([1-9]\d*)*&#39;</span>
+<span class="n">FORMULA_ELEMENT</span> <span class="o">=</span> <span class="n">ELEMENT_SYMBOL</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span>
+<span class="n">FORMULA</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">FORMULA_ELEMENT</span> <span class="o">+</span> <span class="s1">&#39;)+&#39;</span>
+<span class="n">LIST_OF_FORMULAS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">FORMULA</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">BRACKETED_LIST_OF_FORMULAS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_FORMULAS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span>
+<span class="c1"># C12H22O11, C12 H22 O11, [13C]4H7NO4, [13]C6 H14 [15]N4 O2, [C13]C4H6O5, C21C(13)2H38N7O17P3S, 12C12+14N4+16O19+1H32</span>
+<span class="n">ISOTOPIC_NUM</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d+&#39;</span>
+<span class="c1"># Add dueterium.</span>
+<span class="n">ISOTOPIC_SYMBOL</span> <span class="o">=</span> <span class="n">ELEMENT_SYMBOL</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;|D)&#39;</span>
+<span class="n">ISOTOPIC_ELEMENT</span> <span class="o">=</span> <span class="n">ISOTOPIC_SYMBOL</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span>
+<span class="n">ISOTOPIC_FORMULA</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_ELEMENT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                   <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_NUM</span> <span class="o">+</span> <span class="n">ISOTOPIC_SYMBOL</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                   <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_NUM</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_ELEMENT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                   <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_SYMBOL</span> <span class="o">+</span> <span class="n">ISOTOPIC_NUM</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                   <span class="n">ISOTOPIC_SYMBOL</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\(&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_NUM</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)&#39;</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                   <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ISOTOPIC_NUM</span> <span class="o">+</span> <span class="n">ISOTOPIC_SYMBOL</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\+&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)+&#39;</span>
+<span class="n">LIST_OF_ISOTOPIC_FORMULAS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ISOTOPIC_FORMULA</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">BRACKETED_LIST_OF_ISOTOPIC_FORMULAS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_ISOTOPIC_FORMULAS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span>
+<span class="c1"># C12H22O11+, [C12H22O11]+</span>
+<span class="n">CHARGE_FORMULA</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(\[&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\](-|\+)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(-|\+)&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="c1"># CH3(CH2)16COOH</span>
+<span class="n">GROUP_FORMULA</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">FORMULA_ELEMENT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\(&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)\d+&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)+&#39;</span>
+
+<span class="n">ORGANIC_ELEMENT_SYMBOL</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([CHNOPS])&#39;</span>
+<span class="n">ORGANIC_FORMULA_ELEMENT</span> <span class="o">=</span> <span class="n">ORGANIC_ELEMENT_SYMBOL</span> <span class="o">+</span> <span class="n">ELEMENT_COUNT</span>
+<span class="n">ORGANIC_FORMULA</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ORGANIC_FORMULA_ELEMENT</span> <span class="o">+</span> <span class="s1">&#39;){4,}&#39;</span>
+
+<span class="n">SMILES_ELEMENT_SYMBOL</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d?[a-zA-Z][a-z]?&#39;</span>
+<span class="c1"># Note the , , , and  symbols at the end of the character set are &#39;\x01&#39;, &#39;x02&#39;, &#39;\x03&#39;, and &#39;\x04&#39;. </span>
+<span class="c1"># I don&#39;t think they are apart of the SMILES characters, but they appeared in the SMILES of some datasets.</span>
+<span class="c1"># There are some SMILES in AN003143 like &#39;C[n]1c[n]cc1C[C@@H](NC(=O)CCN)C(O)=O |&amp;1:7|&#39;. </span>
+<span class="c1"># I don&#39;t think the end bit between &#39;|&#39; is part of a legit SMILES, but I added it to pass this dataset.</span>
+<span class="n">SMILES</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(\[?&#39;</span> <span class="o">+</span> <span class="n">SMILES_ELEMENT_SYMBOL</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;[0-9@+\-[\]()</span><span class="se">\\</span><span class="s1">/%=#$.*]*)+&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;( \|[0-9:&amp;,w]+\|)?&#39;</span>
+<span class="n">LIST_OF_SMILES_SEMICOLON</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">SMILES</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+
+<span class="n">INCHIKEY</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(InChIKey=)?[a-zA-Z]</span><span class="si">{14}</span><span class="s1">-[a-zA-Z]</span><span class="si">{10}</span><span class="s1">-[a-zA-Z]?&#39;</span>
+<span class="n">INCHIKEY_OR_NULL</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;|null|No record)&#39;</span>
+<span class="n">LIST_OF_INCHIKEYS</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*,\s*)+&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*|\s*)&#39;</span>
+<span class="n">LIST_OF_INCHIKEYS_SLASH</span> <span class="o">=</span> <span class="n">LIST_OF_INCHIKEYS</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+<span class="c1"># InChI=1 or InChI=1 where &quot;1&quot; is a version number and &quot;S&quot; means it&#39;s a standard InChI.</span>
+<span class="n">INCHI_HEAD</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;InChI=&#39;</span>
+<span class="n">INCHI_VERSION</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d+S?&#39;</span>
+<span class="n">INCHI_FORMULA</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span>
+<span class="n">INCHI_SKELETAL_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/c(\d+([-,()])?)+&#39;</span>
+<span class="n">INCHI_HYDROGEN_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/h&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+(-\d+)?H?\d*&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\(H\d*-?(,\d+)+\))*&#39;</span>
+<span class="n">INCHI_CHARGE_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/q(-|\+)\d+&#39;</span>
+<span class="n">INCHI_PROTONATION_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/p(-|\+)\d+&#39;</span>
+<span class="n">INCHI_STEREOCHEMISTRY_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/t&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(-|\+|\?|u)|M)&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER1</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/m\d+&#39;</span>
+<span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER2</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/s\d+&#39;</span>
+<span class="n">INCHI_FIXED_HYDROGEN_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/f(&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+                             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_HYDROGEN_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+                             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER2</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+                             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_CHARGE_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span>
+<span class="n">INCHI_DOUBLEBOND_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/b&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+(-|\+)\d+(-|\+)&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">INCHI_ISOTOPIC_LAYER</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;/i&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(-|\+)\d+|\d+[A-Z]\d*|\d+(-|\+)\d+[A-Z]?\d*)&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER2</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span>
+
+<span class="n">FULL_INCHI</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_HEAD</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="n">INCHI_VERSION</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_SKELETAL_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_HYDROGEN_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_CHARGE_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_PROTONATION_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_DOUBLEBOND_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_STEREOCHEMISTRY_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER1</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_STEREOCHEMISTRY_SUBLAYER2</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_ISOTOPIC_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> \
+             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_FIXED_HYDROGEN_LAYER</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span>
+
+<span class="n">CHEAP_INCHI</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\s*&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHI_HEAD</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;)?&#39;</span> <span class="o">+</span> <span class="n">INCHI_VERSION</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;((/c|/h|/i|/t|/m|/s|/q|/f|/p|/b|/[A-Z])(\S)+)+&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*&#39;</span>
+<span class="n">LIST_OF_INCHI</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">CHEAP_INCHI</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">BRACKETED_LIST_OF_INCHI</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_INCHI</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span>
+
+<span class="c1"># M+H, [M+H]+, -H(-), M+AGN+H, M+Acid, (M-H)/2, [M+NH4] +_[M+Na]+, [M+H–H2O]+, [M-2H](2-)</span>
+<span class="c1"># Cat, Hac, and Chol-head are wierd special cases.</span>
+<span class="n">ION_ELEMENTS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(\d?(m|M)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+               <span class="sa">r</span><span class="s1">&#39;(-|\+)?\d*&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\d*(\((-|\+)\))?&#39;</span> <span class="o">+</span>  <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+               <span class="sa">r</span><span class="s1">&#39;[ [a-zA-Z]*(A|a)cid&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+               <span class="sa">r</span><span class="s1">&#39;Cat&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;Chol-head&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;Hac&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\di&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;FA|NA|A&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">ION</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION_ELEMENTS</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;(-|\+)?&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">ION</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+      <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]\(?\d?\s?(-|\+)?\d?\)?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+      <span class="n">ION</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\](-|\+)?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+      <span class="sa">r</span><span class="s1">&#39;\(&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)((/\d)|(-|\+))?&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">LIST_OF_IONS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_IONS_SPACE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_IONS_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_IONS_MIXED</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39;(_| )&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_IONS_NO_DELIMITER</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">BRACKETED_LIST_OF_IONS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\[&#39;</span> <span class="o">+</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">ION</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\]&#39;</span>
+
+<span class="c1"># There are values like CA1511 that I can&#39;t confirm are KEGG values. You can&#39;t find them in the compound database, but they appear often.</span>
+<span class="c1"># The prefixes CE, UP, Z, and U are the same. There is a common mistake of only having 4 numbers after C, so that is accounted for as well.</span>
+<span class="n">KEGG</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(cpd:)?[CDMGKRZU]0?\d</span><span class="si">{5}</span><span class="s1">\?{0,2}&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(DG|ko)\d</span><span class="si">{5}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(CA|CE|UP|C)\d</span><span class="si">{4}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(NA|n/a)&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">LIST_OF_KEGG</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_SEMICOLON</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_SPACE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_DOUBLE_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;//&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_HYPHEN</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_MIXED</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="s1">&#39;(/|,)&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_KEGG_BAR</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">KEGG</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;(\|)&#39;</span><span class="p">)</span>
+
+<span class="n">HMDB</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(HMDB|HDMB|YMDB|HMBD)\d+(\*|\?)?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;n/a&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">LIST_OF_HMDB</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_AMPERSAND</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_SEMICOLON</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_SPACE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">HMDB_INT</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d{,5}&#39;</span>
+<span class="n">LIST_OF_HMDB_INTS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB_INT</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_HMDB_INTS_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">HMDB_INT</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+<span class="n">LIPID_MAPS</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;LM(PK|ST|GL|FA|SP|GP|PR|SL)[0-9A-Z]{8,10}\*?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(ST|FA|PR|GP|PK|GL|SP)\d{4,6}-&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="n">LIST_OF_LMP</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">LIPID_MAPS</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_LMP_UNDERSCORE</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">LIPID_MAPS</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_LMP_SLASH</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">LIPID_MAPS</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+<span class="c1"># When using Excel, a CAS number can get mistaken for a date and it will automatically change the value.</span>
+<span class="n">DATE</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;\d{1,2}/\d{1,2}/(\d</span><span class="si">{4}</span><span class="s1">|\d</span><span class="si">{2}</span><span class="s1">)&#39;</span>
+<span class="n">CAS</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(CAS: ?)?\d+-\d\d-0?\d&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">DATE</span>
+<span class="n">LIST_OF_CAS</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">CAS</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">LIST_OF_CAS_SEMICOLON</span> <span class="o">=</span> <span class="n">make_list_regex</span><span class="p">(</span><span class="n">CAS</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="c1"># Comment for Sphinx to find the end of regular expressions.</span>
+
+
+<span class="c1"># Important NOTE! All of the regular expressions delivered to ValueMatchers are surrounded with an additional set of </span>
+<span class="c1"># parenthesis. This is because they are later used with the pyarrow integration in pandas, and the behavior is </span>
+<span class="c1"># slightly different between python&#39;s built in regular expressions and pyarrow&#39;s. TLDR, add wrapping parenthesis </span>
+<span class="c1"># to avoid problems matching using pyarrow.</span>
+<span class="n">column_finders</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;moverz_quant&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m/z&#39;</span><span class="p">,</span> <span class="s1">&#39;mz&#39;</span><span class="p">,</span> <span class="s1">&#39;moverz&#39;</span><span class="p">,</span> <span class="s1">&#39;mx&#39;</span><span class="p">],</span>
+                             <span class="n">not_regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m.z&#39;</span><span class="p">,</span> <span class="s1">&#39;calcmz&#39;</span><span class="p">,</span> <span class="s1">&#39;medmz&#39;</span><span class="p">,</span> <span class="s1">&#39;m_z&#39;</span><span class="p">,</span> <span class="s1">&#39;obsmz&#39;</span><span class="p">,</span> <span class="s1">&#39;mass to charge&#39;</span><span class="p">,</span> <span class="s1">&#39;mass over z&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spec&#39;</span><span class="p">,</span> <span class="s1">&#39;pectrum&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;retention&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*/\s*&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*\(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*;\s*)+&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*\(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\)&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*|\s*)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\s*&gt;\s*|\s*&lt;\s*)&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*)+&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*\(\s*&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*\)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*-\s*&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;quantmass&#39;</span><span class="p">,</span> <span class="s1">&#39;masses&#39;</span><span class="p">,</span> <span class="s1">&#39;mw&#39;</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">],</span>
+                             <span class="n">not_regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;exactmass&#39;</span><span class="p">,</span> <span class="s1">&#39;obsmass&#39;</span><span class="p">,</span> <span class="s1">&#39;calcmass&#39;</span><span class="p">,</span> <span class="s1">&#39;monoisotopicmass&#39;</span><span class="p">,</span> <span class="s1">&#39;molwt&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spec&#39;</span><span class="p">,</span> <span class="s1">&#39;pectrum&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="s1">&#39;regno&#39;</span><span class="p">,</span> <span class="s1">&#39;charge&#39;</span><span class="p">,</span> <span class="s1">&#39;over z&#39;</span><span class="p">,</span> <span class="s1">&#39;rsd&#39;</span><span class="p">,</span> <span class="s1">&#39;m/z&#39;</span><span class="p">],</span>
+                             <span class="n">exact_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m meas.&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*/\s*&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\s*Da)?|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*-\s*&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;parent_moverz_quant&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">exact_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;parent&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;mass_spectrum&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spec&#39;</span><span class="p">,</span> <span class="s1">&#39;pectrum&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">,</span> <span class="s1">&#39;composite&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(_|\s+|$))+&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;composite_mass_spectrum&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;composite&#39;</span><span class="p">,</span> <span class="s1">&#39;spectrum&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">PARENTHESIZED_LIST_OF_NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*)+&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;inchi_key&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;inchikey&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi-key&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi_key&#39;</span><span class="p">,</span> <span class="s1">&#39;inchi key&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\*?|\?*)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span>\
+                                             <span class="n">INCHIKEY_OR_NULL</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\s*or\s*|\s*;\s*|\s*_\s*|\s*&amp;\s*)&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY_OR_NULL</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span>\
+                                             <span class="sa">r</span><span class="s1">&#39;Sum\s*\(\s*&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\s*\+\s*)&#39;</span> <span class="o">+</span> <span class="n">INCHIKEY</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\s*\)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span>\
+                                             <span class="n">LIST_OF_INCHIKEYS_SLASH</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;inchi&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;inchi&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">CHEAP_INCHI</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">BRACKETED_LIST_OF_INCHI</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;smile&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">SMILES</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_SMILES_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;formula&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,</span>
+                              <span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ISOTOPIC_FORMULA</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d*&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\d*\s*&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">CHARGE_FORMULA</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">GROUP_FORMULA</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">BRACKETED_LIST_OF_FORMULAS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">BRACKETED_LIST_OF_ISOTOPIC_FORMULAS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="c1"># Metabolite is the first left-most column in every table for mwtab. This Finder will only create false positives.</span>
+    <span class="c1"># ColumnFinder(&quot;metabolite&quot;,</span>
+    <span class="c1">#              NameMatcher(exact_strings = [&#39;metabolite&#39;],),</span>
+    <span class="c1">#              ValueMatcher(values_type = &#39;non-numeric&#39;,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;compound&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;compound&#39;</span><span class="p">,</span> <span class="s1">&#39;compund&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;kegg&#39;</span><span class="p">,</span> <span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;pubchem&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">,</span> <span class="s1">&#39;algo&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;refmet&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adduct&#39;</span><span class="p">,</span> <span class="s1">&#39;named&#39;</span><span class="p">,</span> <span class="s1">&#39;internal&#39;</span><span class="p">,</span> <span class="s1">&#39;ion&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite_name&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;refmet&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;refmet&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,</span>
+                              <span class="n">values_inverse_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ORGANIC_FORMULA</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;pathway&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pathway&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sort&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;pathway_sortorder&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;pathway&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;integer&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;ion&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ion&#39;</span><span class="p">,</span> <span class="s1">&#39;ions&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adduct&#39;</span><span class="p">,</span> <span class="s1">&#39;m/z&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">NUMS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(\s*&gt;\s*|\s*&lt;\s*)&#39;</span> <span class="o">+</span> <span class="n">NUMS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_NUMS_SLASH</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;adduct&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;adduct&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_MIXED</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_NO_DELIMITER</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">BRACKETED_LIST_OF_IONS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;species&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;is_species&#39;</span><span class="p">,</span> <span class="s1">&#39;ion&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">ION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_IONS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;pubchem_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cid&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pubchem&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">,</span> <span class="s1">&#39;kegg&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;[&amp;?]?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_OR</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;Sum \(\d+ \+ \d+\)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;CID&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;kegg_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;kegg&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">KEGG</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_DOUBLE_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_HYPHEN</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_MIXED</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_KEGG_BAR</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">KEGG</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">FORMULA</span>  <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">KEGG</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;;\d+&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;hmdb_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hmdb&#39;</span><span class="p">,</span> <span class="s1">&#39;human metabolome&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;hmp&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">HMDB</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">HMDB_INT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_INTS_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;Sum \(HMDB\d+ \+ HMDB\d+\)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_AMPERSAND</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;METPA\d+&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_HMDB_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;lm_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lipidmaps&#39;</span><span class="p">,</span> <span class="s1">&#39;lmid&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;lmp&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;lipid&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;lm&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">LIPID_MAPS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_LMP_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_LMP</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_LMP_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;chemspider_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chemspider&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;[&amp;?]?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_OR</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SLASH</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_INTS_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;Sum \(\d+ \+ \d+\)&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="s1">&#39;CID&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="s1">&#39;CSID&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;[CD]\d</span><span class="si">{5}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">make_list_regex</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[CD]\d</span><span class="si">{5}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\|&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;metlin_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;metlin&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;METLIN:&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;cas_number&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cas&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">CAS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_CAS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_CAS_SEMICOLON</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;binbase_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bb&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;binbase&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;chebi_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chebi&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;mw_regno&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;regno&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;mw&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">LIST_OF_POS_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;mzcloud_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;mz&#39;</span><span class="p">,</span> <span class="s1">&#39;cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;((Reference|Autoprocessed)-)?&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;retention time_m/z&#39;</span><span class="p">,</span> <span class="s1">&#39;feature@rt&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pubchem&#39;</span><span class="p">,</span> <span class="s1">&#39;study&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POS_FLOAT_PAIRS</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;(n|m/z)?&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POS_INT_FLOAT_PAIR</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_FLOAT_PAIRS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_FLOAT_PAIRS_NO_SPACE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_FLOAT_PAIRS_MIXED</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;CHEBI:\d+&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;other_id&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">not_regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cas&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;other&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;database&#39;</span><span class="p">,</span> <span class="s1">&#39;identifier&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;chemical&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;cmpd&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">,</span> <span class="s1">&#39;match&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;local&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;comp&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;chem&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;chro&#39;</span><span class="p">,</span> <span class="s1">&#39;lib&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;lib&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;pubchem&#39;</span><span class="p">,</span> <span class="s1">&#39;chemspider&#39;</span><span class="p">,</span> <span class="s1">&#39;kegg&#39;</span><span class="p">],</span>
+                             <span class="n">exact_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_inverse_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">FLOAT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">SCIENTIFIC_NOTATION</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;other_id_type&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;other&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;retention_time&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rt&#39;</span><span class="p">],</span>
+                             <span class="n">regex_search_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">]],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rtimes&#39;</span><span class="p">,</span> <span class="s1">&#39;r.t.&#39;</span><span class="p">,</span> <span class="s1">&#39;medrt&#39;</span><span class="p">,</span> <span class="s1">&#39;rtsec&#39;</span><span class="p">,</span> <span class="s1">&#39;bestrt&#39;</span><span class="p">,</span> <span class="s1">&#39;compoundrt&#39;</span><span class="p">,</span> <span class="s1">&#39;rtmed&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;retention&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;rentetion&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;retension&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;delta&#39;</span><span class="p">,</span> <span class="s1">&#39;feature&#39;</span><span class="p">,</span> <span class="s1">&#39;m/z&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;\d&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POSITIVE_SCIENTIFIC_NOTATION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POSITIVE_FLOAT_RANGE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_FLOATS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;delta_rt&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deltart&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;delta&#39;</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="n">FLOAT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;0&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;retention_index&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ri&#39;</span><span class="p">],</span>
+                             <span class="n">regex_search_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;ind&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">]],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rindex&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;retention&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;rentetion&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;reten&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_FLOATS</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="sa">r</span><span class="s1">&#39;\d&#39;</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POSITIVE_SCIENTIFIC_NOTATION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">POSITIVE_FLOAT_RANGE</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> \
+                                             <span class="n">LIST_OF_POS_FLOATS_UNDERSCORE</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;retention_index_type&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;retention&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;ri&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;abbreviation&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;abbreviation&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;assignment_certainty&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="s1">&#39;certainty&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_inverse_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">FLOAT</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="n">SCIENTIFIC_NOTATION</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;\d{2,}&#39;</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;assignment_method&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;isotopologue&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;isotopologue&#39;</span><span class="p">],</span>
+                             <span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;isotope&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;isotopologue_type&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;isotopologue%type&#39;</span><span class="p">,</span> <span class="s1">&#39;isotope&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;peak_description&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;peak&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;peak_pattern&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;peak&#39;</span><span class="p">,</span> <span class="s1">&#39;pattern&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;transient_peak&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;transient&#39;</span><span class="p">,</span> <span class="s1">&#39;peak&#39;</span><span class="p">]],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;transient_peak_type&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;transient&#39;</span><span class="p">,</span> <span class="s1">&#39;peak&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;fish_coverage&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_string_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;fish&#39;</span><span class="p">,</span> <span class="s1">&#39;coverage&#39;</span><span class="p">]],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_NUMS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;msi_category&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;msicategory&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;1&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;annotations&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">not_regex_search_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;annotation&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;approach&#39;</span><span class="p">,</span> <span class="s1">&#39;confidence&#39;</span><span class="p">,</span> <span class="s1">&#39;level&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;istd&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;internal&#39;</span><span class="p">],</span>
+                             <span class="n">exact_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;istd&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;platform&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;ms_method&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;assignment&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_type</span> <span class="o">=</span> <span class="s1">&#39;non-numeric&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;polarity&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;polarity&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?i)((neg|pos|1|-1|\+|positive|negative)&#39;</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;|\[M\+H\]\+|\[M-H\]-|5MM\+|5MM-)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;esi_mode&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;esi&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(neg|pos|1|-1|(ESI )?\(\+\)( ESI)?|(ESI )?\(-\)( ESI| ES\))?|positive|negative)&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;ionization_mode&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">regex_search_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="s1">&#39;neg&#39;</span><span class="p">]],</span>
+                             <span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ionization&#39;</span><span class="p">,</span> <span class="s1">&#39;ionisation&#39;</span><span class="p">],</span>
+                             <span class="n">not_in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;confirmed&#39;</span><span class="p">],</span>
+                             <span class="n">exact_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;ms mode&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?i)((neg|pos|1|-1|(ES)?\+|(ES)?-|positive|negative|TOF|Splitless|Split30))&#39;</span><span class="p">,)),</span>
+    
+    <span class="n">ColumnFinder</span><span class="p">(</span><span class="s2">&quot;frequency&quot;</span><span class="p">,</span>
+                 <span class="n">NameMatcher</span><span class="p">(</span><span class="n">in_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">],),</span>
+                 <span class="n">ValueMatcher</span><span class="p">(</span><span class="n">values_regex</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">POSITIVE_INTS</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">,)),</span>
+<span class="p">]</span>
+
+<span class="n">column_finders</span> <span class="o">=</span> <span class="p">{</span><span class="n">finder</span><span class="o">.</span><span class="n">standard_name</span><span class="p">:</span> <span class="n">finder</span> <span class="k">for</span> <span class="n">finder</span> <span class="ow">in</span> <span class="n">column_finders</span><span class="p">}</span>
+
+
+<span class="n">implied_pairs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;other_id&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;other_id_type&#39;</span><span class="p">],</span> <span class="s1">&#39;retention_index&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;retention_index_type&#39;</span><span class="p">]}</span>
+
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020, Christian D. Powell, Andrey Smelter, Hunter N.B. Moseley.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
