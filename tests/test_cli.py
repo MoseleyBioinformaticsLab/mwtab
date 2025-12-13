@@ -503,6 +503,7 @@ def test_extract_metadata_command(from_path, to_path, key, to_format, no_header,
 
 def test_extract_metadata_stdout():
     command = "python -m mwtab extract metadata tests/example_data/mwtab_files/ - SUBJECT_TYPE --to-format=json"
+    command = command.split(" ")
     subp = subprocess.run(command, capture_output=True, encoding="UTF-8")
     assert subp.returncode == 0
     assert "{'SUBJECT_TYPE': {'Human'}}" == subp.stdout[:-1]
@@ -587,6 +588,7 @@ def test_extract_metabolites_command(from_path, to_path, key, value, to_format, 
 
 def test_extract_metabolites_stdout():
     command = "python -m mwtab extract metabolites tests/example_data/mwtab_files/ - SU:SUBJECT_TYPE Human --to-format=json"
+    command = command.split(" ")
     subp = subprocess.run(command, capture_output=True, encoding="UTF-8")
     assert subp.returncode == 0
     assert '{\n    "17-hydroxypregnenolone": {\n        "ST000122": {' in subp.stdout
