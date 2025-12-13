@@ -4,9 +4,14 @@ The mwtab API Reference
 
 .. automodule:: mwtab
 
-.. automodule:: mwtab.mwtab
-   :member-order: bysource
-   :members:
+.. automodule:: mwtab.mwtab   
+    
+    .. autoclass:: MWTabFile
+        :member-order: bysource
+        :members:
+        :exclude-members: validate
+    
+        .. automethod:: validate(ms_schema = mwschema.ms_required_schema, nmr_schema = mwschema.nmr_required_schema, verbose = True)
 
 
 .. automodule:: mwtab.cli
@@ -31,9 +36,7 @@ The mwtab API Reference
 
 .. automodule:: mwtab.validator
 
-.. autofunction:: validate_section
-
-.. autofunction:: validate_file
+.. autofunction:: validate_file(mwtabfile, ms_schema, nmr_schema, verbose = False)
 
 
 .. automodule:: mwtab.mwrest
@@ -46,49 +49,8 @@ The mwtab API Reference
    :members:
 
 
-.. automodule:: mwtab.mwschema
+.. automodule:: mwtab.metadata_column_matching
+   :members:
 
-.. autodata:: metabolomics_workbench_schema
-   :annotation:
 
-.. autodata:: project_schema
-   :annotation:
 
-.. autodata:: study_schema
-   :annotation:
-
-.. autodata:: analysis_schema
-   :annotation:
-
-.. autodata:: subject_schema
-   :annotation:
-
-.. autodata:: subject_sample_factors_schema
-   :annotation:
-
-.. autodata:: collection_schema
-   :annotation:
-
-.. autodata:: treatment_schema
-   :annotation:
-
-.. autodata:: sampleprep_schema
-   :annotation:
-
-.. autodata:: chromatography_schema
-   :annotation:
-
-.. autodata:: ms_schema
-   :annotation:
-
-.. autodata:: nmr_schema
-   :annotation:
-
-.. autodata:: metabolites_schema
-   :annotation:
-
-.. autodata:: ms_metabolite_data_schema
-   :annotation:
-
-.. autodata:: nmr_binned_data_schema
-   :annotation:

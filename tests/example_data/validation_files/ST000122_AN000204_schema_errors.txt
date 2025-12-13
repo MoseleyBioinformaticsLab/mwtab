@@ -1,0 +1,144 @@
+#METABOLOMICS WORKBENCH STUDY_ID:ST000122 ANALYSIS_ID:AN000204 PROJECT_ID:PR000109
+VERSION             	1
+CREATED_ON          	2016-09-17
+#BADSECTION
+#PROJECT
+PR:BADSUBSECTION	bad value
+PR:BADSUBSECTION2	bad value2
+PR:PROJECT_TITLE                 	Perinatal DDT causes dysfunctional lipid metabolism underlying metabolic
+PR:PROJECT_TYPE                  	Pilot and Feasibility Projects
+PR:PROJECT_SUMMARY               	-
+PR:INSTITUTE                     	University of California, Davis
+PR:DEPARTMENT                    	Nutrition
+PR:LABORATORY                    	Gaikwad Lab
+PR:LAST_NAME                     	Gaikwad
+PR:FIRST_NAME                    	Nilesh
+PR:ADDRESS                       	-
+PR:EMAIL                         	nwgaikwad at ucdavis.edu
+PR:PHONE                         	530-752-2906
+PR:FUNDING_SOURCE                	NIH 1U24DK097154 ;  PI Fiehn, Oliver  ; UC Davis WEST COAST CENTRAL
+PR:FUNDING_SOURCE                	METABOLOMICS RESOURCE CORE (WC3MRC)
+#STUDY
+ST:BADSUBSECTION	bad value
+ST:STUDY_TITLE                   	Perinatal DDT causes dysfunctional lipid metabolism underlying metabolic
+ST:STUDY_TYPE                    	steroid panel
+ST:STUDY_SUMMARY                 	-
+ST:INSTITUTE                     	University of California, Davis
+ST:DEPARTMENT                    	Nutrition
+ST:LABORATORY                    	Gaikwad Lab
+ST:LAST_NAME                     	Gaikwad
+ST:FIRST_NAME                    	Nilesh
+ST:ADDRESS                       	-
+ST:EMAIL                         	nwgaikwad@ucdavis.edu
+ST:PHONE                         	-
+ST:NUM_GROUPS                    	NA
+#SUBJECT
+SU:SUBJECT_TYPE                  	Human
+SU:SUBJECT_SPECIES               	Homo sapiens
+SU:TAXONOMY_ID                   	9606
+#SUBJECT_SAMPLE_FACTORS:         	SUBJECT(optional)[tab]SAMPLE[tab]FACTORS(NAME:VALUE pairs separated by |)[tab]Additional sample data
+SUBJECT_SAMPLE_FACTORS           			Tissue/Fluid:	
+SUBJECT_SAMPLE_FACTORS           	CER040_242995_ML_2	CER040_242995_ML_2	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER055_249947_ML_3	CER055_249947_ML_3	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER062_246153_ML_4	CER062_246153_ML_4	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER085_251176_ML_5	CER085_251176_ML_5	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER093_242931_ML_6	CER093_242931_ML_6	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER110_238825_ML_7	CER110_238825_ML_7	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER120_253690_ML_8	CER120_253690_ML_8	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER147_254803_ML_9	CER147_254803_ML_9	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER149_266689_ML_10	CER149_266689_ML_10	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER158_254231_ML_11	CER158_254231_ML_11	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER165_287001_ML_12	CER165_287001_ML_12	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER178_295145_ML_13	CER178_295145_ML_13	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER181_244392_ML_14	CER181_244392_ML_14	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER188_250760_ML_15	CER188_250760_ML_15	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER192_254091_ML_16	CER192_254091_ML_16	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER201_244193_ML_17	CER201_244193_ML_17	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER216_242490_ML_18	CER216_242490_ML_18	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER220_274308_ML_19	CER220_274308_ML_19	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER223_264067_ML_20	CER223_264067_ML_20	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER226_254303_ML_21	CER226_254303_ML_21	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER277_255328_ML_22	CER277_255328_ML_22	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER287_248530_ML_23	CER287_248530_ML_23	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER303_253023_ML_24	CER303_253023_ML_24	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER315_282966_ML_25	CER315_282966_ML_25	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER324_285069_ML_26	CER324_285069_ML_26	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER340_244448_ML_27	CER340_244448_ML_27	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER346_246320_ML_28	CER346_246320_ML_28	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER356_269662_ML_29	CER356_269662_ML_29	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER368_250104_ML_30	CER368_250104_ML_30	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER369_276355_ML_31	CER369_276355_ML_31	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER384_264971_ML_32	CER384_264971_ML_32	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER445_286527_ML_33	CER445_286527_ML_33	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER452_240972_ML_34	CER452_240972_ML_34	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER463_271249_ML_35	CER463_271249_ML_35	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER465_265004_ML_36	CER465_265004_ML_36	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER483_294606_ML_37	CER483_294606_ML_37	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER488_274343_ML_38	CER488_274343_ML_38	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER530_249229_ML_39	CER530_249229_ML_39	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER540_240346_ML_40	CER540_240346_ML_40	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER552_241945_ML_41	CER552_241945_ML_41	Tissue/Fluid:Serum	
+SUBJECT_SAMPLE_FACTORS           	CER555_251239_ML_42	CER555_251239_ML_42	Tissue/Fluid:Serum	
+#TREATMENT
+TR:TREATMENT_SUMMARY             	-
+#SAMPLEPREP
+SP:SAMPLEPREP_SUMMARY            	Methanol: Water Extraction
+SP:SAMPLEPREP_PROTOCOL_FILENAME  	NIH_WCMC_LaMerrill_Method_GaikwadLab__SteroidAnalysis_2013-14.docx
+SP:PROCESSING_METHOD             	Homogenization and Solvent Removal w/ Speed Vac
+SP:PROCESSING_STORAGE_CONDITIONS 	On Ice
+SP:EXTRACTION_METHOD             	1:1 Methanol: Water
+SP:EXTRACT_STORAGE               	-80C
+SP:SAMPLE_RESUSPENSION           	150ul CH3OH/H2O
+SP:ORGAN                         	Sprague-Dawley Maternal: Adrenal, liver, placenta, amniotic fluid
+SP:ORGAN                         	Fetal: Male and female brain, male and female liver
+#CHROMATOGRAPHY
+CH:CHROMATOGRAPHY_SUMMARY        	Targeted UPLC-MS/MS
+CH:CHROMATOGRAPHY_TYPE           	Reversed phase
+CH:INSTRUMENT_NAME               	Waters Acquity
+CH:COLUMN_NAME                   	Waters Acquity HSS T3 (150 x 2.1mm, 1.8um)
+CH:FLOW_GRADIENT                 	0-2 min 100% A (Water 0.1% formic acid) 0% B (CH3CN 0.1 % formic acid), 2-4 min
+CH:FLOW_GRADIENT                 	A, 4-9mins 45% A, 9-11 mins 20% A, 11-12 mins 100% A
+CH:FLOW_RATE                     	0.15 ml/min
+CH:SAMPLE_INJECTION              	10ul
+CH:SOLVENT_A                     	Water 0.1% formic acid
+CH:SOLVENT_B                     	CH3CN 0.1 % formic acid
+CH:ANALYTICAL_TIME               	12 mins
+#ANALYSIS
+AN:ANALYSIS_TYPE                 	MS
+AN:LABORATORY_NAME               	Gaikwad Laboratory
+AN:ACQUISITION_DATE              	41716
+AN:SOFTWARE_VERSION              	Masslynx
+AN:OPERATOR_NAME                 	Nilesh Gaikwad
+#MS
+MS:INSTRUMENT_NAME               	Waters Xevo-TQ
+MS:INSTRUMENT_TYPE               	Triple quadrupole
+MS:MS_TYPE                       	ESI
+MS:ION_MODE                      	POSITIVE
+MS:CAPILLARY_VOLTAGE             	3.0 kV
+MS:COLLISION_GAS                 	N2
+MS:IONIZATION                    	positive
+MS:SOURCE_TEMPERATURE            	150C
+MS:DESOLVATION_GAS_FLOW          	600 L/h
+MS:DESOLVATION_TEMPERATURE       	350C
+MS:MS_COMMENTS                   	UPLC-MS/MS
+#METABOLITES
+METABOLITES_START
+metabolite_name	moverz_quant	ri	ri_type	pubchem_id	inchi_key	kegg_id	other_id	other_id_type
+17-hydroxypregnenolone				91451			2Q4710	UCDavis_Gaikwad_Lab_ID
+17-hydroxyprogesterone				6238			6Q3360	UCDavis_Gaikwad_Lab_ID
+Allodihydrotestosterone				10635			14A2570	UCDavis_Gaikwad_Lab_ID
+Androstenedione				6128			12A6030	UCDavis_Gaikwad_Lab_ID
+Androstenolone (DHEA)				5881			3A8500	UCDavis_Gaikwad_Lab_ID
+Cortexolone				440707			7Q1610	UCDavis_Gaikwad_Lab_ID
+Cortexone				6166			9Q3460	UCDavis_Gaikwad_Lab_ID
+Corticosterone, DOC				5753			10Q1550	UCDavis_Gaikwad_Lab_ID
+Cortisol				5754			8Q3880	UCDavis_Gaikwad_Lab_ID
+Estradiol				5757			16E0950	UCDavis_Gaikwad_Lab_ID
+Estrone				5870			15E2300	UCDavis_Gaikwad_Lab_ID
+Pregnenolone				8955			1Q5500	UCDavis_Gaikwad_Lab_ID
+Progesterone				5994			5Q2600	UCDavis_Gaikwad_Lab_ID
+Testosterone				6013			13A6950	UCDavis_Gaikwad_Lab_ID
+METABOLITES_END
+#END
+
+

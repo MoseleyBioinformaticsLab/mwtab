@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mwtab"
+description = "Parser for mwtab files from the Metabolomics Workbench"
+readme = "README.rst"
+requires-python = ">=3.10"
+keywords = ["mwtab", "metabolomics workbench"]
+license = {file = "LICENSE"}
+classifiers = [
+	'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
+        'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+]
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+"Homepage" = "https://github.com/MoseleyBioinformaticsLab/mwtab"
+"Documentation" = "https://moseleybioinformaticslab.github.io/mwtab/"
+"GitHub" = "https://github.com/MoseleyBioinformaticsLab/mwtab"
+"Issues" = "https://github.com/MoseleyBioinformaticsLab/mwtab/issues"
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+[project.scripts]
+mwtab = "mwtab.__main__:main"
+
+[tool.setuptools_scm]
+write_to = "src/mwtab/_version.py"
+
+[tool.coverage.run]
+patch = ["subprocess"]

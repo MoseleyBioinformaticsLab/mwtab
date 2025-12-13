@@ -1,0 +1,48 @@
+name: Publish Documentation
+
+on:
+  workflow_call:
+
+jobs:
+  publish-documentation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - uses: actions/setup-python@v6
+      with:
+        python-version: '3.x'
+    - name: Upgrade pip, install package, install requirements, build docs
+      run: |
+        pip install --upgrade pip
+        pip install .
+        if [ -f ./docs/requirements.txt ]; then pip install -r ./docs/requirements.txt; fi
+        pip install sphinx
+        sphinx-build docs ./docs/_build/html/
+    # Create an artifact of the html output.
+    - uses: actions/upload-artifact@v4
+      with:
+        name: DocumentationHTML
+        path: docs/_build/html/
+    # Publish built docs to gh-pages branch.
+    # ===============================
+    - name: Commit documentation changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git clone "https://token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --branch gh-pages --single-branch gh-pages
+        cp -r docs/_build/html/* gh-pages/
+        cd gh-pages
+        touch .nojekyll
+        git add .
+        git commit -m "Update documentation." -a || true
+        # The above command will fail if no changes were present, so we ignore
+        # that.
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: gh-pages
+        directory: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    # ===============================

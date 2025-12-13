@@ -12,8 +12,10 @@ Documentation index:
 
    guide
    tutorial
+   metadata_column_matching
    api
    license
+   todo
 
 
 Indices and tables

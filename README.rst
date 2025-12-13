@@ -13,10 +13,6 @@ mwtab
    :target: https://pypi.org/project/mwtab
    :alt: Supported Python versions
 
-.. image:: https://readthedocs.org/projects/nmrstarlib/badge/?version=latest
-   :target: http://mwtab.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation status
-
 .. image:: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml/badge.svg
    :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
    :alt: Build status
@@ -38,7 +34,7 @@ mwtab
 .. image:: https://raw.githubusercontent.com/MoseleyBioinformaticsLab/mwtab/master/docs/_static/images/mwtab_logo.png
    :width: 50%
    :align: center
-   :target: http://mwtab.readthedocs.io/
+   :target: https://moseleybioinformaticslab.github.io/mwtab/
 
 
 The ``mwtab`` package is a Python library that facilitates reading and writing
@@ -80,7 +76,7 @@ Links
 
    * mwtab @ GitHub_
    * mwtab @ PyPI_
-   * Documentation @ ReadTheDocs_
+   * Documentation @ Pages_
 
 
 Installation
@@ -142,7 +138,7 @@ Quickstart
    :align: center
 
 
-.. note:: Read the User Guide and the ``mwtab`` Tutorial on ReadTheDocs_
+.. note:: Read the User Guide and the ``mwtab`` Tutorial on Pages_
           to learn more and to see code examples on using the ``mwtab`` as a
           library and as a command-line tool.
 
@@ -155,7 +151,7 @@ This package is distributed under the BSD_ `license`.
 
 .. _Metabolomics Workbench: http://www.metabolomicsworkbench.org
 .. _GitHub: https://github.com/MoseleyBioinformaticsLab/mwtab
-.. _ReadTheDocs: http://mwtab.readthedocs.io
+.. _Pages: https://moseleybioinformaticslab.github.io/mwtab/
 .. _PyPI: https://pypi.org/project/mwtab
 .. _pip: https://pip.pypa.io
 .. _BSD: https://choosealicense.com/licenses/bsd-3-clause-clear/
