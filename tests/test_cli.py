@@ -7,7 +7,6 @@ import pytest
 import time
 import pathlib
 import subprocess
-import requests
 
 from fixtures import teardown_module
 
@@ -38,7 +37,6 @@ def teardown_module_cwd():
 def disable_network_calls(monkeypatch):
     def stunted_get():
         raise RuntimeError("Network access not allowed during testing!")
-    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: stunted_get())
     monkeypatch.setattr("urllib.request.urlopen", lambda *args, **kwargs: stunted_get())
     monkeypatch.setattr("urllib.parse.urlparse", lambda *args, **kwargs: stunted_get())
     monkeypatch.setattr("mwtab.fileio.urlopen", lambda *args, **kwargs: stunted_get())
