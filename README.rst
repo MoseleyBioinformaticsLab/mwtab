@@ -18,7 +18,7 @@ mwtab
        :target: https://github.com/MoseleyBioinformaticsLab/mwtab/actions/workflows/build.yml
        :alt: Build status
 
-.. image:: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab/branch/master/graph/badge.svg?token=jhjMsP1qma
+.. image:: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab/branch/main/graph/badge.svg?token=jhjMsP1qma
    :target: https://codecov.io/gh/MoseleyBioinformaticsLab/mwtab
    :alt: CodeCov
 
