@@ -30,7 +30,7 @@ jobs:
           pip install .
 
       - name: Run tests and collect coverage
-        run: pytest --cov=./mwtab --cov-report=xml
+        run: pytest --cov=mwtab --cov-report=xml
 
       # codecov
       - name: "Upload coverage to Codecov"
