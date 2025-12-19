@@ -3,6 +3,7 @@ name: codecov.io
 # Controls when the workflow will run
 on:
   workflow_call:
+  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -34,3 +35,5 @@ jobs:
       # codecov
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
