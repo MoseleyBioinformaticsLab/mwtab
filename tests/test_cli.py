@@ -31,7 +31,46 @@ def teardown_module_cwd():
     delete_ST000001_cwd()
     yield
     delete_ST000001_cwd()
+
+
+def delete_ST003030_cwd():
+    path = pathlib.Path(os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST003030%2Fmwtab%2Ftxt.txt'))
+    if path.exists():
+        os.remove(path)
+        time_to_wait=10
+        time_counter = 0
+        while path.exists():
+            time.sleep(1)
+            time_counter += 1
+            if time_counter > time_to_wait:
+                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+
+def delete_ST003030_results_cwd():
+    path = pathlib.Path(os.path.join(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST003030%2Fmwtab%2Ftxt_results_file.txt'))
+    if path.exists():
+        os.remove(path)
+        time_to_wait=10
+        time_counter = 0
+        while path.exists():
+            time.sleep(1)
+            time_counter += 1
+            if time_counter > time_to_wait:
+                raise FileExistsError(path + " was not deleted within " + str(time_to_wait) + " seconds, so it is assumed that it won't be and something went wrong.")
+
+@pytest.fixture()
+def teardown_module_ST003030():
+    delete_ST003030_cwd()
+    yield
+    delete_ST003030_cwd()
     
+@pytest.fixture()
+def teardown_module_ST003030_results():
+    delete_ST003030_results_cwd()
+    yield
+    delete_ST003030_results_cwd()
+
+
+
 
 @pytest.fixture()
 def disable_network_calls(monkeypatch):
@@ -220,6 +259,10 @@ def test_download_command_cwd(teardown_module_cwd):
     with open(file_path, "w") as fh:
         fh.close()
     assert file_str
+    
+def test_download_command_results_files_option(teardown_module_ST003030, teardown_module_ST003030_results):
+    assert os.system('python -m mwtab download study ST003030 --results-files') == 0
+    assert pathlib.Path(os.getcwd(), 'https%3A%2F%2Fwww_metabolomicsworkbench_org%2Frest%2Fstudy%2Fstudy_id%2FST003030%2Fmwtab%2Ftxt_results_file.txt').exists()
 
 
 def test_download_all_analysis_ids(teardown_module, disable_network_calls, disable_sleep, capsys, mocker):

@@ -13,9 +13,9 @@ The mwtab Command Line Interface
         mwtab convert (<from-path> <to-path>) [--from-format=<format>] [--to-format=<format>] [--mw-rest=<url>] [--force] [--verbose]
         mwtab validate <from-path> [--to-path=<path>] [--mw-rest=<url>] [--force] [--silent]
         mwtab download url <url> [--to-path=<path>] [--verbose]
-        mwtab download study all [--to-path=<path>] [--input-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
-        mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
-        mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
+        mwtab download study all [--to-path=<path>] [--input-item=<item>] [--results-files] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+        mwtab download study <input-value> [--to-path=<path>] [--input-item=<item>] [--results-files] [--output-item=<item>] [--output-format=<format>] [--mw-rest=<url>] [--verbose]
+        mwtab download (study | compound | refmet | gene | protein) <input-item> <input-value> <output-item> [--results-files] [--output-format=<format>] [--to-path=<path>] [--mw-rest=<url>] [--verbose]
         mwtab download moverz <input-item> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
         mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--to-path=<path>] [--mw-rest=<url>] [--verbose]
         mwtab extract metadata <from-path> <to-path> <key> ... [--to-format=<format>] [--no-header] [--force]
@@ -42,6 +42,7 @@ The mwtab Command Line Interface
         --suffix=<suffix>                    Suffix to add at the end of the output file name. Defaults to no suffix.
         --context=<context>                  Type of resource to access from MW REST interface, available contexts: study,
                                              compound, refmet, gene, protein, moverz, exactmass [default: study].
+        --results-files                      When downloading analyses, download any results files they may have as well.
         --input-item=<item>                  Item to search Metabolomics Workbench with.
         --output-item=<item>                 Item to be retrieved from Metabolomics Workbench.
         --output-format=<format>             Format for item to be retrieved in, available formats: mwtab, json.
@@ -82,6 +83,7 @@ OUTPUT_FORMATS = {
 VERBOSE = False
 # Note that 'url' is not a context for the Metabolomics Workbench REST API, but the code works better to have it in this list.
 CONTEXTS = ['study', 'compound', 'refmet', 'gene', 'protein', 'moverz', 'exactmass', 'url']
+RESULTS_FILE_BASE_URL = 'https://www.metabolomicsworkbench.org/studydownload/'
 
 
 
@@ -107,9 +109,8 @@ def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url
     
     return mwrestfile
 
-
-def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt') -> bool:
-    """Save the given MWRESTFile object to the given path if it has text.
+def _determine_mwrestfile_save_path(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt') -> pathlib.Path:
+    """Determine the save path for the given MWRESTFile object.
     
     Args:
         mwrestfile: The MWRESTFile object to save.
@@ -117,39 +118,79 @@ def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, ou
         output_format: The format to save the file to. Should be 'txt', 'json', or 'mwtab'.
     
     Returns:
+        The save path for the MWRESTFile object.
+    """
+    filename = quote_plus(mwrestfile.source).replace(".", "_")
+    extension = OUTPUT_FORMATS[output_format]
+    if to_path:
+        fileio._create_save_path(to_path)
+        if pathlib.Path(to_path).suffix:
+            path_to_save = to_path
+        else:
+            path_to_save = pathlib.Path(to_path, filename + "." + extension)
+    else:
+        path_to_save = pathlib.Path(getcwd(), filename + "." + extension)
+    return path_to_save
+
+
+def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt', save_path: str|None = None) -> bool:
+    """Save the given MWRESTFile object to the given path if it has text.
+    
+    Args:
+        mwrestfile: The MWRESTFile object to save.
+        to_path: The path to save the file to. Defaults to the current working directory.
+        output_format: The format to save the file to. Should be 'txt', 'json', or 'mwtab'.
+        save_path: Fully qualified save path, if given, ignores to_path and output_format.
+    
+    Returns:
         True if the mwrestfile had text and was therefore saved, False otherwise.
     """
     if mwrestfile.text:  # if the text file isn't blank
-        filename = quote_plus(mwrestfile.source).replace(".", "_")
-        extension = OUTPUT_FORMATS[output_format]
-        if to_path:
-            fileio._create_save_path(to_path)
-            if pathlib.Path(to_path).suffix:
-                path_to_save = to_path
-            else:
-                path_to_save = join(to_path, filename + "." + extension)
-        else:
-            path_to_save = join(getcwd(), filename + "." + extension)
+        if not save_path:
+            save_path = _determine_mwrestfile_save_path(mwrestfile, to_path, output_format)
         
-        with open(path_to_save, "w", encoding="utf-8") as fh:
+        with open(save_path, "w", encoding="utf-8") as fh:
             mwrestfile.write(fh)
         return True
     return False
 
 
-def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, 
+def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, download_results_files: bool = False,
                                   mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
     """DRY function to combine downloading, saving, and error printing."""
     mwrestfile = download(rest_params, mwrest_base_url, full_url)
     extension = output_format if (output_format := rest_params.get('output_format')) else 'txt'
-    if not save_mwrest_file(mwrestfile, to_path, extension):
+    save_path = _determine_mwrestfile_save_path(mwrestfile, to_path, extension)
+    if not save_mwrest_file(mwrestfile, save_path = save_path):
         value = full_url if full_url else rest_params['input_value']
         print(f'When trying to download a file for the value, "{value}", '
               'a blank file or an error was returned, so no file was created for it.')
+    
+    elif download_results_files and 'RESULTS_FILE' in mwrestfile.text:
+        ids_found = True
+        if re_match := re.match(r'(?s).*(AN\d{6}).*', mwrestfile.text):
+            an_id = re_match.group(1)
+        else:
+            ids_found = False
+        if re_match := re.match(r'(?s).*(ST\d{6}).*', mwrestfile.text):
+            st_id = re_match.group(1)
+        else:
+            ids_found = False
+        
+        if not ids_found:
+            print(f'When trying to download the reuslts file for the value, "{value}", '
+                  'the study and analysis IDs could not be determined, so it could not be downloaded.')
+        else:
+            results_file_url = RESULTS_FILE_BASE_URL + f'{st_id}_{an_id}_Results.txt'
+            results_file = next(fileio.read_mwrest(results_file_url))
+            save_path = pathlib.Path(save_path.parent, save_path.stem + '_results_file.txt')
+            if not save_mwrest_file(results_file, save_path = save_path):
+                print(f'When trying to download the results file for the value, "{value}", '
+                      'a blank file or an error was returned, so no file was created for it.')
 
 
 def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]], verbose: bool,
-                              to_path: str|None = None, 
+                              to_path: str|None = None, download_results_files: bool = False,
                               mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
     """Download and save a list of study and/or analysis IDs.
     
@@ -159,6 +200,7 @@ def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]],
         id_list: A list of tuples that are pairs of IDs and their classification.
         verbose: If True, print more information about each ID being downloaded.
         to_path: The directory path to save the files to. Defaults to the current working directory.
+        download_results_files: If True, then download any results files for downloaded analyses that have them.
         mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.
         full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. 
                   If given, all other parameters are ignored and this URL is used to download.
@@ -169,7 +211,7 @@ def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]],
         if verbose:
             print("[{:4}/{:4}]".format(count+1, len(id_list)), input_id, datetime.datetime.now())
         try:
-            download_and_save_mwrest_file(rest_params, to_path, mwrest_base_url, full_url)
+            download_and_save_mwrest_file(rest_params, to_path, download_results_files, mwrest_base_url, full_url)
         except Exception:
             print("Something went wrong and " + input_id + " could not be downloaded.")
             traceback.print_exc(file=sys.stdout)
@@ -224,6 +266,7 @@ def cli(cmdargs):
     optional_to_path = cmdargs.get('--to-path')
     optional_output_item = cmdargs.get('--output-item')
     required_output_item = cmdargs.get('<output-item>')
+    download_results_files = cmdargs['--results-files']
     
 
     # mwtab convert ...
@@ -281,7 +324,7 @@ def cli(cmdargs):
 
         # mwtab download url ...
         if cmdargs["<url>"]:
-            download_and_save_mwrest_file({}, optional_to_path, full_url = cmdargs['<url>'])
+            download_and_save_mwrest_file({}, optional_to_path, download_results_files, full_url = cmdargs['<url>'])
 
         # mwtab download study ...
         elif cmdargs["study"]:
@@ -298,7 +341,7 @@ def cli(cmdargs):
                     rest_params = {'context': 'study',
                                    'output_item': 'mwtab',
                                    'output_format': output_format}
-                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, mwrest_base_url)
+                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, download_results_files, mwrest_base_url)
 
                 else:
                     raise ValueError("Unknown \"--input-item\" {}".format(optional_input_item))
@@ -330,7 +373,7 @@ def cli(cmdargs):
                     rest_params = {'context': 'study', 
                                     'output_item': optional_output_item if optional_output_item else 'mwtab',
                                     'output_format': output_format}
-                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, mwrest_base_url)
+                    download_and_save_ID_list(rest_params, id_list, VERBOSE, optional_to_path, download_results_files, mwrest_base_url)
 
                 # Assume input value is a single analysis or study id and use --input-item to decide which, default to analysis_id
                 else:
@@ -343,7 +386,7 @@ def cli(cmdargs):
                                    'input_item': input_item,
                                    'output_item': optional_output_item if optional_output_item else 'mwtab',
                                    'output_format': output_format}
-                    download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+                    download_and_save_mwrest_file(rest_params, optional_to_path, download_results_files, mwrest_base_url)
 
             # mwtab download (study | ...) <input_item> ...
             elif required_input_item:
@@ -352,7 +395,7 @@ def cli(cmdargs):
                                'input_item': required_input_item,
                                'output_item': required_output_item,
                                'output_format': output_format}
-                download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+                download_and_save_mwrest_file(rest_params, optional_to_path, download_results_files, mwrest_base_url)
         
         # mwtab download (... | compound | refmet | gene | protein) ...
         elif context in ['compound', 'refmet', 'gene', 'protein']:
@@ -361,7 +404,7 @@ def cli(cmdargs):
                            'input_item': required_input_item,
                            'output_item': required_output_item,
                            'output_format': output_format}
-            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+            download_and_save_mwrest_file(rest_params, optional_to_path, False, mwrest_base_url)
                 
         # mwtab download moverz <input-value> <m/z-value> <ion-type-value> <m/z-tolerance-value> [--verbose]
         elif cmdargs["moverz"]:
@@ -370,14 +413,14 @@ def cli(cmdargs):
                            "m/z_value": cmdargs["<m/z-value>"],
                            "ion_type_value": cmdargs["<ion-type-value>"],
                            "m/z_tolerance_value": cmdargs["<m/z-tolerance-value>"]}
-            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+            download_and_save_mwrest_file(rest_params, optional_to_path, False, mwrest_base_url)
 
         # mwtab download exactmass <LIPID-abbreviation> <ion-type-value> [--verbose]
         elif cmdargs["exactmass"]:
             rest_params = {'context': 'exactmass', 
                            "LIPID_abbreviation": cmdargs["<LIPID-abbreviation>"],
                            "ion_type_value": cmdargs["<ion-type-value>"],}
-            download_and_save_mwrest_file(rest_params, optional_to_path, mwrest_base_url)
+            download_and_save_mwrest_file(rest_params, optional_to_path, False, mwrest_base_url)
 
     # mwtab extract ...
     elif cmdargs["extract"]:
