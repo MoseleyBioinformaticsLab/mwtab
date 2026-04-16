@@ -141,7 +141,7 @@ Testosterone	75.7500	63.2500	42.7500	98.0000	24.2500	35.0000	165.7500	23.2500	73
 MS_METABOLITE_DATA_END
 #METABOLITES
 METABOLITES_START
-metabolite_name	moverz_quant	ri	qwer	pubchem_id	inchi_key	kegg_id	other_id	other_id_type	pubchem_id/hmdb_id
+metabolite_name	moverz_quant	ri	qwer	pubchem_id	inchi_key	kegg_id	other_id	other_id_type	pubchem_id/hmdb_id	smiles/frequency
 17-hydroxypregnenolone				asdf			2Q4710	
 17-hydroxyprogesterone				6238			6Q3360	UCDavis_Gaikwad_Lab_ID
 Allodihydrotestosterone				10635			14A2570	UCDavis_Gaikwad_Lab_ID

@@ -180,8 +180,8 @@ def test_validate_metabolites(file_source):
             'columns for these and not lump them together into a less descriptive '
             '"other_id" column.') in validation_log
     
-    assert 'Warning: The column, "pubchem_id/hmdb_id", in the' in validation_log
-    assert ('was matched to multiple standard names, [\'pubchem_id\', \'hmdb_id\']. This is a good indication '
+    assert 'Warning: The column, "smiles/frequency", in the' in validation_log
+    assert ('was matched to multiple standard names, [\'smiles\', \'frequency\']. This is a good indication '
             'that the values in that column should be split into the appropriate '
             'individual columns.') in validation_log
     

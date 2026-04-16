@@ -725,7 +725,7 @@ column_finders = [
     
     ColumnFinder("inchi",
                  NameMatcher(in_strings = ['inchi'],
-                             not_in_strings = ['key'],),
+                             not_in_strings = ['key', 'base_inchi', 'representative_inchi', 'isotopic_inchi'],),
                  ValueMatcher(values_regex = '(' + CHEAP_INCHI + '|' + BRACKETED_LIST_OF_INCHI + ')',)),
     
     ColumnFinder("smiles",
@@ -782,6 +782,7 @@ column_finders = [
                  ValueMatcher(values_regex = '(' + ION + '|' + \
                                              LIST_OF_IONS + '|' + \
                                              LIST_OF_IONS_SPACE + '|' + \
+                                             LIST_OF_IONS_MIXED + '|' + \
                                              NUMS + '|' + \
                                              LIST_OF_NUMS + '|' + \
                                              NUMS + r'(\s*>\s*|\s*<\s*)' + NUMS + '|' + \

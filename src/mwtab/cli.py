@@ -266,7 +266,7 @@ def cli(cmdargs):
     optional_to_path = cmdargs.get('--to-path')
     optional_output_item = cmdargs.get('--output-item')
     required_output_item = cmdargs.get('<output-item>')
-    download_results_files = cmdargs['--results-files']
+    download_results_files = cmdargs.get('--results-files')
     
 
     # mwtab convert ...

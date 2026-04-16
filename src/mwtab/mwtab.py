@@ -776,7 +776,7 @@ class MWTabFile(dict):
                 # for file missing "Additional sample data" items
                 if len(formatted_items) < 4:
                     line += "\t"
-                print(line, file=f)
+                print(line.replace('\n', ' '), file=f)
 
     def print_block(self, section_key, f=sys.stdout, file_format="mwtab"):
         """Print `mwtab` section into a file or stdout.
@@ -804,13 +804,13 @@ class MWTabFile(dict):
                     
                     results_string = self.prefixes.get(section_key, "") + key + cw * " " + "\t"
                     results_string += self._create_result_file_string(section_key, key, "mwtab")
-                    print(results_string, file=f)
+                    print(results_string.replace('\n', ' '), file=f)
 
                 # prints #MS_METABOLITE_DATA, #NMR_METABOLITE_DATA, or #NMR_BINNED_DATA sections
                 elif key == "Units":
-                    print("{}:UNITS{}\t{}".format(section_key, cw * " ", value), file=f)
+                    print("{}:UNITS{}\t{}".format(section_key, cw * " ", value).replace('\n', ' '), file=f)
                 elif key == "Data":
-                    print("{}_START".format(section_key), file=f)
+                    print("{}_START".format(section_key).replace('\n', ' '), file=f)
 
                     if "METABOLITE" in section_key:
                         # prints "Samples" line at head of data section
@@ -819,7 +819,7 @@ class MWTabFile(dict):
                             sample_names = self._samples
                         elif self[section_key][key]:
                             sample_names = [k for k in self[section_key][key][0].keys()][1:]
-                        print("\t".join(["Samples"] + sample_names), file=f)
+                        print("\t".join(["Samples"] + sample_names).replace('\n', ' '), file=f)
                         if sample_names:
                             # prints "Factors" line at head of data section
                             if self._factors is not None:
@@ -848,10 +848,10 @@ class MWTabFile(dict):
                                     break
                                 factors_list.append(factors_dict[k])
                             if factors_list:
-                                print("\t".join(["Factors"] + factors_list), file=f)
+                                print("\t".join(["Factors"] + factors_list).replace('\n', ' '), file=f)
                         
                         for k, i in enumerate(self[section_key][key]):
-                            print("\t".join(i.values()), file=f)
+                            print("\t".join(i.values()).replace('\n', ' '), file=f)
 
                     else:  # NMR_BINNED_DATA
                         # Only print if there is data to print.
@@ -860,12 +860,30 @@ class MWTabFile(dict):
                         elif self[section_key][key]:
                             binned_header = [k for k in self[section_key][key][0].keys()][1:]
                         
-                        print("\t".join(["Bin range(ppm)"] + binned_header), file=f)
+                        print("\t".join(["Bin range(ppm)"] + binned_header).replace('\n', ' '), file=f)
                         
-                        for i in self[section_key][key]:
-                            print("\t".join(i.values()), file=f)
+                        for i, data_dict in enumerate(self[section_key][key]):
+                            
+                            if 'Bin range(ppm)' in data_dict:
+                                if data_dict['Metabolite'] != data_dict['Bin range(ppm)']:
+                                    print("Warning: The \"Metabolite\" key and \"Bin range(ppm)\" "
+                                          f"key in ['NMR_BINNED_DATA']['Data'][{i}] are different "
+                                          "values. Only the value in \"Bin range(ppm)\" will be written out.")
+                                del self[section_key][key][i]['Metabolite']
+                                print("\t".join(data_dict.values()), file=f)
+                                self[section_key][key][i]['Metabolite'] = self[section_key][key][i]['Bin range(ppm)']
+                            else:
+                                new_dict = self._default_dict_type()
+                                new_dict['Bin range(ppm)'] = data_dict['Metabolite']
+                                del data_dict['Metabolite']
+                                # Note that the update method cannot be used here because it can mess up DuplicatesDict.
+                                for key2, value2 in data_dict.items():
+                                    new_dict[key2] = value2
+                                print("\t".join(new_dict.values()), file=f)
+                                self[section_key][key][i]['Metabolite'] = new_dict['Bin range(ppm)']
+                            
 
-                    print("{}_END".format(section_key), file=f)
+                    print("{}_END".format(section_key).replace('\n', ' '), file=f)
 
                 # prints #METABOLITES section
                 elif key in ("Metabolites", "Extended"):
@@ -873,7 +891,7 @@ class MWTabFile(dict):
                         print("#METABOLITES", file=f)
                         print("METABOLITES_START", file=f)
                     else:
-                        print("EXTENDED_{}_START".format(section_key), file=f)
+                        print("EXTENDED_{}_START".format(section_key).replace('\n', ' '), file=f)
                     
                     if key == "Metabolites" and self._metabolite_header is not None:
                         metabolite_header = self._metabolite_header
@@ -883,15 +901,15 @@ class MWTabFile(dict):
                         metabolite_header = [k for k in self[section_key][key][0].keys()][1:]
                     else:
                         metabolite_header = []
-                    print("\t".join(["metabolite_name"] + metabolite_header), file=f)
+                    print("\t".join(["metabolite_name"] + metabolite_header).replace('\n', ' '), file=f)
                     
                     for i in self[section_key][key]:
-                        print("\t".join(i.values()), file=f)
+                        print("\t".join(i.values()).replace('\n', ' '), file=f)
 
                     if key == "Metabolites":
                         print("METABOLITES_END", file=f)
                     else:
-                        print("EXTENDED_{}_END".format(section_key), file=f)
+                        print("EXTENDED_{}_END".format(section_key).replace('\n', ' '), file=f)
 
                 else:
                     # Filenames don't get split.
@@ -908,13 +926,13 @@ class MWTabFile(dict):
                                 # I fixed this by adding a check to skip filenames, but just in case I also don't 
                                 # let empty lines be printed.
                                 if line:
-                                    print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)), file=f)
+                                    print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)).replace('\n', ' '), file=f)
                                 line = [word]
                                 length = len(word)
-                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)),
+                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", " ".join(line)).replace('\n', ' '),
                               file=f)
                     else:
-                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value), file=f)
+                        print("{}{}{}\t{}".format(self.prefixes.get(section_key, ""), key, cw * " ", value).replace('\n', ' '), file=f)
         
         # Note that indent cannot be None or json will use a version of the 
         # encoder written in C and DuplicatesDict will not be printed correctly.
@@ -1101,7 +1119,7 @@ class MWTabFile(dict):
         Sets the key order to a certain order for better reproducibility and consistency.
         """               
         key_order = \
-            {'METABOLOMICS WORKBENCH': {},
+            {'METABOLOMICS WORKBENCH': {'STUDY_ID': [], 'ANALYSIS_ID': [], 'VERSION': [], 'CREATED_ON': []},
              'PROJECT': {},
              'STUDY': {},
              'SUBJECT': {},

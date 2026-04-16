@@ -1028,7 +1028,8 @@
                 "kegg_id": "",
                 "other_id": "2Q4710",
                 "other_id_type": "",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "17-hydroxyprogesterone",
@@ -1040,7 +1041,8 @@
                 "kegg_id": "",
                 "other_id": "6Q3360",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Allodihydrotestosterone",
@@ -1052,7 +1054,8 @@
                 "kegg_id": "",
                 "other_id": "14A2570",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Androstenedione",
@@ -1064,7 +1067,8 @@
                 "kegg_id": "",
                 "other_id": "12A6030",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Androstenolone (DHEA)",
@@ -1076,7 +1080,8 @@
                 "kegg_id": "",
                 "other_id": "3A8500",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Cortexolone",
@@ -1088,7 +1093,8 @@
                 "kegg_id": "",
                 "other_id": "7Q1610",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Cortexone",
@@ -1100,7 +1106,8 @@
                 "kegg_id": "",
                 "other_id": "9Q3460",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Corticosterone, DOC",
@@ -1112,7 +1119,8 @@
                 "kegg_id": "",
                 "other_id": "10Q1550",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Cortisol",
@@ -1124,7 +1132,8 @@
                 "kegg_id": "",
                 "other_id": "8Q3880",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Estradiol",
@@ -1136,7 +1145,8 @@
                 "kegg_id": "",
                 "other_id": "16E0950",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Estrone",
@@ -1148,7 +1158,8 @@
                 "kegg_id": "",
                 "other_id": "15E2300",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Pregnenolone",
@@ -1160,7 +1171,8 @@
                 "kegg_id": "",
                 "other_id": "1Q5500",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Progesterone",
@@ -1172,7 +1184,8 @@
                 "kegg_id": "",
                 "other_id": "5Q2600",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Testosterone",
@@ -1184,7 +1197,8 @@
                 "kegg_id": "",
                 "other_id": "13A6950",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "Testosterone",
@@ -1196,7 +1210,8 @@
                 "kegg_id": "",
                 "other_id": "13A6950",
                 "other_id_type": "UCDavis_Gaikwad_Lab_ID",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             },
             {
                 "Metabolite": "",
@@ -1208,7 +1223,8 @@
                 "kegg_id": "",
                 "other_id": "",
                 "other_id_type": "",
-                "pubchem_id/hmdb_id": ""
+                "pubchem_id/hmdb_id": "",
+                "smiles/frequency": ""
             }
         ]
     }

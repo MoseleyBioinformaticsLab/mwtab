@@ -360,6 +360,10 @@ def validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables):
                         metabolites_errors.append({'message': message, 'tags': ['value'], 'section': data_section_key, 'sub-section': 'Metabolites',
                                                    'ID': '15', 'name': 'Standard Column Name Match'})
             for column_name in column_matches:
+                # Do not want to check columns that look similar if a direct match already exits, for example retention_time and retention_time%units.
+                # A message for retention_time%units would be spurious.
+                if name in columns and column_name.lower() != name:
+                    continue
                 if column_name in columns_to_standard_columns:
                     columns_to_standard_columns[column_name].append(name)
                 else:
@@ -797,7 +801,8 @@ def create_better_error_messages(errors_generator: Iterable[jsonschema.exception
                 container_noun = 'key'
             
             if key_is_required:
-                message = message + f' A legitimate value should be provided for this required {container_noun}.'
+                message = message + f' A legitimate value should be provided for this required {container_noun}.' + \
+                          ' You may have to ignore this error in certain situations. For example, SOLVENT_A for a GCMS experiment.'
             else:
                 message = message + f' Either a legitimate value should be provided for this {container_noun}, or it should be removed altogether.'
         else:
@@ -930,7 +935,10 @@ def validate_table_values(mwtabfile, data_section_key, mwtabfile_tables, na_valu
             # Look for overbalanced values, so if 90% of a column is dominated by a single value print a warning.
             for i, column in enumerate([column for column in data_df.columns if column != 'Metabolite']):
                 temp_column = data_df.loc[:, column].astype(str)
-                value_counts = temp_column.value_counts(dropna=False)
+                # There are fairly sparse data sets where this check will just be spurious if blanks/NAs are included.
+                value_counts = temp_column.value_counts(dropna = True if table_name == 'Data' else False)
+                if table_name == 'Data':
+                    value_counts = value_counts[value_counts.index != '']
                 value_counts = value_counts / value_counts.sum()
                 if any(value_counts > .9) and len(value_counts) > 1:
                     message = (f'Warning: {format_column_name(column, data_df.columns.get_loc(column)+1)} '
