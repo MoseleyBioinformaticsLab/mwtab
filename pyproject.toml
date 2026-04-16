@@ -8,12 +8,12 @@ description = "Parser for mwtab files from the Metabolomics Workbench"
 readme = "README.rst"
 requires-python = ">=3.10"
 keywords = ["mwtab", "metabolomics workbench"]
-license = {file = "LICENSE"}
+license = "BSD-3-Clause-Clear"
+license-files = ["LICENSE"]
 classifiers = [
 	'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
