@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TODO &#8212; mwtab 2.0.0 documentation</title>
+    <title>TODO &#8212; mwtab 2.1.0 documentation</title>
   
   
   
@@ -27,39 +27,44 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=46b6e079" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=51b770b3"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'todo';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="License" href="license.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.0.0" />
+  <meta name="docsearch:version" content="2.1.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
@@ -91,7 +96,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -113,7 +118,7 @@
   
   
   
-    <p class="title logo__title">mwtab 2.0.0 documentation</p>
+    <p class="title logo__title">mwtab 2.1.0 documentation</p>
   
 </a></div>
     
@@ -161,23 +166,13 @@
   </a>
 </li>
 
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     TODO
   </a>
 </li>
 
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -364,12 +359,28 @@
                   
   <section id="todo">
 <h1>TODO<a class="headerlink" href="#todo" title="Link to this heading">#</a></h1>
-<p>Add options to validate CLI and validate method in mwtab to save out the new JSON file.</p>
 <p>Add –limit or –ignore option to validate to filter out certain types of errors/warnings. Need to first create some classifications to tag them with.</p>
 <p>Think about extending METABOLITES and EXTENDED blocks with an “Attributes” line like “Factors” in DATA block as a way to add more information about the columns themselves.
 Hunter also wanted to consider adding things like the _factors properties into the JSON as well. For example, the _factors could be added into [‘MS_METABOLITE_DATA’] under a ‘Factors’ key.</p>
 <p>Think about adding an “UNASSIGNED” data block for the datasets we found that have a results_file instead of having the data in the mwTab file.
 Pretty sure most of these if not all are all unnassigned data where there are basically bins and no metabolite assinments.</p>
+<p>Had some new undocumented requirements pop up when submitting the Helsley data. The following is an email from Eoin about it:
+Hi Travis,
+You should have received an automated email regarding the completion of your submission.
+There were a couple of problems with the mwtab files. Our submission system requires a single common study design block for all analyses that have the same set of headings for all samples (even if some of them are blank) Headings like Sex and Resected tissue type have to include all samples.
+Also, the MW needs a mandatory column which indicates the source of each sample-I added one and designated Liver as the source of each patient sample. The “Show all samples link” in the main page (<a class="reference external" href="https://dev.metabolomicsworkbench.org:22222/data/subject_fetch.php?STUDY_ID=ST004733&amp;STUDY_TYPE=MS&amp;RESULT_TYPE=1&amp;Access=IloQ2417">https://dev.metabolomicsworkbench.org:22222/data/subject_fetch.php?STUDY_ID=ST004733&amp;STUDY_TYPE=MS&amp;RESULT_TYPE=1&amp;Access=IloQ2417</a>) shows the proper layout.
+The other issue was that there were a large number of unassigned annotations (m/z_rt features) that may not be added to an mwtab file. These are submitted as tab-delimited text files and saved with the raw data. I pulled these out of the mwtab files and saved them, one for each analysis:
+ST004733_AN008002_Results.txt (124.1K)
+ST004733_AN008003_Results.txt (249.1K)
+ST004733_AN008004_Results.txt (135K)
+ST004733_AN008005_Results.txt (254.2K)
+ST004733_AN008006_Results.txt (109.5K)
+The can be seen  under the “Download raw/supplementary data” on the main page.</p>
+<p>Need to address these. New check in validation for all SSF to have the same factors.
+Must have a new required factor “Sample source” for every sample. It might not have to have that name, but that is
+the name most common in the latest deposited datasets.
+Add check in validation that Metabolite names aren’t just numbers or rt_mz or something like that.
+Those now have to be submitted as results files.</p>
 </section>
 
 
@@ -409,8 +420,8 @@ Pretty sure most of these if not all are all unnassigned data where there are ba
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -430,7 +441,7 @@ Pretty sure most of these if not all are all unnassigned data where there are ba
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>
@@ -444,7 +455,7 @@ Pretty sure most of these if not all are all unnassigned data where there are ba
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
 </p></div>
       
     </div>
