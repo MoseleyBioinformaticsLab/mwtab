@@ -621,38 +621,7 @@ class MWTabFile(dict):
                         if token.key.lower() == "metabolite_name":
                             # self._extended_metabolite_header = token_value[1:]
                             is_header = True
-                    
-                    
-                    
-                    # TODO remove.
-                    # if token.key == "Bin range(ppm)" and "BINNED_DATA" in section_name and loop_count < 2:
-                    #     self._binned_header = token_value[1:]
-                    #     self._samples = self._binned_header
-                    # # Have seen Factors section in incorrect sections such as METABOLITES, 
-                    # # and seen multiple Factors sections in a single METABOLITE_DATA section.
-                    # # So just grab the one near the top.
-                    # elif token.key == "Factors" and "METABOLITE_DATA" in section_name and loop_count < 2:
-                    #     self._factors = {}
-                    #     for i, factor_string in enumerate(token_value[1:]):
-                    #         factor_pairs = factor_string.split("| ")
-                    #         factor_dict = self._default_dict_type()
-                    #         for pair in factor_pairs:
-                    #             factor_key, factor_value = pair.split(":")
-                    #             factor_dict[factor_key.strip()] = factor_value.strip()
-                    #         self._factors[header[i+1]] = factor_dict
-                    
-                    # # The last check for len(token_value) == 1 is for ones like AN000788.
-                    # elif "METABOLITE_DATA" in section_name and 'EXTENDED' not in section_name and self._samples is None and \
-                    #      loop_count < 2 and (any(sample in ssf_samples for sample in token_value[1:]) or \
-                    #      (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
-                    #     self._samples = token_value[1:]
-                    
-                    # elif token.key.lower() == "metabolite_name" and "METABOLITES" in section_name and loop_count < 2:
-                    #     self._metabolite_header = token_value[1:]
-                    
-                    # elif token.key.lower() == "metabolite_name" and "EXTENDED" in section_name and loop_count < 2:
-                    #     self._extended_metabolite_header = token_value[1:]
-                        
+                                            
                     if not is_header:                        
                         token_len = len(token_value)
                         temp_dict = self._default_dict_type()
