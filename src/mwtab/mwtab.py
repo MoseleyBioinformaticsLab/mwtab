@@ -578,11 +578,9 @@ class MWTabFile(dict):
                     is_header = False
                     if "BINNED_DATA" in section_name and 'EXTENDED' not in section_name and loop_count < 2:
                         if loop_count < 1:
-                            self._raw_binned_headers = token_value
-                            self._raw_samples = self._raw_binned_headers
+                            self._raw_binned_header = token_value
+                            self._raw_samples = self._raw_binned_header
                         if token.key == "Bin range(ppm)":
-                            # self._binned_header = token_value[1:]
-                            # self._samples = self._binned_header
                             is_header = True
                     # Have seen Factors section in incorrect sections such as METABOLITES, 
                     # and seen multiple Factors sections in a single METABOLITE_DATA section.
@@ -605,21 +603,18 @@ class MWTabFile(dict):
                         if (any(sample in ssf_samples for sample in token_value[1:]) or \
                            (len(token_value) == 1 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name']) or \
                            (len(ssf_samples) == 0 and token_value[0] in ['Samples', 'metabolite name', 'metabolite_name'])):
-                            # self._samples = token_value[1:]
                             is_header = True
                     
                     elif "METABOLITES" in section_name and loop_count < 2:
                         if loop_count < 1:
                             self._raw_metabolite_header = token_value
                         if token.key.lower() == "metabolite_name":
-                            # self._metabolite_header = token_value[1:]
                             is_header = True
                     
                     elif "EXTENDED" in section_name and loop_count < 2:
                         if loop_count < 1:
                             self._raw_extended_metabolite_header = token_value
                         if token.key.lower() == "metabolite_name":
-                            # self._extended_metabolite_header = token_value[1:]
                             is_header = True
                                             
                     if not is_header:                        
@@ -788,7 +783,9 @@ class MWTabFile(dict):
                             sample_names = self._samples
                         elif self[section_key][key]:
                             sample_names = [k for k in self[section_key][key][0].keys()][1:]
+                        
                         print("\t".join(["Samples"] + sample_names).replace('\n', ' '), file=f)
+                        
                         if sample_names:
                             # prints "Factors" line at head of data section
                             if self._factors is not None:
@@ -828,6 +825,8 @@ class MWTabFile(dict):
                             binned_header = self._binned_header
                         elif self[section_key][key]:
                             binned_header = [k for k in self[section_key][key][0].keys()][1:]
+                        else:
+                            binned_header = []
                         
                         print("\t".join(["Bin range(ppm)"] + binned_header).replace('\n', ' '), file=f)
                         
