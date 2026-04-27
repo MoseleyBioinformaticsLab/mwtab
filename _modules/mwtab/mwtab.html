@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mwtab.mwtab &#8212; mwtab 2.1.0 documentation</title>
+    <title>mwtab.mwtab &#8212; mwtab 2.1.1 documentation</title>
   
   
   
@@ -26,20 +26,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=46b6e079" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="../../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../../_static/documentation_options.js?v=841abef3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -50,7 +50,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.1.0" />
+  <meta name="docsearch:version" content="2.1.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -68,7 +68,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -116,7 +118,7 @@
   
   
   
-    <p class="title logo__title">mwtab 2.1.0 documentation</p>
+    <p class="title logo__title">mwtab 2.1.1 documentation</p>
   
 </a></div>
     
@@ -985,11 +987,9 @@
                     <span class="n">is_header</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">if</span> <span class="s2">&quot;BINNED_DATA&quot;</span> <span class="ow">in</span> <span class="n">section_name</span> <span class="ow">and</span> <span class="s1">&#39;EXTENDED&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">section_name</span> <span class="ow">and</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_raw_binned_headers</span> <span class="o">=</span> <span class="n">token_value</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_binned_headers</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_raw_binned_header</span> <span class="o">=</span> <span class="n">token_value</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_raw_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_binned_header</span>
                         <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;Bin range(ppm)&quot;</span><span class="p">:</span>
-                            <span class="c1"># self._binned_header = token_value[1:]</span>
-                            <span class="c1"># self._samples = self._binned_header</span>
                             <span class="n">is_header</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="c1"># Have seen Factors section in incorrect sections such as METABOLITES, </span>
                     <span class="c1"># and seen multiple Factors sections in a single METABOLITE_DATA section.</span>
@@ -1012,54 +1012,20 @@
                         <span class="k">if</span> <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">sample</span> <span class="ow">in</span> <span class="n">ssf_samples</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">token_value</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="ow">or</span> \
                            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">token_value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">token_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Samples&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite name&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite_name&#39;</span><span class="p">])</span> <span class="ow">or</span> \
                            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ssf_samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">token_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Samples&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite name&#39;</span><span class="p">,</span> <span class="s1">&#39;metabolite_name&#39;</span><span class="p">])):</span>
-                            <span class="c1"># self._samples = token_value[1:]</span>
                             <span class="n">is_header</span> <span class="o">=</span> <span class="kc">True</span>
                     
                     <span class="k">elif</span> <span class="s2">&quot;METABOLITES&quot;</span> <span class="ow">in</span> <span class="n">section_name</span> <span class="ow">and</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_raw_metabolite_header</span> <span class="o">=</span> <span class="n">token_value</span>
                         <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;metabolite_name&quot;</span><span class="p">:</span>
-                            <span class="c1"># self._metabolite_header = token_value[1:]</span>
                             <span class="n">is_header</span> <span class="o">=</span> <span class="kc">True</span>
                     
                     <span class="k">elif</span> <span class="s2">&quot;EXTENDED&quot;</span> <span class="ow">in</span> <span class="n">section_name</span> <span class="ow">and</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">loop_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_raw_extended_metabolite_header</span> <span class="o">=</span> <span class="n">token_value</span>
                         <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;metabolite_name&quot;</span><span class="p">:</span>
-                            <span class="c1"># self._extended_metabolite_header = token_value[1:]</span>
                             <span class="n">is_header</span> <span class="o">=</span> <span class="kc">True</span>
-                    
-                    
-                    
-                    <span class="c1"># TODO remove.</span>
-                    <span class="c1"># if token.key == &quot;Bin range(ppm)&quot; and &quot;BINNED_DATA&quot; in section_name and loop_count &lt; 2:</span>
-                    <span class="c1">#     self._binned_header = token_value[1:]</span>
-                    <span class="c1">#     self._samples = self._binned_header</span>
-                    <span class="c1"># # Have seen Factors section in incorrect sections such as METABOLITES, </span>
-                    <span class="c1"># # and seen multiple Factors sections in a single METABOLITE_DATA section.</span>
-                    <span class="c1"># # So just grab the one near the top.</span>
-                    <span class="c1"># elif token.key == &quot;Factors&quot; and &quot;METABOLITE_DATA&quot; in section_name and loop_count &lt; 2:</span>
-                    <span class="c1">#     self._factors = {}</span>
-                    <span class="c1">#     for i, factor_string in enumerate(token_value[1:]):</span>
-                    <span class="c1">#         factor_pairs = factor_string.split(&quot;| &quot;)</span>
-                    <span class="c1">#         factor_dict = self._default_dict_type()</span>
-                    <span class="c1">#         for pair in factor_pairs:</span>
-                    <span class="c1">#             factor_key, factor_value = pair.split(&quot;:&quot;)</span>
-                    <span class="c1">#             factor_dict[factor_key.strip()] = factor_value.strip()</span>
-                    <span class="c1">#         self._factors[header[i+1]] = factor_dict</span>
-                    
-                    <span class="c1"># # The last check for len(token_value) == 1 is for ones like AN000788.</span>
-                    <span class="c1"># elif &quot;METABOLITE_DATA&quot; in section_name and &#39;EXTENDED&#39; not in section_name and self._samples is None and \</span>
-                    <span class="c1">#      loop_count &lt; 2 and (any(sample in ssf_samples for sample in token_value[1:]) or \</span>
-                    <span class="c1">#      (len(token_value) == 1 and token_value[0] in [&#39;Samples&#39;, &#39;metabolite name&#39;, &#39;metabolite_name&#39;])):</span>
-                    <span class="c1">#     self._samples = token_value[1:]</span>
-                    
-                    <span class="c1"># elif token.key.lower() == &quot;metabolite_name&quot; and &quot;METABOLITES&quot; in section_name and loop_count &lt; 2:</span>
-                    <span class="c1">#     self._metabolite_header = token_value[1:]</span>
-                    
-                    <span class="c1"># elif token.key.lower() == &quot;metabolite_name&quot; and &quot;EXTENDED&quot; in section_name and loop_count &lt; 2:</span>
-                    <span class="c1">#     self._extended_metabolite_header = token_value[1:]</span>
-                        
+                                            
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_header</span><span class="p">:</span>                        
                         <span class="n">token_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_value</span><span class="p">)</span>
                         <span class="n">temp_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_dict_type</span><span class="p">()</span>
@@ -1234,7 +1200,9 @@
                             <span class="n">sample_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span>
                         <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="n">section_key</span><span class="p">][</span><span class="n">key</span><span class="p">]:</span>
                             <span class="n">sample_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">section_key</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">1</span><span class="p">:]</span>
+                        
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Samples&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sample_names</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+                        
                         <span class="k">if</span> <span class="n">sample_names</span><span class="p">:</span>
                             <span class="c1"># prints &quot;Factors&quot; line at head of data section</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1274,6 +1242,8 @@
                             <span class="n">binned_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binned_header</span>
                         <span class="k">elif</span> <span class="bp">self</span><span class="p">[</span><span class="n">section_key</span><span class="p">][</span><span class="n">key</span><span class="p">]:</span>
                             <span class="n">binned_header</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">section_key</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">1</span><span class="p">:]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">binned_header</span> <span class="o">=</span> <span class="p">[]</span>
                         
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Bin range(ppm)&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">binned_header</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
                         
@@ -1662,8 +1632,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1697,7 +1667,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
 </p></div>
       
     </div>
