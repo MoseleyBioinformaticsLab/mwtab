@@ -178,7 +178,7 @@ def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, d
             ids_found = False
         
         if not ids_found:
-            print(f'When trying to download the reuslts file for the value, "{value}", '
+            print(f'When trying to download the results file for the value, "{value}", '
                   'the study and analysis IDs could not be determined, so it could not be downloaded.')
         else:
             results_file_url = RESULTS_FILE_BASE_URL + f'{st_id}_{an_id}_Results.txt'

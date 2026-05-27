@@ -504,11 +504,17 @@ class MWTabFile(dict):
                         for key in section.keys():
                             mwtab_file[data_section][key] = section[key]
                 elif name == "NMR":
-                    mwtab_file["NM"] = section
+                    if 'NM' in mwtab_file:
+                        mwtab_file['NM'].update(section)
+                    else:
+                        mwtab_file['NM'] = section
                 elif name == "END":
                     pass
                 else:
-                    mwtab_file[name] = section
+                    if name in mwtab_file:
+                        mwtab_file[name].update(section)
+                    else:
+                        mwtab_file[name] = section
             token = next(lexer)
         
         # Sometimes the results file line is in the wrong spot, look for it in DATA and move it if so.
