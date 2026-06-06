@@ -356,6 +356,64 @@ class MWTabFile(dict):
         """
         return self.get_table_as_pandas('Data')
     
+    def download_results_file(self, output_dir=".", session=None):
+        """Download the results file associated with this MWTabFile.
+
+        The results file URL is constructed from the study_id and analysis_id
+        properties, following the pattern:
+            https://www.metabolomicsworkbench.org/studydownload/{ST}_{AN}_Results.txt
+
+        :param str output_dir: Directory to save the results file to.
+        :param session: Optional requests.Session for connection pooling.
+        :return: Path to the downloaded file, or None if no results file info exists.
+        :rtype: str or None
+        """
+        import os
+        import requests
+
+        # Get IDs from managed properties
+        st_id = self.study_id
+        an_id = self.analysis_id
+
+        if not st_id or not an_id:
+            raise ValueError("MWTabFile must have both study_id and analysis_id to download results file")
+
+        # Check if results file info exists in MS or NM section
+        results_file_key = None
+        section_key = None
+        if 'MS' in self and 'MS_RESULTS_FILE' in self['MS']:
+            results_file_key = 'MS_RESULTS_FILE'
+            section_key = 'MS'
+        elif 'NM' in self and 'NMR_RESULTS_FILE' in self['NM']:
+            results_file_key = 'NMR_RESULTS_FILE'
+            section_key = 'NM'
+
+        if not results_file_key:
+            return None  # No results file info in this file
+
+        # Construct URL
+        base_url = "https://www.metabolomicsworkbench.org/studydownload/"
+        results_url = "{}{}_{}_Results.txt".format(base_url, st_id, an_id)
+
+        # Download
+        sess = session or requests.Session()
+        response = sess.get(results_url)
+        response.raise_for_status()
+
+        # Determine filename from results file dict if available
+        filename = None
+        if isinstance(self[section_key][results_file_key], dict) and "filename" in self[section_key][results_file_key]:
+            filename = self[section_key][results_file_key]["filename"]
+        else:
+            filename = "{}_{}_Results.txt".format(st_id, an_id)
+
+        output_path = os.path.join(output_dir, filename)
+
+        with open(output_path, 'wb') as f:
+            f.write(response.content)
+
+        return output_path
+
     def validate(self, ms_schema: dict = ms_required_schema, nmr_schema: dict = nmr_required_schema, verbose: bool = True) -> (str, list[dict]):
         """Validate the instance.
         
