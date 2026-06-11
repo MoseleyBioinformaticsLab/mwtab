@@ -83,11 +83,10 @@ OUTPUT_FORMATS = {
 VERBOSE = False
 # Note that 'url' is not a context for the Metabolomics Workbench REST API, but the code works better to have it in this list.
 CONTEXTS = ['study', 'compound', 'refmet', 'gene', 'protein', 'moverz', 'exactmass', 'url']
-RESULTS_FILE_BASE_URL = 'https://www.metabolomicsworkbench.org/studydownload/'
 
 
 
-def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> mwrest.MWRESTFile:
+def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None, download_results_file: bool = False) -> mwrest.MWRESTFile:
     """Create Metabolomics Workbench REST URL and request file.
     
     Args:
@@ -96,16 +95,17 @@ def download(rest_params: dict, mwrest_base_url: str = mwrest.BASE_URL, full_url
         mwrest_base_url: String for the base URL to use for accessing the Metabolomics Workbench REST interface.
         full_url: String representing a fully constructed URL to a Metabolomics Workbench REST endpoint. 
                   If given, all other parameters are ignored and this URL is used to download.
+        download_results_file: If True, attempt to download the results file associated with the rest file if it exists.
     
     Returns:
         The downloaded file as an MWRESTFile object if no exceptions occured, otherwise None with a raised exception.
     """
     if full_url:
-        mwrestfile = next(fileio.read_mwrest(full_url))
+        mwrestfile = next(fileio.read_mwrest(full_url, download_results_file = download_results_file))
     else:
         # create and validate a callable URL to pull data from Metabolomics Workbench's REST API
         fileurl = mwrest.GenericMWURL(rest_params, mwrest_base_url).url
-        mwrestfile = next(fileio.read_mwrest(fileurl))
+        mwrestfile = next(fileio.read_mwrest(fileurl, download_results_file = download_results_file))
     
     return mwrestfile
 
@@ -133,24 +133,27 @@ def _determine_mwrestfile_save_path(mwrestfile: mwrest.MWRESTFile, to_path: str|
     return path_to_save
 
 
-def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, output_format: str = 'txt', save_path: str|None = None) -> bool:
+def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, save_path: str|None = None, results_file: bool = False) -> bool:
     """Save the given MWRESTFile object to the given path if it has text.
     
     Args:
         mwrestfile: The MWRESTFile object to save.
-        to_path: The path to save the file to. Defaults to the current working directory.
-        output_format: The format to save the file to. Should be 'txt', 'json', or 'mwtab'.
         save_path: Fully qualified save path, if given, ignores to_path and output_format.
+        results_file: If True, save the results file text of the MWRESTFile instead of the text.
     
     Returns:
         True if the mwrestfile had text and was therefore saved, False otherwise.
     """
-    if mwrestfile.text:  # if the text file isn't blank
-        if not save_path:
-            save_path = _determine_mwrestfile_save_path(mwrestfile, to_path, output_format)
-        
+    if results_file:
+        text_to_save = mwrestfile.results_file_text
+        write_function = mwrestfile.write_results_file
+    else:
+        text_to_save = mwrestfile.text
+        write_function = mwrestfile.write
+    
+    if text_to_save:  # if the text file isn't blank
         with open(save_path, "w", encoding="utf-8") as fh:
-            mwrestfile.write(fh)
+            write_function(fh)
         return True
     return False
 
@@ -158,35 +161,19 @@ def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, to_path: str|None = None, ou
 def download_and_save_mwrest_file(rest_params: dict, to_path: str|None = None, download_results_files: bool = False,
                                   mwrest_base_url: str = mwrest.BASE_URL, full_url: str|None = None) -> None:
     """DRY function to combine downloading, saving, and error printing."""
-    mwrestfile = download(rest_params, mwrest_base_url, full_url)
+    mwrestfile = download(rest_params, mwrest_base_url, full_url, download_results_files)
     extension = output_format if (output_format := rest_params.get('output_format')) else 'txt'
     save_path = _determine_mwrestfile_save_path(mwrestfile, to_path, extension)
-    if not save_mwrest_file(mwrestfile, save_path = save_path):
-        value = full_url if full_url else rest_params['input_value']
-        print(f'When trying to download a file for the value, "{value}", '
+    error_message = 'URL, "' + full_url + '"' if full_url else 'parameters, "' + str(rest_params) + '"'
+    if not save_mwrest_file(mwrestfile, save_path):
+        print(f'When trying to download a file for the {error_message}, '
               'a blank file or an error was returned, so no file was created for it.')
     
-    elif download_results_files and 'RESULTS_FILE' in mwrestfile.text:
-        ids_found = True
-        if re_match := re.match(r'(?s).*(AN\d{6}).*', mwrestfile.text):
-            an_id = re_match.group(1)
-        else:
-            ids_found = False
-        if re_match := re.match(r'(?s).*(ST\d{6}).*', mwrestfile.text):
-            st_id = re_match.group(1)
-        else:
-            ids_found = False
-        
-        if not ids_found:
-            print(f'When trying to download the results file for the value, "{value}", '
-                  'the study and analysis IDs could not be determined, so it could not be downloaded.')
-        else:
-            results_file_url = RESULTS_FILE_BASE_URL + f'{st_id}_{an_id}_Results.txt'
-            results_file = next(fileio.read_mwrest(results_file_url))
-            save_path = pathlib.Path(save_path.parent, save_path.stem + '_results_file.txt')
-            if not save_mwrest_file(results_file, save_path = save_path):
-                print(f'When trying to download the results file for the value, "{value}", '
-                      'a blank file or an error was returned, so no file was created for it.')
+    elif download_results_files:
+        save_path = pathlib.Path(save_path.parent, save_path.stem + '_results_file.txt')
+        if not save_mwrest_file(mwrestfile, save_path, True):
+            print(f'When trying to download the results file for the {error_message}, '
+                  'a blank file or an error was returned, so no file was created for it.')
 
 
 def download_and_save_ID_list(rest_params: dict, id_list: list[tuple[str, str]], verbose: bool,

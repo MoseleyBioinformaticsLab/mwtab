@@ -18,6 +18,7 @@ import json
 
 VERBOSE = False
 BASE_URL = "https://www.metabolomicsworkbench.org/rest/"
+RESULTS_FILE_BASE_URL = 'https://www.metabolomicsworkbench.org/studydownload/'
 
 
 def analysis_ids(base_url=BASE_URL):
@@ -532,16 +533,19 @@ class GenericMWURL(object):
 class MWRESTFile(object):
     """MWRESTFile class that stores data from a single file download through Metabolomics Workbench's REST API.
 
-    Mirrors :class:`~mwtab.mwtab.MWTabFile`.
+    Mirrors :class:`~mwtab.mwtab.MWTabFile`. The text of the file to be read is stored in the "text" attribute. 
+    If a results file was read with the source it is stored in the "results_file_text" attribute.
     """
 
-    def __init__(self, source):
+    def __init__(self, source, download_results_file = False):
         """File initializer.
 
         :param str source: Source a `MWRESTFile` instance was created from.
         """
         self.source = source
         self.text = ""
+        self.download_results_file = download_results_file
+        self.results_file_text = ''
 
     def read(self, filehandle):
         """Read data into a :class:`~mwtab.mwrest.MWRESTFile` instance.
@@ -556,9 +560,27 @@ class MWRESTFile(object):
         # input_str = input_str.replace("\r\n", "\n")
         # self.text = re.sub(r"</br>", "", self.text)  # included to remove remaining HTML tags
         filehandle.close()
+        
+        if self.download_results_file and 'RESULTS_FILE' in self.text:
+            ids_found = True
+            if re_match := re.match(r'(?s).*(AN\d{6}).*', self.text):
+                an_id = re_match.group(1)
+            else:
+                ids_found = False
+            if re_match := re.match(r'(?s).*(ST\d{6}).*', self.text):
+                st_id = re_match.group(1)
+            else:
+                ids_found = False
+            
+            if not ids_found:
+                print(f'When trying to download the results file for, "{self.source}", '
+                      'the study and analysis IDs could not be determined, so it could not be downloaded.')
+            else:
+                results_file_url = RESULTS_FILE_BASE_URL + f'{st_id}_{an_id}_Results.txt'
+                self.results_file_text = next(fileio.read_mwrest(results_file_url)).text
 
     def write(self, filehandle):
-        """Write :class:`~mwtab.mwrest.MWRESTFile` data into file.
+        """Write :class:`~mwtab.mwrest.MWRESTFile` text into file.
 
         :param filehandle: file-like object.
         :type filehandle: :py:class:`io.TextIOWrapper`
@@ -567,6 +589,20 @@ class MWRESTFile(object):
         """
         try:
             filehandle.write(self.text)
+        except IOError:
+            raise IOError('"filehandle" parameter must be writable.')
+        filehandle.close()
+    
+    def write_results_file(self, filehandle):
+        """Write :class:`~mwtab.mwrest.MWRESTFile` results_file_text into file.
+
+        :param filehandle: file-like object.
+        :type filehandle: :py:class:`io.TextIOWrapper`
+        :return: None
+        :rtype: :py:obj:`None`
+        """
+        try:
+            filehandle.write(self.results_file_text)
         except IOError:
             raise IOError('"filehandle" parameter must be writable.')
         filehandle.close()

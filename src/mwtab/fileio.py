@@ -191,7 +191,19 @@ def read_with_class(sources: str|list[str], read_class: type, class_kwds: dict, 
 
 
 read_files = partial(read_with_class, read_class = mwtab.MWTabFile, class_kwds = {"duplicate_keys": True})
-read_mwrest = partial(read_with_class, read_class = mwrest.MWRESTFile, class_kwds = {})
+# read_mwrest = partial(read_with_class, read_class = mwrest.MWRESTFile, class_kwds = {})
+def read_mwrest(sources: str|list[str], return_exceptions: bool = False, download_results_file: bool = False) -> tuple[Any, Exception]|Any:
+    """Wrapper around read_with_class using the :class:`~mwtab.mwtab.MWRESTFile` class.
+    
+    Args:
+        sources: A string or list of strings to read from.
+        return_exceptions: Whether to yield a tuple with file instance and exception or just the file instance.
+        download_results_file: If True, attempt to download the results file associated with the source.
+    
+    Returns:
+        Returns a :class:`~mwtab.mwtab.MWRESTFile` class and any exceptions, or None and any exceptions, or the source and any exceptions.
+    """
+    return read_with_class(sources, mwrest.MWRESTFile, {'download_results_file': download_results_file}, return_exceptions)
 
 class ReadLines():
     def __init__(self, source, *args, **kwargs):

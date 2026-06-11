@@ -511,7 +511,9 @@ def test_download_study_error_recovery(teardown_module):
     command = command.split(" ")
     subp = subprocess.run(command, capture_output=True, encoding="UTF-8")
     assert "AN9999999 could not be downloaded" in subp.stdout
-    assert ('When trying to download a file for the value, "AN000206", '
+    assert ('When trying to download a file for the parameters, '
+            '"{\'context\': \'study\', \'output_item\': \'mwtab\', \'output_format\': \'txt\', '
+            '\'input_value\': \'AN000206\', \'input_item\': \'analysis_id\'}", '
             'a blank file or an error was returned, so no file was created for it.') in subp.stdout
     assert "ValueError: Invalid Metabolomics Workbench analysis ID for a study (AN<6-digit integer>)" in subp.stdout
     assert subp.returncode == 0
