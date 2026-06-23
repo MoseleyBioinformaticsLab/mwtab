@@ -1,5 +1,5 @@
-cff-version: 1.0.0
-message: "If you use this software, please cite it as below."
+cff-version: 1.2.0
+message: "Please cite this software using the metadata from 'preferred-citation'."
 authors:
 - family-names: "Powell"
   given-names: "Christian"
@@ -10,10 +10,13 @@ authors:
 - family-names: "Moseley"
   given-names: "Hunter"
   orcid: "https://orcid.org/0000-0003-3995-5368"
+- family-names: "Thompson"
+  given-names: "Travis"
+  orcid: "https://orcid.org/0000-0002-8198-1327"
 title: "mwtab"
-version: 1.2.5
 date-released: 2017-03-18
-url: "https://github.com/MoseleyBioinformaticsLab/mwtab"
+repository-code: "https://github.com/MoseleyBioinformaticsLab/mwtab"
+type: "software"
 preferred-citation:
   type: article
   authors:
