@@ -17,22 +17,6 @@ title: "mwtab"
 date-released: 2017-03-18
 repository-code: "https://github.com/MoseleyBioinformaticsLab/mwtab"
 type: "software"
-preferred-citation:
-  type: article
-  authors:
-    - family-names: "Thompson"
-      given-names: "Travis"
-      orcid: "https://orcid.org/0000-0002-8198-1327"
-    - family-names: "Moseley"
-      given-names: "Hunter"
-      orcid: "https://orcid.org/0000-0003-3995-5368"
-  doi: "10.3390/metabo16010076"
-  journal: "Metabolites"
-  month: 1
-  title: "A Major Update and Improved Validation Functionality in the mwtab Python Library and the Metabolomics Workbench File Status Website"
-  issue: 1
-  volume: 16
-  year: 2026
 references:
   - type: article
     authors:
@@ -49,3 +33,19 @@ references:
     issue: 11
     volume: 3
     year: 2021
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Thompson"
+      given-names: "Travis"
+      orcid: "https://orcid.org/0000-0002-8198-1327"
+    - family-names: "Moseley"
+      given-names: "Hunter"
+      orcid: "https://orcid.org/0000-0003-3995-5368"
+  doi: "10.3390/metabo16010076"
+  journal: "Metabolites"
+  month: 1
+  title: "A Major Update and Improved Validation Functionality in the mwtab Python Library and the Metabolomics Workbench File Status Website"
+  issue: 1
+  volume: 16
+  year: 2026
