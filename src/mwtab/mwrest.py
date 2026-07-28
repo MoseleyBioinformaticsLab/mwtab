@@ -14,6 +14,7 @@ from collections import OrderedDict
 from . import fileio
 import re
 import json
+import urllib
 
 
 VERBOSE = False
@@ -556,12 +557,17 @@ class MWRESTFile(object):
         :return: None
         :rtype: :py:obj:`None`
         """
-        self.text = filehandle.read().decode("utf-8")
+        self.text = filehandle.read()
+        try:
+            self.text = self.text.decode("utf-8")
+        except Exception:
+            pass
+            
         # input_str = input_str.replace("\r\n", "\n")
         # self.text = re.sub(r"</br>", "", self.text)  # included to remove remaining HTML tags
         filehandle.close()
         
-        if self.download_results_file and 'RESULTS_FILE' in self.text:
+        if self.download_results_file:
             ids_found = True
             if re_match := re.match(r'(?s).*(AN\d{6}).*', self.text):
                 an_id = re_match.group(1)
@@ -577,7 +583,10 @@ class MWRESTFile(object):
                       'the study and analysis IDs could not be determined, so it could not be downloaded.')
             else:
                 results_file_url = RESULTS_FILE_BASE_URL + f'{st_id}_{an_id}_Results.txt'
-                self.results_file_text = next(fileio.read_mwrest(results_file_url)).text
+                try:
+                    self.results_file_text = next(fileio.read_mwrest(results_file_url)).text
+                except urllib.error.HTTPError:
+                    pass
 
     def write(self, filehandle):
         """Write :class:`~mwtab.mwrest.MWRESTFile` text into file.

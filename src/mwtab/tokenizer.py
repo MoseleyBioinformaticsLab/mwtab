@@ -73,13 +73,17 @@ def tokenizer(text, dict_type = None):
         dict_type = dict
         
     stream = deque(text.split("\n"))
-
+    line_count = 0
     while len(stream) > 0:
+        line_count += 1
         line = stream.popleft()
         try:
 
             # header
             if line.startswith("#METABOLOMICS WORKBENCH"):
+                # Sometimes there are more than 1 Workbench line, so endsection needs to be sent or it causes issues.
+                if line_count > 3:
+                    yield KeyValue("#ENDSECTION", "\n")
                 yield KeyValue("#METABOLOMICS WORKBENCH", "\n")
                 for i, identifier in enumerate(re.split(r' |\t', line)):
                     if ":" in identifier:

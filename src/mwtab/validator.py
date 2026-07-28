@@ -1069,11 +1069,11 @@ def validate_file(mwtabfile: 'mwtab.mwtab.MWTabFile',
     if data_section_key:
         errors.extend(validate_data(mwtabfile, data_section_key, mwtabfile_tables))
 
-        if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA"):
-            if "Metabolites" in mwtabfile[data_section_key].keys():
+        if data_section_key in ("MS_METABOLITE_DATA", "NMR_METABOLITE_DATA") or not data_section_key:
+            if data_section_key and "Metabolites" in mwtabfile[data_section_key].keys():
                 errors.extend(validate_metabolites(mwtabfile, data_section_key, mwtabfile_tables))
             else:
-                if mwtabfile._input_format == 'mwtab':
+                if mwtabfile._input_format == 'mwtab' or not data_section_key:
                     location = 'METABOLITES'
                 else:
                     location = f'["{data_section_key}"]["Metabolites"]'

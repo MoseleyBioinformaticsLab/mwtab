@@ -152,8 +152,12 @@ def save_mwrest_file(mwrestfile: mwrest.MWRESTFile, save_path: str|None = None, 
         write_function = mwrestfile.write
     
     if text_to_save:  # if the text file isn't blank
-        with open(save_path, "w", encoding="utf-8") as fh:
-            write_function(fh)
+        if isinstance(text_to_save, str):
+            with open(save_path, "w", encoding="utf-8") as fh:
+                write_function(fh)
+        else:
+            with open(save_path, "wb") as fh:
+                write_function(fh)
         return True
     return False
 

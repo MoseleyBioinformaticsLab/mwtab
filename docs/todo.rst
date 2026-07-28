@@ -9,6 +9,16 @@ Hunter also wanted to consider adding things like the _factors properties into t
 Think about adding an "UNASSIGNED" data block for the datasets we found that have a results_file instead of having the data in the mwTab file.
 Pretty sure most of these if not all are all unnassigned data where there are basically bins and no metabolite assinments.
 
+Change the SSF error messages in validate to also include the sample ID instead of only giving the number so it is easier to find it.
+Ex. Warning: SUBJECT_SAMPLE_FACTORS entry #44 has a duplicate Sample ID.  should say #44, "sample ID", ...
+
+Add checks specific for DATA that look for entire rows and columns that are all 1 non-null/non-zero value. AN002453
+  Replace 0s with nulls, then do a value_counts and if there is only 1 value or less then there is an issue.
+
+AN000905 has a special case for the results file. It is actually a zip file with a single Excel file with 4 tabs in it.
+The best change is probably to try .txt for results files, and if that fails try .zip. .xslx is also a valid possibility.
+There is also at least one where the name is just the study ID, so ST000000_Results.xlsx. Could try that after zip.
+
 
 Had some new undocumented requirements pop up when submitting the Helsley data. The following is an email from Eoin about it:
 Hi Travis,

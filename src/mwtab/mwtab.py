@@ -512,7 +512,11 @@ class MWTabFile(dict):
                     pass
                 else:
                     if name in mwtab_file:
-                        mwtab_file[name].update(section)
+                        if isinstance(mwtab_file[name], list):
+                            # This should never execute, but there are malformed files where there are 2 SSF sections, so just add them.
+                            mwtab_file[name] += [element for element in section if element not in mwtab_file[name]]
+                        else:
+                            mwtab_file[name].update(section)
                     else:
                         mwtab_file[name] = section
             token = next(lexer)

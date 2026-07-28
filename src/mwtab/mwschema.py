@@ -657,7 +657,7 @@ nmr_required_schema['required'].extend(['NM'])
 nmr_required_schema['if'] = {'allOf':[{'properties': {'NMR_METABOLITE_DATA':{'not':{}}}}, {'properties': {'NMR_BINNED_DATA':{'not':{}}}}]}
 nmr_required_schema['then'] = {'properties': {'NM':{'required':['NMR_RESULTS_FILE'],
                                                     'required_message': ('Error: There must be either a "NMR_METABOLITE_DATA" '
-                                                                         'section, a "NMR_BINNED_DATA" section or a '
+                                                                         'section, a "NMR_BINNED_DATA" section, or a '
                                                                          '"NMR_RESULTS_FILE" subsection in the '
                                                                          '"NM" section. Neither were found.')}}}
 
